@@ -260,7 +260,10 @@ footer div {
 
 
 
-@media (min-width: 40rem) {
+
+
+/*@media (min-width: 40rem) {*/
+    @media (min-width: 1180px) {
     .header {
         justify-content: space-between;
     }
