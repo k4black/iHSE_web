@@ -1,10 +1,18 @@
 @import url('https://fonts.googleapis.com/css?family=Hind|Indie+Flower');
 
-body {
+html, body {
     margin: 0;
     font-family: 'Hind', sans-serif;
     box-sizing: border-box;
+    font-size: 16px;
 
+    height: 100%;
+    overflow-y: hidden;
+    /*display: block;*/
+}
+
+* {
+    box-sizing: border-box;
 }
 
 .header {
@@ -265,8 +273,10 @@ footer div {
 
 
 /*@media (min-width: 40rem) {*/
-/*@media (min-width: 1180px) {  */
-@media not handheld {
+/*@media (min-width: 1180px) {*/
+/*@media not handheld {*/
+/*@media device-aspect-ratio (min-device-aspect-ratio, max-device-aspect-ratio) {*/
+@media (min-width : 769px) {
 
     .header {
         justify-content: space-between;
