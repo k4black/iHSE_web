@@ -1,6 +1,77 @@
+
+/* Floating button hide */
+var floatingButton = document.querySelector('.mobile__floating__button');
+
+var hide = false;
+
+function showFloating() {
+    hide = false;
+    floatingButton.classList.remove('hide');
+    console.log("Show floating button");
+}
+
+function hideFloating() {
+    hide = true;
+    floatingButton.classList.add('hide');
+    console.log("Hide floating button");
+}
+
+var lastScrollTop = 0;
+function floatingButtonOnScroll() {
+    if (open) {
+        return
+    }
+
+    var st = window.pageYOffset || document.documentElement.scrollTop; // Credits: "https://github.com/qeremy/so/blob/master/so.dom.js#L426"
+    if (st > lastScrollTop){
+        // downscroll code
+        if (!hide)
+            hideFloating();
+    } else {
+        // upscroll code
+        if (hide)
+            showFloating();
+    }
+    lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
+}
+
+window.addEventListener('scroll', floatingButtonOnScroll);
+
+
+
+/* Open/close mobile menu */
 var hamburgerButton = document.querySelector('.hamburger__button');
 var mobileNav = document.querySelector('.mobile');
 
+var open = false;
+
+
+function openMobile() {
+    open = true;
+    mobileNav.classList.add('open');
+    console.log("Open menu");
+}
+
+function closeMobile() {
+    open = false;
+    mobileNav.classList.remove('open');
+    console.log("Close menu");
+}
+
+
+function hamburgerOnClick() {
+    if (!open) {
+        openMobile();
+    } else {
+        closeMobile();
+    }
+}
+
+
+hamburgerButton.addEventListener('click', hamburgerOnClick);
+mobileNav.addEventListener('click', closeMobile);
+
+/* Swipe open*/
 
 //
 // window.addEventListener('load', function(){
@@ -49,32 +120,3 @@ var mobileNav = document.querySelector('.mobile');
 //     }, false)
 //
 // }, false)
-
-
-
-var open = false;
-
-function hamburgerOnClick() {
-    if (!open) {
-        openMobile();
-    } else {
-        closeMobile();
-    }
-}
-
-function openMobile() {
-    open = true;
-    mobileNav.classList.add('open');
-    console.log("Open menu");
-}
-
-function closeMobile() {
-    open = false;
-    mobileNav.classList.remove('open');
-    console.log("Close menu");
-}
-
-
-
-hamburgerButton.addEventListener('click', hamburgerOnClick);
-mobileNav.addEventListener('click', closeMobile);
