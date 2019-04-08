@@ -1,5 +1,5 @@
 def application(env, start_response):
-    message_return = "<p>Hello from uWSGI!</p>"
+    message_return = b"<p>Hello from uWSGI!</p>"
     # message_return.append(b"<p>Hello from uWSGI!</p>")
     # message_return.append(b"Second string")
     # message_return.append(b"Another one!")
