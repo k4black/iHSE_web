@@ -17,6 +17,6 @@ function loadDoc() {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:5000", true);
+    xhttp.open("GET", "http://ihse.tk:50000", true);
     xhttp.send();
 }
