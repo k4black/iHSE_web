@@ -220,6 +220,7 @@ footer div {
 }
 
 
+/* User profile block */
 .mobile__sidebar__avatar {
     width: 80px;
     height: 80px;
@@ -228,8 +229,6 @@ footer div {
     background-size: cover;
 
 }
-
-
 
 .mobile__sidebar__name {
     font-size: 18px;
@@ -249,7 +248,7 @@ footer div {
 }
 
 
-
+/* Menu elements  */
 .mobile__sidebar__group {
     margin: 10px 0;
     padding: 0;
@@ -295,18 +294,28 @@ footer div {
     margin: 0 15px;
 }
 
-
-
-
 .mobile__item__name {
     margin-left: 5px;
 
     font-weight: bold;
 }
 
+.mobile__item__notification {
+    color: white;
+    background-color: orange;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    vertical-align: center;
+
+    position: absolute;
+    right: 25px;
+}
 
 
 
+/* Open sidebar */
 .open {
     display: flex;
     transform: translateX(0);
