@@ -12,11 +12,12 @@ function loadDoc() {
 
         } else if (this.status === 200) {
             document.getElementById("demo").innerHTML = "readyState: " + this.readyState.toString();
+
         } else {
             document.getElementById("demo").innerHTML = "Some other";
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000", true);
+    xhttp.open("GET", "http://ihse.tk:50000/", true);
     xhttp.send();
 }

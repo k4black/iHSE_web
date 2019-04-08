@@ -11,4 +11,6 @@ def application(env, start_response):
                     ])
     # open("/tmp/ot.txt", "w").write(message_return)
     # ret = open("/tmp/ot.txt").read()
-    return [message_return]
+
+    message_return_2 = b"<p>" + type(env) + "</p>"
+    return [message_return, message_return_2]
