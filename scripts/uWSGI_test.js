@@ -13,7 +13,7 @@ function loadDoc() {
         } else if (this.status === 200) {
             document.getElementById("demo").innerHTML = "readyState: " + this.readyState.toString();
         } else {
-            console.log("Error!");
+            document.getElementById("demo").innerHTML = "Some other";
         }
     };
 
