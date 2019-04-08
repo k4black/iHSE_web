@@ -12,5 +12,12 @@ def application(env, start_response):
     # open("/tmp/ot.txt", "w").write(message_return)
     # ret = open("/tmp/ot.txt").read()
 
-    message_return_2 = b"<p>" + type(env) + "</p>"
-    return [message_return, message_return_2]
+    # message_return_2 = b"<p> ttt: " + type(env) + b"</p>"
+    s = ""
+    for i in env.keys():
+        s = s + str(i) + ":" + str(env[i]) + "\n"
+
+    message_return_3 = ("<p>Hi again!" + s + "!</p>")   
+    message_return_3 = message_return_3.encode('utf-8')
+    
+    return [message_return, message_return_3]
