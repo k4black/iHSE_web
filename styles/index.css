@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css?family=Hind|Indie+Flower');
+
+
+
+/*background*/
+.background__image {
+    background: url("image/background.jpg");
+    width: 100vw;
+    height: 140vh;
+    background-size: cover;
+    background-position: center;
+}
+
+.scroller {
+    height: auto;
+    width: auto;
+    margin-top: 60px;
+    overflow: auto;
+}
+
+/*footer*/
+footer div {
+    color: gray;
+    font-family: 'Indie Flower', sans-serif;
+    font-size: 60px;
+    width: 80vw;
+    margin: auto;
+    text-align: center;
+    padding: 100px 0;
+}

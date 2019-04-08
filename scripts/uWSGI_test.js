@@ -2,7 +2,27 @@ function loadDoc() {
     console.log("Change content");
 
     var xhttp = new XMLHttpRequest();
+    /*
+    * Events can be called: onfoo()
+    * loadstart
+    * progress – updated responseText.
+    * abort – was called xhr.abort().
+    * error
+    * load – with no error
+    * timeout
+    * loadend – success or not
+    */
 
+    /*
+    *  readyState: 0	UNSENT	Only created; No open() method call
+    *              1	OPENED	Just called open().
+    *              2	HEADERS_RECEIVED	Method send() was call, headers and status accessible.
+    *              3	LOADING	 Loading; responseText is NOT completed.
+    *              4	DONE	Ok The end of the operation.
+    *
+    *  status: http request status
+    *
+    */
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) {
             document.getElementById("demo").innerHTML = this.responseText;
@@ -16,6 +36,11 @@ function loadDoc() {
         } else {
             document.getElementById("demo").innerHTML = "Some other";
         }
+    };
+
+    xhttp.timeout = 30000;
+    xhttp.ontimeout = function() {
+        alert( 'Too loooooong' );
     };
 
     xhttp.open("GET", "http://ihse.tk:50000/path/resource?param1=value1&param2=value2", true);
