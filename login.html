@@ -26,32 +26,27 @@
 
 
 <script>
-    document.ready(function() {
-        $("#btn").click(
-            function(){
-                console.log("result_form");
-                sendAjaxForm('result_form', 'ajax_form', 'action_ajax_form.php');
-                return false;
-            }
-        );
-    });
+    console.log("!!!");
+
+    var button = document.querySelector('#btn');
+
+    button.addEventListener('click', btn);
+    function btn() {
+        console.log("result_form");
+        sendAjaxForm('result_form', 'ajax_form', 'action_ajax_form.php');
+        return false;
+    }
+
 
     function sendAjaxForm(result_form, ajax_form, url) {
 
         var xhttp = new XMLHttpRequest();
 
         xhttp.onreadystatechange = function() {
-            if (this.readyState === 4 && this.status === 200) {
-                document.getElementById("demo").innerHTML = this.responseText;
-
-            } else if (this.readyState === 4) {
-                document.getElementById("demo").innerHTML = "status: " + this.status.toString();
-
-            } else if (this.status === 200) {
-                document.getElementById("demo").innerHTML = "readyState: " + this.readyState.toString();
-
+            if (this.status === 200) {
+                console.log("200 ok!");
             } else {
-                document.getElementById("demo").innerHTML = "Some other";
+                console.log("Smth else!");
             }
         };
 
@@ -60,7 +55,7 @@
             alert( 'Too loooooong' );
         };
 
-        xhttp.open("GET", "http://ihse.tk:50000/path/resource?param1=value1&param2=value2", true, "user", "pass");
+        xhttp.open("POST", "http://ihse.tk:50000/path/resource?param1=value1&param2=value2", true, "user", "pass");
         xhttp.send();
     }
 </script>
