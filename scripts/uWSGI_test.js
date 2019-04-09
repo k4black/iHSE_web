@@ -43,6 +43,6 @@ function loadDoc() {
         alert( 'Too loooooong' );
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/path/resource?param1=value1&param2=value2", true);
+    xhttp.open("GET", "http://ihse.tk:50000/path/resource?param1=value1&param2=value2", true, "user", "pass");
     xhttp.send();
 }

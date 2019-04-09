@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
 
 html, body {
     margin: 0;
@@ -68,6 +70,8 @@ p {
 /** Mobile navigation **/
 .title {
     margin-left: 20px;
+    vertical-align: middle;
+    height: 1.3em;
     font-weight: bold;
 }
 
@@ -116,8 +120,8 @@ p {
     justify-content: center;
     bottom: 15px;
     right: 15px;
-    top: calc(100vh - 56px - 15px);
-    left: calc(100vw - 56px - 15px);
+    top: calc(100% - 56px - 15px);
+    left: calc(100% - 56px - 15px);
     height: 56px;
     width: 56px;
     box-sizing: border-box;
@@ -135,6 +139,18 @@ p {
 .mobile__floating__button:hover {
     background: #006cae;
 }
+
+
+.mobile__floating__button__icon {
+    font-family: 'Hind', sans-serif;
+    vertical-align: middle;
+    transform: translateY(-80%);
+    color: white;
+    font-size: 50px;
+    margin: auto;
+    height: 27px;
+}
+
 
 .hide {
     transform: translateY(150%);
@@ -241,7 +257,7 @@ p {
 
 .mobile__item {
     list-style: none;
-    padding: 5px;
+    padding: 10px 20px;
     margin: 0;
     display: inline-flex;
     flex-direction: row;
@@ -269,14 +285,21 @@ p {
 
 
 .mobile__item__icon {
-    height: 40px;
-    width: 40px;
+    height: 25px;
+    width: 25px;
 
-    margin: 0 15px;
+
+    vertical-align: middle;
+
+    color: #b4b4b4;
+    font-size: 25px;
 }
 
 .mobile__item__name {
-    margin-left: 5px;
+    margin-left: 25px;
+
+    height: 20px;
+    vertical-align: middle;
 
     font-weight: bold;
 }
@@ -291,7 +314,7 @@ p {
     vertical-align: center;
 
     position: absolute;
-    right: 25px;
+    right: 20px;
 }
 
 
