@@ -9,55 +9,70 @@
     <title>Login</title>
 
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/login.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
 </head>
 <body>
 
-<form method="post" id="ajax_form" action="" >
-    <input type="text" name="name" placeholder="NAME" /><br>
-    <input type="text" name="phonenumber" placeholder="YOUR PHONE" /><br>
-    <input type="button" id="btn" value="Отправить" />
-</form>
 
-<br>
+<header class="header">
+    <nav class="arrow">
+        <button class="arrow__button">
+            <i class="mobile__item__icon large material-icons">arrow_back</i>
 
-<div id="result_form"></div>
-
-
-<script>
-    console.log("!!!");
-
-    var button = document.querySelector('#btn');
-
-    button.addEventListener('click', btn);
-    function btn() {
-        console.log("result_form");
-        sendAjaxForm('result_form', 'ajax_form', 'action_ajax_form.php');
-        return false;
-    }
+        </button>
+    </nav>
 
 
-    function sendAjaxForm(result_form, ajax_form, url) {
+    <div class="title">Login</div>
 
-        var xhttp = new XMLHttpRequest();
 
-        xhttp.onreadystatechange = function() {
-            if (this.status === 200) {
-                console.log("200 ok!");
-            } else {
-                console.log("Smth else!");
-            }
-        };
+    <nav class="desktop">
+        <div class="desktop__navigation" >
+            <div>Recipes</div>
+            <div>More</div>
+        </div>
+    </nav>
 
-        xhttp.timeout = 30000;
-        xhttp.ontimeout = function() {
-            alert( 'Too loooooong' );
-        };
+</header>
 
-        xhttp.open("POST", "http://ihse.tk:50000/path/resource?param1=value1&param2=value2", true, "user", "pass");
-        xhttp.send();
-    }
-</script>
+<div class="wrapper">
+
+<!--    <button type="button" onclick="alert(document.referrer)">адрес предшествующей страницы</button>-->
+
+
+
+    <form method="post" id="ajax_form" action="" style="margin-top: 50px">
+        <span class="login__title">Welcome</span>
+
+        <img src="images/icon.png" class="login__icon">
+
+        <div class="login__input">
+            <label for="name" class="login__label">Name</label>
+            <input id="name" type="text" name="name"/>
+        </div>
+
+        <div class="login__input">
+            <label for="pass" class="login__label">Password</label>
+            <input id="pass" type="password" name="pass"/>
+        </div>
+
+        <button id="btn" class="login__button">Login</button>
+
+    </form>
+
+
+    <div class="login__register">
+        <span>Нет аккаунта? </span>
+        <a href="#">Свяжитесь с нами</a>
+    </div>
+
+
+</div>
+
+
+<script defer src="scripts/login.js"></script>
 </body>
 </html>
