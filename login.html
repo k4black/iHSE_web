@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, viewport-fit=cover">
+
+    <meta name="theme-color" content="#006cae">
+
+    <title>Login</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/index.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+
+<form method="post" id="ajax_form" action="" >
+    <input type="text" name="name" placeholder="NAME" /><br>
+    <input type="text" name="phonenumber" placeholder="YOUR PHONE" /><br>
+    <input type="button" id="btn" value="Отправить" />
+</form>
+
+<br>
+
+<div id="result_form"></div>
+
+
+<script>
+    document.ready(function() {
+        $("#btn").click(
+            function(){
+                console.log("result_form");
+                sendAjaxForm('result_form', 'ajax_form', 'action_ajax_form.php');
+                return false;
+            }
+        );
+    });
+
+    function sendAjaxForm(result_form, ajax_form, url) {
+
+        var xhttp = new XMLHttpRequest();
+
+        xhttp.onreadystatechange = function() {
+            if (this.readyState === 4 && this.status === 200) {
+                document.getElementById("demo").innerHTML = this.responseText;
+
+            } else if (this.readyState === 4) {
+                document.getElementById("demo").innerHTML = "status: " + this.status.toString();
+
+            } else if (this.status === 200) {
+                document.getElementById("demo").innerHTML = "readyState: " + this.readyState.toString();
+
+            } else {
+                document.getElementById("demo").innerHTML = "Some other";
+            }
+        };
+
+        xhttp.timeout = 30000;
+        xhttp.ontimeout = function() {
+            alert( 'Too loooooong' );
+        };
+
+        xhttp.open("GET", "http://ihse.tk:50000/path/resource?param1=value1&param2=value2", true, "user", "pass");
+        xhttp.send();
+    }
+</script>
+</body>
+</html>
