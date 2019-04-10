@@ -19,7 +19,11 @@ button.addEventListener('click', btn);
 
 function btn() {
     console.log("result_form");
-    sendAjaxForm('result_form', 'ajax_form', 'action_ajax_form.php');
+    // sendAjaxForm('result_form', 'ajax_form', 'action_ajax_form.php');
+
+    xhttp.open("POST", "http://ihse.tk:50000/login?name=value1&pass=value2", true, "USR", "PSS");
+    xhttp.send();
+
     return false;
 }
 

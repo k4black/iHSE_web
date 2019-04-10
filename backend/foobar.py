@@ -1,3 +1,47 @@
+import urllib3.parse
+
+# GET requare
+def get(env, start_response, query):
+    message_return = b"<p>Hello from uWSGI!</p>"
+
+    s = ""
+    for i in env.keys():
+        s = s + str(i) + ":" + str(env[i]) + "\n"
+
+    message_env = ("<p>" + s + "</p>")
+    message_env = message_env.encode('utf-8')
+
+
+
+    start_response('200 OK',
+                   [('Access-Control-Allow-Origin', '*'),
+                    ('Content-type', 'text/html'),
+                    # ('Content-Length', str(len(message_return) + len(message_env)))
+                    ])
+    return [message_return, message_env, ("<p>" + request_body + "</p>").encode('utf-8')]
+
+
+
+def login(env, start_response, name, passw):
+    start_response('302 Found',
+                       [('Access-Control-Allow-Origin', '*'),
+                        ('Content-type', 'text/html'),
+                        ('Set-Cookie', 'sessid=123; HttpOnly; Path=/'),
+                        ('Location', env['HTTP_REFERER']),
+                        # ('Content-Length', str(len(message_return) + len(message_env)))
+                        ])
+
+    return
+
+
+# POST requare
+def post(env, start_response, ):
+
+    if env['PATH_INFO'] == '/login':
+        return login(query['name'], query['pass']);
+
+
+
 '''
 Resource - iHSE.tk/path/resource?param1=value1&param2=value2
 
@@ -36,7 +80,25 @@ uwsgi.node: b'ip-172-31-36-110'
 
 '''
 def application(env, start_response):
-#     if env['REQUEST_METHOD'] == 'GET':
+
+    urllib.parse.urlparse('https://someurl.com/with/query_string?a=1&b=2&b=3').query
+        #a=1&b=2&b=3
+
+    #urllib.parse.parse_qs('a=1&b=2&b=3');
+        #{'a': ['1'], 'b': ['2','3']}
+
+    #urllib.parse.parse_qsl('a=1&b=2&b=3')
+        #[('a', '1'), ('b', '2'), ('b', '3')]
+
+    query = dict(urllib.parse.parse_qsl('a=1&b=2&b=3'))
+        #{'a': '1', 'b': '3'}
+
+    if env['REQUEST_METHOD'] == 'GET':
+        return get(env, start_response, query)
+
+
+    if env['REQUEST_METHOD'] == 'POST':
+        return post(env, start_response, query)
 
     # the environment variable CONTENT_LENGTH may be empty or missing
     try:
@@ -50,21 +112,4 @@ def application(env, start_response):
     request_body = env['wsgi.input'].read(request_body_size)
 
 
-    message_return = b"<p>Hello from uWSGI!</p>"
 
-
-    s = ""
-    for i in env.keys():
-        s = s + str(i) + ":" + str(env[i]) + "\n"
-
-    message_env = ("<p>" + s + "</p>")
-    message_env = message_env.encode('utf-8')
-
-
-
-    start_response('200 OK',
-                   [('Access-Control-Allow-Origin', '*'),
-                    ('Content-type', 'text/html'),
-                    # ('Content-Length', str(len(message_return) + len(message_env)))
-                    ])
-    return [message_return, message_env, ("<p>" + request_body + "</p>").encode('utf-8')]
