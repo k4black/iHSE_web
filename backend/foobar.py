@@ -1,4 +1,75 @@
 import urllib.parse
+import sqlite3
+
+conn = sqlite3.connect("/home/ubuntu/main.sqlite")
+cursor = conn.cursor()
+
+# Users
+cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
+                  	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                  	"user_type"	INTEGER,
+                  	"phone"	TEXT,
+                  	"name"	TEXT,
+                    "pass"	INTEGER,
+                  	"team"	INTEGER
+                  );
+               """)
+
+# Sessions
+cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
+                  	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                  	"user_id"	INTEGER,
+                  	"user_agent"	TEXT,
+                  	"last_ip"	TEXT,
+                  	"time"	TEXT,
+                  	FOREIGN KEY("user_id") REFERENCES "users"("id")
+                  );
+               """)
+
+
+cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(0, '+7122', 'A. Aagrh!', 11111, 0)")
+cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(0, '+3221', 'B. TRdds!', 22222, 2)")
+cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(1, '+7756', 'C. Yyts!', 55555, 0)")
+conn.commit()
+
+users = (
+    (0, '+7 912', 'Audi', 52642, 1),
+    (0, '+7 234', 'Mercedes', 57127, 0),
+    (1, '+7 123', 'Skoda', 9000, 1),
+    (0, '+7 332', 'Volvo', 29000, 0),
+    (0, '+7 444', 'Bentley', 350000, 2),
+    (1, '+7 666', 'Hummer', 41400, 0),
+    (0, '+7 123', 'Volkswagen', 21600, 0)
+)
+cursor.executemany("INSERT INTO users(user_type, phone, name, pass, team) VALUES(?, ?, ?, ?, ?)", users)
+conn.commit()
+
+
+cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
+                  SELECT 0, '+7122', 'Audi', 11111, 0
+                  WHERE NOT EXISTS(SELECT 1 FROM users WHERE pass=22221 OR name='Audi');""")
+
+
+cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
+                  SELECT 0, '+7122', 'Rrra', 11111, 0
+                  WHERE NOT EXISTS(SELECT 1 FROM users WHERE pass=52642 OR name='Rrra');""")
+
+
+cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
+                  SELECT 0, '+7122', 'Rrra', 11111, 0
+                  WHERE NOT EXISTS(SELECT 1 FROM users WHERE pass=22121 OR name='TTT');""")
+conn.commit()
+
+
+
+
+cursor.execute("INSERT INTO sessions(id, user_id, user_agent, last_ip, time) VALUES(16666, 6, 'AGENT', '5.5.5.5', '231.22')")
+conn.commit()
+
+
+
+
+
 
 # GET requare
 def get(env, start_response, query):

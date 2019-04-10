@@ -19,13 +19,13 @@ button.addEventListener('click', function () {
     console.log("result_form");
    
 
-    var name = button.parentElement.querySelector('#name').value;
-    var pass = button.parentElement.querySelector('#pass').value;
+    var name = button.parentElement.querySelector('#name');
+    var pass = button.parentElement.querySelector('#pass');
     
-    if (name == "" || pass == "")
+    if (name.value == "" || pass.value == "")
         return
     
-    var query = "?name=" + name + "&pass=" + pass;
+    var query = "?name=" + name.value + "&pass=" + pass.value;
     
         
     var xhttp = new XMLHttpRequest();
@@ -33,11 +33,16 @@ button.addEventListener('click', function () {
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4) {
             if (this.status === 200) {
-                alert('OK');
+                alert("ok!");
+
+                name.value = "";
+                pass.value = "";
             }
 
             if (this.status === 401) {
-                alert('NOT');
+                alert("not!");
+
+                pass.value = "";
             }
         }
     };
