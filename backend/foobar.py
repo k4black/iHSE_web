@@ -24,22 +24,33 @@ def get(env, start_response, query):
 
 def login(env, start_response, name, passw):
 # '302 Found'
-    start_response('200 Ok',
+    if True:
+        start_response('200 Ok',
                        [('Access-Control-Allow-Origin', '*'),
                         #('Content-type', 'text/html'),
-                        ('Set-Cookie', 'sessid=123; HttpOnly; Path=/'),
+                        ('Set-Cookie', 'sessid=123; HttpOnly; Max-Age=31536000; Path=/'),
                         #('Location', env['HTTP_REFERER']),
+                        #('Location', 'http://ihse.tk/login.html')
                         # ('Content-Length', str(len(message_return) + len(message_env)))
                         ])
+
+    else:
+        start_response('401 Unauthorized',
+                       [('Access-Control-Allow-Origin', '*'),
+                        #('Content-type', 'text/html'),
+                        ])
+
 
     return
 
 
 # POST requare
 def post(env, start_response, query):
+#    print(query)
+#    print(query['name'], query['pass'])
 
     if env['PATH_INFO'] == '/login':
-        return login(query['name'], query['pass']);
+        return login(env, start_response, query['name'], query['pass']);
 
 
 

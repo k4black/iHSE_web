@@ -17,9 +17,7 @@ var button = document.querySelector('#btn');
 
 button.addEventListener('click', function () {
     console.log("result_form");
-    // sendAjaxForm('result_form', 'ajax_form', 'action_ajax_form.php');
-
-    var xhttp = new XMLHttpRequest(); 
+   
 
     var name = button.parentElement.querySelector('#name').value;
     var pass = button.parentElement.querySelector('#pass').value;
@@ -29,6 +27,21 @@ button.addEventListener('click', function () {
     
     var query = "?name=" + name + "&pass=" + pass;
     
+        
+    var xhttp = new XMLHttpRequest();
+    
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                alert('OK');
+            }
+
+            if (this.status === 401) {
+                alert('NOT');
+            }
+        }
+    };
+
     xhttp.open("POST", "http://ihse.tk:50000/login" + query, true);
     xhttp.send();
 });
