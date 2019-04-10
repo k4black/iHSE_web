@@ -1,4 +1,4 @@
-import urllib3.parse
+#import urllib3.parse
 
 # GET requare
 def get(env, start_response, query):
@@ -23,11 +23,12 @@ def get(env, start_response, query):
 
 
 def login(env, start_response, name, passw):
-    start_response('302 Found',
+# '302 Found'
+    start_response('200 Ok',
                        [('Access-Control-Allow-Origin', '*'),
-                        ('Content-type', 'text/html'),
+                        #('Content-type', 'text/html'),
                         ('Set-Cookie', 'sessid=123; HttpOnly; Path=/'),
-                        ('Location', env['HTTP_REFERER']),
+                        #('Location', env['HTTP_REFERER']),
                         # ('Content-Length', str(len(message_return) + len(message_env)))
                         ])
 
@@ -35,7 +36,7 @@ def login(env, start_response, name, passw):
 
 
 # POST requare
-def post(env, start_response, ):
+def post(env, start_response, query):
 
     if env['PATH_INFO'] == '/login':
         return login(query['name'], query['pass']);

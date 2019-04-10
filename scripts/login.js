@@ -15,17 +15,23 @@ console.log("!!!");
 
 var button = document.querySelector('#btn');
 
-button.addEventListener('click', btn);
-
-function btn() {
+button.addEventListener('click', function () {
     console.log("result_form");
     // sendAjaxForm('result_form', 'ajax_form', 'action_ajax_form.php');
 
-    xhttp.open("POST", "http://ihse.tk:50000/login?name=value1&pass=value2", true, "USR", "PSS");
-    xhttp.send();
+    var xhttp = new XMLHttpRequest(); 
 
-    return false;
-}
+    var name = button.parentElement.querySelector('#name').value;
+    var pass = button.parentElement.querySelector('#pass').value;
+    
+    if (name == "" || pass == "")
+        return
+    
+    var query = "?name=" + name + "&pass=" + pass;
+    
+    xhttp.open("POST", "http://ihse.tk:50000/login" + query, true);
+    xhttp.send();
+});
 
 
 function sendAjaxForm(result_form, ajax_form, url) {
