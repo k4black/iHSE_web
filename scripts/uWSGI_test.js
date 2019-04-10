@@ -44,5 +44,14 @@ function loadDoc() {
     };
 
     xhttp.open("GET", "http://ihse.tk:50000/path/resource?param1=value1&param2=value2", true, "user", "pass");
-    xhttp.send();
+
+    // xhttp.setRequestHeader("SCRIPT_NAME", '12311');
+
+    var params = "rrrrqqqw";
+
+    // xhttp.setRequestHeader("Content-type", "application/text; charset=utf-8");
+    xhttp.setRequestHeader("Content-length", params.length);
+    xhttp.setRequestHeader("Connection", "close");
+
+    xhttp.send(params);
 }

@@ -36,6 +36,20 @@ uwsgi.node: b'ip-172-31-36-110'
 
 '''
 def application(env, start_response):
+#     if env['REQUEST_METHOD'] == 'GET':
+
+    # the environment variable CONTENT_LENGTH may be empty or missing
+    try:
+        request_body_size = int(environ.get('CONTENT_LENGTH', 0))
+    except (ValueError):
+        request_body_size = 0
+
+    # When the method is POST the variable will be sent
+    # in the HTTP request body which is passed by the WSGI server
+    # in the file like wsgi.input environment variable.
+    request_body = env['wsgi.input'].read(request_body_size)
+
+
     message_return = b"<p>Hello from uWSGI!</p>"
 
 
@@ -53,4 +67,4 @@ def application(env, start_response):
                     ('Content-type', 'text/html'),
                     # ('Content-Length', str(len(message_return) + len(message_env)))
                     ])
-    return [message_return, message_env]
+    return [message_return, message_env, ("<p>" + request_body + "</p>").encode('utf-8')]
