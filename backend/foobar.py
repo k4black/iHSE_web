@@ -1,4 +1,4 @@
-#import urllib3.parse
+import urllib.parse
 
 # GET requare
 def get(env, start_response, query):
@@ -91,7 +91,8 @@ def application(env, start_response):
     #urllib.parse.parse_qsl('a=1&b=2&b=3')
         #[('a', '1'), ('b', '2'), ('b', '3')]
 
-    query = dict(urllib.parse.parse_qsl('a=1&b=2&b=3'))
+    query = dict( urllib.parse.parse_qsl( env['QUERY_STRING'] ) )
+#     query = dict( urllib3.util.parse_url( env['QUERY_STRING'] ) )
         #{'a': '1', 'b': '3'}
 
     if env['REQUEST_METHOD'] == 'GET':
