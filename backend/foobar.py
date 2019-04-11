@@ -1,6 +1,7 @@
 import urllib.parse
 import sqlite3
 
+print('!!!! RUN PYTHON INIT !!!!')
 
 conn = sqlite3.connect("/home/k4black/main.sqlite")
 conn.execute("PRAGMA journal_mode=WAL")   # https://www.sqlite.org/wal.html
