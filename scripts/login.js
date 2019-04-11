@@ -9,6 +9,15 @@ function back() {
 
 
 
+function hashCode(s) {
+    let h;
+    for(let i = 0; i < s.length; i++)
+        h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+
+    return h;
+}
+
+
 
 
 console.log("!!!");
@@ -25,7 +34,7 @@ button.addEventListener('click', function () {
     if (name.value == "" || pass.value == "")
         return
     
-    var query = "?name=" + name.value + "&pass=" + pass.value;
+    var query = "?name=" + name.value + "&pass=" + hashCode(pass.value);
     
         
     var xhttp = new XMLHttpRequest();
@@ -52,27 +61,45 @@ button.addEventListener('click', function () {
 });
 
 
-function sendAjaxForm(result_form, ajax_form, url) {
+
+
+
+var buttonReg = document.querySelector('#btnReg');
+
+buttonReg.addEventListener('click', function () {
+
+
+    var name = button.parentElement.querySelector('#name');
+    var pass = button.parentElement.querySelector('#pass');
+
+    if (name.value == "" || pass.value == "")
+        return
+
+    var query = "?name=" + name.value + "&pass=" + hashCode(pass.value) + "&code=" + 0;
+
 
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
-        if (this.status === 200) {
-            console.log("200 ok!");
-        } else {
-            console.log("Smth else!");
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                alert("ok reg!");
+
+                name.value = "";
+                pass.value = "";
+            }
+
+            if (this.status === 403) {
+                alert("not reg!");
+
+                pass.value = "";
+            }
         }
     };
 
-    xhttp.timeout = 30000;
-    xhttp.ontimeout = function() {
-        alert( 'Too loooooong' );
-    };
-
-    xhttp.open("POST", "http://ihse.tk:50000/path/resource?param1=value1&param2=value2", true, "user", "pass");
+    xhttp.open("POST", "http://ihse.tk:50000/register" + query, true);
     xhttp.send();
-}
-
+});
 
 
 

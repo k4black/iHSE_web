@@ -1,7 +1,9 @@
 import urllib.parse
 import sqlite3
 
-conn = sqlite3.connect("/home/ubuntu/main.sqlite")
+
+conn = sqlite3.connect("/home/k4black/main.sqlite")
+conn.execute("PRAGMA journal_mode=WAL")   # https://www.sqlite.org/wal.html
 cursor = conn.cursor()
 
 # Users
@@ -17,8 +19,9 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
 
 # Sessions
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
-                  	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                  	"id"	BLOB NOT NULL PRIMARY KEY UNIQUE DEFAULT (randomblob(16)),
                   	"user_id"	INTEGER,
+                  	"user_type"	INTEGER,
                   	"user_agent"	TEXT,
                   	"last_ip"	TEXT,
                   	"time"	TEXT,
@@ -27,44 +30,89 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
                """)
 
 
-cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(0, '+7122', 'A. Aagrh!', 11111, 0)")
-cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(0, '+3221', 'B. TRdds!', 22222, 2)")
-cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(1, '+7756', 'C. Yyts!', 55555, 0)")
-conn.commit()
+import time
+timeout = 10
 
-users = (
-    (0, '+7 912', 'Audi', 52642, 1),
-    (0, '+7 234', 'Mercedes', 57127, 0),
-    (1, '+7 123', 'Skoda', 9000, 1),
-    (0, '+7 332', 'Volvo', 29000, 0),
-    (0, '+7 444', 'Bentley', 350000, 2),
-    (1, '+7 666', 'Hummer', 41400, 0),
-    (0, '+7 123', 'Volkswagen', 21600, 0)
-)
-cursor.executemany("INSERT INTO users(user_type, phone, name, pass, team) VALUES(?, ?, ?, ?, ?)", users)
-conn.commit()
-
-
-cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
-                  SELECT 0, '+7122', 'Audi', 11111, 0
-                  WHERE NOT EXISTS(SELECT 1 FROM users WHERE pass=22221 OR name='Audi');""")
-
-
-cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
-                  SELECT 0, '+7122', 'Rrra', 11111, 0
-                  WHERE NOT EXISTS(SELECT 1 FROM users WHERE pass=52642 OR name='Rrra');""")
-
-
-cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
-                  SELECT 0, '+7122', 'Rrra', 11111, 0
-                  WHERE NOT EXISTS(SELECT 1 FROM users WHERE pass=22121 OR name='TTT');""")
-conn.commit()
+def seftySql(sql):
+    for x in range(0, timeout):
+        try:
+            with conn:
+                conn.execute(sql)
+                conn.commit()
+        except:
+            time.sleep(1)
+            pass
+        finally:
+            break
+    else:
+        with conn:
+            conn.execute(sql)
+            conn.commit()
 
 
 
+# Get session by id, None is no such session
+def session(id):
+    cursor.execute("SELECT * FROM sessions WHERE id=?", (id))
+    sessions = cursor.fetchall()
 
-cursor.execute("INSERT INTO sessions(id, user_id, user_agent, last_ip, time) VALUES(16666, 6, 'AGENT', '5.5.5.5', '231.22')")
-conn.commit()
+    if len(sessions) == 0:    # No such session
+        return None
+    else:
+        return sessions[0]
+
+
+# Login form, None if not possible
+def login(name, passw, agent, ip, time='0'):
+    cursor.execute("SELECT * FROM users WHERE name=? AND pass=?", (name, passw))
+    users = cursor.fetchall()
+
+    if len(users) == 0:    # No such user
+        return None
+
+    user = users[0]
+
+
+    cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
+                      SELECT ?, ?, ?, ?, ?
+                      WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_agent=?)""",
+                   (user[0], user[1], agent, ip, time, agent))
+    conn.commit()
+
+
+    cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=? ORDER BY time  DESC LIMIT 1 ", (user[0], agent))
+    # cursor.execute("SELECT * FROM sessions ORDER BY employee_id DESC LIMIT 1", ())
+    result = cursor.fetchone()
+
+    return result
+
+
+# Register (No verification)
+def register(name, passw, type, phone, team):
+    # cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(?, ?, ?, ?, ?)", ('USER_TYPE', 'PHONE', 'NAME', 'PASS', 'TEAM'))
+    cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
+                      SELECT ?, ?, ?, ?, ?
+                      WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
+                   (type, phone, name, passw, team, name, passw)
+    conn.commit()
+
+
+
+
+register('user', 6445723, 0, '+7 915', 0)
+register('Hasd Trra', 23344112, 0, '+7 512', 0)
+register('ddds Ddsa', 33232455, 0, '+7 333', 1)
+register('aiuy Ddsa', 44542234, 0, '+7 234', 1)
+register('AArruyaa Ddsa', 345455, 1, '+7 745', 1)
+register('AAaa ryui', 23344234523112, 0, '+7 624', 0)
+register('AAruiria', 563563265, 0, '+7 146', 0)
+
+
+print( login('Name', 22222331, 'Gggg', '0:0:0:0') )
+a = login('AAaa Ddsa', 6445723, 'Pass', '0:0:0:0')
+print(a[0])
+print(a[0].decode("utf-8") )
+print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
 
 
 
@@ -92,14 +140,19 @@ def get(env, start_response, query):
     return [message_return, message_env, ("<p>" + request_body + "</p>").encode('utf-8')]
 
 
+# Login http request
+def req_login(env, start_response, name, passw):
 
-def login(env, start_response, name, passw):
-# '302 Found'
-    if True:
+    res = login(name, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
+
+
+    # '302 Found'
+    if res is not None:
+        sessid = res[0].hex()
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', '*'),
                         #('Content-type', 'text/html'),
-                        ('Set-Cookie', 'sessid=123; HttpOnly; Max-Age=31536000; Path=/'),
+                        ('Set-Cookie', 'sessid=' + sessid + '; HttpOnly; Max-Age=31536000; Path=/'),
                         #('Location', env['HTTP_REFERER']),
                         #('Location', 'http://ihse.tk/login.html')
                         # ('Content-Length', str(len(message_return) + len(message_env)))
@@ -114,14 +167,43 @@ def login(env, start_response, name, passw):
 
     return
 
+# >>> b'\xde\xad\xbe\xef'.hex()
+# 'deadbeef'
+#
+# >>> bytes.fromhex('deadbeef')
+# b'\xde\xad\xbe\xef'
+
+
+# Chech reg sequrity code
+def checkRegCode(code):
+    return True
+
+
+# Register http request
+def req_register(env, start_response, name, passw, code):
+
+    if checkRegCode(code):
+        register(name, passw, 0, '+7', 0)
+
+        req_login(env, start_response, name, passw)
+
+    else:
+        start_response('403 Forbidden',
+                       [('Access-Control-Allow-Origin', '*'),
+                        #('Content-type', 'text/html'),
+                        ])
+
+    return
+
 
 # POST requare
 def post(env, start_response, query):
-#    print(query)
-#    print(query['name'], query['pass'])
 
     if env['PATH_INFO'] == '/login':
-        return login(env, start_response, query['name'], query['pass']);
+        return req_login(env, start_response, query['name'], query['pass']);
+
+    if env['PATH_INFO'] == '/register':
+        return req_register(env, start_response, query['name'], query['pass'], query['code']);
 
 
 
