@@ -1,40 +1,45 @@
 import urllib.parse
 import sqlite3
 
-print('!!!! RUN PYTHON INIT !!!!')
+@count
+def init():
+    global conn
+    global cursor
+    print('!!!! RUN PYTHON INIT !!!!')
 
-conn = sqlite3.connect("/home/k4black/main.sqlite")
-conn.execute("PRAGMA journal_mode=WAL")   # https://www.sqlite.org/wal.html
-cursor = conn.cursor()
+    conn = sqlite3.connect("/home/k4black/main.sqlite")
+    conn.execute("PRAGMA journal_mode=WAL")   # https://www.sqlite.org/wal.html
+    cursor = conn.cursor()
 
-# Users
-cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
-                  	"id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                  	"user_type"	INTEGER,
-                  	"phone"	TEXT,
-                  	"name"	TEXT,
-                    "pass"	INTEGER,
-                  	"team"	INTEGER
-                  );
-               """)
+    # Users
+    cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
+                        "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                        "user_type"	INTEGER,
+                        "phone"	TEXT,
+                        "name"	TEXT,
+                        "pass"	INTEGER,
+                        "team"	INTEGER
+                      );
+                   """)
 
-# Sessions
-cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
-                  	"id"	BLOB NOT NULL PRIMARY KEY UNIQUE DEFAULT (randomblob(16)),
-                  	"user_id"	INTEGER,
-                  	"user_type"	INTEGER,
-                  	"user_agent"	TEXT,
-                  	"last_ip"	TEXT,
-                  	"time"	TEXT,
-                  	FOREIGN KEY("user_id") REFERENCES "users"("id")
-                  );
-               """)
+    # Sessions
+    cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
+                        "id"	BLOB NOT NULL PRIMARY KEY UNIQUE DEFAULT (randomblob(16)),
+                        "user_id"	INTEGER,
+                        "user_type"	INTEGER,
+                        "user_agent"	TEXT,
+                        "last_ip"	TEXT,
+                        "time"	TEXT,
+                        FOREIGN KEY("user_id") REFERENCES "users"("id")
+                      );
+                   """)
 
 
 import time
-timeout = 10
 
 def seftySql(sql):
+    timeout = 10
+
     for x in range(0, timeout):
         try:
             with conn:
@@ -246,6 +251,9 @@ uwsgi.node: b'ip-172-31-36-110'
 
 '''
 def application(env, start_response):
+#     global flag
+    if call_counts['init'] == 0:
+        init()
 
     urllib.parse.urlparse('https://someurl.com/with/query_string?a=1&b=2&b=3').query
         #a=1&b=2&b=3
