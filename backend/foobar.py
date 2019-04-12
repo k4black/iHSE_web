@@ -1,54 +1,39 @@
 import urllib.parse
 import sqlite3
 
-@count
-def init():
-    global conn
-    global cursor
-    print('!!!! RUN PYTHON INIT !!!!')
-
-    conn = sqlite3.connect("/home/k4black/main.sqlite")
-    conn.execute("PRAGMA journal_mode=WAL")   # https://www.sqlite.org/wal.html
-    cursor = conn.cursor()
-
-    # Users
-    cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
-                        "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                        "user_type"	INTEGER,
-                        "phone"	TEXT,
-                        "name"	TEXT,
-                        "pass"	INTEGER,
-                        "team"	INTEGER
-                      );
-                   """)
-
-    # Sessions
-    cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
-                        "id"	BLOB NOT NULL PRIMARY KEY UNIQUE DEFAULT (randomblob(16)),
-                        "user_id"	INTEGER,
-                        "user_type"	INTEGER,
-                        "user_agent"	TEXT,
-                        "last_ip"	TEXT,
-                        "time"	TEXT,
-                        FOREIGN KEY("user_id") REFERENCES "users"("id")
-                      );
-                   """)
 
 
-    register('user', 6445723, 0, '+7 915', 0)
-    register('Hasd Trra', 23344112, 0, '+7 512', 0)
-    register('ddds Ddsa', 33232455, 0, '+7 333', 1)
-    register('aiuy Ddsa', 44542234, 0, '+7 234', 1)
-    register('AArruyaa Ddsa', 345455, 1, '+7 745', 1)
-    register('AAaa ryui', 23344234523112, 0, '+7 624', 0)
-    register('AAruiria', 563563265, 0, '+7 146', 0)
+print('!!!! RUN PYTHON INIT !!!!')
+
+conn = sqlite3.connect("/home/k4black/main.sqlite")
+conn.execute("PRAGMA journal_mode=WAL")   # https://www.sqlite.org/wal.html
+cursor = conn.cursor()
+
+# Users
+cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
+                    "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    "user_type"	INTEGER,
+                    "phone"	TEXT,
+                    "name"	TEXT,
+                    "pass"	INTEGER,
+                    "team"	INTEGER
+                  );
+               """)
+
+# Sessions
+cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
+                    "id"	BLOB NOT NULL PRIMARY KEY UNIQUE DEFAULT (randomblob(16)),
+                    "user_id"	INTEGER,
+                    "user_type"	INTEGER,
+                    "user_agent"	TEXT,
+                    "last_ip"	TEXT,
+                    "time"	TEXT,
+                    FOREIGN KEY("user_id") REFERENCES "users"("id")
+                  );
+               """)
 
 
-    print( login('Name', 22222331, 'Gggg', '0:0:0:0') )
-    a = login('AAaa Ddsa', 6445723, 'Pass', '0:0:0:0')
-    print(a[0])
-    print(a[0].decode("utf-8") )
-    print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
+
 
 
 
@@ -118,11 +103,25 @@ def register(name, passw, type, phone, team):
     cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
                       SELECT ?, ?, ?, ?, ?
                       WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
-                   (type, phone, name, passw, team, name, passw)
+                   (type, phone, name, passw, team, name, passw))
     conn.commit()
 
 
 
+register('user', 6445723, 0, '+7 915', 0)
+register('Hasd Trra', 23344112, 0, '+7 512', 0)
+register('ddds Ddsa', 33232455, 0, '+7 333', 1)
+register('aiuy Ddsa', 44542234, 0, '+7 234', 1)
+register('AArruyaa Ddsa', 345455, 1, '+7 745', 1)
+register('AAaa ryui', 23344234523112, 0, '+7 624', 0)
+register('AAruiria', 563563265, 0, '+7 146', 0)
+
+
+print( login('Name', 22222331, 'Gggg', '0:0:0:0') )
+a = login('AAaa Ddsa', 6445723, 'Pass', '0:0:0:0')
+print(a[0])
+print(a[0].decode("utf-8") )
+print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
 
 
 
@@ -254,9 +253,7 @@ uwsgi.node: b'ip-172-31-36-110'
 '''
 def application(env, start_response):
     print('TEST TEXT')
-#     global flag
-    if call_counts['init'] == 0:
-        init()
+
 
     urllib.parse.urlparse('https://someurl.com/with/query_string?a=1&b=2&b=3').query
         #a=1&b=2&b=3
