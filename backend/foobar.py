@@ -5,7 +5,7 @@ import sqlite3
 
 print('!!!! RUN PYTHON INIT !!!!')
 
-conn = sqlite3.connect("/home/k4black/main.sqlite")
+conn = sqlite3.connect("/home/ubuntu/main.sqlite", check_same_thread = False)
 conn.execute("PRAGMA journal_mode=WAL")   # https://www.sqlite.org/wal.html
 cursor = conn.cursor()
 
@@ -81,24 +81,28 @@ def login(name, passw, agent, ip, time='0'):
         return None
 
     user = users[0]
-
+    print('User login: ', user)
 
     cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
                       SELECT ?, ?, ?, ?, ?
-                      WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_agent=?)""",
-                   (user[0], user[1], agent, ip, time, agent))
+                      WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_id=? AND user_agent=?)""",
+                   (user[0], user[1], agent, ip, time, user[0], agent))
     conn.commit()
 
+    print(cursor.lastrowid)
 
-    cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=? ORDER BY time  DESC LIMIT 1 ", (user[0], agent))
+    cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
     # cursor.execute("SELECT * FROM sessions ORDER BY employee_id DESC LIMIT 1", ())
     result = cursor.fetchone()
-
+    
+    print('Loggined', result)
     return result
 
 
 # Register (No verification)
 def register(name, passw, type, phone, team):
+    print('Register:', name, passw)
+
     # cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(?, ?, ?, ?, ?)", ('USER_TYPE', 'PHONE', 'NAME', 'PASS', 'TEAM'))
     cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
                       SELECT ?, ?, ?, ?, ?
@@ -118,9 +122,9 @@ register('AAruiria', 563563265, 0, '+7 146', 0)
 
 
 print( login('Name', 22222331, 'Gggg', '0:0:0:0') )
-a = login('AAaa Ddsa', 6445723, 'Pass', '0:0:0:0')
+a = login('user', 6445723, 'AgentUserAgent', '0:0:0:0')
 print(a[0])
-print(a[0].decode("utf-8") )
+print(a[0].hex() )
 print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
 
 
