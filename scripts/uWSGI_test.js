@@ -1,3 +1,26 @@
+var name = document.querySelector('.mobile__sidebar__name');
+var phone = document.querySelector('.mobile__sidebar__phone');
+
+
+var xhttp = new XMLHttpRequest();
+
+xhttp.onreadystatechange = function() {
+    if (this.readyState === 4) {
+        if (this.status === 200) {
+            var user = JSON.parse( this.responseText );
+            name.value = user.name;
+            phone.value = user.phone;
+        }
+    }
+};
+
+xhttp.open("GET", "http://ihse.tk:50000/account", true);
+xhttp.send();
+
+
+
+
+
 function loadDoc() {
     console.log("Change content");
 
