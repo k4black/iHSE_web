@@ -35,6 +35,25 @@ def init():
                    """)
 
 
+    register('user', 6445723, 0, '+7 915', 0)
+    register('Hasd Trra', 23344112, 0, '+7 512', 0)
+    register('ddds Ddsa', 33232455, 0, '+7 333', 1)
+    register('aiuy Ddsa', 44542234, 0, '+7 234', 1)
+    register('AArruyaa Ddsa', 345455, 1, '+7 745', 1)
+    register('AAaa ryui', 23344234523112, 0, '+7 624', 0)
+    register('AAruiria', 563563265, 0, '+7 146', 0)
+
+
+    print( login('Name', 22222331, 'Gggg', '0:0:0:0') )
+    a = login('AAaa Ddsa', 6445723, 'Pass', '0:0:0:0')
+    print(a[0])
+    print(a[0].decode("utf-8") )
+    print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
+
+
+
+
+
 import time
 
 def seftySql(sql):
@@ -102,23 +121,6 @@ def register(name, passw, type, phone, team):
                    (type, phone, name, passw, team, name, passw)
     conn.commit()
 
-
-
-
-register('user', 6445723, 0, '+7 915', 0)
-register('Hasd Trra', 23344112, 0, '+7 512', 0)
-register('ddds Ddsa', 33232455, 0, '+7 333', 1)
-register('aiuy Ddsa', 44542234, 0, '+7 234', 1)
-register('AArruyaa Ddsa', 345455, 1, '+7 745', 1)
-register('AAaa ryui', 23344234523112, 0, '+7 624', 0)
-register('AAruiria', 563563265, 0, '+7 146', 0)
-
-
-print( login('Name', 22222331, 'Gggg', '0:0:0:0') )
-a = login('AAaa Ddsa', 6445723, 'Pass', '0:0:0:0')
-print(a[0])
-print(a[0].decode("utf-8") )
-print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
 
 
 
@@ -251,6 +253,7 @@ uwsgi.node: b'ip-172-31-36-110'
 
 '''
 def application(env, start_response):
+    print('TEST TEXT')
 #     global flag
     if call_counts['init'] == 0:
         init()
