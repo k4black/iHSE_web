@@ -130,8 +130,33 @@ print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
 
 
 
+def req_account(env, start_response, query):
+
+    data = '''
+    {
+        "name": "Ivanov",
+        "phone": +7 915 aaa tt",
+        "type": 0,
+        "group": 0
+    }
+    '''
+
+    start_response('200 OK',
+                   [('Access-Control-Allow-Origin', '*'),
+                    ('Content-type', 'application/json'),
+                    ('Content-Length', str(len(data))
+                   ])
+
+    return [data]
+
+
 # GET requare
 def get(env, start_response, query):
+    if env['PATH_INFO'] == '/account':
+        return req_account(env, start_response, query);
+
+
+
     message_return = b"<p>Hello from uWSGI!</p>"
 
     s = ""
@@ -163,7 +188,7 @@ def req_login(env, start_response, name, passw):
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', '*'),
                         #('Content-type', 'text/html'),
-                        ('Set-Cookie', 'sessid=' + sessid + '; HttpOnly; Max-Age=31536000; Path=/'),
+                        ('Set-Cookie', 'sessid=' + sessid + '; Domain=ihse.tk; HttpOnly; Max-Age=31536000; Path=/'),
                         #('Location', env['HTTP_REFERER']),
                         #('Location', 'http://ihse.tk/login.html')
                         # ('Content-Length', str(len(message_return) + len(message_env)))
@@ -256,9 +281,6 @@ uwsgi.node: b'ip-172-31-36-110'
 
 '''
 def application(env, start_response):
-    print('TEST TEXT')
-
-
     urllib.parse.urlparse('https://someurl.com/with/query_string?a=1&b=2&b=3').query
         #a=1&b=2&b=3
 

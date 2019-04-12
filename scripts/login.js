@@ -3,7 +3,10 @@ mobileNav.addEventListener('click', back);
 
 function back() {
     //alert(document.referrer);
-    window.location.href = document.referrer;
+    if (document.referrer == "http://ihse.tk/login.html")
+        window.location.href = "http://ihse.tk/";
+    else
+        window.location.href = document.referrer;
 }
 
 
