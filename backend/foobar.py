@@ -144,8 +144,7 @@ def req_account(env, start_response, query):
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', '*'),
                     ('Content-type', 'application/json'),
-                    ('Content-Length', str(len(data))
-                   ])
+                    ('Content-Length', str(len(data)) ) ])
 
     return [data]
 
