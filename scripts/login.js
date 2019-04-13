@@ -1,17 +1,28 @@
-var mobileNav = document.querySelector('.arrow__button');
-mobileNav.addEventListener('click', back);
 
-function back() {
+
+/**
+ * Add navigation button event - 'back'
+ */
+var mobileNav = document.querySelector('.arrow__button');
+mobileNav.addEventListener('click', function back() {
+
     //alert(document.referrer);
+
     if (document.referrer == "http://ihse.tk/login.html")
         window.location.href = "http://ihse.tk/";
+
     else
         window.location.href = document.referrer;
-}
+});
 
 
 
-
+/**
+ * Calculate hash from password
+ * TODO: Check security
+ * @param {string} s - password with which the hash is calculated
+ * @return {int}
+ */
 function hashCode(s) {
     let h;
     for(let i = 0; i < s.length; i++)
@@ -23,14 +34,12 @@ function hashCode(s) {
 
 
 
-console.log("!!!");
-
+/**
+ * Add button event - 'login'
+ * TODO: optimize selection
+ */
 var button = document.querySelector('#btn');
-
 button.addEventListener('click', function () {
-    console.log("result_form");
-   
-
     var name = button.parentElement.querySelector('#name');
     var pass = button.parentElement.querySelector('#pass');
     

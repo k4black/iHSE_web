@@ -1,13 +1,13 @@
 import urllib.parse
 import sqlite3
-
 from http.cookies import SimpleCookie
-
+import time
+import json
 
 # TODO: Delete accounts user/user and admin/admin
 
 
-print('!!!! RUN PYTHON INIT !!!!')
+
 
 conn = sqlite3.connect("/home/ubuntu/main.sqlite", check_same_thread = False)
 conn.execute("PRAGMA journal_mode=WAL")   # https://www.sqlite.org/wal.html
@@ -43,7 +43,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
 
 
 
-import time
+
 
 def seftySql(sql):
     timeout = 10
@@ -65,8 +65,19 @@ def seftySql(sql):
 
 
 
-# Get session by id, None is no such session
+
 def session(id):
+    """ Get session obj by id
+
+    Args:
+        id: session id from bd
+
+    Returns:
+        session obj: (id, user_id, user_type, user_agent, last_ip, time)
+                     or None if there is no such session
+
+    """
+
     cursor.execute("SELECT * FROM sessions WHERE id=?", (id, ) )
     sessions = cursor.fetchall()
 
@@ -76,19 +87,50 @@ def session(id):
         return sessions[0]
 
 
-# Get user by id, None is no such user
+
 def user(id):
+    """ Get user obj by id
+
+    Args:
+        id: user id from bd
+
+    Returns:
+        user obj: (id, user_type, phone, name, pass, team)
+                     or None if there is no such user
+
+    """
+
     cursor.execute("SELECT * FROM users WHERE id=?", (id, ))
     users = cursor.fetchall()
 
-    if len(users) == 0:    # No such session
+    if len(users) == 0:    # No such user
         return None
     else:
         return users[0]
 
 
-# Login form, None if not possible
+
 def login(name, passw, agent, ip, time='0'):
+    """ Login user
+    Create new session if it does not exist and return sess id
+
+    Args:
+        name: User name - string
+        passw: Password hash - int
+        agent: User agent - string
+        ip: ip - string
+        time: time of session creation
+
+    Note:
+        session id is automatically generated
+
+    Returns:
+        session id: string of hex
+                    b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
+
+    """
+
+    # Check user with name and pass exist and got it
     cursor.execute("SELECT * FROM users WHERE name=? AND pass=?", (name, passw))
     users = cursor.fetchall()
 
@@ -96,29 +138,49 @@ def login(name, passw, agent, ip, time='0'):
         return None
 
     user = users[0]
-    print('User login: ', user)
+#     print('User: ', user)
 
+
+    # Create new session if there is no session with user_id and user_agent
     cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
                       SELECT ?, ?, ?, ?, ?
                       WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_id=? AND user_agent=?)""",
                    (user[0], user[1], agent, ip, time, user[0], agent))
     conn.commit()
 
-    print(cursor.lastrowid)
 
+    # Get session corresponding to user_id and user_agent
     cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
-    # cursor.execute("SELECT * FROM sessions ORDER BY employee_id DESC LIMIT 1", ())
     result = cursor.fetchone()
     
-    print('Loggined', result)
+#     print('Loggined: ', result)
     return result
 
 
-# Register (No verification)
+
 def register(name, passw, type, phone, team):
-    print('Register:', name, passw)
+    """ Register new user
+    There is no verification - create anywhere
+
+    Args:
+        name: User name - string
+        passw: Password hash - int
+        type: User type - int  [GUEST, USER, ADMIN]
+        phone: phone - string
+        team: number of group - int
+
+    Note:
+        user id is automatically generated
+
+    Returns:
+        user id: - int (because it is for internal use only)
+
+    """
+
+#     print('Register:', name, passw)
 
     # cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(?, ?, ?, ?, ?)", ('USER_TYPE', 'PHONE', 'NAME', 'PASS', 'TEAM'))
+    # Register new user if there is no user with name and pass
     cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
                       SELECT ?, ?, ?, ?, ?
                       WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
@@ -127,28 +189,43 @@ def register(name, passw, type, phone, team):
 
 
 
-register('user', 6445723, 0, '+7 915', 0)
-register('Hasd Trra', 23344112, 0, '+7 512', 0)
-register('ddds Ddsa', 33232455, 0, '+7 333', 1)
-register('aiuy Ddsa', 44542234, 0, '+7 234', 1)
-register('AArruyaa Ddsa', 345455, 1, '+7 745', 1)
-register('AAaa ryui', 23344234523112, 0, '+7 624', 0)
-register('AAruiria', 563563265, 0, '+7 146', 0)
+""" TEST """
+# register('user', 6445723, 0, '+7 915', 0)
+# register('Hasd Trra', 23344112, 0, '+7 512', 0)
+# register('ddds Ddsa', 33232455, 0, '+7 333', 1)
+# register('aiuy Ddsa', 44542234, 0, '+7 234', 1)
+# register('AArruyaa Ddsa', 345455, 1, '+7 745', 1)
+# register('AAaa ryui', 23344234523112, 0, '+7 624', 0)
+# register('AAruiria', 563563265, 0, '+7 146', 0)
+#
+#
+# print( login('Name', 22222331, 'Gggg', '0:0:0:0') )
+# a = login('user', 6445723, 'AgentUserAgent', '0:0:0:0')
+# print(a[0])
+# print(a[0].hex() )
+# print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
 
-
-print( login('Name', 22222331, 'Gggg', '0:0:0:0') )
-a = login('user', 6445723, 'AgentUserAgent', '0:0:0:0')
-print(a[0])
-print(a[0].hex() )
-print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
-
-
-import json
 
 
 
 def req_account(env, start_response, query):
-    #rawdata = 'Cookie: devicePixelRatio=1; ident=exists; __utma=13103r6942.2918; __utmc=13103656942; __utmz=13105942.1.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); mp_3cb27825a6612988r46d00tinct_id%22%3A%201752338%2C%22%24initial_referrer%22%3A%20%22https%3A%2F%2Fwww.pion_created_at%22%3A%20%222015-08-03%22%2C%22platform%22%3A%20%22web%22%2C%%22%3A%20%%22%7D; t_session=BAh7DUkiD3Nlc3NpbWVfZV9uYW1lBjsARkkiH1BhY2lmaWMgVGltZSAoVVMgJiBDYW5hZGEpBjsAVEkiFXNpZ25pbl9wZXJzb25faWQGOwBGaQMSvRpJIhRsYXN0X2xvZ2luX2RhdGUGOwBGVTogQWN0aXZlU3VwcG9ydDo6VGltZVdpdGhab25lWwhJdToJVGltZQ2T3RzAAABA7QY6CXpvbmVJIghVVEMGOwBUSSIfUGFjaWZpZWRfZGFzaGJvYXJkX21lc3NhZ2UGOwBGVA%3D%3D--6ce6ef4bd6bc1a469164b6740e7571c754b31cca'
+    """ Account data HTTP request
+    Will check session id and return data according to user
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict
+
+    Note:
+        If there is no cookie or it is incorrect - it returns guest profile
+
+    Returns:
+        data: which will be transmited
+
+    """
+
+    # Parce cookie
     rawdata = env.get('HTTP_COOKIE', '')
     cookie = SimpleCookie()
     cookie.load(rawdata)
@@ -160,16 +237,17 @@ def req_account(env, start_response, query):
         cookies[key] = morsel.value
 
 
-    print(cookies)
+#     print(cookies)
 
-
+    # Json account data
     data = {}
 
+    # Get session id or ''
     sessid = bytes.fromhex( cookies.get('sessid', '') )
 
 
 
-    if sessid == b'':
+    if sessid == b'':  # No cookie
 
         data['name'] = 'Guest'
         data['phone'] = ''
@@ -180,16 +258,16 @@ def req_account(env, start_response, query):
     else:
         sess = session(sessid)
 
-        if sess is None:
+        if sess is None:  # Wrong cookie
             data['name'] = 'Guest No sess'
             data['phone'] = ''
             data['type'] = 0
             data['group'] = 0
             json_data = json.dumps(data)
 
-            # Clear cookie
+            # TODO: Clear cookie
 
-        else:
+        else:   # Cookie - ok
             usr = user( sess[1] )  # get user by user id
 
             data['name'] = usr[3]
@@ -199,27 +277,43 @@ def req_account(env, start_response, query):
             json_data = json.dumps(data)
 
 
-    print(json_data)
+#     print(json_data)
 
     json_data = json_data.encode('utf-8')
 
     start_response('200 OK',
-                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),
-                    ('Access-Control-Allow-Credentials', 'true'),
+                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
                     ('Content-type', 'application/json'),
                     ('Content-Length', str(len(json_data))) ])
 
     return [json_data]
 
 
-# GET requare
+
 def get(env, start_response, query):
+    """ GET HTTP request
+    Will manage and call specific function [account, registration]
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict
+
+    Returns:
+        data: which will be transmited
+
+    """
 
     if env['PATH_INFO'] == '/account':
         return req_account(env, start_response, query);
 
 
 
+
+
+
+    # TMP for TESTing
     message_return = b"<p>Hello from uWSGI!</p>"
 
     s = ""
@@ -248,53 +342,93 @@ def get(env, start_response, query):
                     ('Content-type', 'text/html'),
                     ('Content-Length', str(len(message_return) + len(message_env) + len(request_body)))
                     ])
+
     return [message_return, message_env, request_body]
 
 
-# Login http request
-def req_login(env, start_response, name, passw):
 
+def req_login(env, start_response, name, passw):
+    """ Login HTTP request
+    Create new session if it does not exist and send cookie sess id
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict
+
+    Note:
+        Send:
+            200 Ok: if user exist and session created correnctly
+                    and send cookie with sess id
+            401 Unauthorized: if wrong name of pass
+
+    Returns:
+
+    """
+
+    # Get session obj or None
     res = login(name, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
 
-    # '302 Found'
+    # TODO: redirection by '302 Found'
     if res is not None:
-        print(res, type(res))
-        sessid = res[0].hex()
+#         print(res, type(res))
+
+        sessid = res[0].hex()  # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
+
         start_response('200 Ok',
-                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),
-                        ('Access-Control-Allow-Credentials', 'true'),
-                        #('Content-type', 'text/html'),
-#                         ('Set-Cookie', 'sessid=' + sessid + '; Domain=ihse.tk; HttpOnly; Max-Age=31536000; Path=/'),
+                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                       ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
                         ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=31536000;'),
-                        #('Set-Cookie', 'theme=light'),
-                        #('Location', env['HTTP_REFERER']),
                         #('Location', 'http://ihse.tk/login.html')
-                        # ('Content-Length', str(len(message_return) + len(message_env)))
                         ])
 
     else:
         start_response('401 Unauthorized',
                        [('Access-Control-Allow-Origin', '*'),
-                        #('Content-type', 'text/html'),
                         ])
 
 
     return
 
-# >>> b'\xde\xad\xbe\xef'.hex()
-# 'deadbeef'
-#
-# >>> bytes.fromhex('deadbeef')
-# b'\xde\xad\xbe\xef'
 
 
 # Chech reg sequrity code
 def checkRegCode(code):
+    """ Check register code
+
+    Args:
+        code: special code hash wich will be responsible for the user type and permission to register - int
+
+
+    Returns:
+        flag: registration allowed or not - bool
+
+    """
+
     return True
 
 
-# Register http request
+
 def req_register(env, start_response, name, passw, code):
+    """ Register HTTP request
+    Create new user if it does not exist and login user
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        name: User name - string
+        passw: Password hash - int
+        code: special code hash wich will be responsible for the user type and permission to register - int
+
+    Note:
+        Send:
+            200 Ok: if user exist and session created correnctly
+                    and send cookie with sess id
+            401 Unauthorized: if wrong name of pass
+
+    Returns:
+
+    """
 
     if checkRegCode(code):
         register(name, passw, 0, '+7', 0)
@@ -310,14 +444,27 @@ def req_register(env, start_response, name, passw, code):
     return
 
 
-# POST requare
+
 def post(env, start_response, query):
+    """ POST HTTP request
+    Will manage and call specific function [login, register]
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict
+
+    Returns:
+
+    """
 
     if env['PATH_INFO'] == '/login':
         return req_login(env, start_response, query['name'], query['pass']);
 
     if env['PATH_INFO'] == '/register':
         return req_register(env, start_response, query['name'], query['pass'], query['code']);
+
+
 
 
 
@@ -359,20 +506,21 @@ uwsgi.node: b'ip-172-31-36-110'
 
 '''
 def application(env, start_response):
+    """ HTTP request
+    Will manage and call specific function for [GET, POST]
 
-    print(env.get('HTTP_COOKIE', 'NOTHING'))
-#     urllib.parse.urlparse('https://someurl.com/with/query_string?a=1&b=2&b=3').query
-        #a=1&b=2&b=3
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict
 
-    #urllib.parse.parse_qs('a=1&b=2&b=3');
-        #{'a': ['1'], 'b': ['2','3']}
+    Returns:
+        data: which will be transmited
 
-    #urllib.parse.parse_qsl('a=1&b=2&b=3')
-        #[('a', '1'), ('b', '2'), ('b', '3')]
+    """
 
     query = dict( urllib.parse.parse_qsl( env['QUERY_STRING'] ) )
-#     query = dict( urllib3.util.parse_url( env['QUERY_STRING'] ) )
-        #{'a': '1', 'b': '3'}
+
 
     if env['REQUEST_METHOD'] == 'GET':
         return get(env, start_response, query)
