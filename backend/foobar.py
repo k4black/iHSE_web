@@ -144,6 +144,8 @@ def req_account(env, start_response, query):
 
     print(data)
 
+    data = data.encode('utf-8')
+
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', '*'),
                     ('Content-type', 'text/plain'),
@@ -180,7 +182,7 @@ def get(env, start_response, query):
     # in the HTTP request body which is passed by the WSGI server
     # in the file like wsgi.input environment variable.
     request_body = env['wsgi.input'].read(request_body_size)
-    request_body = ("<p>" + request_body + "</p>").encode('utf-8')
+    request_body = ("<p>" + request_body.decode("utf-8")  + "</p>").encode('utf-8')
 
 
 
