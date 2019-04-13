@@ -131,6 +131,7 @@ print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
 
 
 def req_account(env, start_response, query):
+    print(' !get account! ')
 
     data = '''
     {
@@ -151,6 +152,8 @@ def req_account(env, start_response, query):
 
 # GET requare
 def get(env, start_response, query):
+    print('GET')
+
     if env['PATH_INFO'] == '/account':
         return req_account(env, start_response, query);
 
@@ -233,6 +236,7 @@ def req_register(env, start_response, name, passw, code):
 
 # POST requare
 def post(env, start_response, query):
+    print('POST')
 
     if env['PATH_INFO'] == '/login':
         return req_login(env, start_response, query['name'], query['pass']);
@@ -280,7 +284,7 @@ uwsgi.node: b'ip-172-31-36-110'
 
 '''
 def application(env, start_response):
-    urllib.parse.urlparse('https://someurl.com/with/query_string?a=1&b=2&b=3').query
+#     urllib.parse.urlparse('https://someurl.com/with/query_string?a=1&b=2&b=3').query
         #a=1&b=2&b=3
 
     #urllib.parse.parse_qs('a=1&b=2&b=3');
