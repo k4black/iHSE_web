@@ -142,6 +142,8 @@ def req_account(env, start_response, query):
     }
     '''
 
+    print(data)
+
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', '*'),
                     ('Content-type', 'text/plain'),
@@ -168,14 +170,26 @@ def get(env, start_response, query):
     message_env = ("<p>" + s + "</p>")
     message_env = message_env.encode('utf-8')
 
+    # the environment variable CONTENT_LENGTH may be empty or missing
+    try:
+        request_body_size = int(environ.get('CONTENT_LENGTH', 0))
+    except (ValueError):
+        request_body_size = 0
+
+    # When the method is POST the variable will be sent
+    # in the HTTP request body which is passed by the WSGI server
+    # in the file like wsgi.input environment variable.
+    request_body = env['wsgi.input'].read(request_body_size)
+    request_body = ("<p>" + request_body + "</p>").encode('utf-8')
+
 
 
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', '*'),
                     ('Content-type', 'text/html'),
-                    # ('Content-Length', str(len(message_return) + len(message_env)))
+                    ('Content-Length', str(len(message_return) + len(message_env) + len(request_body)))
                     ])
-    return [message_return, message_env, ("<p>" + request_body + "</p>").encode('utf-8')]
+    return [message_return, message_env, request_body]
 
 
 # Login http request
@@ -304,16 +318,6 @@ def application(env, start_response):
     if env['REQUEST_METHOD'] == 'POST':
         return post(env, start_response, query)
 
-    # the environment variable CONTENT_LENGTH may be empty or missing
-    try:
-        request_body_size = int(environ.get('CONTENT_LENGTH', 0))
-    except (ValueError):
-        request_body_size = 0
-
-    # When the method is POST the variable will be sent
-    # in the HTTP request body which is passed by the WSGI server
-    # in the file like wsgi.input environment variable.
-    request_body = env['wsgi.input'].read(request_body_size)
 
 
 
