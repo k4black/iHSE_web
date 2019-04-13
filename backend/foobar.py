@@ -1,6 +1,10 @@
 import urllib.parse
 import sqlite3
 
+from http.cookies import SimpleCookie
+
+
+# TODO: Delete accounts user/user and admin/admin
 
 
 print('!!!! RUN PYTHON INIT !!!!')
@@ -72,6 +76,17 @@ def session(id):
         return sessions[0]
 
 
+# Get user by id, None is no such user
+def user(id):
+    cursor.execute("SELECT * FROM user WHERE id=?", (id))
+    users = cursor.fetchall()
+
+    if len(users) == 0:    # No such session
+        return None
+    else:
+        return users[0]
+
+
 # Login form, None if not possible
 def login(name, passw, agent, ip, time='0'):
     cursor.execute("SELECT * FROM users WHERE name=? AND pass=?", (name, passw))
@@ -133,13 +148,41 @@ import json
 
 
 def req_account(env, start_response, query):
+    #rawdata = 'Cookie: devicePixelRatio=1; ident=exists; __utma=13103r6942.2918; __utmc=13103656942; __utmz=13105942.1.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); mp_3cb27825a6612988r46d00tinct_id%22%3A%201752338%2C%22%24initial_referrer%22%3A%20%22https%3A%2F%2Fwww.pion_created_at%22%3A%20%222015-08-03%22%2C%22platform%22%3A%20%22web%22%2C%%22%3A%20%%22%7D; t_session=BAh7DUkiD3Nlc3NpbWVfZV9uYW1lBjsARkkiH1BhY2lmaWMgVGltZSAoVVMgJiBDYW5hZGEpBjsAVEkiFXNpZ25pbl9wZXJzb25faWQGOwBGaQMSvRpJIhRsYXN0X2xvZ2luX2RhdGUGOwBGVTogQWN0aXZlU3VwcG9ydDo6VGltZVdpdGhab25lWwhJdToJVGltZQ2T3RzAAABA7QY6CXpvbmVJIghVVEMGOwBUSSIfUGFjaWZpZWRfZGFzaGJvYXJkX21lc3NhZ2UGOwBGVA%3D%3D--6ce6ef4bd6bc1a469164b6740e7571c754b31cca'
+    rawdata = env.get('HTTP_COOKIE', '')
+    cookie = SimpleCookie()
+    cookie.load(rawdata)
+
+    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
+    # which is incompatible with requests. Manually construct a dictionary instead.
+    cookies = {}
+    for key, morsel in cookie.items():
+        cookies[key] = morsel.value
+
+
+    print(cookies)
+
 
     data = {}
-    data['name'] = 'Petrov Ivan'
-    data['phone'] = '+7 923 12 333'
-    data['type'] = 1
-    data['group'] = 1
-    json_data = json.dumps(data)
+
+    sessid = bytes.fromhex( cookies.get('sessid', '') )
+
+    if sessid == b'' or (sess = session(sessid)) is None:
+
+        data['name'] = 'Guest'
+        data['phone'] = ''
+        data['type'] = 0
+        data['group'] = 0
+        json_data = json.dumps(data)
+
+    else:
+        usr = user( sess[1] )  # get user by user id
+
+        data['name'] = usr[3]
+        data['phone'] = usr[2]
+        data['type'] = usr[1]
+        data['group'] = usr[5]
+        json_data = json.dumps(data)
 
 
     print(json_data)
@@ -197,20 +240,18 @@ def get(env, start_response, query):
 # Login http request
 def req_login(env, start_response, name, passw):
 
-    print('req_login_1')
     res = login(name, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
-    print('req_login_2')
 
     # '302 Found'
     if res is not None:
         print(res, type(res))
         sessid = res[0].hex()
         start_response('200 Ok',
-                       [('Access-Control-Allow-Origin', '*'),
-                        #('Access-Control-Allow-Credentials', '*'),
+                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                        ('Access-Control-Allow-Credentials', 'true'),
                         #('Content-type', 'text/html'),
 #                         ('Set-Cookie', 'sessid=' + sessid + '; Domain=ihse.tk; HttpOnly; Max-Age=31536000; Path=/'),
-                        ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; Max-Age=31536000;'),
+                        ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=31536000;'),
                         #('Set-Cookie', 'theme=light'),
                         #('Location', env['HTTP_REFERER']),
                         #('Location', 'http://ihse.tk/login.html')
