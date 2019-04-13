@@ -133,16 +133,6 @@ import json
 
 
 def req_account(env, start_response, query):
-    print(' !get account! ')
-
-    data = '''
-    {
-        "name": "Ivanov",
-        "phone": +7 915 aaa tt",
-        "type": 0,
-        "group": 0
-    }
-    '''
 
     data = {}
     data['name'] = 'Petrov Ivan'
@@ -150,6 +140,7 @@ def req_account(env, start_response, query):
     data['type'] = 1
     data['group'] = 1
     json_data = json.dumps(data)
+
 
     print(json_data)
 
@@ -165,7 +156,6 @@ def req_account(env, start_response, query):
 
 # GET requare
 def get(env, start_response, query):
-    print('GET')
 
     if env['PATH_INFO'] == '/account':
         return req_account(env, start_response, query);
@@ -215,7 +205,9 @@ def req_login(env, start_response, name, passw):
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', '*'),
                         #('Content-type', 'text/html'),
-                        ('Set-Cookie', 'sessid=' + sessid + '; Domain=ihse.tk; HttpOnly; Max-Age=31536000; Path=/'),
+#                         ('Set-Cookie', 'sessid=' + sessid + '; Domain=ihse.tk; HttpOnly; Max-Age=31536000; Path=/'),
+                        ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; Max-Age=31536000;'),
+                        ('Set-Cookie', 'Set-Cookie: theme=light'),
                         #('Location', env['HTTP_REFERER']),
                         #('Location', 'http://ihse.tk/login.html')
                         # ('Content-Length', str(len(message_return) + len(message_env)))
@@ -261,7 +253,6 @@ def req_register(env, start_response, name, passw, code):
 
 # POST requare
 def post(env, start_response, query):
-    print('POST')
 
     if env['PATH_INFO'] == '/login':
         return req_login(env, start_response, query['name'], query['pass']);
@@ -309,6 +300,8 @@ uwsgi.node: b'ip-172-31-36-110'
 
 '''
 def application(env, start_response):
+
+    print(env['HTTP_COOKIE', 'NOTHING'])
 #     urllib.parse.urlparse('https://someurl.com/with/query_string?a=1&b=2&b=3').query
         #a=1&b=2&b=3
 

@@ -72,13 +72,13 @@ var buttonReg = document.querySelector('#btnReg');
 buttonReg.addEventListener('click', function () {
 
 
-    var name = button.parentElement.querySelector('#name');
+    var name_ = button.parentElement.querySelector('#name');
     var pass = button.parentElement.querySelector('#pass');
 
-    if (name.value == "" || pass.value == "")
+    if (name_.value == "" || pass.value == "")
         return
 
-    var query = "?name=" + name.value + "&pass=" + hashCode(pass.value) + "&code=" + 0;
+    var query = "?name=" + name_.value + "&pass=" + hashCode(pass.value) + "&code=" + 0;
 
 
     var xhttp = new XMLHttpRequest();
@@ -88,7 +88,7 @@ buttonReg.addEventListener('click', function () {
             if (this.status === 200) {
                 alert("ok reg!");
 
-                name.value = "";
+                name_.value = "";
                 pass.value = "";
             }
 
@@ -110,7 +110,7 @@ buttonReg.addEventListener('click', function () {
 
 console.log('Login form');
 
-var name = document.querySelector('#name');
+var name_ = document.querySelector('#name');
 var pass = document.querySelector('#pass');
 
 
@@ -128,13 +128,16 @@ pass.addEventListener('blur', function () {
 });
 
 
-name.addEventListener('focus', function () {
-    name.closest('div').querySelector("label").classList.add('active');
+name_.addEventListener('focus', function () {
+    name_.closest('div').querySelector("label").classList.add('active');
     console.log('Name active');
 });
 
-name.addEventListener('blur', function () {
-    name.closest('div').querySelector("label").classList.remove('active');
+name_.addEventListener('blur', function () {
+    if (name_.value != "")
+        return;
+
+    name_.closest('div').querySelector("label").classList.remove('active');
     console.log('Name inactive');
 });
 

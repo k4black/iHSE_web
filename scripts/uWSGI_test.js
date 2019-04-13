@@ -1,5 +1,5 @@
-var name = document.querySelector('.mobile__sidebar__name');
-var phone = document.querySelector('.mobile__sidebar__phone');
+var accountName = document.querySelector('.mobile__sidebar__name');
+var accountPhone = document.querySelector('.mobile__sidebar__phone');
 
 
 var xhttp = new XMLHttpRequest();
@@ -7,9 +7,10 @@ var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function() {
     if (this.readyState === 4) {
         if (this.status === 200) {
+            console.log(this.responseText);
             var user = JSON.parse( this.responseText );
-            name.value = user.name;
-            phone.value = user.phone;
+            accountName.innerText = user.name;
+            accountPhone.innerText = user.phone;
         }
     }
 };

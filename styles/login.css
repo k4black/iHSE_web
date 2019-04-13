@@ -32,6 +32,7 @@
 }
 
 .login__icon {
+    display: block;
     height: 60px;
     width: 60px;
     margin-bottom: 70px;

@@ -264,6 +264,7 @@ button {
 .mobile__sidebar__name {
     font-size: 18px;
     color: #ffffff;
+    margin: 0;
     margin-top: 10px;
     width: 100%;
     font-weight: 600;
@@ -274,6 +275,7 @@ button {
     width: 100%;
     color: #E2E2E2;
     size: 16px;
+    margin: 0;
     font-weight: normal;
 
 }
