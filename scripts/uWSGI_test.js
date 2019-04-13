@@ -16,7 +16,9 @@ xhttp.onreadystatechange = function() {
 };
 
 xhttp.open("GET", "http://ihse.tk:50000/account", true);
+xhttp.withCredentials = true; // Send Cookie;
 xhttp.send();
+
 
 
 

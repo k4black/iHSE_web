@@ -147,7 +147,8 @@ def req_account(env, start_response, query):
     json_data = json_data.encode('utf-8')
 
     start_response('200 OK',
-                   [('Access-Control-Allow-Origin', '*'),
+                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    ('Access-Control-Allow-Credentials', 'true'),
                     ('Content-type', 'application/json'),
                     ('Content-Length', str(len(json_data))) ])
 
@@ -196,18 +197,21 @@ def get(env, start_response, query):
 # Login http request
 def req_login(env, start_response, name, passw):
 
+    print('req_login_1')
     res = login(name, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
-
+    print('req_login_2')
 
     # '302 Found'
     if res is not None:
+        print(res, type(res))
         sessid = res[0].hex()
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', '*'),
+                        #('Access-Control-Allow-Credentials', '*'),
                         #('Content-type', 'text/html'),
 #                         ('Set-Cookie', 'sessid=' + sessid + '; Domain=ihse.tk; HttpOnly; Max-Age=31536000; Path=/'),
                         ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; Max-Age=31536000;'),
-                        ('Set-Cookie', 'Set-Cookie: theme=light'),
+                        #('Set-Cookie', 'theme=light'),
                         #('Location', env['HTTP_REFERER']),
                         #('Location', 'http://ihse.tk/login.html')
                         # ('Content-Length', str(len(message_return) + len(message_env)))
@@ -301,7 +305,7 @@ uwsgi.node: b'ip-172-31-36-110'
 '''
 def application(env, start_response):
 
-    print(env['HTTP_COOKIE', 'NOTHING'])
+    print(env.get('HTTP_COOKIE', 'NOTHING'))
 #     urllib.parse.urlparse('https://someurl.com/with/query_string?a=1&b=2&b=3').query
         #a=1&b=2&b=3
 

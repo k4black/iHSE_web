@@ -60,6 +60,7 @@ button.addEventListener('click', function () {
     };
 
     xhttp.open("POST", "http://ihse.tk:50000/login" + query, true);
+    xhttp.withCredentials = true;
     xhttp.send();
 });
 
