@@ -78,7 +78,7 @@ def session(id):
 
 # Get user by id, None is no such user
 def user(id):
-    cursor.execute("SELECT * FROM user WHERE id=?", (id, ))
+    cursor.execute("SELECT * FROM users WHERE id=?", (id, ))
     users = cursor.fetchall()
 
     if len(users) == 0:    # No such session
