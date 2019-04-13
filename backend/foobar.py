@@ -128,6 +128,8 @@ print(a[0].hex() )
 print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
 
 
+import json
+
 
 
 def req_account(env, start_response, query):
@@ -142,16 +144,23 @@ def req_account(env, start_response, query):
     }
     '''
 
-    print(data)
+    data = {}
+    data['name'] = 'Petrov Ivan'
+    data['phone'] = '+7 923 12 333'
+    data['type'] = 1
+    data['group'] = 1
+    json_data = json.dumps(data)
 
-    data = data.encode('utf-8')
+    print(json_data)
+
+    json_data = json_data.encode('utf-8')
 
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', '*'),
-                    ('Content-type', 'text/plain'),
-                    ('Content-Length', str(len(data))) ])
+                    ('Content-type', 'application/json'),
+                    ('Content-Length', str(len(json_data))) ])
 
-    return [data]
+    return [json_data]
 
 
 # GET requare
