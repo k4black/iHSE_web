@@ -172,7 +172,7 @@ def get(env, start_response, query):
 
     # the environment variable CONTENT_LENGTH may be empty or missing
     try:
-        request_body_size = int(environ.get('CONTENT_LENGTH', 0))
+        request_body_size = int(env.get('CONTENT_LENGTH', 0))
     except (ValueError):
         request_body_size = 0
 
