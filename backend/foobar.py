@@ -167,7 +167,9 @@ def req_account(env, start_response, query):
 
     sessid = bytes.fromhex( cookies.get('sessid', '') )
 
-    if sessid == b'' or (sess = session(sessid)) is None:
+
+
+    if sessid == b'':
 
         data['name'] = 'Guest'
         data['phone'] = ''
@@ -176,13 +178,25 @@ def req_account(env, start_response, query):
         json_data = json.dumps(data)
 
     else:
-        usr = user( sess[1] )  # get user by user id
+        sess = session(sessid)
 
-        data['name'] = usr[3]
-        data['phone'] = usr[2]
-        data['type'] = usr[1]
-        data['group'] = usr[5]
-        json_data = json.dumps(data)
+        if sess is None:
+            data['name'] = 'Guest No sess'
+            data['phone'] = ''
+            data['type'] = 0
+            data['group'] = 0
+            json_data = json.dumps(data)
+
+            # Clear cookie
+
+        else:
+            usr = user( sess[1] )  # get user by user id
+
+            data['name'] = usr[3]
+            data['phone'] = usr[2]
+            data['type'] = usr[1]
+            data['group'] = usr[5]
+            json_data = json.dumps(data)
 
 
     print(json_data)
