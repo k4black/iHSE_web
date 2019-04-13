@@ -67,7 +67,7 @@ def seftySql(sql):
 
 # Get session by id, None is no such session
 def session(id):
-    cursor.execute("SELECT * FROM sessions WHERE id=?", (id))
+    cursor.execute("SELECT * FROM sessions WHERE id=?", ( sqlite3.Binary(id) ) )
     sessions = cursor.fetchall()
 
     if len(sessions) == 0:    # No such session
