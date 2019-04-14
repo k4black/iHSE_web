@@ -1,29 +1,40 @@
+
+/**
+ * Get account information from server
+ * Send http GET request and get user bio (or guest bio if cookie does not exist)
+ * TODO: optimize selection
+ * TODO: move in the sidebar js file
+ */
 var accountName = document.querySelector('.mobile__sidebar__name');
 var accountPhone = document.querySelector('.mobile__sidebar__phone');
-
 
 var xhttp = new XMLHttpRequest();
 
 xhttp.onreadystatechange = function() {
     if (this.readyState === 4) {
-        if (this.status === 200) {
-            console.log(this.responseText);
+        if (this.status === 200) { // If ok set up fields name and phone
+
+            // console.log(this.responseText);
             var user = JSON.parse( this.responseText );
             accountName.innerText = user.name;
             accountPhone.innerText = user.phone;
+
         }
     }
 };
 
 xhttp.open("GET", "http://ihse.tk:50000/account", true);
-xhttp.withCredentials = true; // Send Cookie;
+xhttp.withCredentials = true; // To send Cookie;
 xhttp.send();
 
 
 
 
 
-
+/**
+ * Temporary test function
+ * TODO: Remove
+ */
 function loadDoc() {
     console.log("Change content");
 

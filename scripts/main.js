@@ -1,5 +1,8 @@
 
-/* Floating button hide */
+/**
+ * Mobile Floating button management
+ * OnScroll hide and appear
+ */
 var floatingButton = document.querySelector('.mobile__floating__button');
 
 var hide = false;
@@ -7,22 +10,23 @@ var hide = false;
 function showFloating() {
     hide = false;
     floatingButton.classList.remove('hide');
-    console.log("Show floating button");
+    // console.log("Show floating button");
 }
 
 function hideFloating() {
     hide = true;
     floatingButton.classList.add('hide');
-    console.log("Hide floating button");
+    // console.log("Hide floating button");
 }
 
 var lastScrollTop = 0;
 function floatingButtonOnScroll() {
-    if (open) {
+    if (open) {  // if sidebar is open
         return
     }
 
-    var st = window.pageYOffset || document.documentElement.scrollTop; // Credits: "https://github.com/qeremy/so/blob/master/so.dom.js#L426"
+    // Credits: "https://github.com/qeremy/so/blob/master/so.dom.js#L426"
+    var st = window.pageYOffset || document.documentElement.scrollTop;
     if (st > lastScrollTop){
         // downscroll code
         if (!hide)
@@ -39,25 +43,28 @@ window.addEventListener('scroll', floatingButtonOnScroll);
 
 
 
-/* Open/close mobile menu */
+
+/**
+ * Mobile sidebar management
+ * OnClick on hamburger button
+ * TODO: optimize selection
+ */
 var hamburgerButton = document.querySelector('.hamburger__button');
 var mobileNav = document.querySelector('.mobile');
 
 var open = false;
 
-
 function openMobile() {
     open = true;
     mobileNav.classList.add('open');
-    console.log("Open menu");
+    // console.log("Open menu");
 }
 
 function closeMobile() {
     open = false;
     mobileNav.classList.remove('open');
-    console.log("Close menu");
+    // console.log("Close menu");
 }
-
 
 function hamburgerOnClick() {
     if (!open) {
@@ -67,12 +74,16 @@ function hamburgerOnClick() {
     }
 }
 
-
 hamburgerButton.addEventListener('click', hamburgerOnClick);
 mobileNav.addEventListener('click', closeMobile);
 
-/* Swipe open*/
 
+
+
+
+/**
+ * Mobile sidebar swipe open
+ */
 //
 // window.addEventListener('load', function(){
 //
