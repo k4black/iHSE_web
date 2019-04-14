@@ -60,6 +60,7 @@ xhttp.send();
  * Add navigation button event - 'back'
  */
 var mobileNav = document.querySelector('.arrow__button');
+if (mobileNav != null)
 mobileNav.addEventListener('click', function () {
 
     //alert(document.referrer);
@@ -149,8 +150,10 @@ function hamburgerOnClick() {
         closeMobile();
     }
 }
-
+if (hamburgerButton != null)
 hamburgerButton.addEventListener('click', hamburgerOnClick);
+
+if (mobileNav != null)
 mobileNav.addEventListener('click', closeMobile);
 
 
