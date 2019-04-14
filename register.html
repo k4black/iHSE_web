@@ -6,14 +6,14 @@
 
     <meta name="theme-color" content="#006cae">
 
-    <title>Login</title>
+    <title>Register</title>
 
     <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/login.css">
+    <link rel="stylesheet" href="styles/register.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <!--Onpage logic -->
-    <script defer async src="scripts/login.js"></script>
+    <script defer async src="scripts/register.js"></script>
     <!--STD nav logic -->
     <script defer async src="scripts/nav.js"></script>
 </head>
@@ -29,7 +29,7 @@
     </nav>
 
 
-    <div class="title">Login</div>
+    <div class="title">Register</div>
 
 
     <nav class="desktop">
@@ -44,31 +44,37 @@
 <div class="wrapper">
 
     <div id="ajax_form" style="margin-top: 50px">
-        <div class="login__title">Welcome</div>
+        <div class="register__title">Register</div>
 
-        <img src="images/icon.png" class="login__icon">
+        <img src="images/icon.png" class="register__icon">
 
-        <div class="login__input">
-            <label for="name" class="login__label">Name</label>
+        <div class="register__input">
+            <label for="name" class="register__label">Name</label>
             <input id="name" type="text" name="name"/>
         </div>
 
-        <div class="login__input">
-            <label for="pass" class="login__label">Password</label>
+        <div class="register__input">
+            <label for="pass" class="register__label">Password</label>
             <input id="pass" type="password" name="pass"/>
         </div>
 
-        <button id="btn" class="login__button">Login</button>
+        <div class="register__input">
+            <label for="code" class="register__label">Code</label>
+            <input id="code" type="text" name="code"/>
+        </div>
+
+        <button id="btnReg" class="register__button">register</button>
 
     </div>
 
 
-    <div id="btnReg" class="login__register">
-        <span>Нет аккаунта? </span>
-        <a href="">Регистрация</a>
+    <div class="register__register">
+        <span>Не получается? </span>
+        <a href="">Свяжитесь с нами</a>
     </div>
 
 </div>
+
 
 
 </body>

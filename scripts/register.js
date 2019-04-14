@@ -1,14 +1,8 @@
 /**
- * @fileoverview Login page logic
- * File providing all functions which are used to control login.html page
+ * @fileoverview Register page logic
+ * File providing all functions which are used to control register.html page
  * Including animations and http requests if that are sending by NOT nav elements
  */
-
-
-
-
-// TODO: Hide .html
-// ihse.tk/login.html -> ihse.tk/login
 
 
 
@@ -36,50 +30,55 @@ function hashCode(s) {
 
 
 
+
 /**
- * Add button event - 'login'
- * Send http POST request to get session id
+ * Add button event - 'register'
+ * Send http POST request to register and automatically login - get session id
+ * TODO: Register form
  */
-var button = document.querySelector('#btn');
-button.addEventListener('click', function () {
+var buttonReg = document.querySelector('#btnReg');
+buttonReg.addEventListener('click', function () {
 
-    var name = button.parentElement.querySelector('#name');
-    var pass = button.parentElement.querySelector('#pass');
+    var name_ = buttonReg.parentElement.querySelector('#name');
+    var pass = buttonReg.parentElement.querySelector('#pass');
+    var code = buttonReg.parentElement.querySelector('#code');
 
 
-    if (name.value == "" || pass.value == "") // If some field are empty - do nothing
+    if (name_.value == "" || pass.value == "" || code.value == "") // If some field are empty - do nothing
         return
 
 
+
     // Pass not password but hashcode of it
-    var query = "?name=" + name.value + "&pass=" + hashCode(pass.value);
-    
-        
+    // code - registration code
+    var query = "?name=" + name_.value + "&pass=" + hashCode(pass.value) + "&code=" + code.value;
+
+
+
     var xhttp = new XMLHttpRequest();
-    
+
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4) {  // When request is done
 
             if (this.status === 200) {  // Authorized
-                alert("ok!");  // TODO: Redirection
+                alert("ok reg!");  // TODO: Redirection
 
                 name.value = "";
                 pass.value = "";
+                code.value = "";
             }
 
             if (this.status === 401) {  // Authorization error
-                alert("not!");  // TODO: show Html error message
+                alert("not reg!");  // TODO: show Html error message
 
                 pass.value = "";
             }
         }
     };
 
-    xhttp.open("POST", "http://ihse.tk:50000/login" + query, true);
-    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.open("POST", "http://ihse.tk:50000/register" + query, true);
     xhttp.send();
 });
-
 
 
 
@@ -127,5 +126,27 @@ pass.addEventListener('blur', function () {
 
     pass.closest('div').querySelector("label").classList.remove('active');
     console.log('Pass inactive');
+});
+
+
+
+/**
+ * Add code field animations
+ * Hint Rise up when there is some text or cursor inside it
+ * TODO: optimize selection
+ */
+var code = document.querySelector('#code');
+
+pass.addEventListener('focus', function () {
+    pass.closest('div').querySelector("label").classList.add('active');
+    console.log('Code active');
+});
+
+pass.addEventListener('blur', function () {
+    if (code.value != "")
+        return;
+
+    pass.closest('div').querySelector("label").classList.remove('active');
+    console.log('Code inactive');
 });
 
