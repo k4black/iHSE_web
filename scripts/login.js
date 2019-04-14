@@ -1,22 +1,22 @@
+/**
+ * @fileoverview Login page logic
+ * File providing all functions which are used to control login.html page
+ * Including animations and http requests if that are sending by NOT nav elements
+ */
+
+
+
+
 // TODO: Hide .html
 // ihse.tk/login.html -> ihse.tk/login
 
 
 
-/**
- * Add navigation button event - 'back'
- */
-var mobileNav = document.querySelector('.arrow__button');
-mobileNav.addEventListener('click', function back() {
 
-    //alert(document.referrer);
 
-    if (document.referrer == "http://ihse.tk/login.html")
-        window.location.href = "http://ihse.tk/";
 
-    else
-        window.location.href = document.referrer;
-});
+/** ===============  LOGIC and REQUESTS  =============== */
+
 
 
 
@@ -33,7 +33,6 @@ function hashCode(s) {
 
     return h;
 }
-
 
 
 
@@ -130,6 +129,12 @@ buttonReg.addEventListener('click', function () {
     xhttp.open("POST", "http://ihse.tk:50000/register" + query, true);
     xhttp.send();
 });
+
+
+
+
+/** ===============  ANIMATIONS  =============== */
+
 
 
 
