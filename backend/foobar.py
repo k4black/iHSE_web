@@ -9,9 +9,10 @@ import json
 
 
 
-conn = sqlite3.connect("/home/ubuntu/main.sqlite", check_same_thread = False)
+conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread = False)
 conn.execute("PRAGMA journal_mode=WAL")   # https://www.sqlite.org/wal.html
 cursor = conn.cursor()
+
 
 # Users
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
@@ -35,8 +36,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
                     FOREIGN KEY("user_id") REFERENCES "users"("id")
                   );
                """)
-
-
 
 
 
