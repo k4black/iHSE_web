@@ -60,7 +60,7 @@ xhttp.send();
  * Add navigation button event - 'back'
  */
 var mobileNav = document.querySelector('.arrow__button');
-mobileNav.addEventListener('click', function back() {
+mobileNav.addEventListener('click', function () {
 
     //alert(document.referrer);
 
