@@ -14,6 +14,11 @@
 /** ===============  LOGIC and REQUESTS  =============== */
 
 
+// TODO: Nav panel notification
+// TODO: Push notification
+// TODO: Cookies notification? =) (Just say it during correspond sending)
+
+
 
 /**
  * Get account information from server
