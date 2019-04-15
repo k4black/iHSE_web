@@ -1,18 +1,14 @@
 /* Login page specific css rules  */
 
-.wrapper {
 
+body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-
-    box-sizing: border-box;
-
-    padding: 15px;
-    height: 100%;
-    padding-top: 60px;
 }
+
+
 
 .wrapper form {
     color: #9f9f9f;
@@ -112,15 +108,16 @@
     line-height: 1.2;
     text-transform: uppercase;
 
-
     background: #007ac5;
 }
 
 .register__register {
     /*position: absolute;*/
+    top: 0;
     width: 100%;
     bottom: 15px;
     text-align: center;
+    padding-top: calc(25vh - 100px);
 }
 
 .register__register span {
