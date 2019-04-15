@@ -30,16 +30,32 @@
     margin-bottom: 30px;
     font-weight: bold;
 }
-
 .login__icon {
     display: block;
+    position: static;
+
+    background-image: url('../images/icon.png');
+    background-attachment: fixed;
+    background-position: 50% -10.3%;
+    background-size: 60px;
+
+
     height: 60px;
     width: 60px;
     margin-bottom: 70px;
     margin-left: auto;
     margin-right: auto;
+
+    transition-property: height, margin-bottom;
+    transition-duration: 500ms, 500ms;
+    transition-timing-function: ease-out;
 }
 
+
+.close {
+    height: 0.1px;
+    margin-bottom: 20px;
+}
 
 .login__input {
     margin-bottom: 40px;
@@ -109,6 +125,6 @@
 
 .login__register a {
 
-    color: #03053b;
+    color: #242473;
     text-decoration: none;
 }

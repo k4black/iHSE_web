@@ -88,7 +88,6 @@ button.addEventListener('click', function () {
 
 
 
-
 /**
  * Add name field animations
  * Hint Rise up when there is some text or cursor inside it
@@ -96,11 +95,14 @@ button.addEventListener('click', function () {
  */
 var name_ = document.querySelector('#name');
 name_.addEventListener('focus', function () {
+    onFocus(true);
     name_.closest('div').querySelector("label").classList.add('active');
     console.log('Name active');
+
 });
 
 name_.addEventListener('blur', function () {
+    onFocus(false);
     if (name_.value != "")
         return;
 
@@ -117,11 +119,13 @@ name_.addEventListener('blur', function () {
 var pass = document.querySelector('#pass');
 
 pass.addEventListener('focus', function () {
+    onFocus(true);
     pass.closest('div').querySelector("label").classList.add('active');
     console.log('Pass active');
 });
 
 pass.addEventListener('blur', function () {
+    onFocus(false);
     if (pass.value != "")
         return;
 
@@ -129,3 +133,24 @@ pass.addEventListener('blur', function () {
     console.log('Pass inactive');
 });
 
+
+
+
+/**
+ * Add icon field animations
+ * Hide icon if there is virtual keyboard
+ * TODO: optimize selection
+ */
+
+var focus = false;  // Is there virtual keyboard?
+
+var icon = document.querySelector('.login__icon');
+
+function onFocus(focus) {
+    if (focus) {
+        icon.classList.add('close');
+    }
+    else {
+        icon.classList.remove('close');
+    }
+}

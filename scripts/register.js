@@ -95,11 +95,13 @@ buttonReg.addEventListener('click', function () {
  */
 var name_ = document.querySelector('#name');
 name_.addEventListener('focus', function () {
+    onFocus(true);
     name_.closest('div').querySelector("label").classList.add('active');
     console.log('Name active');
 });
 
 name_.addEventListener('blur', function () {
+    onFocus(false);
     if (name_.value != "")
         return;
 
@@ -116,11 +118,13 @@ name_.addEventListener('blur', function () {
 var pass = document.querySelector('#pass');
 
 pass.addEventListener('focus', function () {
+    onFocus(true);
     pass.closest('div').querySelector("label").classList.add('active');
     console.log('Pass active');
 });
 
 pass.addEventListener('blur', function () {
+    onFocus(false);
     if (pass.value != "")
         return;
 
@@ -138,15 +142,39 @@ pass.addEventListener('blur', function () {
 var code = document.querySelector('#code');
 
 pass.addEventListener('focus', function () {
-    pass.closest('div').querySelector("label").classList.add('active');
+    onFocus(true);
+    code.closest('div').querySelector("label").classList.add('active');
     console.log('Code active');
 });
 
 pass.addEventListener('blur', function () {
+    onFocus(false);
     if (code.value != "")
         return;
 
-    pass.closest('div').querySelector("label").classList.remove('active');
+    code.closest('div').querySelector("label").classList.remove('active');
     console.log('Code inactive');
 });
 
+
+
+
+
+/**
+ * Add icon field animations
+ * Hide icon if there is virtual keyboard
+ * TODO: optimize selection
+ */
+
+var focus = false;  // Is there virtual keyboard?
+
+var icon = document.querySelector('.register__icon');
+
+function onFocus(focus) {
+    if (focus) {
+        icon.classList.add('close');
+    }
+    else {
+        icon.classList.remove('close');
+    }
+}
