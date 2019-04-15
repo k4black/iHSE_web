@@ -36,8 +36,9 @@
 
     background-image: url('../images/icon.png');
     background-attachment: fixed;
-    background-position: 50% -10.3%;
+    background-position: 50% 27.6%;
     background-size: 60px;
+    background-repeat: no-repeat;
 
 
     height: 60px;

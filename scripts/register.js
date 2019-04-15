@@ -141,13 +141,13 @@ pass.addEventListener('blur', function () {
  */
 var code = document.querySelector('#code');
 
-pass.addEventListener('focus', function () {
+code.addEventListener('focus', function () {
     onFocus(true);
     code.closest('div').querySelector("label").classList.add('active');
     console.log('Code active');
 });
 
-pass.addEventListener('blur', function () {
+code.addEventListener('blur', function () {
     onFocus(false);
     if (code.value != "")
         return;
