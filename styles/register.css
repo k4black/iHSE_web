@@ -51,7 +51,7 @@ body {
 }
 
 
-.close {
+.close .register__icon {
     height: 0.1px;
     margin-bottom: 20px;
 }
@@ -111,13 +111,20 @@ body {
     background: #007ac5;
 }
 
-.register__register {
-    /*position: absolute;*/
-    top: 0;
+.register__callback {
+    position: absolute;
     width: 100%;
     bottom: 15px;
     text-align: center;
-    padding-top: calc(25vh - 100px);
+    /*padding-top: calc(25vh - 100px);*/
+
+    opacity: 1;
+    transition: opacity 300ms ease-out;
+
+}
+
+.close .register__callback {
+    opacity: 0;
 }
 
 .register__register span {

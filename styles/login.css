@@ -41,7 +41,7 @@
 }
 
 
-.close {
+.close .login__icon {
     height: 0.1px;
     margin-bottom: 20px;
 }
@@ -102,12 +102,19 @@
 }
 
 .login__register {
-    /*position: absolute;*/
-    top: 0;
+    position: absolute;
     width: 100%;
     bottom: 15px;
     text-align: center;
-    padding-top: calc(25vh - 100px);
+    /*padding-top: calc(25vh - 100px);*/
+
+    opacity: 1;
+    transition: opacity 300ms ease-out;
+
+}
+
+.close .login__register {
+    opacity: 0;
 }
 
 .login__register span {

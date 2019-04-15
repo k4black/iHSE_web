@@ -144,13 +144,13 @@ pass.addEventListener('blur', function () {
 
 var focus = false;  // Is there virtual keyboard?
 
-var icon = document.querySelector('.login__icon');
+var form = document.querySelector('.wrapper');
 
 function onFocus(focus) {
     if (focus) {
-        icon.classList.add('close');
+        form.classList.add('close');
     }
     else {
-        icon.classList.remove('close');
+        form.classList.remove('close');
     }
 }
