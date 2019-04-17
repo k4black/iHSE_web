@@ -92,8 +92,15 @@ body {
 }
 
 
+#ajax_form {
+    position: relative;
+    z-index: 10;
+    background-color: white;
+}
 
 .register__button {
+
+
     display: block;
     height: 50px;
     width: 100%;

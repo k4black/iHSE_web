@@ -101,6 +101,14 @@
     background: #007ac5;
 }
 
+
+#ajax_form {
+    position: relative;
+    z-index: 10;
+    background-color: white;
+}
+
+
 .login__register {
     position: absolute;
     width: 100%;

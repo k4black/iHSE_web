@@ -30,3 +30,79 @@ footer div {
     text-align: center;
     padding: 100px 0;
 }
+
+
+
+
+
+.wrapper {
+
+    padding-top: 80px;
+}
+
+
+
+
+.day {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+
+    width: 100%;
+    height: auto;
+
+
+    background-color: #adadad;
+
+}
+
+
+.time {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+
+    background-color: #8a8a8a;
+
+
+}
+
+
+.bar {
+    width: 30px;
+    height: inherit;
+
+    background-color: #03053b;
+}
+
+
+.events {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    width: 100%;
+
+    background-color: #007ac5;
+
+    padding-bottom: 20px;
+}
+
+
+.event {
+    width: 100%;
+    padding: 0 10px;
+    background-color: orange;
+}
+
+
+.event td {
+    vertical-align: top;
+}
+
+.event td:first-child {
+    font-weight: 600;
+    color: red;
+    width: 60px;
+}
+
+

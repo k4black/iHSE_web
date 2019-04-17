@@ -206,6 +206,33 @@ def register(name, passw, type, phone, team):
 
 
 
+def req_account(env, start_response, query):
+    """ Day sheudle data HTTP request
+    Get day num and return html
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict
+
+    Note:
+        return day html by req from query string (if none return today)
+
+    Returns:
+        html data: day sheudle
+
+    """
+
+    html_data = "<div></div>".encode('utf-8')
+
+    start_response('200 OK',
+                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                    ('Content-type', 'text/html'),
+                    ('Content-Length', str(len(html_data))) ])
+
+    return [html_data]
+
 
 def req_account(env, start_response, query):
     """ Account data HTTP request
@@ -306,6 +333,9 @@ def get(env, start_response, query):
 
     if env['PATH_INFO'] == '/account':
         return req_account(env, start_response, query);
+
+    if env['PATH_INFO'] == '/day':
+        return req_day(env, start_response, query);
 
 
 
