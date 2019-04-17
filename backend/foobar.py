@@ -217,6 +217,8 @@ def req_day(env, start_response, query):
 
     """
 
+    day = query['day']
+
     html_data = "<div></div>".encode('utf-8')
 
     start_response('200 OK',
