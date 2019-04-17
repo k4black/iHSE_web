@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, viewport-fit=cover">
+
+    <meta name="theme-color" content="#006cae">
+
+    <title>Feedback</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/feedback.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!--Onpage logic -->
+    <script defer async src="scripts/feedback.js"></script>
+    <!--STD nav logic -->
+    <script defer async src="scripts/nav.js"></script>
+
+</head>
+<body>
+
+
+<div class="topbar">
+
+    <div class="day">
+        <div class="day__num">2</div>
+        <div class="day__name">13.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">3</div>
+        <div class="day__name">14.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">4</div>
+        <div class="day__name">15.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">5</div>
+        <div class="day__name">16.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">6</div>
+        <div class="day__name">17.05</div>
+    </div>
+
+    <div class="day today">
+        <div class="day__num">7</div>
+        <div class="day__name">18.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">8</div>
+        <div class="day__name">19.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">9</div>
+        <div class="day__name">20.05</div>
+    </div>
+
+</div>
+
+<!--<span class="nav-prev" id="prev"></span>-->
+<!--<span class="nav-next" id="next"></span>-->
+
+
+<div class="wrapper">
+
+    <div class="feedback_form">
+        <div class="title">Title</div>
+
+
+        <input type="text" id="slider" class="slider">
+
+    </div>
+
+
+</div>
+
+
+<link rel="stylesheet" href="styles/rSlider.min.css">
+<script defer async src="scripts/rSlider.min.js"></script>
+
+
+
+<script src="scripts/rSlider.min.js"></script>
+<script>
+    (function () {
+        'use strict';
+
+        var init = function () {
+
+            var slider2 = new rSlider({
+                target: '#slider',
+                values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                range: false,
+                set: [5],
+                tooltip: false,
+                // onChange: function (vals) {
+                //     console.log(vals);
+                // }
+            });
+
+        };
+        window.onload = init;
+
+
+
+        getValue();
+    })();
+</script>
+
+
+</body>
+</html>

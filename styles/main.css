@@ -61,6 +61,8 @@ button {
     height: 100%;
     height: auto;
     padding-top: 60px;
+
+    overflow-x: hidden;
 }
 
 
