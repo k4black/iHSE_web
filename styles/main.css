@@ -104,6 +104,13 @@ button {
 
 
 
+.border_line {
+    background-color: #E2E2E2;
+    width: 100%;
+    height: 1px;
+    border: none;
+}
+
 
 
 /** Desktop navigation **/

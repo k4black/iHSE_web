@@ -12,9 +12,10 @@ from google.auth.transport.requests import Request
 
 # TODO: Delete accounts user/user and admin/admin
 
-""" ----====----====---- """
-""" uWSGI input function """
-""" ----====----====---- """
+
+""" ---===---==========================================---===--- """
+"""                    uWSGI main input function                 """
+""" ---===---==========================================---===--- """
 
 
 def application(env, start_response):
@@ -38,9 +39,9 @@ def application(env, start_response):
         return post(env, start_response, query)
 
 
-""" ---===---====---===--- """
-""" Main interaction logic """
-""" ---===---====---===--- """
+""" ---===---==========================================---===--- """
+"""                   Main http interaction logic                """
+""" ---===---==========================================---===--- """
 
 
 def get(env, start_response, query):
@@ -241,7 +242,7 @@ def req_day(env, start_response, query):
 
                       {}
 
-                      <hr style="background-color: #E2E2E2; width: 100%; height: 1px; border: none;">
+                      <hr class="border_line">
 
                   </div>
 
@@ -258,7 +259,7 @@ def req_day(env, start_response, query):
 
 
     # TODO: Optimize (NO SPACE)
-    #html_data = day
+    html_data = day
 
     html_data = str(gsheets_get_day())
 
@@ -283,6 +284,7 @@ def post(env, start_response, query):
         query: url query parameters - dict (may be empty)
 
     Returns:
+         None; Only http answer
 
     """
 
@@ -309,6 +311,7 @@ def req_login(env, start_response, name, passw):
             401 Unauthorized: if wrong name of pass
 
     Returns:
+         None; Only http answer
 
     """
 
@@ -333,55 +336,7 @@ def req_login(env, start_response, name, passw):
                        [('Access-Control-Allow-Origin', '*'),
                         ])
 
-
     return
-
-
-def login(name, passw, agent, ip, time='0'):
-    """ Login user
-    Create new session if it does not exist and return sess id
-
-    Args:
-        name: User name - string
-        passw: Password hash - int
-        agent: User agent - string
-        ip: ip - string
-        time: time of session creation
-
-    Note:
-        session id is automatically generated
-
-    Returns:
-        session id: string of hex
-                    b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
-
-    """
-
-    # Check user with name and pass exist and got it
-    cursor.execute("SELECT * FROM users WHERE name=? AND pass=?", (name, passw))
-    users = cursor.fetchall()
-
-    if len(users) == 0:    # No such user
-        return None
-
-    user = users[0]
-#     print('User: ', user)
-
-
-    # Create new session if there is no session with user_id and user_agent
-    cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
-                      SELECT ?, ?, ?, ?, ?
-                      WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_id=? AND user_agent=?)""",
-                   (user[0], user[1], agent, ip, time, user[0], agent))
-    conn.commit()
-
-
-    # Get session corresponding to user_id and user_agent
-    cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
-    result = cursor.fetchone()
-
-#     print('Loggined: ', result)
-    return result
 
 
 def req_register(env, start_response, name, passw, code):
@@ -419,36 +374,6 @@ def req_register(env, start_response, name, passw, code):
     return
 
 
-def register(name, passw, type, phone, team):
-    """ Register new user
-    There is no verification - create anywhere
-
-    Args:
-        name: User name - string
-        passw: Password hash - int
-        type: User type - int  [GUEST, USER, ADMIN]
-        phone: phone - string
-        team: number of group - int
-
-    Note:
-        user id is automatically generated
-
-    Returns:
-        user id: - int (because it is for internal use only)
-
-    """
-
-#     print('Register:', name, passw)
-
-    # cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(?, ?, ?, ?, ?)", ('USER_TYPE', 'PHONE', 'NAME', 'PASS', 'TEAM'))
-    # Register new user if there is no user with name and pass
-    cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
-                      SELECT ?, ?, ?, ?, ?
-                      WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
-                   (type, phone, name, passw, team, name, passw))
-    conn.commit()
-
-
 # TODO: Max
 def checkRegCode(code):
     """ Check register code
@@ -463,6 +388,11 @@ def checkRegCode(code):
     """
 
     return True
+
+
+""" ---===---==========================================---===--- """
+"""                    SQLite database creation                  """
+""" ---===---==========================================---===--- """
 
 
 # TODO: place this in sql-specific functions
@@ -493,9 +423,10 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
                   );
                """)
 
-""" ---===---===---===---===---===---===--- """
-""" SQLite database interaction via sqlite3 """
-""" ---===---===---===---===---===---===--- """
+
+""" ---===---==========================================---===--- """
+"""           SQLite database interaction via sqlite3            """
+""" ---===---==========================================---===--- """
 
 
 def seftySql(sql):
@@ -559,9 +490,86 @@ def user(id):
         return users[0]
 
 
-""" ---===---===---===----===---===---===--- """
-""" Google Sheets interaction via GSheetsAPI """
-""" ---===---===---===----===---===---===--- """
+def register(name, passw, type, phone, team):
+    """ Register new user
+    There is no verification - create anywhere
+
+    Args:
+        name: User name - string
+        passw: Password hash - int
+        type: User type - int  [GUEST, USER, ADMIN]
+        phone: phone - string
+        team: number of group - int
+
+    Note:
+        user id is automatically generated
+
+    Returns:
+        user id: - int (because it is for internal use only)
+
+    """
+
+#     print('Register:', name, passw)
+
+    # cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(?, ?, ?, ?, ?)", ('USER_TYPE', 'PHONE', 'NAME', 'PASS', 'TEAM'))
+    # Register new user if there is no user with name and pass
+    cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
+                      SELECT ?, ?, ?, ?, ?
+                      WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
+                   (type, phone, name, passw, team, name, passw))
+    conn.commit()
+
+
+def login(name, passw, agent, ip, time='0'):
+    """ Login user
+    Create new session if it does not exist and return sess id
+
+    Args:
+        name: User name - string
+        passw: Password hash - int
+        agent: User agent - string
+        ip: ip - string
+        time: time of session creation
+
+    Note:
+        session id is automatically generated
+
+    Returns:
+        session id: string of hex
+                    b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
+
+    """
+
+    # Check user with name and pass exist and got it
+    cursor.execute("SELECT * FROM users WHERE name=? AND pass=?", (name, passw))
+    users = cursor.fetchall()
+
+    if len(users) == 0:    # No such user
+        return None
+
+    user = users[0]
+#     print('User: ', user)
+
+
+    # Create new session if there is no session with user_id and user_agent
+    cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
+                      SELECT ?, ?, ?, ?, ?
+                      WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_id=? AND user_agent=?)""",
+                   (user[0], user[1], agent, ip, time, user[0], agent))
+    conn.commit()
+
+
+    # Get session corresponding to user_id and user_agent
+    cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
+    result = cursor.fetchone()
+
+#     print('Loggined: ', result)
+    return result
+
+
+""" ---===---==========================================---===--- """
+"""           Google Sheets interaction via GSheetsAPI           """
+""" ---===---==========================================---===--- """
 
 
 def gsheets_get_day() -> list:
@@ -605,6 +613,11 @@ def gsheets_get_day() -> list:
     values = result.get('values', [])
 
     return values
+
+
+
+
+
 
 
 """ TEST """
