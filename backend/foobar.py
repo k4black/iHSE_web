@@ -276,8 +276,8 @@ def req_day(env, start_response, query):
 
     day = query['day']
 
-    # htmp_data = """<div>{}, {}</div>""".format('One', 'two')
-    htmp_data = gsheets_get_day()
+    htmp_data = """<div>{}, {}</div>""".format('One', 'two')
+    # htmp_data = gsheets_get_day()
 
     html_data = htmp_data.encode('utf-8')
 
