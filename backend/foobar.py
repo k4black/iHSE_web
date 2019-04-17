@@ -206,7 +206,7 @@ def register(name, passw, type, phone, team):
 # print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
 
 
-
+# TODO: Max
 def req_day(env, start_response, query):
     """ Day sheudle data HTTP request
     Get day num and return html
@@ -214,7 +214,7 @@ def req_day(env, start_response, query):
     Args:
         env: HTTP request environment - dict
         start_response: HTTP response headers place
-        query: url query parameters - dict
+        query: url query parameters - dict (may be empty)
 
     Note:
         return day html by req from query string (if none return today)
@@ -226,7 +226,9 @@ def req_day(env, start_response, query):
 
     day = query['day']
 
-    html_data = "<div></div>".encode('utf-8')  # TODO: GSheetsAPI here!
+    htmp_data = """<div>{}, {}</div>""".format('One', 'two')  # TODO: GSheetsAPI here!
+
+    html_data = htmp_data.encode('utf-8')
 
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
@@ -244,7 +246,7 @@ def req_account(env, start_response, query):
     Args:
         env: HTTP request environment - dict
         start_response: HTTP response headers place
-        query: url query parameters - dict
+        query: url query parameters - dict (may be empty)
 
     Note:
         If there is no cookie or it is incorrect - it returns guest profile
@@ -386,7 +388,7 @@ def req_login(env, start_response, name, passw):
     Args:
         env: HTTP request environment - dict
         start_response: HTTP response headers place
-        query: url query parameters - dict
+        query: url query parameters - dict (may be empty)
 
     Note:
         Send:
@@ -424,7 +426,7 @@ def req_login(env, start_response, name, passw):
 
 
 
-# Chech reg sequrity code
+# TODO: Max
 def checkRegCode(code):
     """ Check register code
 
@@ -484,7 +486,7 @@ def post(env, start_response, query):
     Args:
         env: HTTP request environment - dict
         start_response: HTTP response headers place
-        query: url query parameters - dict
+        query: url query parameters - dict (may be empty)
 
     Returns:
 
@@ -543,7 +545,6 @@ def application(env, start_response):
     Args:
         env: HTTP request environment - dict
         start_response: HTTP response headers place
-        query: url query parameters - dict, optional
 
     Returns:
         data: which will be transmitted
