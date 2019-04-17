@@ -206,7 +206,7 @@ def register(name, passw, type, phone, team):
 
 
 
-def req_account(env, start_response, query):
+def req_day(env, start_response, query):
     """ Day sheudle data HTTP request
     Get day num and return html
 
@@ -222,6 +222,8 @@ def req_account(env, start_response, query):
         html data: day sheudle
 
     """
+
+    day = query['day']
 
     html_data = "<div></div>".encode('utf-8')
 
