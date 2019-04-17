@@ -7,10 +7,8 @@ import json
 # TODO: Delete accounts user/user and admin/admin
 
 
-
-
 conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread = False)
-conn.execute("PRAGMA journal_mode=WAL")   # https://www.sqlite.org/wal.html
+conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
 cursor = conn.cursor()
 
 
@@ -36,10 +34,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
                     FOREIGN KEY("user_id") REFERENCES "users"("id")
                   );
                """)
-
-
-
-
 
 
 
@@ -151,7 +145,7 @@ def login(name, passw, agent, ip, time='0'):
     # Get session corresponding to user_id and user_agent
     cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
     result = cursor.fetchone()
-    
+
 #     print('Loggined: ', result)
     return result
 
@@ -206,7 +200,7 @@ def register(name, passw, type, phone, team):
 
 
 
-def req_account(env, start_response, query):
+def req_day(env, start_response, query):
     """ Day sheudle data HTTP request
     Get day num and return html
 
@@ -332,10 +326,10 @@ def get(env, start_response, query):
     """
 
     if env['PATH_INFO'] == '/account':
-        return req_account(env, start_response, query);
+        return req_account(env, start_response, query)
 
     if env['PATH_INFO'] == '/day':
-        return req_day(env, start_response, query);
+        return req_day(env, start_response, query)
 
 
 
@@ -378,7 +372,7 @@ def get(env, start_response, query):
 
 def req_login(env, start_response, name, passw):
     """ Login HTTP request
-    Create new session if it does not exist and send cookie sess id
+    Create new session if it does not exist and send cookie sessid
 
     Args:
         env: HTTP request environment - dict
@@ -406,7 +400,7 @@ def req_login(env, start_response, name, passw):
 
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-                       ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
                         ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=31536000;'),
                         #('Location', 'http://ihse.tk/login.html')
                         ])
@@ -497,9 +491,8 @@ def post(env, start_response, query):
 
 
 
-'''
+"""
 Resource - iHSE.tk/path/resource?param1=value1&param2=value2
-
 
 REQUEST_METHOD: GET
 PATH_INFO: /path/resource
@@ -532,8 +525,8 @@ wsgi.url_scheme: http
 uwsgi.version: b'2.0.15-debian'
 uwsgi.core: 1
 uwsgi.node: b'ip-172-31-36-110'
+"""
 
-'''
 def application(env, start_response):
     """ HTTP request
     Will manage and call specific function for [GET, POST]
@@ -541,10 +534,10 @@ def application(env, start_response):
     Args:
         env: HTTP request environment - dict
         start_response: HTTP response headers place
-        query: url query parameters - dict
+        query: url query parameters - dict, optional
 
     Returns:
-        data: which will be transmited
+        data: which will be transmitted
 
     """
 
