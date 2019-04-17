@@ -6,6 +6,14 @@
 
 
 
+
+
+/** ===============  LOGIC and REQUESTS  =============== */
+
+
+// TODO: Loading
+
+
 /**
  * Get day information from server
  * Send http GET request and get today html schedule

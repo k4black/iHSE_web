@@ -224,11 +224,65 @@ def req_day(env, start_response, query):
 
     """
 
+    # In format - 11.06
     day = query['day']
 
-    htmp_data = """<div>{}, {}</div>""".format('One', 'two')  # TODO: GSheetsAPI here!
 
-    html_data = htmp_data.encode('utf-8')
+
+    # TODO: If some field (Name, desc, loc) is empty - hide it
+
+    # Event is - Event title, description, location and host name
+    event = """<table class="event">
+                   <th>{}</th>
+                   <tr>
+                       <td>Desc:</td>
+                       <td>{}</td>
+                   </tr>
+
+                   <tr>
+                       <td>Loc:</td>
+                       <td>{}</td>
+                   </tr>
+
+                   <tr>
+                       <td>Name:</td>
+                       <td>{}</td>
+                   </tr>
+               </table>""".format("Title", "Some descripton of the event too long", "Location", "Named Dmitry")
+
+
+    # Time consist of several events  and time label
+    time = """<div class="time">
+                  <div class="bar"></div>
+
+                  <div class="events">
+
+                      <div>{}</div>
+
+                      {}
+
+                      {}
+
+                      <hr style="background-color: #E2E2E2; width: 100%; height: 1px; border: none;">
+
+                  </div>
+
+              </div>""".format("15:00 - 16:15", event, event)
+
+    # Day is several times
+    day = """<div class="day">
+
+                 {}
+
+                 {}
+
+             </div>""".format(time, time)
+
+
+    # TODO: Optimize (NO SPACE)
+    html_data = day
+
+    html_data = html_data.encode('utf-8')
 
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
