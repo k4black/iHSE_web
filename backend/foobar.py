@@ -7,7 +7,10 @@ import json
 # TODO: Delete accounts user/user and admin/admin
 
 
-conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread = False)
+""" SQLite database interaction via sqlite3 """
+
+
+conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread=False)
 conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
 cursor = conn.cursor()
 
@@ -100,6 +103,10 @@ def user(id):
         return None
     else:
         return users[0]
+
+
+
+""" Google Sheets interaction via GSheetsAPI """
 
 
 
@@ -219,7 +226,7 @@ def req_day(env, start_response, query):
 
     day = query['day']
 
-    html_data = "<div></div>".encode('utf-8')
+    html_data = "<div></div>".encode('utf-8')  # TODO: GSheetsAPI here!
 
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
