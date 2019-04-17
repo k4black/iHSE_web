@@ -115,6 +115,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
+
 def gsheets_get_day() -> list:
     # If modifying these scopes, delete the file token.pickle.
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
@@ -276,8 +277,8 @@ def req_day(env, start_response, query):
 
     day = query['day']
 
-    htmp_data = """<div>{}, {}</div>""".format('One', 'two')
-    # htmp_data = gsheets_get_day()
+    # htmp_data = """<div>{}, {}</div>""".format('One', 'two')
+    htmp_data = gsheets_get_day()
 
     html_data = htmp_data.encode('utf-8')
 
