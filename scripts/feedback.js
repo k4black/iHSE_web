@@ -27,7 +27,6 @@ for (var i = 0; i < days.length; i++) {
 
 
 
-
         var xhttp = new XMLHttpRequest();
 
         xhttp.onreadystatechange = function() {
@@ -131,6 +130,8 @@ button.addEventListener('click', function() {
 
 
 
+    var query = "?day=" + document.querySelector('.today').lastElementChild.textContent;
+
 
     var data = JSON.stringify({"overall": overallSlider.getValue(),
                                      "user1": users[0].value,
@@ -163,7 +164,7 @@ button.addEventListener('click', function() {
     };
 
 
-    xhttp.open("POST", "http://ihse.tk:50000/feedback", true);
+    xhttp.open("POST", "http://ihse.tk:50000/feedback" + query, true);
     xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.withCredentials = true;  // To receive cookie
 

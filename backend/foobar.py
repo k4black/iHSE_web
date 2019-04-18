@@ -64,6 +64,9 @@ def get(env, start_response, query):
     if env['PATH_INFO'] == '/day':
         return req_day(env, start_response, query)
 
+    if env['PATH_INFO'] == '/feedback':
+        return req_feedback_day(env, start_response, query)
+
 
 
 
@@ -184,6 +187,47 @@ def req_account(env, start_response, query):
     return [json_data]
 
 
+def req_feedback_day(env, start_response, query):
+    """ Account data HTTP request
+    Got day num and return day event for feedback
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict (may be empty)
+
+    Returns:
+        data: which will be transmited
+
+    """
+
+#     print(cookies)
+
+    # Json account data
+    data = {}
+
+    # TODO: SQL
+    data['title'] = 'Guest'
+    data['events'] = [ {'title': 'Event 1'},
+                       {'title': 'Other event'},
+                       {'title': 'Some event'}
+                     ]
+
+    json_data = json.dumps(data)
+
+
+#     print(json_data)
+
+    json_data = json_data.encode('utf-8')
+
+    start_response('200 OK',
+                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                    ('Content-type', 'application/json'),
+                    ('Content-Length', str(len(json_data))) ])
+
+    return [json_data]
+
+
 # TODO: Max
 def req_day(env, start_response, query):
     """ Day sheudle data HTTP request
@@ -294,6 +338,9 @@ def post(env, start_response, query):
     if env['PATH_INFO'] == '/register':
         return req_register(env, start_response, query['name'], query['pass'], query['code']);
 
+    if env['PATH_INFO'] == '/feedback':
+        return req_feedback(env, start_response, query);
+
 
 def req_login(env, start_response, name, passw):
     """ Login HTTP request
@@ -369,6 +416,58 @@ def req_register(env, start_response, name, passw, code):
         start_response('403 Forbidden',
                        [('Access-Control-Allow-Origin', '*'),
                         #('Content-type', 'text/html'),
+                        ])
+
+    return
+
+
+def req_feedback(env, start_response, query):
+    """ Login HTTP request
+    By cookie create feedback for day
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if all are ok
+            405 Method Not Allowed: already got it
+
+    Returns:
+         None; Only http answer
+
+    """
+
+    day = query['day']
+
+    # the environment variable CONTENT_LENGTH may be empty or missing
+    try:
+        request_body_size = int(env.get('CONTENT_LENGTH', 0))
+    except (ValueError):
+        request_body_size = 0
+
+    # When the method is POST the variable will be sent
+    # in the HTTP request body which is passed by the WSGI server
+    # in the file like wsgi.input environment variable.
+    request_body = env['wsgi.input'].read(request_body_size)
+    request_body = ("<p>" + request_body.decode("utf-8")  + "</p>").encode('utf-8')
+
+    print(request_body)
+
+
+    if res is not None:
+
+        start_response('200 Ok',
+                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                        #('Location', 'http://ihse.tk/login.html')
+                        ])
+
+    else:
+        start_response('405 Method Not Allowed',
+                       [('Access-Control-Allow-Origin', '*'),
                         ])
 
     return
