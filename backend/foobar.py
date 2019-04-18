@@ -331,6 +331,7 @@ def post(env, start_response, query):
          None; Only http answer
 
     """
+    print('POST')
 
     if env['PATH_INFO'] == '/login':
         return req_login(env, start_response, query['name'], query['pass']);
@@ -439,6 +440,8 @@ def req_feedback(env, start_response, query):
          None; Only http answer
 
     """
+
+    print('feedback POST')
 
     day = query['day']
 
