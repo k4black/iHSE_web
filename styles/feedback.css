@@ -81,3 +81,46 @@
     display: none;
 }
 
+
+input {
+    color: #333333;
+    font-size: 15px;
+    width: 100%;
+    height: 35px;
+
+    border: 1px solid gainsboro;
+}
+
+
+textarea {
+    font-size: 14px;
+     width: 100%;
+    border: 1px solid gainsboro;
+    resize: none;
+
+
+    min-height: 30px;
+
+    display: none;
+
+}
+
+.content {
+    display: inline-block;
+    font-size: 14px;
+    width: 100%;
+    border: 1px solid gainsboro;
+    min-height: 40px;
+
+}
+
+/* Slider setup*/
+
+.rs-container .rs-selected {
+    background-color: #006cae !important;
+    border: 1px solid #242473 !important;
+}
+
+.rs-container {
+    margin: 0 10px;
+}
