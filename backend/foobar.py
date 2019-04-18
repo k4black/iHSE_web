@@ -31,17 +31,6 @@ def application(env, start_response):
 
     """
 
-    print('REQ')
-
-#     print(env)
-    query = {}
-    try:
-        query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
-    except (ValueError):
-        query = {}
-
-    print(query)
-
     if env['REQUEST_METHOD'] == 'GET':
         return get(env, start_response, query)
 
@@ -55,7 +44,7 @@ def application(env, start_response):
                      [('Access-Control-Allow-Origin', '*'),
                       ('Access-Control-Allow-Methods', 'GET, POST, HEAD, OPTIONS'),
                       ('Access-Control-Allow-Headers', '*'),
-                      ('Allow', 'GET, POST, HEAD, OPTIONS')
+                      ('Allow', 'GET, POST, HEAD, OPTIONS') # TODO: Add content application/json
                       ])
 
         return
@@ -80,7 +69,6 @@ def get(env, start_response, query):
         data: which will be transmited
 
     """
-    print('GET')
 
     if env['PATH_INFO'] == '/account':
         return req_account(env, start_response, query)
@@ -355,7 +343,6 @@ def post(env, start_response, query):
          None; Only http answer
 
     """
-    print('POST')
 
     if env['PATH_INFO'] == '/login':
         return req_login(env, start_response, query['name'], query['pass'])
@@ -465,8 +452,6 @@ def req_feedback(env, start_response, query):
 
     """
 
-    print('feedback POST')
-
     day = query['day']
 
     print(day)
@@ -477,15 +462,11 @@ def req_feedback(env, start_response, query):
     except (ValueError):
         request_body_size = 0
 
-    print(request_body_size)
 
     # When the method is POST the variable will be sent
     # in the HTTP request body which is passed by the WSGI server
     # in the file like wsgi.input environment variable.
     request_body = env['wsgi.input'].read(request_body_size)
-
-    print(request_body)
-
     request_body = request_body.decode("utf-8")
 
     print(request_body)

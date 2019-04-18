@@ -140,9 +140,9 @@ button.addEventListener('click', function() {
                                      "event1": eventSliders[0].getValue(),
                                      "event2": eventSliders[1].getValue(),
                                      "event3": eventSliders[2].getValue(),
-                                     "event1_text": events[0].lastElementChild.textConten,
-                                     "event2_text": events[1].lastElementChild.textConten,
-                                     "event3_text": events[2].lastElementChild.textConten
+                                     "event1_text": events[0].lastElementChild.textContent,
+                                     "event2_text": events[1].lastElementChild.textContent,
+                                     "event3_text": events[2].lastElementChild.textContent
                               });
 
 
