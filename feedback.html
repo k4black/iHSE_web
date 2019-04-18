@@ -69,38 +69,55 @@
 <div class="wrapper">
 
     <div class="feedback_form">
-        <div class="title">Day one</div>
+        <h1 class="">Day one</h1>
+
+        <hr class="border_line">
 
         <label for="slider">Overall</label>
         <input type="text" id="slider" class="slider">
 
+        <hr class="border_line">
 
         <!-- TODO: Auto completion   -->
         <p>Select 3 participant you remember the most this day (<b>not</b> teamers)</p>
-        <input type="text" id="user1">
-        <input type="text" id="user2">
-        <input type="text" id="user3">
+        <input class="user" type="text" id="user1">
+        <input class="user" type="text" id="user2">
+        <input class="user" type="text" id="user3">
 
-        <p>Please, score your events for today</p>
+        <hr class="border_line">
+
+        <p>Please, score your events for today:</p>
 
         <div class="event">
-            <p>Event Title</p>
+            <h3>Event 1 Title</h3>
 
-            <input type="text" id="slider2" class="slider">
+            <input type="text" id="event1" class="slider">
+            <textarea type="text" ></textarea>
+
+            <p>Comments and feedback:</p>
+            <div class="content" contentEditable="true"></div>
+        </div>
+
+        <div class="event">
+            <h3>Event 2 Title</h3>
+
+            <input type="text" id="event2" class="slider">
             <textarea type="text" ></textarea>
 
             <div class="content" contentEditable="true"></div>
         </div>
 
         <div class="event">
-            <p>Event Title</p>
+            <h3>Event 3 Title</h3>
 
-            <input type="text" id="slider3" class="slider">
+            <input type="text" id="event3" class="slider">
             <textarea type="text" ></textarea>
 
             <div class="content" contentEditable="true"></div>
         </div>
 
+
+<!--        <hr class="border_line">-->
 
         <button id="btn">Save</button>
     </div>
@@ -114,29 +131,7 @@
 
 
 
-<script src="scripts/rSlider.min.js"></script>
-<script>
-    (function () {
-        'use strict';
-
-        var init = function () {
-
-            // var slider2 = new rSlider({
-            //     target: '#slider2',
-            //     values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            //     range: false,
-            //     set: [5],
-            //     tooltip: false,
-            //     // onChange: function (vals) {
-            //     //     console.log(vals);
-            //     // }
-            // });
-
-        };
-        window.onload = init;
-
-    })();
-</script>
+<script defer async src="scripts/rSlider.min.js"></script>
 <!--Onpage logic -->
 <script defer async src="scripts/feedback.js"></script>
 <!--STD nav logic -->

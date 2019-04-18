@@ -114,6 +114,24 @@ textarea {
 
 }
 
+
+
+hr {
+    margin: 15px 0;
+}
+
+.event h3 {
+    margin-bottom: 6px;
+}
+
+.event p {
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+
+
+
 /* Slider setup*/
 
 .rs-container .rs-selected {
@@ -124,3 +142,30 @@ textarea {
 .rs-container {
     margin: 0 10px;
 }
+
+
+
+
+
+
+button {
+    display: block;
+    height: 50px;
+    width: 200px;
+    border-radius: 25px;
+    overflow: hidden;
+    margin: 0 auto;
+
+
+    /*font-family: Poppins-Medium;*/
+    font-size: 15px;
+    color: #fff;
+    line-height: 1.2;
+    text-transform: uppercase;
+
+    z-index: 10;
+    background: #007ac5;
+
+    margin-top: 50px;
+}
+
