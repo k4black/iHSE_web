@@ -33,13 +33,14 @@ def application(env, start_response):
 
     print('REQ')
 
-    print(env)
+#     print(env)
     query = {}
     try:
         query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
     except (ValueError):
         query = {}
 
+    print(query)
 
     if env['REQUEST_METHOD'] == 'GET':
         return get(env, start_response, query)
