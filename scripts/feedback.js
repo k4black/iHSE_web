@@ -166,8 +166,6 @@ button.addEventListener('click', function() {
 
     xhttp.open("POST", "http://ihse.tk:50000/feedback" + query, true);
     xhttp.setRequestHeader('Content-Type', 'application/json');
-    xhttp.setRequestHeader('Access-Control-Allow-Methods', 'POST');
-    xhttp.setRequestHeader('Access-Control-Allow-Headers', 'accept, content-type');
 
     xhttp.withCredentials = true;  // To receive cookie
 

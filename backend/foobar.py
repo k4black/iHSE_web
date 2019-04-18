@@ -49,6 +49,18 @@ def application(env, start_response):
         return post(env, start_response, query)
 
 
+
+    if env['REQUEST_METHOD'] == 'OPTIONS':
+        start_response('200 OK',
+                     [('Access-Control-Allow-Origin', '*'),
+                      ('Access-Control-Allow-Methods', '*'),
+                      ('Access-Control-Allow-Headers', '*')
+                      ])
+
+        return
+
+
+
 """ ---===---==========================================---===--- """
 """                   Main http interaction logic                """
 """ ---===---==========================================---===--- """
