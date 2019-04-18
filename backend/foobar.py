@@ -55,6 +55,7 @@ def application(env, start_response):
                      [('Access-Control-Allow-Origin', '*'),
                       ('Access-Control-Allow-Methods', '*'),
                       ('Access-Control-Allow-Headers', '*')
+                      ('Allow', 'GET, HEAD, OPTIONS')
                       ])
 
         return
