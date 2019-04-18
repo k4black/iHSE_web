@@ -31,6 +31,8 @@ def application(env, start_response):
 
     """
 
+    query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
+
     if env['REQUEST_METHOD'] == 'GET':
         return get(env, start_response, query)
 
