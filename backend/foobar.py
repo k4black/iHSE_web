@@ -57,6 +57,7 @@ def get(env, start_response, query):
         data: which will be transmited
 
     """
+    print('GET')
 
     if env['PATH_INFO'] == '/account':
         return req_account(env, start_response, query)
@@ -334,13 +335,13 @@ def post(env, start_response, query):
     print('POST')
 
     if env['PATH_INFO'] == '/login':
-        return req_login(env, start_response, query['name'], query['pass']);
+        return req_login(env, start_response, query['name'], query['pass'])
 
     if env['PATH_INFO'] == '/register':
-        return req_register(env, start_response, query['name'], query['pass'], query['code']);
+        return req_register(env, start_response, query['name'], query['pass'], query['code'])
 
     if env['PATH_INFO'] == '/feedback':
-        return req_feedback(env, start_response, query);
+        return req_feedback(env, start_response, query)
 
 
 def req_login(env, start_response, name, passw):
@@ -459,7 +460,10 @@ def req_feedback(env, start_response, query):
     # in the HTTP request body which is passed by the WSGI server
     # in the file like wsgi.input environment variable.
     request_body = env['wsgi.input'].read(request_body_size)
-    request_body = ("<p>" + request_body.decode("utf-8")  + "</p>").encode('utf-8')
+
+    print(request_body)
+
+    request_body = request_body.decode("utf-8")
 
     print(request_body)
 
