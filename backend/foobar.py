@@ -53,9 +53,9 @@ def application(env, start_response):
     if env['REQUEST_METHOD'] == 'OPTIONS':
         start_response('200 OK',
                      [('Access-Control-Allow-Origin', '*'),
-                      ('Access-Control-Allow-Methods', '*'),
-                      ('Access-Control-Allow-Headers', '*')
-                      ('Allow', 'GET, HEAD, OPTIONS')
+                      ('Access-Control-Allow-Methods', 'GET, POST, HEAD, OPTIONS'),
+                      ('Access-Control-Allow-Headers', '*'),
+                      ('Allow', 'GET, POST, HEAD, OPTIONS')
                       ])
 
         return
