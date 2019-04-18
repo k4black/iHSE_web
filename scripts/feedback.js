@@ -44,6 +44,16 @@ var mySlider = new rSlider({
 
 });
 
+var slider2 = new rSlider({
+    target: '#slider2',
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    range: false,
+    set: [5],
+    tooltip: false,
+    // onChange: function (vals) {
+    //     console.log(vals);
+    // }
+});
 
 
 /**
@@ -54,7 +64,20 @@ var button = document.querySelector('#btn');
 
 button.addEventListener('click', function() {
 
-    alert(mySlider.getValue());
+    console.log("Overall: " + mySlider.getValue() );
+
+    events = button.parentElement.querySelectorAll('.event');
+    for (var i = 0; i < events.length; i++) {
+        console.log("Event " + i + " " + events[i].firstChild.textContent + ": " + slider2.getValue() + " - " + events[i].lastChild.textContent );
+    }
+
+    users = button.parentElement.querySelectorAll('.day');
+    for (var i = 0; i < users.length; i++) {
+        console.log("User " + i + ": " + users[i].value );
+    }
+
+
+
 
 });
 
