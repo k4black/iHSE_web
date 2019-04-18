@@ -207,7 +207,7 @@ def req_feedback_day(env, start_response, query):
     data = {}
 
     # TODO: SQL
-    data['title'] = 'Guest'
+    data['title'] = '15.04: Day of the Russia'
     data['events'] = [ {'title': 'Event 1'},
                        {'title': 'Other event'},
                        {'title': 'Some event'}
@@ -442,11 +442,15 @@ def req_feedback(env, start_response, query):
 
     day = query['day']
 
+    print(day)
+
     # the environment variable CONTENT_LENGTH may be empty or missing
     try:
         request_body_size = int(env.get('CONTENT_LENGTH', 0))
     except (ValueError):
         request_body_size = 0
+
+    print(request_body_size)
 
     # When the method is POST the variable will be sent
     # in the HTTP request body which is passed by the WSGI server
@@ -457,7 +461,7 @@ def req_feedback(env, start_response, query):
     print(request_body)
 
 
-    if res is not None:
+    if True:
 
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
