@@ -28,9 +28,16 @@ def application(env, start_response):
 
     Returns:
         data: which will be transmitted
+
     """
 
-    query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
+    print('REQ')
+
+    print(env)
+    query = {}
+    try:
+        query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
+
 
     if env['REQUEST_METHOD'] == 'GET':
         return get(env, start_response, query)
