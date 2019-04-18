@@ -37,6 +37,8 @@ def application(env, start_response):
     query = {}
     try:
         query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
+    except (ValueError):
+        query = {}
 
 
     if env['REQUEST_METHOD'] == 'GET':
