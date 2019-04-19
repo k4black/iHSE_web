@@ -220,11 +220,13 @@ def req_feedback_day(env, start_response, query):
     # Json account data
     data = {}
 
+    tmp = gsheet_get_feedback(day)  # return (title, [event1, event2, event3] ) or None
+
     # TODO: SQL
-    data['title'] = day + ': ' + 'Day of the Russia'
-    data['events'] = [ {'title': 'Event 1'},
-                       {'title': 'Other event'},
-                       {'title': 'Some event'}
+    data['title'] = day + ': ' + tmp[0]
+    data['events'] = [ {'title': tmp[1][0]},
+                       {'title': tmp[1][1]},
+                       {'title': tmp[1][2]}
                      ]
 
     json_data = json.dumps(data)
@@ -786,6 +788,21 @@ def gsheets_save_feedback(user_obj, day, json_obj):
 
     pass
 
+
+def gsheet_get_feedback(day):
+    """ Get description of day for feedback in google sheets
+    Create new user if it does not exist
+    Save in table id, name, phone type and team
+
+    Args:
+        day: num of the day - string '16.04'
+
+    Returns:
+        (title, [event1, event2, event3] )                  (TODO: not now: or None if already done)
+
+    """
+
+    return ('Day of the Russia', ['Event 1', 'Other event', 'And the last one'])
 
 
 
