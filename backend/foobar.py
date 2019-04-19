@@ -215,13 +215,13 @@ def req_feedback_day(env, start_response, query):
 
     """
 
-#     print(cookies)
+    day = query['day']
 
     # Json account data
     data = {}
 
     # TODO: SQL
-    data['title'] = '15.04: Day of the Russia'
+    data['title'] = day + ': ' + 'Day of the Russia'
     data['events'] = [ {'title': 'Event 1'},
                        {'title': 'Other event'},
                        {'title': 'Some event'}
@@ -456,7 +456,7 @@ def req_feedback(env, start_response, query):
 
     day = query['day']
 
-    print(day)
+    # Json feedback data
 
     # the environment variable CONTENT_LENGTH may be empty or missing
     try:
@@ -464,17 +464,42 @@ def req_feedback(env, start_response, query):
     except (ValueError):
         request_body_size = 0
 
-
     # When the method is POST the variable will be sent
     # in the HTTP request body which is passed by the WSGI server
     # in the file like wsgi.input environment variable.
     request_body = env['wsgi.input'].read(request_body_size)
     request_body = request_body.decode("utf-8")
 
-    print(request_body)
+#     print(request_body)
+
+    parced = json.loads(request_body)
 
 
-    if True:
+    print(parced)
+
+
+
+    # Parce cookie
+    rawdata = env.get('HTTP_COOKIE', '')
+    cookie = SimpleCookie()
+    cookie.load(rawdata)
+
+    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
+    # which is incompatible with requests. Manually construct a dictionary instead.
+    cookies = {}
+    for key, morsel in cookie.items():
+        cookies[key] = morsel.value
+
+    # Get session id or ''
+    sessid = bytes.fromhex( cookies.get('sessid', '') )
+
+    user_obj = user(sessid)
+
+
+    gsheets_save_feedback(user_obj, day, parced)
+
+
+    if user_obj is not None:   # If user exist
 
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
@@ -689,6 +714,8 @@ def login(name, passw, agent, ip, time='0'):
 
 
 def gsheets_get_day() -> list:
+    # TODO comment
+
     # If modifying these scopes, delete the file token.pickle.
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
@@ -731,7 +758,33 @@ def gsheets_get_day() -> list:
     return values
 
 
+def gsheets_save_feedback(user_obj, day, json_obj):
+    """ Save feedback of user in google sheets
+    Create new user if it does not exist
+    Save in table id, name, phone type and team
 
+    Args:
+        user_obj: User object - (id, type, phone, name, pass, team)
+        day: num of the day - string '16.04'
+        json_obj: Json obj of feedback - dictionary
+                  {"overall": int,
+                   "user1": string,
+                   "user2": string,
+                   "user3": string,
+                   "event1": int,
+                   "event2": int,
+                   "event3": int,
+                   "event1_text": string,
+                   "event2_text": string,
+                   "event3_text": string
+                   }
+
+    Returns:
+        None
+
+    """
+
+    pass
 
 
 
