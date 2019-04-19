@@ -25,6 +25,7 @@ for (var i = 0; i < days.length; i++) {
         alert(this.querySelector('.day__name').innerText);
 
 
+        var query = "?day=" + this.lastElementChild.textContent;
 
 
         var xhttp = new XMLHttpRequest();
@@ -48,7 +49,7 @@ for (var i = 0; i < days.length; i++) {
             }
         };
 
-        xhttp.open("GET", "http://ihse.tk:50000/feedback", true);
+        xhttp.open("GET", "http://ihse.tk:50000/feedback" + query, true);
         xhttp.send();
 
 
