@@ -28,7 +28,7 @@ xhttp.onreadystatechange = function() {
         if (this.status === 200) { // If ok set up day field
 
             // console.log(this.responseText);
-            day.innerText = this.responseText;
+            day.innerHTML = this.responseText;
 
         }
     }
