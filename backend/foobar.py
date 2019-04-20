@@ -775,7 +775,8 @@ def gsheets_get_day() -> list:
         for name in event[1::]:
             timetable[values[0][0]][-1].append(name)
     # building html FOR ONE DAY ONLY WITHOUT ASKING WHAT DAY TO SHOW
-    html_timetable = '<div class="day">'
+    # html_timetable = '<div class="day">'
+    html_timetable = ''
     for time in timetable[values[0][0]]:
         html_timetable += '<div class="time"><div class="bar"></div><div class="events">'
         html_timetable += '<div>' + str(time[0]) + '</div>'
@@ -784,7 +785,7 @@ def gsheets_get_day() -> list:
             html_timetable += str(event)
             html_timetable += '</table>'
         html_timetable += '</div></div>'
-    html_timetable += '</div>'
+    # html_timetable += '</div>'
 
     return html_timetable
 
