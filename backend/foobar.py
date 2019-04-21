@@ -319,13 +319,107 @@ def req_day(env, start_response, query):
 
     html_data = html_data.encode('utf-8')
 
+
+
+    tmp = gsheets_get_day(day)
+
+
+
+    """
+    Json format for the day:
+        {
+            [
+                {
+                    "time": "16:00 - 17:00"
+                    "events": [
+                        {
+                            "title": "Event 1",
+                            "desc": "Description",
+                            "host": "Name of the host",
+                            "loc": "Location"
+                        },
+
+                        {
+                            "title": "Event 2",
+                            "desc": "Other text",
+                            "host": "Name of the host2",
+                            "loc": "Other loc"
+                        }
+
+                    ]
+                },
+
+                {/* Othe time */}
+
+            ]
+
+        }
+
+    """
+
+
+    # Json day data
+    data = []
+    # TODO: SQL
+    time1 = {
+                "time": "16:00 - 17:00"
+                "events": [
+                    {
+                        "title": "Event 1",
+                        "desc": "Description",
+                        "host": "Name of the host",
+                        "loc": "Location"
+                    },
+
+                    {
+                        "title": "Event 2",
+                        "desc": "Other text",
+                        "host": "Name of the host2",
+                        "loc": "Other loc"
+                    }
+
+                ]
+            }
+
+    time2 = {
+                 "time": "19:00 - 21:00"
+                 "events": [
+                     {
+                         "title": "Event 3",
+                         "desc": "Text and text and text",
+                         "host": "Name",
+                         "loc": "Location"
+                     },
+
+                     {
+                         "title": "Event 4",
+                         "desc": "Other text",
+                         "host": "MAX",
+                         "loc": "Other loc"
+                     }
+
+                 ]
+             }
+
+    data.append(time1)
+    data.append(time2)
+
+
+    json_data = json.dumps(data)
+
+
+#     print(json_data)
+
+    json_data = json_data.encode('utf-8')
+
+
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
                     ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
-                    ('Content-type', 'text/html'),
-                    ('Content-Length', str(len(html_data))) ])
+                    ('Content-type', 'text/plant'),
+                    ('Content-Length', str(len(json_data))) ])
 
-    return [html_data]
+    return [json_data]
 
 
 def post(env, start_response, query):
