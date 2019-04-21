@@ -1,0 +1,85 @@
+
+.wrapper {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.border_line {
+    margin: 0 10px;
+    width: 80%;
+}
+
+
+
+
+
+.project {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 70px;
+    padding: 5px 10px;
+    background-color: orange;
+
+    overflow: hidden;
+}
+
+.description {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    margin-left: 10px;
+
+    width: 75%;
+}
+
+.project__top_line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.project__top_line span:first-child {
+    font-size: 18px;
+    font-weight: bold;
+    color: red;
+}
+
+.project__top_line span:last-child {
+    font-size: 14px;
+    color: gainsboro;
+}
+
+.project img {
+    height: 60px;
+}
+
+.description div {
+    min-height: 1em;
+
+}
+
+.project__names {
+    font-size: 14px;
+    display: block;
+    height: 1em;
+    width: 100%;
+    white-space: nowrap; /* Запрещаем перенос строк */
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    margin: 0;
+}
+
+
+.project__desc {
+    display: block;
+    height: 1em;
+    width: 100%;
+    white-space: nowrap; /* Запрещаем перенос строк */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
