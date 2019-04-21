@@ -81,6 +81,9 @@ def get(env, start_response, query):
     if env['PATH_INFO'] == '/feedback':
         return req_feedback_day(env, start_response, query)
 
+    if env['PATH_INFO'] == '/projects':
+        return req_projects(env, start_response, query)
+
 
 
 
@@ -245,6 +248,82 @@ def req_feedback_day(env, start_response, query):
 
 
 # TODO: Max
+def req_projects(env, start_response, query):
+    """ Projects HTTP request
+    Send list of projects in json format
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict (may be empty)
+
+    Returns:
+        data: which will be transmited
+
+    """
+
+    day = query['day']
+
+
+
+    tmp = gsheet_get_feedback(day)  # return (title, [event1, event2, event3] ) or None
+
+
+    """
+    Json format:
+        [
+            {
+                "title": "Some title",
+                "type": "TED",
+                "subj": "Math",
+                "name": "VAsya and Ilya",
+                "desc": "Some project description"
+            }
+        ]
+    """
+
+    # TODO: SQL
+
+    # Json projects data
+    data = []
+
+    project1 = {
+                   "title": "Some title",
+                   "type": "TED",
+                   "subj": "Math",
+                   "name": "VAsya and Ilya",
+                   "desc": "Some project description"
+               }
+
+    project2 = {
+                   "title": "Some title",
+                   "type": "TED",
+                   "subj": "Math",
+                   "name": "VAsya and Ilya",
+                   "desc": "Some project description"
+               }
+
+    data.append(project1)
+    data.append(project2)
+
+
+    json_data = json.dumps(data)
+
+
+#     print(json_data)
+
+    json_data = json_data.encode('utf-8')
+
+
+    start_response('200 OK',
+                   [('Access-Control-Allow-Origin', '*'),
+                    ('Content-type', 'application/json'),
+                    ('Content-Length', str(len(json_data))) ])
+
+    return [json_data]
+
+
+# TODO: Max
 def req_day(env, start_response, query):
     """ Day schedule data HTTP request
     Get day num and return html
@@ -266,54 +345,6 @@ def req_day(env, start_response, query):
     # In format - 11.06
     day = query['day']
 
-
-
-    # TODO: If some field (Name, desc, loc) is empty - hide it
-
-    # Event is - Event title, description, location and host name
-    event = """<div class="event">
-                    <p class="event__title">{}</p>
-
-                    <p class="event__desc"{}</p>
-
-                    <div class="event__last_line">
-                        <span class="event__names">{}</span>
-                        <span class="event__loc">{}</span>
-                    </div>
-
-               </div>""".format("Title", "Some descripton of the event too long", "Named Dmitry", "Location")
-
-
-    # Time consist of several events  and time label
-    time = """<div class="time">
-                  <div class="bar"></div>
-
-                  <div class="events">
-
-                      <div>{}</div>
-
-                      {}
-
-                      {}
-
-                      <hr class="border_line">
-
-                  </div>
-
-              </div>""".format("15:00 - 16:15", event, event)
-
-    # Day is several times
-    day = """<div class="day">
-
-                 {}
-
-                 {}
-
-             </div>""".format(time, time)
-
-
-    # TODO: Optimize (NO SPACE)
-    html_data = day
 
     html_data = str(gsheets_get_day())
 

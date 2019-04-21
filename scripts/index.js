@@ -38,7 +38,6 @@ xhttp.onreadystatechange = function() {
             var event_html;
 
             for (var time of day_data) {
-                console.log(time);
 
                 time_html = '<div class="time">' +
                                 '<div class="bar"></div>' +
