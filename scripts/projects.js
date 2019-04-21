@@ -47,7 +47,8 @@ xhttp.onreadystatechange = function() {
                                '</div>';
 
 
-                projects_html += project_html;
+
+                projects_html += project_html + '<hr class="border_line">';
             }
 
 
