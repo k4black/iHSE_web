@@ -271,23 +271,17 @@ def req_day(env, start_response, query):
     # TODO: If some field (Name, desc, loc) is empty - hide it
 
     # Event is - Event title, description, location and host name
-    event = """<table class="event">
-                   <th>{}</th>
-                   <tr>
-                       <td>Desc:</td>
-                       <td>{}</td>
-                   </tr>
+    event = """<div class="event">
+                    <p class="event__title">{}</p>
 
-                   <tr>
-                       <td>Loc:</td>
-                       <td>{}</td>
-                   </tr>
+                    <p class="event__desc"{}</p>
 
-                   <tr>
-                       <td>Name:</td>
-                       <td>{}</td>
-                   </tr>
-               </table>""".format("Title", "Some descripton of the event too long", "Location", "Named Dmitry")
+                    <div class="event__last_line">
+                        <span class="event__names">{}</span>
+                        <span class="event__loc">{}</span>
+                    </div>
+
+               </div>""".format("Title", "Some descripton of the event too long", "Named Dmitry", "Location")
 
 
     # Time consist of several events  and time label
