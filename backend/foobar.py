@@ -246,7 +246,7 @@ def req_feedback_day(env, start_response, query):
 
 # TODO: Max
 def req_day(env, start_response, query):
-    """ Day sheudle data HTTP request
+    """ Day schedule data HTTP request
     Get day num and return html
 
     Args:
@@ -258,7 +258,7 @@ def req_day(env, start_response, query):
         return day html by req from query string (if none return today)
 
     Returns:
-        html data: day sheudle
+        html data: day schedule
 
     """
 
@@ -743,7 +743,7 @@ def gsheets_get_day() -> list:
 
     # The ID and range of a sample spreadsheet.
     SAMPLE_SPREADSHEET_ID = '18DH6SNfsIlJiFxz50zOxoMIzdL3wS4iH70I_YYOFm2Y'
-    SAMPLE_RANGE_NAME = 'Sheet1!A1:C17'
+    SAMPLE_RANGE_NAME = 'Sheet1!A1:D21'
 
     """
         Shows basic usage of the Sheets API.
@@ -777,7 +777,65 @@ def gsheets_get_day() -> list:
                                 range=SAMPLE_RANGE_NAME).execute()
     values = result.get('values', [])
 
-    return values
+    # removing empty lines
+    toremove = []
+    for index, value in enumerate(values):
+        if not value:
+            toremove.append(index)
+    for index in toremove[::-1]:
+        values.pop(index)
+
+    # creating nice dictionary of lists (days with time-events pairs)
+    tmpstring = ''
+    timetable = {}
+    timetable[values[0][0]] = []
+    for event in values[1::]:
+        tmpstring = event[0].replace(' ', '')
+        tmpstring = tmpstring.replace('\n', ' - ')
+        timetable[values[0][0]].append([tmpstring])
+        for name in event[1::]:
+            if len(name) > 0:
+                tmpstring = name
+                tmpstring = tmpstring.splitlines()
+                for data in tmpstring:
+                    timetable[values[0][0]][-1].append(data)
+
+    # building html FOR ONE DAY ONLY WITHOUT ASKING WHAT DAY TO SHOW
+    # html_timetable = '<div class="day">'
+    html_timetable = ''
+    for time in timetable[values[0][0]]:
+        html_timetable += '<div class="time"><div class="bar"></div><div class="events">'
+
+        html_timetable += '<div>' + str(time[0]) + '</div>'
+        print(time[0])
+        index = 1
+        while not index == len(time):
+            html_timetable += '<table class="event">'
+            html_timetable += '<th>SOME</th>'
+            html_timetable += '<tr><td>Desc:</td><td>'
+            html_timetable += str(time[index])
+            index += 1
+            html_timetable += '</td></tr>'
+            html_timetable += '<tr><td>Name:</td><td>'
+            html_timetable += str(time[index])
+            index += 1
+            html_timetable += '</td></tr>'
+            html_timetable += '<tr><td>Loc:</td><td>'
+            html_timetable += str(time[index])
+            index += 1
+            html_timetable += '</td></tr>'
+            html_timetable += '</table>'
+
+        # for event in time[1::]:
+        #     html_timetable += '<table class="event">'
+        #     html_timetable += '<th>SOME</th>'
+        #   #  html_timetable += str(event)
+        # html_timetable += '</table>'
+
+        html_timetable += '</div></div>'
+    # html_timetable += '</div>'
+
+    return html_timetable
 
 
 def gsheets_save_feedback(user_obj, day, json_obj):
