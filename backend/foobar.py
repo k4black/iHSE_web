@@ -330,7 +330,7 @@ def req_day(env, start_response, query):
         {
             [
                 {
-                    "time": "16:00 - 17:00"
+                    "time": "16:00 - 17:00",
                     "events": [
                         {
                             "title": "Event 1",
@@ -362,7 +362,7 @@ def req_day(env, start_response, query):
     data = []
     # TODO: SQL
     time1 = {
-                "time": "16:00 - 17:00"
+                "time": "16:00 - 17:00",
                 "events": [
                     {
                         "title": "Event 1",
@@ -382,7 +382,7 @@ def req_day(env, start_response, query):
             }
 
     time2 = {
-                 "time": "19:00 - 21:00"
+                 "time": "19:00 - 21:00",
                  "events": [
                      {
                          "title": "Event 3",
