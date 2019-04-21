@@ -88,21 +88,55 @@ footer div {
 }
 
 
+.events div:first-child  {
+    background-color: #00b3bc;
+}
+
+
+
+
+.event p {
+    margin: 0;
+}
+
 .event {
     width: 100%;
+
     padding: 0 10px;
     background-color: orange;
+    display: flex;
+    flex-direction: column;
+
+
 }
 
 
-.event td {
-    vertical-align: top;
+.event__last_line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-.event td:first-child {
-    font-weight: 600;
+.event__last_line span:first-child {
+    font-size: 18px;
+    font-weight: bold;
     color: red;
-    width: 60px;
 }
 
+.event__last_line span:last-child {
+    font-size: 14px;
+    color: gainsboro;
+}
+
+.event__title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.event__desc {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 2em;
+    line-height: 1em;
+}
 
