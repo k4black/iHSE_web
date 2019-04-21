@@ -11,7 +11,7 @@
 /** ===============  LOGIC and REQUESTS  =============== */
 
 
-// TODO: Loading
+// TODO: Loading icon
 
 
 /**
@@ -27,9 +27,9 @@ xhttp.onreadystatechange = function() {
     if (this.readyState === 4) {
         if (this.status === 200) { // If ok set up day field
 
-            // console.log(this.responseText);
-            day.innerHTML = this.responseText;
+            var day = JSON.parse( this.responseText );
 
+            console.log(day);
         }
     }
 };
