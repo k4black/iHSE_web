@@ -321,7 +321,7 @@ def req_day(env, start_response, query):
 
 
 
-    tmp = gsheets_get_day(day)
+    # tmp = gsheets_get_day(day)
 
 
 
@@ -825,6 +825,7 @@ def login(name, passw, agent, ip, time='0'):
 
 def gsheets_get_day() -> list:
     # TODO comment
+    # TODO get day by day num!!!
 
     # If modifying these scopes, delete the file token.pickle.
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
