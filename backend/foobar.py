@@ -262,11 +262,8 @@ def req_projects(env, start_response, query):
 
     """
 
-    day = query['day']
 
-
-
-    tmp = gsheet_get_feedback(day)  # return (title, [event1, event2, event3] ) or None
+    #tmp = gsheet_get_projects(day)  # return (title, [event1, event2, event3] ) or None
 
 
     """
