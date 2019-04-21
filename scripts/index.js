@@ -16,8 +16,10 @@
 
 /**
  * Get day information from server
- * Send http GET request and get today html schedule
+ * Send http GET request and get today json schedule
+ * than parse of json data and create html
  * TODO: optimize selection
+ * TODO: optimize html generation
  */
 var day = document.querySelector('.day');
 
@@ -27,40 +29,46 @@ xhttp.onreadystatechange = function() {
     if (this.readyState === 4) {
         if (this.status === 200) { // If ok set up day field
 
-            var day = JSON.parse( this.responseText );
+            var day_data = JSON.parse( this.responseText );
 
-            console.log(day);
+
 
             var day_html = "";
             var time_html;
             var event_html;
 
-            for (var time in day) {
+            for (var time of day_data) {
+                console.log(time);
+
                 time_html = '<div class="time">' +
                                 '<div class="bar"></div>' +
                                 '<div class="events">' +
 
                                     '<div>' + time.time + '</div>';
 
-                for (var event in time.events) {
+                for (var event of time.events) {
                     event_html =    '<div class="event">' +
                                         '<p class="event__title">' + event.title + '</p>' +
 
                                         '<p class="event__desc">' + event.desc + '</p>' +
 
                                         '<div class="event__last_line">' +
-                                        '<span class="event__names">' + event.host + '</span>' +
-                                        '<span class="event__loc">' + event.loc + '</span>' +
+                                            '<span class="event__names">' + event.host + '</span>' +
+                                            '<span class="event__loc">' + event.loc + '</span>' +
+                                        '</div>' +
                                     '</div>';
 
                     time_html += event_html;
 
                 }
 
-                time_html += '</div>';
+                time_html += '</div>' + '</div>';
 
                 day_html += time_html;
             }
+
+
+            day.innerHTML = day_html;
         }
     }
 };
