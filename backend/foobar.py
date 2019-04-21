@@ -327,33 +327,32 @@ def req_day(env, start_response, query):
 
     """
     Json format for the day:
-        {
-            [
-                {
-                    "time": "16:00 - 17:00",
-                    "events": [
-                        {
-                            "title": "Event 1",
-                            "desc": "Description",
-                            "host": "Name of the host",
-                            "loc": "Location"
-                        },
 
-                        {
-                            "title": "Event 2",
-                            "desc": "Other text",
-                            "host": "Name of the host2",
-                            "loc": "Other loc"
-                        }
+        [
+            {
+                "time": "16:00 - 17:00",
+                "events": [
+                    {
+                        "title": "Event 1",
+                        "desc": "Description",
+                        "host": "Name of the host",
+                        "loc": "Location"
+                    },
 
-                    ]
-                },
+                    {
+                        "title": "Event 2",
+                        "desc": "Other text",
+                        "host": "Name of the host2",
+                        "loc": "Other loc"
+                    }
 
-                {/* Othe time */}
+                ]
+            },
 
-            ]
+            {/* Othe time */}
 
-        }
+        ]
+
 
     """
 
@@ -414,8 +413,7 @@ def req_day(env, start_response, query):
 
 
     start_response('200 OK',
-                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                   [('Access-Control-Allow-Origin', '*'),
                     ('Content-type', 'text/plant'),
                     ('Content-Length', str(len(json_data))) ])
 
