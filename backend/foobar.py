@@ -567,12 +567,32 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
                """)
 
 
+# Feedback: voite or not
+cursor.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
+                    "user_id"	INTEGER NOT NULL PRIMARY KEY,
+                    "days"	TEXT,
+                    "time"	TEXT DEFAULT(datetime('now','localtime')),
+                    FOREIGN KEY("user_id") REFERENCES "users"("id")
+                  );
+               """)
+
+
 """ ---===---==========================================---===--- """
 """           SQLite database interaction via sqlite3            """
 """ ---===---==========================================---===--- """
 
 
 def seftySql(sql):
+    """ Try to run sql code event if db is bisy
+
+    Args:
+        sql: sql - string
+
+    Returns:
+        None
+
+    """
+
     timeout = 10
 
     for x in range(0, timeout):
