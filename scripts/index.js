@@ -30,6 +30,37 @@ xhttp.onreadystatechange = function() {
             var day = JSON.parse( this.responseText );
 
             console.log(day);
+
+            var day_html = "";
+            var time_html;
+            var event_html;
+
+            for (var time in day) {
+                time_html = '<div class="time">' +
+                                '<div class="bar"></div>' +
+                                '<div class="events">' +
+
+                                    '<div>' + time.time + '</div>';
+
+                for (var event in time.events) {
+                    event_html =    '<div class="event">' +
+                                        '<p class="event__title">' + event.title + '</p>' +
+
+                                        '<p class="event__desc">' + event.desc + '</p>' +
+
+                                        '<div class="event__last_line">' +
+                                        '<span class="event__names">' + event.host + '</span>' +
+                                        '<span class="event__loc">' + event.loc + '</span>' +
+                                    '</div>';
+
+                    time_html += event_html;
+
+                }
+
+                time_html += '</div>';
+
+                day_html += time_html;
+            }
         }
     }
 };
