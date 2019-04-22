@@ -142,11 +142,11 @@ hr {
 }
 
 .rs-container {
-    margin: 0 15px !important;
+    margin: 0 10px !important;
 }
 
-.rs-pointer {
-
+.rs-container span:first-child, .rs-container span:fi{
+    visibility: hidden;
 }
 
 
