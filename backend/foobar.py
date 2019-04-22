@@ -920,7 +920,7 @@ def gsheets_get_day(day: str) -> list:
     # TODO get day by day num!!!
 
     # If modifying these scopes, delete the file token.pickle.
-    SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
     day = 'Template'  # TODO: redo
 
