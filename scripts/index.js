@@ -55,9 +55,12 @@ xhttp.onreadystatechange = function() {
                                             '<span class="event__names">' + event.host + '</span>' +
                                             '<span class="event__loc">' + event.loc + '</span>' +
                                         '</div>' +
-                                    '</div>';
+                                    '</div>' +
+                                    '<hr class="border_line">';
 
                     time_html += event_html;
+
+
 
                 }
 

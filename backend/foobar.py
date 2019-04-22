@@ -731,6 +731,8 @@ def checkRegCode(code):
 """                    SQLite database creation                  """
 """ ---===---==========================================---===--- """
 
+# TODO: SQL inj
+
 
 # TODO: place this in sql-specific functions
 conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread=False)
