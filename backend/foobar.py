@@ -73,16 +73,16 @@ def get(env, start_response, query):
     """
 
     if env['PATH_INFO'] == '/account':
-        return req_account(env, start_response, query)
+        return get_account(env, start_response, query)
 
     if env['PATH_INFO'] == '/day':
-        return req_day(env, start_response, query)
+        return get_day(env, start_response, query)
 
     if env['PATH_INFO'] == '/feedback':
-        return req_feedback_day(env, start_response, query)
+        return get_feedback(env, start_response, query)
 
     if env['PATH_INFO'] == '/projects':
-        return req_projects(env, start_response, query)
+        return get_projects(env, start_response, query)
 
 
 
@@ -122,7 +122,7 @@ def get(env, start_response, query):
     return [message_return, message_env, request_body]
 
 
-def req_account(env, start_response, query):
+def get_account(env, start_response, query):
     """ Account data HTTP request
     Will check session id and return data according to user
 
@@ -204,7 +204,7 @@ def req_account(env, start_response, query):
     return [json_data]
 
 
-def req_feedback_day(env, start_response, query):
+def get_feedback(env, start_response, query):
     """ Account data HTTP request
     Got day num and return day event for feedback
 
@@ -248,7 +248,7 @@ def req_feedback_day(env, start_response, query):
 
 
 # TODO: Max
-def req_projects(env, start_response, query):
+def get_projects(env, start_response, query):
     """ Projects HTTP request
     Send list of projects in json format
 
@@ -321,7 +321,7 @@ def req_projects(env, start_response, query):
 
 
 # TODO: Max
-def req_day(env, start_response, query):
+def get_day(env, start_response, query):
     """ Day schedule data HTTP request
     Get day num and return html
 
@@ -463,16 +463,16 @@ def post(env, start_response, query):
     """
 
     if env['PATH_INFO'] == '/login':
-        return req_login(env, start_response, query['name'], query['pass'])
+        return post_login(env, start_response, query['name'], query['pass'])
 
     if env['PATH_INFO'] == '/register':
-        return req_register(env, start_response, query['name'], query['pass'], query['code'])
+        return post_register(env, start_response, query['name'], query['pass'], query['code'])
 
     if env['PATH_INFO'] == '/feedback':
-        return req_feedback(env, start_response, query)
+        return post_feedback(env, start_response, query)
 
 
-def req_login(env, start_response, name, passw):
+def post_login(env, start_response, name, passw):
     """ Login HTTP request
     Create new session if it does not exist and send cookie sessid
 
@@ -516,7 +516,7 @@ def req_login(env, start_response, name, passw):
     return
 
 
-def req_register(env, start_response, name, passw, code):
+def post_register(env, start_response, name, passw, code):
     """ Register HTTP request
     Create new user if it does not exist and login user
 
@@ -551,7 +551,7 @@ def req_register(env, start_response, name, passw, code):
     return
 
 
-def req_feedback(env, start_response, query):
+def post_feedback(env, start_response, query):
     """ Login HTTP request
     By cookie create feedback for day
 
