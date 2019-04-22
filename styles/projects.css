@@ -18,9 +18,9 @@
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    height: 70px;
-    padding: 5px 10px;
-    background-color: orange;
+    height: 74px;
+    padding: 7px 10px;
+    background-color: white;
 
     overflow: hidden;
 }
@@ -44,12 +44,12 @@
 .project__top_line span:first-child {
     font-size: 18px;
     font-weight: bold;
-    color: red;
+    color: #03053b;
 }
 
 .project__top_line span:last-child {
     font-size: 14px;
-    color: gainsboro;
+    color: #8a8a8a;
 }
 
 .project img {
@@ -71,6 +71,10 @@
     text-overflow: ellipsis;
 
     margin: 0;
+    margin-bottom: 5px;
+    line-height: 0.9em;
+
+    color: #adadad;
 }
 
 
