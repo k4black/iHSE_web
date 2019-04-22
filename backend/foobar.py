@@ -922,6 +922,8 @@ def gsheets_get_day(day: str) -> list:
     # If modifying these scopes, delete the file token.pickle.
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
+    day = 'Template'  # TODO: redo
+
     # The ID and range of a sample spreadsheet.
     SAMPLE_SPREADSHEET_ID = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     SAMPLE_RANGE_NAME = day + '!A1:J30'
