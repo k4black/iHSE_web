@@ -325,7 +325,6 @@ def get_projects(env, start_response, query):
     return [json_data]
 
 
-# TODO: Max
 def get_day(env, start_response, query):
     """ Day schedule data HTTP request
     Get day num and return html
@@ -640,7 +639,7 @@ def checkRegCode(code):
 # TODO: SQL inj
 
 
-# TODO: place this in sql-specific functions
+# TODO: place this in sql-specific functions?
 conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread=False)
 conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
 cursor = conn.cursor()
@@ -854,7 +853,7 @@ def gsheets_get_day(day: str) -> list:
     day = 'Template'
     # The ID and range of a sample spreadsheet.
     spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    spreadsheet_range = day + '!A1:J30'
+    spreadsheet_range = day + '!A1:J32'
 
     # token.pickle stores the user's access and refresh tokens,
     # providing read/write access to GSheets.
