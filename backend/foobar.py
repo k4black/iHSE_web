@@ -948,7 +948,7 @@ def gsheets_get_day(day: str) -> list:
             creds.refresh(Request())
         else:
             print("credentials present")
-            flow = InstalledAppFlow.from_client_secrets_file('/home/ubuntu/iHSE_web/backend/credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file('/home/ubuntu/iHSE_web/backend/credentials.json.new', SCOPES)
             creds = flow.run_local_server()
         # Save the credentials for the next run
         with open('/home/ubuntu/iHSE_web/backend/token.pickle', 'wb') as token:
