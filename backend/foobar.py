@@ -304,6 +304,11 @@ def get_projects(env, start_response, query):
     data.append(project2)
 
 
+
+    data = gsheet_get_projects(None)
+
+
+
     json_data = json.dumps(data)
 
 
@@ -612,10 +617,85 @@ def post_feedback(env, start_response, query):
     user_obj = user(sessid)
 
 
-    gsheets_save_feedback(user_obj, day, parced)
+    if user_obj is not None:   # If user exist
+        gsheets_save_feedback(user_obj, day, parced)
+
+        start_response('200 Ok',
+                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                        #('Location', 'http://ihse.tk/login.html')
+                        ])
+
+    else:
+        start_response('405 Method Not Allowed',
+                       [('Access-Control-Allow-Origin', '*'),
+                        ])
+
+    return
+
+
+def post_project(env, start_response, query):
+    """ Post project HTTP request
+    Create new project signed by cookie
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if all are ok
+            401 Unauthorized: if wrong session id
+            405 Method Not Allowed: already got it
+
+    Returns:
+         None; Only http answer
+
+    """
+
+    # Json project data
+
+    # the environment variable CONTENT_LENGTH may be empty or missing
+    try:
+        request_body_size = int(env.get('CONTENT_LENGTH', 0))
+    except (ValueError):
+        request_body_size = 0
+
+    # When the method is POST the variable will be sent
+    # in the HTTP request body which is passed by the WSGI server
+    # in the file like wsgi.input environment variable.
+    request_body = env['wsgi.input'].read(request_body_size)
+    request_body = request_body.decode("utf-8")
+
+#     print(request_body)
+
+    parced = json.loads(request_body)
+
+
+#     print(parced)
+
+
+
+    # Parce cookie
+    rawdata = env.get('HTTP_COOKIE', '')
+    cookie = SimpleCookie()
+    cookie.load(rawdata)
+
+    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
+    # which is incompatible with requests. Manually construct a dictionary instead.
+    cookies = {}
+    for key, morsel in cookie.items():
+        cookies[key] = morsel.value
+
+    # Get session id or ''
+    sessid = bytes.fromhex( cookies.get('sessid', '') )
+
+    user_obj = user(sessid)
 
 
     if user_obj is not None:   # If user exist
+        gsheets_save_project(user_obj, parced)
 
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
@@ -953,7 +1033,7 @@ def gsheets_get_day() -> list:
     return html_timetable
 
 
-def gsheets_save_feedback(user_obj, day, json_obj):
+def gsheets_save_feedback(user_obj, day, feedback_data):
     """ Save feedback of user in google sheets
     Create new user if it does not exist
     Save in table id, name, phone type and team
@@ -961,7 +1041,7 @@ def gsheets_save_feedback(user_obj, day, json_obj):
     Args:
         user_obj: User object - (id, type, phone, name, pass, team)
         day: num of the day - string '16.04'
-        json_obj: Json obj of feedback - dictionary
+        feedback_data: Python obj of feedback - dictionary
                   {"overall": int,
                    "user1": string,
                    "user2": string,
@@ -975,7 +1055,7 @@ def gsheets_save_feedback(user_obj, day, json_obj):
                    }
 
     Returns:
-        None
+        state: Sucsess or not - bool
 
     """
 
@@ -997,6 +1077,61 @@ def gsheet_get_feedback(day):
 
     return ('Day of the Russia', ['Event 1', 'Other event', 'And the last one'])
 
+
+def gsheet_get_projects(filter_obj):
+    """ Get description of day for feedback in google sheets
+    Create new user if it does not exist
+    Save in table id, name, phone type and team
+
+    Args:
+        filter_obj: filter what we should return - (Name, type, name)   # TODO: Not now
+
+    Returns:
+        List of proojects obj:
+              [ {
+                 "title": string,
+                 "name": string,
+                 "type": string,
+                 "desc": string
+                 }, .........  ]
+
+             (TODO: not now: or None if no one)
+
+
+    """
+
+    return [ {  "title": "TITLE",
+                "name": "NAME",
+                "type": "TYPE",
+                "desc": "DESC" },
+                {"title": "Title of the pr",
+                 "name": "Name of user",
+                 "type": "Ted",
+                 "desc": "Some description of the project"
+                 } ]
+
+
+
+def gsheets_save_project(user_obj, project_data):
+    """ Save feedback of user in google sheets
+    Create new user if it does not exist
+    Save in table id, name, phone type and team
+
+    Args:
+        user_obj: User object - (id, type, phone, name, pass, team)
+        project_data: Python obj of project - dictionary
+                  {"title": string,
+                   "name": string,
+                   "type": string,
+                   "desc": string
+                   }
+
+    Returns:
+        state: Sucsess or not - bool
+
+    """
+
+    pass
 
 
 """ TEST """
