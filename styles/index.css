@@ -52,7 +52,7 @@ footer div {
     height: auto;
 
 
-    background-color: #adadad;
+    /*background-color: #adadad;*/
 
 }
 
@@ -62,10 +62,12 @@ footer div {
     flex-direction: row;
     justify-content: left;
 
-    background-color: #8a8a8a;
+    background-color: #e3e6e5;
 
 
 }
+
+
 
 
 .bar {
@@ -82,14 +84,14 @@ footer div {
     justify-content: left;
     width: 100%;
 
-    background-color: #007ac5;
+    /*background-color: #007ac5;*/
 
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 }
 
 
 .events div:first-child  {
-    background-color: #00b3bc;
+    background-color: #007ac5;
 }
 
 
@@ -103,11 +105,15 @@ footer div {
     width: 100%;
 
     padding: 0 10px;
-    background-color: orange;
+    /*background-color: orange;*/
     display: flex;
     flex-direction: column;
 
 
+}
+
+.events hr:last-child {
+    display: none;
 }
 
 
@@ -118,14 +124,14 @@ footer div {
 }
 
 .event__last_line span:first-child {
-    font-size: 18px;
-    font-weight: bold;
-    color: red;
+    font-size: 16px;
+    font-weight: lighter;
+    color: #333333;
 }
 
 .event__last_line span:last-child {
     font-size: 14px;
-    color: gainsboro;
+    color: #8a8a8a;
 }
 
 .event__title {
