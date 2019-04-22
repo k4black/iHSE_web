@@ -343,98 +343,20 @@ def get_day(env, start_response, query):
 
     """
 
-    # In format - 11.06
+    # format is "dd.mm"
     day = query['day']
 
-    """Json format for the day:
-
-        [
-            {
-                "time": "16:00 - 17:00",
-                "events": [
-                    {
-                        "title": "Event 1",
-                        "desc": "Description",
-                        "host": "Name of the host",
-                        "loc": "Location"
-                    },
-
-                    {
-                        "title": "Event 2",
-                        "desc": "Other text",
-                        "host": "Name of the host2",
-                        "loc": "Other loc"
-                    }
-
-                ]
-            },
-
-            {/* Othe time */}
-
-        ]
-    """
-
-    # Json day data
-    data = []
-    # TODO: SQL
-    time1 = {
-                "time": "16:00 - 17:00",
-                "events": [
-                    {
-                        "title": "Event 1",
-                        "desc": "Description",
-                        "host": "Name of the host",
-                        "loc": "Location"
-                    },
-
-                    {
-                        "title": "Event 2",
-                        "desc": "Other text",
-                        "host": "Name of the host2",
-                        "loc": "Other loc"
-                    }
-
-                ]
-            }
-
-    time2 = {
-                 "time": "19:00 - 21:00",
-                 "events": [
-                     {
-                         "title": "Event 3",
-                         "desc": "Text and text and text",
-                         "host": "Name",
-                         "loc": "Location"
-                     },
-
-                     {
-                         "title": "Event 4",
-                         "desc": "Other text",
-                         "host": "MAX",
-                         "loc": "Other loc"
-                     }
-
-                 ]
-             }
-
-    data.append(time1)
-    data.append(time2)
-
-    data = gsheets_get_day(day)
-    json_data = json.dumps(data)
-
-
-#     print(json_data)
-
+    data = gsheets_get_day(day)  # getting pseudo-json here
+    json_data = json.dumps(data)  # creating real json here
     json_data = json_data.encode('utf-8')
 
-    start_response('200 OK',
-                   [('Access-Control-Allow-Origin', '*'),
-                    ('Content-type', 'text/plant'),
-                    ('Content-Length', str(len(json_data))) ])
+    start_response('200 OK', [
+                                  ('Access-Control-Allow-Origin', '*'),
+                                  ('Content-type', 'text/plant'),
+                                  ('Content-Length', str(len(json_data)))
+                             ])
 
     return [json_data]
-    # return html_data
 
 
 def post(env, start_response, query):
@@ -934,27 +856,23 @@ def gsheets_get_day(day: str) -> list:
     spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     spreadsheet_range = day + '!A1:J30'
 
-    # creds = None
     # token.pickle stores the user's access and refresh tokens,
     # providing read/write access to GSheets.
     # It was actually created on local machine ( where it was created
     # automatically when the authorization flow completed for the first
     # time) and ctrl-pasted to server.
-    # if os.path.exists('/home/ubuntu/iHSE_web/backend/token.pickle'):
-    #     with open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb') as token:
-    #         creds = pickle.load(token)
-
     token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
     creds = pickle.load(token)
 
-    service = build('sheets', 'v4', credentials=creds)
-
     # Call the Sheets API
+    service = build('sheets', 'v4', credentials=creds)
     sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=spreadsheet_id,
-                                range=spreadsheet_range).execute()
+    request = sheet.values().get(spreadsheetId=spreadsheet_id,
+                                 range=spreadsheet_range)
+    result = request.execute()
     values = result.get('values', [])
 
+    # function for removing crlf from human-generated timetable
     def crlf(x):
         y = x.replace('\n', ' - ')
         return y
@@ -962,9 +880,9 @@ def gsheets_get_day(day: str) -> list:
     # removing \n
     for index, line in enumerate(values[2::], start=2):
         values[index] = list(map(lambda x: crlf(x), line))
-    timetable = []
-    mask = []
-    titleplus = 0
+    timetable = []  # resulting timetable
+    mask = []  # selector for correct selection of GSheets verbose data
+    titleplus = 0  # selector for correct differentiation of desc, loc, name
     for line in values[2::]:
         if line[0] != '':
             timetable.append({})
@@ -987,45 +905,6 @@ def gsheets_get_day(day: str) -> list:
                 for pos, index in enumerate(mask):
                     timetable[-1]['events'][pos]['loc'] = line[index]
             titleplus += 1
-
-    """
-    # building html FOR ONE DAY ONLY WITHOUT ASKING WHAT DAY TO SHOW
-    # html_timetable = '<div class="day">'
-    html_timetable = ''
-    for time in timetable[values[0][0]]:
-        html_timetable += '<div class="time"><div class="bar"></div><div class="events">'
-
-        html_timetable += '<div>' + str(time[0]) + '</div>'
-        print(time[0])
-        index = 1
-        while not index == len(time):
-            html_timetable += '<table class="event">'
-            html_timetable += '<th>SOME</th>'
-            html_timetable += '<tr><td>Desc:</td><td>'
-            html_timetable += str(time[index])
-            index += 1
-            html_timetable += '</td></tr>'
-            html_timetable += '<tr><td>Name:</td><td>'
-            html_timetable += str(time[index])
-            index += 1
-            html_timetable += '</td></tr>'
-            html_timetable += '<tr><td>Loc:</td><td>'
-            html_timetable += str(time[index])
-            index += 1
-            html_timetable += '</td></tr>'
-            html_timetable += '</table>'
-
-        # for event in time[1::]:
-        #     html_timetable += '<table class="event">'
-        #     html_timetable += '<th>SOME</th>'
-        #   #  html_timetable += str(event)
-        # html_timetable += '</table>'
-
-        html_timetable += '</div></div>'
-    # html_timetable += '</div>'
-
-    return html_timetable
-    """
 
     return timetable
 
