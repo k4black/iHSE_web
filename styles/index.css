@@ -69,6 +69,10 @@ footer div {
 
 
 
+.border_line {
+    margin: 10px 0;
+}
+
 
 .bar {
     width: 30px;
@@ -92,6 +96,7 @@ footer div {
 
 .events div:first-child  {
     background-color: #007ac5;
+    margin-bottom: 10px;
 }
 
 
@@ -135,6 +140,7 @@ footer div {
 }
 
 .event__title {
+    line-height: 1em;
     font-size: 20px;
     font-weight: bold;
 }
