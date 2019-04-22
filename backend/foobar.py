@@ -346,10 +346,6 @@ def get_day(env, start_response, query):
     # In format - 11.06
     day = query['day']
 
-    # html_data = str(gsheets_get_day())
-    #
-    # html_data = html_data.encode('utf-8')
-
     """Json format for the day:
 
         [
@@ -424,7 +420,7 @@ def get_day(env, start_response, query):
     data.append(time1)
     data.append(time2)
 
-    data = gsheets_get_day()
+    data = gsheets_get_day(day)
     json_data = json.dumps(data)
 
 
@@ -919,7 +915,7 @@ def login(name, passw, agent, ip, time='0'):
 """ ---===---==========================================---===--- """
 
 
-def gsheets_get_day() -> list:
+def gsheets_get_day(day: str) -> list:
     # TODO comment
     # TODO get day by day num!!!
 
@@ -928,7 +924,8 @@ def gsheets_get_day() -> list:
 
     # The ID and range of a sample spreadsheet.
     SAMPLE_SPREADSHEET_ID = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    SAMPLE_RANGE_NAME = 'Template!A1:J30'  # intentionally bigger range
+    SAMPLE_RANGE_NAME = day + '!A1:J30'
+    # SAMPLE_RANGE_NAME = 'Template!A1:J30'  # intentionally bigger range
 
     """
         Shows basic usage of the Sheets API.
