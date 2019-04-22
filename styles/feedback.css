@@ -142,17 +142,20 @@ hr {
 }
 
 .rs-container {
-    margin: 0 10px !important;
+    z-index: -10;
+    overflow: hidden;
+    /*margin: 0 10px !important;*/
+    padding: 0 10px !important;
 }
 
-.rs-container span:first-child, .rs-container span:fi{
-    visibility: hidden;
+.rs-container span:first-child, .rs-container span:last-child{
+    /*visibility: hidden;*/
 }
 
 
 
 
-button {
+.feedback_form button {
     display: block;
     height: 50px;
     width: 200px;
@@ -167,7 +170,7 @@ button {
     line-height: 1.2;
     text-transform: uppercase;
 
-    z-index: 10;
+    z-index: 0;
     background: #007ac5;
 
     margin-top: 50px;
