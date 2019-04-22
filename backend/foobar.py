@@ -346,9 +346,9 @@ def get_day(env, start_response, query):
     # In format - 11.06
     day = query['day']
 
-    html_data = str(gsheets_get_day())
-
-    html_data = html_data.encode('utf-8')
+    # html_data = str(gsheets_get_day())
+    #
+    # html_data = html_data.encode('utf-8')
 
     """Json format for the day:
 
@@ -424,7 +424,7 @@ def get_day(env, start_response, query):
     data.append(time1)
     data.append(time2)
 
-
+    data = gsheets_get_day()
     json_data = json.dumps(data)
 
 
@@ -432,14 +432,13 @@ def get_day(env, start_response, query):
 
     json_data = json_data.encode('utf-8')
 
-
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', '*'),
                     ('Content-type', 'text/plant'),
                     ('Content-Length', str(len(json_data))) ])
 
-    # return [json_data]
-    return html_data
+    return [json_data]
+    # return html_data
 
 
 def post(env, start_response, query):
