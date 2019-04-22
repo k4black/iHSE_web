@@ -338,23 +338,14 @@ def get_day(env, start_response, query):
 
     """
 
-
     # In format - 11.06
     day = query['day']
-
 
     html_data = str(gsheets_get_day())
 
     html_data = html_data.encode('utf-8')
 
-
-
-    # tmp = gsheets_get_day(day)
-
-
-
-    """
-    Json format for the day:
+    """Json format for the day:
 
         [
             {
@@ -380,10 +371,7 @@ def get_day(env, start_response, query):
             {/* Othe time */}
 
         ]
-
-
     """
-
 
     # Json day data
     data = []
@@ -445,7 +433,8 @@ def get_day(env, start_response, query):
                     ('Content-type', 'text/plant'),
                     ('Content-Length', str(len(json_data))) ])
 
-    return [json_data]
+    # return [json_data]
+    return html_data
 
 
 def post(env, start_response, query):
@@ -857,8 +846,8 @@ def gsheets_get_day() -> list:
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
     # The ID and range of a sample spreadsheet.
-    SAMPLE_SPREADSHEET_ID = '18DH6SNfsIlJiFxz50zOxoMIzdL3wS4iH70I_YYOFm2Y'
-    SAMPLE_RANGE_NAME = 'Sheet1!A1:D21'
+    SAMPLE_SPREADSHEET_ID = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    SAMPLE_RANGE_NAME = 'Template!A1:J30'  # intentionally bigger range
 
     """
         Shows basic usage of the Sheets API.
@@ -869,6 +858,7 @@ def gsheets_get_day() -> list:
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
+    # TODO: remove this local_server part, it won't work anyway
     if os.path.exists('/home/ubuntu/iHSE_web/backend/token.pickle'):
         with open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb') as token:
             creds = pickle.load(token)
@@ -892,29 +882,52 @@ def gsheets_get_day() -> list:
                                 range=SAMPLE_RANGE_NAME).execute()
     values = result.get('values', [])
 
-    # removing empty lines
-    toremove = []
-    for index, value in enumerate(values):
-        if not value:
-            toremove.append(index)
-    for index in toremove[::-1]:
-        values.pop(index)
+    def crlf(x):
+        y = x.replace('\n', ' - ')
+        return y
 
-    # creating nice dictionary of lists (days with time-events pairs)
-    tmpstring = ''
-    timetable = {}
-    timetable[values[0][0]] = []
-    for event in values[1::]:
-        tmpstring = event[0].replace(' ', '')
-        tmpstring = tmpstring.replace('\n', ' - ')
-        timetable[values[0][0]].append([tmpstring])
-        for name in event[1::]:
-            if len(name) > 0:
-                tmpstring = name
-                tmpstring = tmpstring.splitlines()
-                for data in tmpstring:
-                    timetable[values[0][0]][-1].append(data)
+    # removing \n
+    for index, line in enumerate(values[2::], start=2):
+        values[index] = list(map(lambda x: crlf(x), line))
+    timetable = []
+    # print(values[0][0])
+    mask = []
+    titleplus = 0
+    for line in values[2::]:
+        if line[0] != '':
+            # print('leading')
+            timetable.append({})
+            timetable[-1]['time'] = line[0]
+            timetable[-1]['events'] = []
+            # print(line[0], end=', ')
+            mask.clear()
+            titleplus = 0
+            for index, cell in enumerate(line[1::], start=1):
+                if cell != '' and cell != '.':
+                    mask.append(index)
+                    timetable[-1]['events'].append({'title': cell})
+            # for index in mask:
+                # print(line[index], end=', ')
+                # print()
+        else:
+            if titleplus == 0:
+                for pos, index in enumerate(mask):
+                    timetable[-1]['events'][pos]['desc'] = line[index]
+            elif titleplus == 1:
+                for pos, index in enumerate(mask):
+                    timetable[-1]['events'][pos]['host'] = line[index]
+            elif titleplus == 2:
+                for pos, index in enumerate(mask):
+                    timetable[-1]['events'][pos]['loc'] = line[index]
+            # print('trailing')
+            # for index in mask:
+                # print(line[index], end=', ')
+                # print()
+            titleplus += 1
 
+    # print(timetable)
+
+    """
     # building html FOR ONE DAY ONLY WITHOUT ASKING WHAT DAY TO SHOW
     # html_timetable = '<div class="day">'
     html_timetable = ''
@@ -951,6 +964,9 @@ def gsheets_get_day() -> list:
     # html_timetable += '</div>'
 
     return html_timetable
+    """
+
+    return timetable
 
 
 def gsheets_save_feedback(user_obj, day, json_obj):
