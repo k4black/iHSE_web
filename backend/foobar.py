@@ -925,9 +925,9 @@ def gsheets_get_day(day: str) -> list:
     day = 'Template'  # TODO: redo
 
     # The ID and range of a sample spreadsheet.
-    SAMPLE_SPREADSHEET_ID = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    SAMPLE_RANGE_NAME = day + '!A1:J30'
-    # SAMPLE_RANGE_NAME = 'Template!A1:J30'  # intentionally bigger range
+    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    spreadsheet_range = day + '!A1:J30'
+    # spreadsheet_range = 'Template!A1:J30'  # intentionally bigger range
 
     """
         Shows basic usage of the Sheets API.
@@ -958,8 +958,8 @@ def gsheets_get_day(day: str) -> list:
 
     # Call the Sheets API
     sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=SAMPLE_SPREADSHEET_ID,
-                                range=SAMPLE_RANGE_NAME).execute()
+    result = sheet.values().get(spreadsheetId=spreadsheet_id,
+                                range=spreadsheet_range).execute()
     values = result.get('values', [])
 
     def crlf(x):
@@ -970,25 +970,19 @@ def gsheets_get_day(day: str) -> list:
     for index, line in enumerate(values[2::], start=2):
         values[index] = list(map(lambda x: crlf(x), line))
     timetable = []
-    # print(values[0][0])
     mask = []
     titleplus = 0
     for line in values[2::]:
         if line[0] != '':
-            # print('leading')
             timetable.append({})
             timetable[-1]['time'] = line[0]
             timetable[-1]['events'] = []
-            # print(line[0], end=', ')
             mask.clear()
             titleplus = 0
             for index, cell in enumerate(line[1::], start=1):
                 if cell != '' and cell != '.':
                     mask.append(index)
                     timetable[-1]['events'].append({'title': cell})
-            # for index in mask:
-                # print(line[index], end=', ')
-                # print()
         else:
             if titleplus == 0:
                 for pos, index in enumerate(mask):
@@ -999,13 +993,7 @@ def gsheets_get_day(day: str) -> list:
             elif titleplus == 2:
                 for pos, index in enumerate(mask):
                     timetable[-1]['events'][pos]['loc'] = line[index]
-            # print('trailing')
-            # for index in mask:
-                # print(line[index], end=', ')
-                # print()
             titleplus += 1
-
-    # print(timetable)
 
     """
     # building html FOR ONE DAY ONLY WITHOUT ASKING WHAT DAY TO SHOW
