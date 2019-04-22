@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, viewport-fit=cover">
+
+    <meta name="theme-color" content="#007ac5">
+
+    <title>Calendar</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/calendar.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!--Onpage logic -->
+    <script defer async src="scripts/calendar.js"></script>
+    <!--STD nav logic -->
+    <script defer async src="scripts/nav.js"></script>
+
+</head>
+<body>
+
+
+<header class="header">
+
+    <nav class="hamburger">
+        <button class="hamburger__button">
+            <span class="hamburger__button-bar"></span>
+            <span class="hamburger__button-bar"></span>
+            <span class="hamburger__button-bar"></span>
+        </button>
+    </nav>
+
+
+    <div class="title">Main</div>
+
+
+    <!--  TODO: Desktop header  -->
+    <nav class="desktop">
+        <div class="desktop__navigation" >
+            <div>Recipes</div>
+            <div>More</div>
+        </div>
+    </nav>
+
+</header>
+
+
+<div class="topbar">
+
+    <div class="day">
+        <div class="day__num">2</div>
+        <div class="day__name">13.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">3</div>
+        <div class="day__name">14.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">4</div>
+        <div class="day__name">15.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">5</div>
+        <div class="day__name">16.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">6</div>
+        <div class="day__name">17.05</div>
+    </div>
+
+    <div class="day today">
+        <div class="day__num">7</div>
+        <div class="day__name">18.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">8</div>
+        <div class="day__name">19.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">9</div>
+        <div class="day__name">20.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">10</div>
+        <div class="day__name">21.05</div>
+    </div>
+
+    <div class="day">
+        <div class="day__num">11</div>
+        <div class="day__name">22.05</div>
+    </div>
+
+</div>
+
+
+<div class="wrapper">
+
+
+    <div class="calendar__day">
+
+        <div class="time">
+            <div class="bar"></div>
+
+            <div class="events">
+
+                <div>15:00 - 16:00</div>
+
+                <div class="event">
+                    <p class="event__title">Title</p>
+
+                    <p class="event__desc">Some description of the event too long</p>
+
+                    <div class="event__last_line">
+                        <span class="event__names">MMMax</span>
+                        <span class="event__loc">Nearby</span>
+                    </div>
+
+                </div>
+
+                <div class="event">
+                    <p class="event__title">Title</p>
+
+                    <p class="event__desc">Some description of the event too long</p>
+
+                    <div class="event__last_line">
+                        <span class="event__names">MMMax</span>
+                        <span class="event__loc">Nearby</span>
+                    </div>
+
+                </div>
+
+                <hr style="background-color: #E2E2E2; width: 100%; height: 1px; border: none;">
+
+            </div>
+
+        </div>
+
+
+        <div class="time">
+            <div class="bar"></div>
+
+            <div class="events">
+
+                <div>15:00 - 16:00</div>
+
+                <div class="event">
+                    <p class="event__title">Title</p>
+
+                    <p class="event__desc">Some description of the event too long</p>
+
+                    <div class="event__last_line">
+                        <span class="event__loc">Nearby</span>
+                        <span class="event__names">MMMax</span>
+                    </div>
+
+                </div>
+
+                <div class="event">
+                    <p class="event__title">Title</p>
+
+                    <p class="event__desc">Some description of the event too long</p>
+
+                    <div class="event__last_line">
+                        <span class="event__loc">Nearby</span>
+                        <span class="event__names">MMMax</span>
+                    </div>
+
+                </div>
+
+                <hr style="background-color: #E2E2E2; width: 100%; height: 1px; border: none;">
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+</body>
+</html>
