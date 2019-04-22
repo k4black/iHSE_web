@@ -22,10 +22,27 @@
 
 
 /**
+ * Account open management
+ * OnClick rty to open account.html
+ */
+var isLogined = false;
+
+document.querySelector('.mobile__sidebar__account').addEventListener('click',
+function () {
+
+    if (isLogined)
+        window.location.href = "account.html";
+
+    else
+        window.location.href = "login.html";
+});
+
+
+
+/**
  * Get account information from server
  * Send http GET request and get user bio (or guest bio if cookie does not exist)
  * TODO: optimize selection
- * TODO: move in the sidebar js file
  */
 var accountName = document.querySelector('.mobile__sidebar__name');
 var accountPhone = document.querySelector('.mobile__sidebar__phone');
@@ -40,6 +57,7 @@ xhttp.onreadystatechange = function() {
             var user = JSON.parse( this.responseText );
             accountName.innerText = user.name;
             accountPhone.innerText = user.phone;
+            isLogined = (user.type == 0 ? false : true);
 
         }
     }
