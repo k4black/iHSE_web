@@ -49,11 +49,11 @@ xhttp.onreadystatechange = function() {
                     event_html =    '<div class="event">' +
                                         '<p class="event__title">' + event.title + '</p>' +
 
-                                        '<p class="event__desc">' + event.desc + '</p>' +
+                                        '<p class="event__desc">' + (event.desc == undefined ? "" : event.desc) + '</p>' +
 
                                         '<div class="event__last_line">' +
-                                            '<span class="event__names">' + event.host + '</span>' +
-                                            '<span class="event__loc">' + event.loc + '</span>' +
+                                            '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
+                                            '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
                                         '</div>' +
                                     '</div>' +
                                     '<hr class="border_line">';

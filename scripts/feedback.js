@@ -6,7 +6,37 @@
 
 
 
-// TODO: set today
+
+
+var today_date = new Date();
+var dd = String(today_date.getDate()).padStart(2, '0');
+var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
+
+
+var today = mm + '.' + dd;
+
+
+
+startDay = 5;
+numOfDays = 14;
+
+topbar_html = "";
+
+for (var i = 0; i < numOfDays; ++i) {
+    if ( (startDay + i) == 15) {
+        topbar_html += '<div class="day today">'
+    } else {
+        topbar_html += '<div class="day">'
+    }
+
+    topbar_html +=          '<div class="day__num">' + i + '</div>' +
+        '<div class="day__name">' + (startDay + i) + '.' + '06' + '</div>' +
+        '</div>';
+}
+
+console.log(topbar_html);
+document.querySelector('.topbar').innerHTML = topbar_html;
+
 
 
 
