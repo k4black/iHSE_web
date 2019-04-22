@@ -916,43 +916,36 @@ def login(name, passw, agent, ip, time='0'):
 
 
 def gsheets_get_day(day: str) -> list:
-    # TODO comment
-    # TODO get day by day num!!!
+    """ Gets timetable from Google Sheets
+        and returns it in pseudo-json format
 
+        Args:
+            day: calendar day, has to be same as sheet in GSheets - string
+
+        Returns:
+            timetable: timetable of the corresponding day in pseudo-json - list
+    """
+    # TODO waiting for Serova to get real day, not template
     # If modifying these scopes, delete the file token.pickle.
-    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+    # SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-    day = 'Template'  # TODO: redo
-
+    day = 'Template'
     # The ID and range of a sample spreadsheet.
     spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     spreadsheet_range = day + '!A1:J30'
-    # spreadsheet_range = 'Template!A1:J30'  # intentionally bigger range
 
-    """
-        Shows basic usage of the Sheets API.
-        Prints values from a sample spreadsheet.
-    """
+    # creds = None
+    # token.pickle stores the user's access and refresh tokens,
+    # providing read/write access to GSheets.
+    # It was actually created on local machine ( where it was created
+    # automatically when the authorization flow completed for the first
+    # time) and ctrl-pasted to server.
+    # if os.path.exists('/home/ubuntu/iHSE_web/backend/token.pickle'):
+    #     with open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb') as token:
+    #         creds = pickle.load(token)
 
-    creds = None
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    # TODO: remove this local_server part, it won't work anyway
-    if os.path.exists('/home/ubuntu/iHSE_web/backend/token.pickle'):
-        with open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-    # # If there are no (valid) credentials available, let the user log in.
-    # if not creds or not creds.valid:
-    #     if creds and creds.expired and creds.refresh_token:
-    #         creds.refresh(Request())
-    #     else:
-    #         print("credentials present")
-    #         flow = InstalledAppFlow.from_client_secrets_file('/home/ubuntu/iHSE_web/backend/credentials.json.new', SCOPES)
-    #         creds = flow.run_local_server()
-    #     # Save the credentials for the next run
-    #     with open('/home/ubuntu/iHSE_web/backend/token.pickle', 'wb') as token:
-    #         pickle.dump(creds, token)
+    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
+    creds = pickle.load(token)
 
     service = build('sheets', 'v4', credentials=creds)
 
