@@ -381,6 +381,9 @@ def post(env, start_response, query):
     if env['PATH_INFO'] == '/feedback':
         return post_feedback(env, start_response, query)
 
+    if env['PATH_INFO'] == '/project':
+        return post_project(env, start_response, query)
+
 
 def post_login(env, start_response, name, passw):
     """ Login HTTP request
@@ -593,6 +596,8 @@ def post_project(env, start_response, query):
 
     """
 
+    print('project')
+
     # Json project data
 
     # the environment variable CONTENT_LENGTH may be empty or missing
@@ -612,7 +617,7 @@ def post_project(env, start_response, query):
     parced = json.loads(request_body)
 
 
-#     print(parced)
+    pprint(parced)
 
 
 
