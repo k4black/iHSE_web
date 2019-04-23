@@ -911,7 +911,7 @@ def gsheets_get_day(day: str) -> list:
 def gsheets_save_feedback(user_obj, day, feedback_data):
     """ Save feedback of user in google sheets
     Create new user if it does not exist
-    Save in table id, name, phone type and team
+    Save in table name, phone and team
 
     Args:
         user_obj: User object - (id, type, phone, name, pass, team)
@@ -934,7 +934,7 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
 
     """
 
-    pass
+    return True  # TODO: check GSheetsAPI how to track success
 
 
 def gsheet_get_feedback(day):
