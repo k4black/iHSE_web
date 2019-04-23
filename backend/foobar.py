@@ -767,7 +767,7 @@ def seftySql(sql):
 
 def users():
     # TODO Remove or comment
-    cursor.execute("SELECT * FROM user")
+    cursor.execute("SELECT * FROM users")
     users_list = cursor.fetchall()
     return users_list
 
