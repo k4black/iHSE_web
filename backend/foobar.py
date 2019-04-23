@@ -934,6 +934,48 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
 
     """
 
+    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    # token.pickle stores the user's access and refresh tokens,
+    # providing read/write access to GSheets.
+    # It was actually created on local machine ( where it was created
+    # automatically when the authorization flow completed for the first
+    # time) and ctrl-pasted to server.
+    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
+    creds = pickle.load(token)
+    service = build('sheets', 'v4', credentials=creds)
+
+    # getting position to write to
+    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+                                                       range='Feedback!A1')
+    read_response = read_request.execute()
+    read_values = read_response.get('values', [])
+    position = read_values[0][0]
+    print(position)
+    write_range = 'WriteTest!A' + position + ':H' + str(int(position) + 2)
+
+    # writing actual feedback
+    data = {'values': [[user_obj[3], user_obj[2], user_obj[5], feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
+                       ['', '', '', '', feedback_data['user2'], feedback_data['event1_text'], feedback_data['event2_text'], feedback_data['event3_text']],
+                       ['', '', '', '', feedback_data['user3']]],
+            'range': write_range
+            }
+    body = {
+        'valueInputOption': 'RAW',
+        'data': data
+    }
+    write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
+                                                                body=body)
+    write_response = write_request.execute()
+    # print('{0} cells updated.'.format(write_response.get('updatedCells')))
+
+    # updating next writing position
+    update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
+                                                            range='WriteTest!A1',
+                                                            valueInputOption='RAW',
+                                                            body={'values': [[int(position) + 3]]})
+    update_response = update_request.execute()
+    # print('{0} cells updated.'.format(update_response.get('updatedCells')))
+
     return True  # TODO: check GSheetsAPI how to track success
 
 
