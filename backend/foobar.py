@@ -1170,7 +1170,7 @@ def gsheets_get_projects(filter_obj):
         projects[-1]['desc'] = project[3]
         projects[-1]['anno'] = project[4]
 
-    return [projects]
+    return projects
 
     # return [ {  "title": "TITLE",
     #             "name": "NAME",
