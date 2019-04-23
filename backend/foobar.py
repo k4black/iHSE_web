@@ -384,6 +384,13 @@ def post(env, start_response, query):
     if env['PATH_INFO'] == '/project':
         return post_project(env, start_response, query)
 
+    # TODO: Remove or move in admin panel
+    if env['PATH_INFO'] == '/save':
+        users_list = users()
+
+        gsheets_save_users(users_list)
+        return
+
 
 def post_login(env, start_response, name, passw):
     """ Login HTTP request
@@ -758,6 +765,13 @@ def seftySql(sql):
             conn.commit()
 
 
+def users():
+    # TODO Remove or comment
+    cursor.execute("SELECT * FROM user")
+    users_list = cursor.fetchall()
+    return users_list
+
+
 def session(id):
     """ Get session obj by id
 
@@ -1036,7 +1050,7 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
 
 
 def gsheets_check_code(code):
-    """ Check registration code
+    """ Check registration code in google sheets
     Get user type according this code
 
     Args:
@@ -1132,6 +1146,52 @@ def gsheet_get_projects(filter_obj):
                  "type": "Ted",
                  "desc": "Some description of the project"
                  } ]
+
+
+def gsheets_save_users(users_list):
+    """ Save list of registred users in google sheets
+    Create new user if it does not exist
+    Save in table id, name, phone type and team
+
+    Args:
+        users_list: User objects - list [ (id, type, phone, name, pass, team), ....]
+    Returns:
+        none
+
+    """
+
+    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    # token.pickle stores the user's access and refresh tokens,
+    # providing read/write access to GSheets.
+    # It was actually created on local machine ( where it was created
+    # automatically when the authorization flow completed for the first
+    # time) and ctrl-pasted to server.
+    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
+    creds = pickle.load(token)
+    service = build('sheets', 'v4', credentials=creds)
+
+    # getting position to write to
+    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+                                                       range='Users!A1')
+    read_response = read_request.execute()
+    read_values = read_response.get('values', [])
+    position = read_values[0][0]
+
+    write_range = 'Users!A' + position + ':F' + position
+
+    i = 0
+
+    data = {'values': [[users_list[i][0], users_list[i][1], users_list[i][2], users_list[i][3], users_list[i][4], users_list[i][5]]],
+            'range': write_range
+            }
+    body = {
+        'valueInputOption': 'RAW',
+        'data': data
+    }
+    write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
+                                                                body=body)
+    write_response = write_request.execute()
+    # print('{0} cells updated.'.format(write_response.get('updatedCells')))
 
 
 def gsheets_save_project(user_obj, project_data):
