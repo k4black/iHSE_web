@@ -1063,7 +1063,7 @@ def gsheets_check_code(code):
     for index, code_line in enumerate(read_values, start=5):
         if code_line[0] == code and code_line[2] == '0':
             user_type = int(code_line[1])
-            upd_range = 'Codes!A' + str(index)
+            upd_range = 'Codes!C' + str(index)
             update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
                                                                     range=upd_range,
                                                                     valueInputOption='RAW',
@@ -1072,7 +1072,7 @@ def gsheets_check_code(code):
             reg_allowed = True
             break
 
-    
+
     if reg_allowed:
         return user_type
     else:
