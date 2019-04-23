@@ -783,9 +783,10 @@ def users():
 
 def load(users_list):
     # TODO Remove or comment
+    cursor.execute("DELETE FROM users")
+    conn.commit()
+
     for user_obj in users_list:
-        cursor.execute("DELETE FROM users")
-        conn.commit()
 
 
 
