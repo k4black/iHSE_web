@@ -956,7 +956,8 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
     write_range = 'WriteTest!A' + position + ':H' + str(int(position) + 2)
 
     # writing actual feedback
-    data = {'values': [[user_obj[3], user_obj[2], user_obj[5], feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
+    data = {'values': [[user_obj[3], user_obj[2], user_obj[5],
+                        feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
                        ['', '', '', '', feedback_data['user2'], feedback_data['event1_text'], feedback_data['event2_text'], feedback_data['event3_text']],
                        ['', '', '', '', feedback_data['user3']]],
             'range': write_range
