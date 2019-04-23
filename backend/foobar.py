@@ -959,7 +959,8 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
     """
 
     # TODO: remove after registration is complete
-    user_obj = (21321, 2, 78942345435, 'Surname Name', 'hrterghresgr', 99)
+    if user_obj is None:
+        user_obj = (21321, 2, '+7 Error', 'ERROR', 666, 99)
 
     print('User obj:', user_obj)
     print('Feedback data:', feedback_data)
