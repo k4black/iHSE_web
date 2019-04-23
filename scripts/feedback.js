@@ -8,13 +8,16 @@
 
 
 
+
+/**
+ * Create topbar day buttons
+ */
 var today_date = new Date();
 var dd = String(today_date.getDate()).padStart(2, '0');
 var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
 
 
 var today = mm + '.' + dd;
-
 
 
 startDay = 5;

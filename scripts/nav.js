@@ -59,6 +59,12 @@ xhttp.onreadystatechange = function() {
             accountPhone.innerText = user.phone;
             isLogined = (user.type == 0 ? false : true);
 
+            if (isLogined) {
+                document.querySelectorAll('.mobile__item__hidden').forEach(function () {
+                    this.classList.remove('mobile__item__hidden');
+                })
+            }
+
         }
     }
 };
