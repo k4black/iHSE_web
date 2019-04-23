@@ -1111,7 +1111,6 @@ def gsheet_get_projects(filter_obj):
                  } ]
 
 
-
 def gsheets_save_project(user_obj, project_data):
     """ Save feedback of user in google sheets
     Create new user if it does not exist
@@ -1132,7 +1131,52 @@ def gsheets_save_project(user_obj, project_data):
 
     """
 
-    pass
+    print('User obj:', user_obj)
+    print('Project data:', project_data)
+
+    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    # token.pickle stores the user's access and refresh tokens,
+    # providing read/write access to GSheets.
+    # It was actually created on local machine ( where it was created
+    # automatically when the authorization flow completed for the first
+    # time) and ctrl-pasted to server.
+    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
+    creds = pickle.load(token)
+    service = build('sheets', 'v4', credentials=creds)
+
+    # getting position to write to
+    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+                                                       range='Projects!A1')
+    read_response = read_request.execute()
+    read_values = read_response.get('values', [])
+    position = read_values[0][0]
+    print(position)
+    write_range = 'Projects!A' + position + ':E' + position
+
+    # writing actual feedback
+    data = {'values': [[project_data['title'], project_data['type'], project_data['name'], project_data['desc'], project_data['anno']]],
+            'range': write_range
+            }
+    body = {
+        'valueInputOption': 'RAW',
+        'data': data
+    }
+    write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
+                                                                body=body)
+    write_response = write_request.execute()
+    # print('{0} cells updated.'.format(write_response.get('updatedCells')))
+    print('writing done')
+
+    # updating next writing position
+    update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
+                                                            range='Projects!A1',
+                                                            valueInputOption='RAW',
+                                                            body={'values': [[int(position) + 1]]})
+    update_response = update_request.execute()
+    # print('{0} cells updated.'.format(update_response.get('updatedCells')))
+    print('updating done')
+
+    return True  # TODO: check GSheetsAPI how to track success
 
 
 """ TEST """
