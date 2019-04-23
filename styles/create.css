@@ -1,0 +1,125 @@
+
+
+
+.wrapper form {
+    color: #9f9f9f;
+    display: flex;
+
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+
+
+
+}
+
+.create__title {
+    color: #333333;
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+.create__icon {
+    display: block;
+    position: static;
+
+    background-image: url('../images/icon.png');
+    background-attachment: fixed;
+    background-position: 50% 27.6%;
+    background-size: 60px;
+    background-repeat: no-repeat;
+
+
+    height: 60px;
+    width: 60px;
+    margin-bottom: 70px;
+    margin-left: auto;
+    margin-right: auto;
+
+    transition-property: height, margin-bottom;
+    transition-duration: 500ms, 500ms;
+    transition-timing-function: ease-out;
+}
+
+
+.close .create__icon {
+    height: 0.1px;
+    margin-bottom: 20px;
+}
+
+.create__input {
+    margin-bottom: 40px;
+    display: block;
+    position: relative;
+    /*border: 1px black solid;*/
+    border-bottom: 2px solid #adadad;
+}
+
+.create__input label {
+    font-size: 16px;
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    vertical-align: middle;
+}
+
+
+.create__input input {
+    color: #333333;
+    font-size: 15px;
+    width: 100%;
+    height: 35px;
+}
+
+.create__input div {
+
+    font-size: 15px;
+    min-height: 1em;
+    height: auto;
+    overflow: auto;
+    padding: 5px;
+    width: 200px;
+}
+
+.create__input select {
+    width: 100%;
+}
+
+
+.create__label {
+    transform: translateY(0);
+    transition: transform 300ms ease-out;
+}
+
+.active {
+    transform: translateY(-20px);
+}
+
+
+
+.create__button {
+    display: block;
+    height: 50px;
+    width: 100%;
+    border-radius: 25px;
+    overflow: hidden;
+    margin: 0 auto;
+
+
+    /*font-family: Poppins-Medium;*/
+    font-size: 15px;
+    color: #fff;
+    line-height: 1.2;
+    text-transform: uppercase;
+
+    z-index: 10;
+    background: #007ac5;
+}
+
+
+#ajax_form {
+    position: relative;
+    z-index: 10;
+    background-color: white;
+}
