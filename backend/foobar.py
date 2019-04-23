@@ -1212,12 +1212,10 @@ def gsheets_save_users(users_list):
     read_values = read_response.get('values', [])
     position = read_values[0][0]
 
-    write_range = 'Users!A' + position + ':F' + position
-
-
 
     for i in range(len(users_list)):
-        position += 1
+        write_range = 'Users!A' + str(5+i) + ':F' + str(5+i)
+
 
         data = {'values': [[users_list[i][0], users_list[i][1], users_list[i][2], users_list[i][3], users_list[i][4], users_list[i][5]]],
                 'range': write_range
@@ -1274,7 +1272,7 @@ def gsheets_save_project(user_obj, project_data):
     read_values = read_response.get('values', [])
     position = read_values[0][0]
     print(position)
-    write_range = 'Projects!A' + str(5+i) + ':E' + str(5+i)
+    write_range = 'Projects!A' + position + ':E' + position
 
     # writing actual feedback
     data = {'values': [[project_data['title'], project_data['type'], project_data['name'], project_data['desc'], project_data['anno']]],
