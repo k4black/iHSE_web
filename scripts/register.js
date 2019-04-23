@@ -113,6 +113,27 @@ name_.addEventListener('blur', function () {
 
 
 /**
+ * Add phone field animations
+ * Hint Rise up when there is some text or cursor inside it
+ * TODO: optimize selection
+ */
+var phone = document.querySelector('#phone');
+phone.addEventListener('focus', function () {
+    onFocus(true);
+    phone.closest('div').querySelector("label").classList.add('active');
+    console.log('phone active');
+});
+
+phone.addEventListener('blur', function () {
+    onFocus(false);
+    if (phone.value != "")
+        return;
+
+    phone.closest('div').querySelector("label").classList.remove('active');
+    console.log('phone inactive');
+});
+
+/**
  * Add password field animations
  * Hint Rise up when there is some text or cursor inside it
  * TODO: optimize selection
