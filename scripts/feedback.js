@@ -83,6 +83,7 @@ for (var i = 0; i < days.length; i++) {
         };
 
         xhttp.open("GET", "http://ihse.tk:50000/feedback" + query, true);
+        xhttp.withCredentials = true; // To send Cookie;
         xhttp.send();
 
 
