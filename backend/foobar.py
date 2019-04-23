@@ -450,7 +450,7 @@ def post_register(env, start_response, name, passw, code):
     if gsheets_check_code(code):
         register(name, passw, 0, '+7', 0)
 
-        req_login(env, start_response, name, passw)
+        post_login(env, start_response, name, passw)
 
     else:
         start_response('403 Forbidden',
