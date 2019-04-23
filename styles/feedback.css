@@ -71,6 +71,9 @@
 
 
 
+
+
+
 .day {
     display: inline-block;
 }
@@ -144,7 +147,6 @@ hr {
 }
 
 .rs-container {
-    z-index: -10;
     overflow: hidden;
     /*margin: 0 10px !important;*/
     padding: 0 10px !important;

@@ -5,11 +5,13 @@
 }
 
 .border_line {
-    margin: 0 10px;
-    width: 80%;
+    margin: 0 0;
+    width: 100%;
 }
 
-
+.border_line:last-child {
+    display: none;
+}
 
 
 

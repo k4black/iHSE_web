@@ -60,6 +60,12 @@ xhttp.onreadystatechange = function() {
 
             isLogin = true;
 
+            if (isLogined) {
+                document.querySelectorAll('.mobile__item__hidden').forEach(function () {
+                    this.classList.remove('mobile__item__hidden');
+                })
+            }
+
         }
     }
 };
