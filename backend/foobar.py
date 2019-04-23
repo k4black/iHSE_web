@@ -977,12 +977,12 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
 
     # getting position to write to
     read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='WriteTest!A1')
+                                                       range='Feedback!A1')
     read_response = read_request.execute()
     read_values = read_response.get('values', [])
     position = read_values[0][0]
     print(position)
-    write_range = 'WriteTest!A' + position + ':H' + str(int(position) + 2)
+    write_range = 'Feedback!A' + position + ':H' + str(int(position) + 2)
 
     # writing actual feedback
     data = {'values': [[user_obj[3], user_obj[2], user_obj[5],
@@ -1003,7 +1003,7 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
 
     # updating next writing position
     update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
-                                                            range='WriteTest!A1',
+                                                            range='Feedback!A1',
                                                             valueInputOption='RAW',
                                                             body={'values': [[int(position) + 3]]})
     update_response = update_request.execute()
