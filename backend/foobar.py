@@ -1214,19 +1214,22 @@ def gsheets_save_users(users_list):
 
     write_range = 'Users!A' + position + ':F' + position
 
-    i = 0
 
-    data = {'values': [[users_list[i][0], users_list[i][1], users_list[i][2], users_list[i][3], users_list[i][4], users_list[i][5]]],
-            'range': write_range
-            }
-    body = {
-        'valueInputOption': 'RAW',
-        'data': data
-    }
-    write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
-                                                                body=body)
-    write_response = write_request.execute()
-    # print('{0} cells updated.'.format(write_response.get('updatedCells')))
+
+    for i in range(len(users_list)):
+        position += 1
+
+        data = {'values': [[users_list[i][0], users_list[i][1], users_list[i][2], users_list[i][3], users_list[i][4], users_list[i][5]]],
+                'range': write_range
+                }
+        body = {
+            'valueInputOption': 'RAW',
+            'data': data
+        }
+        write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
+                                                                    body=body)
+        write_response = write_request.execute()
+        # print('{0} cells updated.'.format(write_response.get('updatedCells')))
 
     print('Users saved')
 
