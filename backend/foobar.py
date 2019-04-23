@@ -263,7 +263,7 @@ def get_projects(env, start_response, query):
     """
 
 
-    #tmp = gsheet_get_projects(day)  # return (title, [event1, event2, event3] ) or None
+    #tmp = gsheets_get_projects(day)  # return (title, [event1, event2, event3] ) or None
 
 
     """
@@ -305,7 +305,7 @@ def get_projects(env, start_response, query):
 
 
 
-    data = gsheet_get_projects(None)
+    data = gsheets_get_projects(None)
 
 
 
@@ -1101,7 +1101,7 @@ def gsheet_get_feedback(day):
     return ('Day of the Russia', ['Event 1', 'Other event', 'And the last one'])
 
 
-def gsheet_get_projects(filter_obj):
+def gsheets_get_projects(filter_obj):
     """ Get description of day for feedback in google sheets
     Create new user if it does not exist
     Save in table id, name, phone type and team
@@ -1110,12 +1110,13 @@ def gsheet_get_projects(filter_obj):
         filter_obj: filter what we should return - (Name, type, name)   # TODO: Not now
 
     Returns:
-        List of proojects obj:
+        List of projects obj:
               [ {
                  "title": string,
                  "name": string,
                  "type": string,
-                 "desc": string
+                 "desc": string,
+                 "anno": string
                  }, .........  ]
 
              (TODO: not now: or None if no one)
@@ -1123,15 +1124,49 @@ def gsheet_get_projects(filter_obj):
 
     """
 
-    return [ {  "title": "TITLE",
-                "name": "NAME",
-                "type": "TYPE",
-                "desc": "DESC" },
-                {"title": "Title of the pr",
-                 "name": "Name of user",
-                 "type": "Ted",
-                 "desc": "Some description of the project"
-                 } ]
+    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    # token.pickle stores the user's access and refresh tokens,
+    # providing read/write access to GSheets.
+    # It was actually created on local machine ( where it was created
+    # automatically when the authorization flow completed for the first
+    # time) and ctrl-pasted to server.
+    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
+    creds = pickle.load(token)
+    service = build('sheets', 'v4', credentials=creds)
+
+    # getting range to read from
+    range_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+                                                        range='Projects!A1')
+    range_response = range_request.execute()
+    range_values = range_response.get('values', [])
+    position = range_values[0][0]
+    read_range = 'Projects!A4:E' + chr(ord(position)-1)
+
+    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+                                                        range=read_range)
+    read_response = read_request.execute()
+    read_values = read_request.get('values', [])
+
+    projects = []
+    for project in read_values:
+        projects.append({})
+        projects[-1]['title'] = project[0]
+        projects[-1]['type'] = project[1]
+        projects[-1]['name'] = project[2]
+        projects[-1]['desc'] = project[3]
+        projects[-1]['anno'] = project[4]
+
+    return [projects]
+
+    # return [ {  "title": "TITLE",
+    #             "name": "NAME",
+    #             "type": "TYPE",
+    #             "desc": "DESC" },
+    #             {"title": "Title of the pr",
+    #              "name": "Name of user",
+    #              "type": "Ted",
+    #              "desc": "Some description of the project"
+    #              } ]
 
 
 def gsheets_save_project(user_obj, project_data):
