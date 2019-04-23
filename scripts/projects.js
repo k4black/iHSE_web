@@ -5,6 +5,21 @@
  */
 
 
+
+/**
+ * Add header button event - new event
+ */
+document.querySelector('.header__button').addEventListener('click', function () {
+
+
+    alert('New one');
+
+});
+
+
+
+
+
 /**
  * Get day information from server
  * Send http GET request and get list of projects

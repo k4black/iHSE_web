@@ -109,6 +109,16 @@ button {
 }
 
 
+.header__button {
+    display: block;
+    font-size: 35px;
+    padding: 10px 20px;
+    position: absolute;
+    right: 0px;
+}
+
+
+
 
 .border_line {
     background-color: #D1D4D3;
@@ -253,6 +263,8 @@ button {
 .hide {
     transform: translateY(150%);
 }
+
+
 
 .mobile__background {
     position: fixed;
@@ -417,6 +429,25 @@ button {
 
     position: absolute;
     right: 20px;
+}
+
+
+
+/* Hidden for unreg users */
+.mobile__item__hidden {
+    /*display: none;*/
+}
+
+.mobile__item__hidden {
+    pointer-events: none;
+}
+
+.mobile__item__hidden p {
+    color: #9b9b9b;
+}
+
+.mobile__item__hidden i {
+    color: #eaeaea;
 }
 
 

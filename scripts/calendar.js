@@ -1,6 +1,13 @@
+/**
+ * @fileoverview Calendar page logic
+ * File providing all functions which are used to control calendar.html page
+ * Including animations and http requests if that are sending by NOT nav elements
+ */
 
 
 
+
+/** ===============  LOGIC and REQUESTS  =============== */
 
 
 
@@ -39,7 +46,7 @@ document.querySelector('.topbar').innerHTML = topbar_html;
 
 
 
-/** ===============  LOGIC and REQUESTS  =============== */
+
 
 
 // TODO: Loading icon
