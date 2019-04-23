@@ -1159,7 +1159,7 @@ def gsheets_get_projects(filter_obj):
     read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
                                                         range=read_range)
     read_response = read_request.execute()
-    read_values = read_request.get('values', [])
+    read_values = read_response.get('values', [])
 
     projects = []
     for project in read_values:
