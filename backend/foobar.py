@@ -1217,6 +1217,7 @@ def gsheets_save_users(users_list):
 
 
     for i in range(len(users_list)):
+        position += 1
 
         data = {'values': [[users_list[i][0], users_list[i][1], users_list[i][2], users_list[i][3], users_list[i][4], users_list[i][5]]],
                 'range': write_range
