@@ -88,7 +88,6 @@ def get(env, start_response, query):
 
 
 
-
     # TMP for TESTing
     message_return = b"<p>Hello from uWSGI!</p>"
 
@@ -163,33 +162,34 @@ def get_account(env, start_response, query):
 
     if sessid == b'':  # No cookie
 
-        data['name'] = 'Guest'
-        data['phone'] = ''
-        data['type'] = 0
-        data['group'] = 0
-        json_data = json.dumps(data)
+        start_response('401 Unauthorized',
+                       [('Access-Control-Allow-Origin', '*'),
+                        ])
 
-    else:
-        sess = session(sessid)
+        return
 
-        if sess is None:  # Wrong cookie
-            data['name'] = 'Guest No sess'
-            data['phone'] = ''
-            data['type'] = 0
-            data['group'] = 0
-            json_data = json.dumps(data)
 
-            # TODO: Clear cookie
+    sess = session(sessid)
 
-        else:   # Cookie - ok
-            usr = user( sess[1] )  # get user by user id
+    if sess is None:  # Wrong cookie
 
-            data['name'] = usr[3]
-            data['phone'] = usr[2]
-            data['type'] = usr[1]
-            data['group'] = usr[5]
-            json_data = json.dumps(data)
+        start_response('401 Unauthorized',
+                       [('Access-Control-Allow-Origin', '*'),
+                        ])
 
+        # TODO: Clear cookie
+
+        return
+
+    # Cookie - ok
+
+    usr = user( sess[1] )  # get user by user id
+
+    data['name'] = usr[3]
+    data['phone'] = usr[2]
+    data['type'] = usr[1]
+    data['group'] = usr[5]
+    json_data = json.dumps(data)
 
 #     print(json_data)
 
@@ -501,7 +501,7 @@ def post_feedback(env, start_response, query):
     parced = json.loads(request_body)
 
 
-    print(parced)
+    print("Feedback data: ", parced)
 
 
 
@@ -520,6 +520,10 @@ def post_feedback(env, start_response, query):
     sessid = bytes.fromhex( cookies.get('sessid', '') )
 
     user_obj = user(sessid)
+
+
+    print("Feedback by user: ", user_obj)
+
 
 
     if user_obj is not None:   # If user exist

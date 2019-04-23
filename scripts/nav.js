@@ -25,12 +25,12 @@
  * Account open management
  * OnClick rty to open account.html
  */
-var isLogined = false;
+var isLogin = false;
 
 document.querySelector('.mobile__sidebar__account').addEventListener('click',
 function () {
 
-    if (isLogined)
+    if (isLogin)
         window.location.href = "account.html";
 
     else
@@ -57,7 +57,8 @@ xhttp.onreadystatechange = function() {
             var user = JSON.parse( this.responseText );
             accountName.innerText = user.name;
             accountPhone.innerText = user.phone;
-            isLogined = (user.type == 0 ? false : true);
+
+            isLogin = true;
 
         }
     }
@@ -85,7 +86,7 @@ mobileNav.addEventListener('click', function () {
     //alert(document.referrer);
 
     if (document.referrer == "http://ihse.tk/login.html")
-        window.location.href = "http://ihse.tk/";
+        window.location.href = "http://ihse.tk/account.html";
 
     else
         window.location.href = document.referrer;
