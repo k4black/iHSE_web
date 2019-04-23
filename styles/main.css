@@ -114,7 +114,11 @@ button {
     font-size: 35px;
     padding: 10px 20px;
     position: absolute;
-    right: 0px;
+    right: 0;
+}
+
+.header__button a {
+    color: white;
 }
 
 

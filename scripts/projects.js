@@ -6,18 +6,6 @@
 
 
 
-/**
- * Add header button event - new event
- */
-document.querySelector('.header__button').addEventListener('click', function () {
-
-
-    alert('New one');
-
-});
-
-
-
 
 
 /**
