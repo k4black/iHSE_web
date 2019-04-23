@@ -21,7 +21,7 @@
  * TODO: optimize selection
  * TODO: optimize html generation
  */
-var day = document.querySelector('.day');
+var day = document.querySelector('.calendar__day');
 
 var xhttp = new XMLHttpRequest();
 
