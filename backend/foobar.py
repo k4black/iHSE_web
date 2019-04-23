@@ -93,6 +93,15 @@ def get(env, start_response, query):
         return
 
 
+    # TODO: Remove or move in admin panel
+    if env['PATH_INFO'] == '/load':
+
+        users_list = gsheets_get_users()
+
+        load(users_list)
+
+        return
+
 
 
     # TMP for TESTing
@@ -772,6 +781,22 @@ def users():
     return users_list
 
 
+def load(users_list):
+    # TODO Remove or comment
+    for user_obj in users_list:
+        cursor.execute("DELETE FROM users")
+        conn.commit()
+
+
+
+        cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
+                          SELECT ?, ?, ?, ?, ?
+                          WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
+                       (user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[3], user_obj[4]))
+        conn.commit()
+
+
+
 def session(id):
     """ Get session obj by id
 
@@ -800,7 +825,7 @@ def user(id):
         id: user id from bd
 
     Returns:
-        user obj: (id, user_type, phone, name, pass, team)
+        user_obj: (id, user_type, phone, name, pass, team)
                      or None if there is no such user
 
     """
@@ -1185,8 +1210,6 @@ def gsheets_get_projects(filter_obj):
 
 def gsheets_save_users(users_list):
     """ Save list of registred users in google sheets
-    Create new user if it does not exist
-    Save in table id, name, phone type and team
 
     Args:
         users_list: User objects - list [ (id, type, phone, name, pass, team), ....]
@@ -1230,6 +1253,27 @@ def gsheets_save_users(users_list):
         # print('{0} cells updated.'.format(write_response.get('updatedCells')))
 
     print('Users saved')
+
+
+def gsheets_get_users():
+    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    # token.pickle stores the user's access and refresh tokens,
+    # providing read/write access to GSheets.
+    # It was actually created on local machine ( where it was created
+    # automatically when the authorization flow completed for the first
+    # time) and ctrl-pasted to server.
+    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
+    creds = pickle.load(token)
+    service = build('sheets', 'v4', credentials=creds)
+
+    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+                                                       range='Users!A5:F15')  #TODO Max F15
+    read_response = read_request.execute()
+    read_values = read_response.get('values', [])
+
+    print(read_values)
+
+    return read_values
 
 
 def gsheets_save_project(user_obj, project_data):
