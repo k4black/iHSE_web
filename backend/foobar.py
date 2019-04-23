@@ -521,7 +521,6 @@ def post_feedback(env, start_response, query):
 
     user_obj = user(sessid)
 
-
     if True or user_obj is not None:   # If user exist
         gsheets_save_feedback(user_obj, day, parced)
 
@@ -933,6 +932,9 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
         state: Sucsess or not - bool
 
     """
+
+    # TODO: remove after registration is complete
+    user_obj = (21321, 2, 78942345435, 'Surname Name', 'hrterghresgr', 99)
 
     spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     # token.pickle stores the user's access and refresh tokens,
