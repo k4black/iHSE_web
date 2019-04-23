@@ -1274,7 +1274,7 @@ def gsheets_save_project(user_obj, project_data):
     read_values = read_response.get('values', [])
     position = read_values[0][0]
     print(position)
-    write_range = 'Projects!A' + position + ':E' + position
+    write_range = 'Projects!A' + str(5+i) + ':E' + str(5+i)
 
     # writing actual feedback
     data = {'values': [[project_data['title'], project_data['type'], project_data['name'], project_data['desc'], project_data['anno']]],
