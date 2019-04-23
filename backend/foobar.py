@@ -957,7 +957,7 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
 
     # getting position to write to
     read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Feedback!A1')
+                                                       range='WriteTest!A1')
     read_response = read_request.execute()
     read_values = read_response.get('values', [])
     position = read_values[0][0]
@@ -979,6 +979,7 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
                                                                 body=body)
     write_response = write_request.execute()
     # print('{0} cells updated.'.format(write_response.get('updatedCells')))
+    print('writing done')
 
     # updating next writing position
     update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
@@ -987,6 +988,7 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
                                                             body={'values': [[int(position) + 3]]})
     update_response = update_request.execute()
     # print('{0} cells updated.'.format(update_response.get('updatedCells')))
+    print('updating done')
 
     return True  # TODO: check GSheetsAPI how to track success
 
