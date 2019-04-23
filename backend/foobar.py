@@ -473,6 +473,7 @@ def post_feedback(env, start_response, query):
     Note:
         Send:
             200 Ok: if all are ok
+            401
             405 Method Not Allowed: already got it
 
     Returns:
@@ -519,15 +520,33 @@ def post_feedback(env, start_response, query):
     # Get session id or ''
     sessid = bytes.fromhex( cookies.get('sessid', '') )
 
-    user_obj = user(sessid)
+    sess_obj = session(sessid)
+
+    # If no session
+    if False and sess_obj is None:
+        start_response('401 Unauthorized',
+                           [('Access-Control-Allow-Origin', '*'),
+                            ])
+        return
+
+    print("Feedback by sess: ", sess)
+
+    user_obj = user(sess_obj[1])
+
+    # If no such user (wrong cookie)
+    if False and user_obj is None:
+
+        start_response('401 Unauthorized',
+                               [('Access-Control-Allow-Origin', '*'),
+                                ])
+        return
 
 
     print("Feedback by user: ", user_obj)
 
 
 
-#     if user_obj is not None:   # If user exist
-    if True:   # If user exist
+    if True:   # TODO: If writing ok
         gsheets_save_feedback(user_obj, day, parced)
 
         start_response('200 Ok',
