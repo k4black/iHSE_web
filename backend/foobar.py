@@ -522,7 +522,7 @@ def post_feedback(env, start_response, query):
     user_obj = user(sessid)
 
 
-    if user_obj is not None:   # If user exist
+    if True or user_obj is not None:   # If user exist
         gsheets_save_feedback(user_obj, day, parced)
 
         start_response('200 Ok',
