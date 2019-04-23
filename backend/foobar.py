@@ -376,7 +376,7 @@ def post(env, start_response, query):
         return post_login(env, start_response, query['name'], query['pass'])
 
     if env['PATH_INFO'] == '/register':
-        return post_register(env, start_response, query['name'], query['pass'], query['code'])
+        return post_register(env, start_response, query['name'], query['phone'], query['pass'], query['code'])
 
     if env['PATH_INFO'] == '/feedback':
         return post_feedback(env, start_response, query)
@@ -426,7 +426,7 @@ def post_login(env, start_response, name, passw):
     return
 
 
-def post_register(env, start_response, name, passw, code):
+def post_register(env, start_response, name, phone, passw, code):
     """ Register HTTP request
     Create new user if it does not exist and login user
 
@@ -434,6 +434,7 @@ def post_register(env, start_response, name, passw, code):
         env: HTTP request environment - dict
         start_response: HTTP response headers place
         name: User name - string
+        phone: User phone - string
         passw: Password hash - int
         code: special code responsible for the user type and permission to register - string
 
@@ -454,7 +455,7 @@ def post_register(env, start_response, name, passw, code):
     print("Registration user type: ", user_type)
 
     if user_type is not None:
-        register(name, passw, user_type, '+7', 0)
+        register(name, passw, user_type, phone, 0)
 
 
         print("Registration user name: ", name)

@@ -34,24 +34,25 @@ function hashCode(s) {
 /**
  * Add button event - 'register'
  * Send http POST request to register and automatically login - get session id
- * TODO: Register form
+ * TODO: Register formne
  */
 var buttonReg = document.querySelector('#btnReg');
 buttonReg.addEventListener('click', function () {
 
     var name_ = buttonReg.parentElement.querySelector('#name');
+    var phone = buttonReg.parentElement.querySelector('#phone');
     var pass = buttonReg.parentElement.querySelector('#pass');
     var code = buttonReg.parentElement.querySelector('#code');
 
 
-    if (name_.value == "" || pass.value == "" || code.value == "") // If some field are empty - do nothing
+    if (name_.value == "" || pass.value == "" || code.value == "" || phone.value == "") // If some field are empty - do nothing
         return
 
 
 
     // Pass not password but hashcode of it
     // code - registration code
-    var query = "?name=" + name_.value + "&pass=" + hashCode(pass.value) + "&code=" + code.value;
+    var query = "?name=" + name_.value + "&phone=" + phone.value + "&pass=" + hashCode(pass.value) + "&code=" + code.value;
 
 
 
@@ -64,6 +65,7 @@ buttonReg.addEventListener('click', function () {
                 alert("ok reg!");  // TODO: Redirection
 
                 name.value = "";
+                phone.value = "";
                 pass.value = "";
                 code.value = "";
             }
