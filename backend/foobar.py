@@ -617,7 +617,7 @@ def post_project(env, start_response, query):
     parced = json.loads(request_body)
 
 
-    pprint(parced)
+    print(parced)
 
 
 
