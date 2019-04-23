@@ -454,7 +454,7 @@ def post_register(env, start_response, name, passw, code):
     print("Registration user type: ", user_type)
 
     if user_type is not None:
-        register(name, passw, 0, '+7', 0)
+        register(name, passw, user_type, '+7', 0)
 
 
         print("Registration user name: ", name)
@@ -1059,8 +1059,10 @@ def gsheets_check_code(code):
     read_values = read_response.get('values', [])
 
     reg_allowed = False
-    for index, code in enumerate(read_values, start=5):
-        if code[0] == code and code[2] == '0':
+    user_type = -1
+    for index, code_line in enumerate(read_values, start=5):
+        if code_line[0] == code and code_line[2] == '0':
+            user_type = int(code_line[1])
             upd_range = 'Codes!A' + str(index)
             update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
                                                                     range=upd_range,
@@ -1070,9 +1072,9 @@ def gsheets_check_code(code):
             reg_allowed = True
             break
 
-    # TODO: !!! Return type of user
+    
     if reg_allowed:
-        return 0
+        return user_type
     else:
         return None
 
