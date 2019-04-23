@@ -447,7 +447,7 @@ def post_register(env, start_response, name, passw, code):
 
     """
 
-    if checkRegCode(code):
+    if gsheets_check_code(code):
         register(name, passw, 0, '+7', 0)
 
         req_login(env, start_response, name, passw)
@@ -661,22 +661,6 @@ def post_project(env, start_response, query):
                         ])
 
     return
-
-
-# TODO: Max
-def checkRegCode(code):
-    """ Check register code
-
-    Args:
-        code: special code hash wich will be responsible for the user type and permission to register - int
-
-
-    Returns:
-        flag: registration allowed or not - bool
-
-    """
-
-    return True
 
 
 """ ---===---==========================================---===--- """
@@ -1034,6 +1018,48 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
     print('updating done')
 
     return True  # TODO: check GSheetsAPI how to track success
+
+
+def gsheets_check_code(code):
+    """ Check register code
+
+    Args:
+        code: special code hash which will be responsible for the user type and permission to register - str
+
+
+    Returns:
+        flag: registration allowed or not - bool
+
+    """
+
+    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    # token.pickle stores the user's access and refresh tokens,
+    # providing read/write access to GSheets.
+    # It was actually created on local machine ( where it was created
+    # automatically when the authorization flow completed for the first
+    # time) and ctrl-pasted to server.
+    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
+    creds = pickle.load(token)
+    service = build('sheets', 'v4', credentials=creds)
+
+    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+                                                       range='Codes!A5:C9')
+    read_response = read_request.execute()
+    read_values = read_response.get('values', [])
+
+    reg_allowed = False
+    for index, code in enumerate(read_values, start=5):
+        if code[0] == code and code[2] == '0':
+            upd_range = 'Codes!A' + str(index)
+            update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
+                                                                    range=upd_range,
+                                                                    valueInputOption='RAW',
+                                                                    body={'values': [[1]]})
+            update_response = update_request.execute()
+            reg_allowed = True
+            break
+
+    return reg_allowed
 
 
 def gsheet_get_feedback(day):
