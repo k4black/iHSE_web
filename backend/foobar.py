@@ -435,7 +435,7 @@ def post_register(env, start_response, name, passw, code):
         start_response: HTTP response headers place
         name: User name - string
         passw: Password hash - int
-        code: special code hash wich will be responsible for the user type and permission to register - int
+        code: special code responsible for the user type and permission to register - string
 
     Note:
         Send:
@@ -447,8 +447,17 @@ def post_register(env, start_response, name, passw, code):
 
     """
 
-    if gsheets_check_code(code):
+    print("Registration code: ", code)
+
+    user_type = gsheets_check_code(code)
+
+    print("Registration user type: ", user_type)
+
+    if user_type is not None:
         register(name, passw, 0, '+7', 0)
+
+
+        print("Registration user name: ", name)
 
         post_login(env, start_response, name, passw)
 
@@ -1021,14 +1030,16 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
 
 
 def gsheets_check_code(code):
-    """ Check register code
+    """ Check registration code
+    Get user type according this code
 
     Args:
         code: special code hash which will be responsible for the user type and permission to register - str
 
 
     Returns:
-        flag: registration allowed or not - bool
+        type: type of user - int or None if registration allowed
+
 
     """
 
@@ -1059,7 +1070,11 @@ def gsheets_check_code(code):
             reg_allowed = True
             break
 
-    return reg_allowed
+    # TODO: !!! Return type of user
+    if reg_allowed:
+        return 0
+    else:
+        return None
 
 
 def gsheet_get_feedback(day):
