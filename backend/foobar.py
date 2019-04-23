@@ -85,6 +85,13 @@ def get(env, start_response, query):
         return get_projects(env, start_response, query)
 
 
+    # TODO: Remove or move in admin panel
+    if env['PATH_INFO'] == '/save':
+        users_list = users()
+
+        gsheets_save_users(users_list)
+        return
+
 
 
 
@@ -383,13 +390,6 @@ def post(env, start_response, query):
 
     if env['PATH_INFO'] == '/project':
         return post_project(env, start_response, query)
-
-    # TODO: Remove or move in admin panel
-    if env['PATH_INFO'] == '/save':
-        users_list = users()
-
-        gsheets_save_users(users_list)
-        return
 
 
 def post_login(env, start_response, name, passw):
@@ -1192,6 +1192,8 @@ def gsheets_save_users(users_list):
                                                                 body=body)
     write_response = write_request.execute()
     # print('{0} cells updated.'.format(write_response.get('updatedCells')))
+
+    print('Users saved')
 
 
 def gsheets_save_project(user_obj, project_data):
