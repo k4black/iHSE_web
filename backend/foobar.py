@@ -529,7 +529,7 @@ def post_feedback(env, start_response, query):
                             ])
         return
 
-    print("Feedback by sess: ", sess)
+    print("Feedback by sess: ", sess_obj)
 
     user_obj = user(sess_obj[1])
 
