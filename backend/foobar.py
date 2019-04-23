@@ -1154,7 +1154,7 @@ def gsheets_get_projects(filter_obj):
     range_response = range_request.execute()
     range_values = range_response.get('values', [])
     position = range_values[0][0]
-    read_range = 'Projects!A4:E' + chr(ord(position)-1)
+    read_range = 'Projects!A4:E' + chr(int(position)-1)
 
     read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
                                                         range=read_range)
@@ -1170,7 +1170,7 @@ def gsheets_get_projects(filter_obj):
         projects[-1]['desc'] = project[3]
         projects[-1]['anno'] = project[4]
 
-    return [projects]
+    return projects
 
     # return [ {  "title": "TITLE",
     #             "name": "NAME",
