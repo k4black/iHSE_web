@@ -415,6 +415,9 @@ def post(env, start_response, query):
     if env['PATH_INFO'] == '/project':
         return post_project(env, start_response, query)
 
+    if env['PATH_INFO'] == '/logout':
+        return post_logout(env, start_response, query)
+
 
 def post_login(env, start_response, name, passw):
     """ Login HTTP request

@@ -52,6 +52,7 @@ document.querySelector('.header__button').addEventListener('click', function () 
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields name and phone
 
+                alert('LOGOUT!');
                 document.referrer = 'http://ihse.tk/';
 
             }
