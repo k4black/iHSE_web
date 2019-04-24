@@ -1,16 +1,17 @@
 import urllib.parse
-import sqlite3
 from http.cookies import SimpleCookie
 import time
 import json
-# 👇👇👇 imports for GSheetsAPI 👇👇👇
+# Sqlite import
+import sqlite3
+# GSheetsAPI imports
 import pickle
 import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-# TODO: Delete accounts user/user and admin/admin
+
 
 
 """ ---===---==========================================---===--- """
@@ -87,7 +88,7 @@ def get(env, start_response, query):
 
     # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/save':
-        users_list = users()
+        users_list = sql_get_users()
 
         gsheets_save_users(users_list)
         return
@@ -98,7 +99,7 @@ def get(env, start_response, query):
 
         users_list = gsheets_get_users()
 
-        load(users_list)
+        sql_load_users(users_list)
 
         return
 
@@ -185,7 +186,7 @@ def get_account(env, start_response, query):
         return
 
 
-    sess = session(sessid)
+    sess = sql_get_session(sessid)
 
     if sess is None:  # Wrong cookie
 
@@ -199,7 +200,7 @@ def get_account(env, start_response, query):
 
     # Cookie - ok
 
-    usr = user( sess[1] )  # get user by user id
+    usr = sql_get_user( sess[1] )  # get user by user id
 
     data['name'] = usr[3]
     data['phone'] = usr[2]
@@ -422,7 +423,7 @@ def post_login(env, start_response, name, passw):
     """
 
     # Get session obj or None
-    res = login(name, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
+    res = sql_login(name, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
 
     # TODO: redirection by '302 Found'
     if res is not None:
@@ -474,7 +475,7 @@ def post_register(env, start_response, name, phone, passw, code):
     print("Registration user type: ", user_type)
 
     if user_type is not None:
-        register(name, passw, user_type, phone, 0)
+        sql_register(name, passw, user_type, phone, 0)
 
 
         print("Registration user name: ", name)
@@ -549,7 +550,7 @@ def post_feedback(env, start_response, query):
     # Get session id or ''
     sessid = bytes.fromhex( cookies.get('sessid', '') )
 
-    sess_obj = session(sessid)
+    sess_obj = sql_get_session(sessid)
 
     # If no session
     if False and sess_obj is None:
@@ -560,7 +561,7 @@ def post_feedback(env, start_response, query):
 
     print("Feedback by sess: ", sess_obj)
 
-    user_obj = user(sess_obj[1])
+    user_obj = sql_get_user(sess_obj[1])
 
     # If no such user (wrong cookie)
     if False and user_obj is None:
@@ -651,7 +652,7 @@ def post_project(env, start_response, query):
     # Get session id or ''
     sessid = bytes.fromhex( cookies.get('sessid', '') )
 
-    sess_obj = session(sessid)
+    sess_obj = sql_get_session(sessid)
 
     # If no session
     if False and sess_obj is None:
@@ -662,7 +663,7 @@ def post_project(env, start_response, query):
 
     print("Project by sess: ", sess_obj)
 
-    user_obj = user(sess_obj[1])
+    user_obj = sql_get_user(sess_obj[1])
 
     # If no such user (wrong cookie)
     if False and user_obj is None:
@@ -745,7 +746,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
 """ ---===---==========================================---===--- """
 
 
-def seftySql(sql):
+def sql_safety_request(sql):
     """ Try to run sql code event if db is bisy
 
     Args:
@@ -774,14 +775,14 @@ def seftySql(sql):
             conn.commit()
 
 
-def users():
+def sql_get_users():
     # TODO Remove or comment
     cursor.execute("SELECT * FROM users")
     users_list = cursor.fetchall()
     return users_list
 
 
-def load(users_list):
+def sql_load_users(users_list):
     # TODO Remove or comment
     cursor.execute("DELETE FROM users")
     conn.commit()
@@ -798,7 +799,7 @@ def load(users_list):
 
 
 
-def session(id):
+def sql_get_session(id):
     """ Get session obj by id
 
     Args:
@@ -819,7 +820,7 @@ def session(id):
         return sessions[0]
 
 
-def user(id):
+def sql_get_user(id):
     """ Get user obj by id
 
     Args:
@@ -840,7 +841,7 @@ def user(id):
         return users[0]
 
 
-def register(name, passw, type, phone, team):
+def sql_register(name, passw, type, phone, team):
     """ Register new user
     There is no verification - create anywhere
 
@@ -870,7 +871,7 @@ def register(name, passw, type, phone, team):
     conn.commit()
 
 
-def login(name, passw, agent, ip, time='0'):
+def sql_login(name, passw, agent, ip, time='0'):
     """ Login user
     Create new session if it does not exist and return sess id
 
@@ -1346,20 +1347,20 @@ def gsheets_save_project(user_obj, project_data):
 
 
 """ TEST """
-# register('user', 6445723, 0, '+7 915', 0)
-# register('Hasd Trra', 23344112, 0, '+7 512', 0)
-# register('ddds Ddsa', 33232455, 0, '+7 333', 1)
-# register('aiuy Ddsa', 44542234, 0, '+7 234', 1)
-# register('AArruyaa Ddsa', 345455, 1, '+7 745', 1)
-# register('AAaa ryui', 23344234523112, 0, '+7 624', 0)
-# register('AAruiria', 563563265, 0, '+7 146', 0)
+# sql_register('user', 6445723, 0, '+7 915', 0)
+# sql_register('Hasd Trra', 23344112, 0, '+7 512', 0)
+# sql_register('ddds Ddsa', 33232455, 0, '+7 333', 1)
+# sql_register('aiuy Ddsa', 44542234, 0, '+7 234', 1)
+# sql_register('AArruyaa Ddsa', 345455, 1, '+7 745', 1)
+# sql_register('AAaa ryui', 23344234523112, 0, '+7 624', 0)
+# sql_register('AAruiria', 563563265, 0, '+7 146', 0)
 #
 #
-# print( login('Name', 22222331, 'Gggg', '0:0:0:0') )
-# a = login('user', 6445723, 'AgentUserAgent', '0:0:0:0')
+# print( sql_login('Name', 22222331, 'Gggg', '0:0:0:0') )
+# a = sql_login('user', 6445723, 'AgentUserAgent', '0:0:0:0')
 # print(a[0])
 # print(a[0].hex() )
-# print( login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
+# print( sql_login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
 
 
 """
