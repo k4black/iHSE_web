@@ -791,6 +791,7 @@ def sql_safety_request(sql):
 
 def sql_get_users():
     # TODO Remove or comment
+    cursor.execute("SELECT * FROM sessions")
     cursor.execute("SELECT * FROM users")
     users_list = cursor.fetchall()
     return users_list
