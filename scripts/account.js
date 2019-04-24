@@ -27,7 +27,7 @@ xhttp.onreadystatechange = function() {
         if (this.status === 200) { // If ok set up fields name and phone
 
             console.log(this.responseText);
-            // var user = JSON.parse( this.responseText );
+            var user = JSON.parse( this.responseText );
             accountName.innerText = user.name;
             accountPhone.innerText = user.phone;
 
