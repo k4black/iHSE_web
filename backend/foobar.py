@@ -12,8 +12,6 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 
-
-
 """ ---===---==========================================---===--- """
 """                    uWSGI main input function                 """
 """ ---===---==========================================---===--- """
@@ -40,8 +38,6 @@ def application(env, start_response):
     if env['REQUEST_METHOD'] == 'POST':
         return post(env, start_response, query)
 
-
-
     if env['REQUEST_METHOD'] == 'OPTIONS':
         start_response('200 OK',
                      [('Access-Control-Allow-Origin', '*'),
@@ -51,7 +47,6 @@ def application(env, start_response):
                       ])
 
         return
-
 
 
 """ ---===---==========================================---===--- """
@@ -85,14 +80,12 @@ def get(env, start_response, query):
     if env['PATH_INFO'] == '/projects':
         return get_projects(env, start_response, query)
 
-
     # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/save':
         users_list = sql_get_users()
 
         gsheets_save_users(users_list)
         return
-
 
     # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/load':
@@ -118,15 +111,14 @@ def get(env, start_response, query):
     # the environment variable CONTENT_LENGTH may be empty or missing
     try:
         request_body_size = int(env.get('CONTENT_LENGTH', 0))
-    except (ValueError):
+    except ValueError:
         request_body_size = 0
 
     # When the method is POST the variable will be sent
     # in the HTTP request body which is passed by the WSGI server
     # in the file like wsgi.input environment variable.
     request_body = env['wsgi.input'].read(request_body_size)
-    request_body = ("<p>" + request_body.decode("utf-8")  + "</p>").encode('utf-8')
-
+    request_body = ("<p>" + request_body.decode("utf-8") + "</p>").encode('utf-8')
 
 
     start_response('200 OK',
@@ -176,7 +168,6 @@ def get_account(env, start_response, query):
     sessid = bytes.fromhex( cookies.get('sessid', '') )
 
 
-
     if sessid == b'':  # No cookie
 
         start_response('401 Unauthorized',
@@ -184,7 +175,6 @@ def get_account(env, start_response, query):
                         ])
 
         return
-
 
     sess = sql_get_session(sessid)
 
@@ -293,10 +283,6 @@ def get_projects(env, start_response, query):
 
     """
 
-
-    #tmp = gsheets_get_projects(day)  # return (title, [event1, event2, event3] ) or None
-
-
     """
     Json format:
         [
@@ -313,40 +299,30 @@ def get_projects(env, start_response, query):
     # TODO: SQL
 
     # Json projects data
-    data = []
-
-    project1 = {
-                   "title": "Some title",
-                   "type": "TED",
-                   "subj": "Math",
-                   "name": "VAsya and Ilya",
-                   "desc": "Some project description"
-               }
-
-    project2 = {
-                   "title": "Some title",
-                   "type": "TED",
-                   "subj": "Math",
-                   "name": "VAsya and Ilya",
-                   "desc": "Some project description"
-               }
-
-    data.append(project1)
-    data.append(project2)
-
-
+    # data = []
+    #
+    # project1 = {
+    #                "title": "Some title",
+    #                "type": "TED",
+    #                "subj": "Math",
+    #                "name": "VAsya and Ilya",
+    #                "desc": "Some project description"
+    #            }
+    #
+    # project2 = {
+    #                "title": "Some title",
+    #                "type": "TED",
+    #                "subj": "Math",
+    #                "name": "VAsya and Ilya",
+    #                "desc": "Some project description"
+    #            }
+    #
+    # data.append(project1)
+    # data.append(project2)
 
     data = gsheets_get_projects(None)
-
-
-
     json_data = json.dumps(data)
-
-
-#     print(json_data)
-
     json_data = json_data.encode('utf-8')
-
 
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', '*'),
@@ -482,8 +458,7 @@ def post_logout(env, start_response, query):
 
     """
 
-
-    # Parce cookie
+    # Parse cookie
     rawdata = env.get('HTTP_COOKIE', '')
     cookie = SimpleCookie()
     cookie.load(rawdata)
@@ -542,7 +517,6 @@ def post_register(env, start_response, name, phone, passw, code):
     if user_type is not None:
         sql_register(name, passw, user_type, phone, 0)
 
-
         print("Registration user name: ", name)
 
         post_login(env, start_response, name, passw)
@@ -583,7 +557,7 @@ def post_feedback(env, start_response, query):
     # the environment variable CONTENT_LENGTH may be empty or missing
     try:
         request_body_size = int(env.get('CONTENT_LENGTH', 0))
-    except (ValueError):
+    except ValueError:
         request_body_size = 0
 
     # When the method is POST the variable will be sent
@@ -596,12 +570,9 @@ def post_feedback(env, start_response, query):
 
     parced = json.loads(request_body)
 
-
     print("Feedback data: ", parced)
 
-
-
-    # Parce cookie
+    # Parse cookie
     rawdata = env.get('HTTP_COOKIE', '')
     cookie = SimpleCookie()
     cookie.load(rawdata)
@@ -620,8 +591,8 @@ def post_feedback(env, start_response, query):
     # If no session
     if False and sess_obj is None:
         start_response('401 Unauthorized',
-                           [('Access-Control-Allow-Origin', '*'),
-                            ])
+                       [('Access-Control-Allow-Origin', '*'), ]
+                       )
         return
 
     print("Feedback by sess: ", sess_obj)
@@ -632,14 +603,11 @@ def post_feedback(env, start_response, query):
     if False and user_obj is None:
 
         start_response('401 Unauthorized',
-                               [('Access-Control-Allow-Origin', '*'),
-                                ])
+                       [('Access-Control-Allow-Origin', '*'), ]
+                       )
         return
 
-
     print("Feedback by user: ", user_obj)
-
-
 
     if True:   # TODO: If writing ok
         gsheets_save_feedback(user_obj, day, parced)
@@ -685,7 +653,7 @@ def post_project(env, start_response, query):
     # the environment variable CONTENT_LENGTH may be empty or missing
     try:
         request_body_size = int(env.get('CONTENT_LENGTH', 0))
-    except (ValueError):
+    except ValueError:
         request_body_size = 0
 
     # When the method is POST the variable will be sent
@@ -702,8 +670,7 @@ def post_project(env, start_response, query):
     print(parced)
 
 
-
-    # Parce cookie
+    # Parse cookie
     rawdata = env.get('HTTP_COOKIE', '')
     cookie = SimpleCookie()
     cookie.load(rawdata)
@@ -722,8 +689,8 @@ def post_project(env, start_response, query):
     # If no session
     if False and sess_obj is None:
         start_response('401 Unauthorized',
-                           [('Access-Control-Allow-Origin', '*'),
-                            ])
+                       [('Access-Control-Allow-Origin', '*'), ]
+                       )
         return
 
     print("Project by sess: ", sess_obj)
@@ -734,14 +701,11 @@ def post_project(env, start_response, query):
     if False and user_obj is None:
 
         start_response('401 Unauthorized',
-                               [('Access-Control-Allow-Origin', '*'),
-                                ])
+                       [('Access-Control-Allow-Origin', '*'), ]
+                       )
         return
 
-
     print("Project by user: ", user_obj)
-
-
 
     if user_obj is not None:   # If user exist
         gsheets_save_project(user_obj, parced)
@@ -754,8 +718,8 @@ def post_project(env, start_response, query):
 
     else:
         start_response('405 Method Not Allowed',
-                       [('Access-Control-Allow-Origin', '*'),
-                        ])
+                       [('Access-Control-Allow-Origin', '*'), ]
+                       )
 
     return
 
@@ -864,7 +828,6 @@ def sql_load_users(users_list):
         conn.commit()
 
 
-
 def sql_get_session(id):
     """ Get session obj by id
 
@@ -877,7 +840,7 @@ def sql_get_session(id):
 
     """
 
-    cursor.execute("SELECT * FROM sessions WHERE id=?", (id, ) )
+    cursor.execute("SELECT * FROM sessions WHERE id=?", (id, ))
     sessions = cursor.fetchall()
 
     if len(sessions) == 0:    # No such session
@@ -897,7 +860,7 @@ def sql_logout(id):
 
     """
 
-    cursor.execute("DELETE FROM sessions WHERE id=?", (id, ) )
+    cursor.execute("DELETE FROM sessions WHERE id=?", (id, ))
     conn.commit()
 
 
@@ -1003,8 +966,8 @@ def sql_login(name, passw, agent, ip, time='0'):
 """           Google Sheets interaction via GSheetsAPI           """
 """ ---===---==========================================---===--- """
 
-# TODO: MAx Optimize gsheet api
 
+# TODO: Max Optimize gsheet api
 def gsheets_get_day(day: str) -> list:
     """ Gets timetable from Google Sheets
         and returns it in pseudo-json format
@@ -1201,7 +1164,6 @@ def gsheets_check_code(code):
             reg_allowed = True
             break
 
-
     if reg_allowed:
         return user_type
     else:
@@ -1243,8 +1205,6 @@ def gsheets_get_projects(filter_obj):
                  }, .........  ]
 
              (TODO: not now: or None if no one)
-
-
     """
 
     spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
@@ -1319,10 +1279,8 @@ def gsheets_save_users(users_list):
     read_values = read_response.get('values', [])
     position = read_values[0][0]
 
-
     for i in range(len(users_list)):
         write_range = 'Users!A' + str(5+i) + ':F' + str(5+i)
-
 
         data = {'values': [[users_list[i][0], users_list[i][1], users_list[i][2], users_list[i][3], users_list[i][4], users_list[i][5]]],
                 'range': write_range
