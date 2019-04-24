@@ -897,7 +897,7 @@ def sql_logout(id):
 
     """
 
-    cursor.execute("DELETE * FROM sessions WHERE id=?", (id, ) )
+    cursor.execute("DELETE FROM sessions WHERE id=?", (id, ) )
     conn.commit()
 
 
