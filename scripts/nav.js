@@ -61,9 +61,10 @@ xhttp.onreadystatechange = function() {
             isLogin = true;
 
             if (isLogin) {
-                document.querySelectorAll('.mobile__item__hidden').forEach(function () {
-                    this.classList.remove('mobile__item__hidden');
-                })
+                hidden = document.querySelectorAll('.mobile__item__hidden');
+                for (var i = 0; i < hidden.length; ++i) {
+                    hidden[i].classList.remove('mobile__item__hidden');
+                }
             }
 
         }
