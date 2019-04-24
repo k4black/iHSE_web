@@ -460,6 +460,54 @@ def post_login(env, start_response, name, passw):
     return
 
 
+def post_logout(env, start_response, query):
+    """ Logout HTTP request
+    Delate current session and send clear cookie sessid
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if session deleted and cookie with sess id cleared
+            401 Unauthorized: if wrong name of pass
+
+    Returns:
+         None; Only http answer
+
+    """
+
+
+    # Parce cookie
+    rawdata = env.get('HTTP_COOKIE', '')
+    cookie = SimpleCookie()
+    cookie.load(rawdata)
+
+    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
+    # which is incompatible with requests. Manually construct a dictionary instead.
+    cookies = {}
+    for key, morsel in cookie.items():
+        cookies[key] = morsel.value
+
+    # Get session id or ''
+    sessid = bytes.fromhex( cookies.get('sessid', '') )
+
+    sql_logout(sessid)
+
+    # TODO: redirection by '302 Found'
+    # TODO: if sess does not exist
+    start_response('200 Ok',
+                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                    ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
+                    #('Location', 'http://ihse.tk/login.html')
+                    ])
+
+    return
+
+
 def post_register(env, start_response, name, phone, passw, code):
     """ Register HTTP request
     Create new user if it does not exist and login user
@@ -835,6 +883,21 @@ def sql_get_session(id):
         return sessions[0]
 
 
+def sql_logout(id):
+    """ Delete current session by sessid
+
+    Args:
+        id: session id from bd
+
+    Returns:
+        None # TODO True/False
+
+    """
+
+    cursor.execute("DELETE * FROM sessions WHERE id=?", (id, ) )
+    conn.commit()
+
+
 def sql_get_user(id):
     """ Get user obj by id
 
@@ -937,6 +1000,7 @@ def sql_login(name, passw, agent, ip, time='0'):
 """           Google Sheets interaction via GSheetsAPI           """
 """ ---===---==========================================---===--- """
 
+# TODO: MAx Optimize gsheet api
 
 def gsheets_get_day(day: str) -> list:
     """ Gets timetable from Google Sheets
@@ -955,7 +1019,7 @@ def gsheets_get_day(day: str) -> list:
     day = 'Template'
     # The ID and range of a sample spreadsheet.
     spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    spreadsheet_range = day + '!A1:J32'
+    spreadsheet_range = day + '!A1:J32'  # TODO: MAX J32 may be other
 
     # token.pickle stores the user's access and refresh tokens,
     # providing read/write access to GSheets.

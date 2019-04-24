@@ -17,6 +17,9 @@
  * TODO: optimize selection
  */
 
+accountName = document.querySelector('.topbar__name');
+accountPhone = document.querySelector('.topbar__phone');
+
 var xhttp = new XMLHttpRequest();
 
 xhttp.onreadystatechange = function() {
@@ -25,8 +28,8 @@ xhttp.onreadystatechange = function() {
 
             console.log(this.responseText);
             // var user = JSON.parse( this.responseText );
-            // accountName.innerText = user.name;
-            // accountPhone.innerText = user.phone;
+            accountName.innerText = user.name;
+            accountPhone.innerText = user.phone;
 
         }
     }
@@ -35,3 +38,30 @@ xhttp.onreadystatechange = function() {
 xhttp.open("GET", "http://ihse.tk:50000/account", true);
 xhttp.withCredentials = true; // To send Cookie;
 xhttp.send();
+
+
+
+
+
+
+document.querySelector('.header__button').addEventListener('click', function () {
+
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+
+                document.referrer = 'http://ihse.tk/';
+
+            }
+        }
+    };
+
+    xhttp.open("POST", "http://ihse.tk:50000/logout", true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+
+});
+
+

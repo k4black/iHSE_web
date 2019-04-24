@@ -1,0 +1,61 @@
+
+body {
+    height: auto;
+}
+
+.wrapper {
+    height: auto;
+}
+
+
+.topbar  {
+
+
+    background-color: #007ac5;
+
+    margin-top: 60px;
+    width: 100%;
+    height: auto;
+
+    white-space: nowrap;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 5px 27px 10px 27px;
+
+    overflow: hidden;
+}
+
+
+.description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    margin-left: 10px;
+
+    width: 75%;
+}
+
+.description p {
+    margin: 0;
+}
+.description p:first-child {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+}
+
+.description p:last-child {
+    font-size: 14px;
+    color: #e3e6e5;
+}
+
+.topbar img {
+    height: 60px;
+}
+
+.header__button i {
+    color: white;
+}
