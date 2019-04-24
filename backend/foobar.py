@@ -200,7 +200,21 @@ def get_account(env, start_response, query):
 
     # Cookie - ok
 
+    print(sess)
+
     usr = sql_get_user( sess[1] )  # get user by user id
+
+    if usr is None:  # Wrong cookie
+
+            start_response('401 Unauthorized',
+                           [('Access-Control-Allow-Origin', '*'),
+                            ])
+
+            # TODO: Clear cookie
+
+            return
+
+    print(usr)
 
     data['name'] = usr[3]
     data['phone'] = usr[2]
