@@ -94,7 +94,8 @@
     font-size: 15px;
 
     outline: none;
-
+    background-color: white;
+    border: none;
 }
 
 .create__input__div label {
@@ -111,30 +112,3 @@
     transform: translateY(-20px);
 }
 
-
-
-.create__button {
-    display: block;
-    height: 50px;
-    width: 100%;
-    border-radius: 25px;
-    overflow: hidden;
-    margin: 0 auto;
-
-
-    /*font-family: Poppins-Medium;*/
-    font-size: 15px;
-    color: #fff;
-    line-height: 1.2;
-    text-transform: uppercase;
-
-    z-index: 10;
-    background: #007ac5;
-}
-
-
-#ajax_form {
-    position: relative;
-    z-index: 10;
-    background-color: white;
-}

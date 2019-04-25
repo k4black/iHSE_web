@@ -51,9 +51,32 @@ button {
 }
 
 
+button {
+    display: block;
+    height: 50px;
+    width: 100%;
+    border-radius: 25px;
+    overflow: hidden;
+    margin: 0 auto;
+
+
+    /*font-family: Poppins-Medium;*/
+    font-size: 15px;
+    color: #fff;
+    line-height: 1.2;
+    text-transform: uppercase;
+
+    z-index: 10;
+    background: #007ac5;
+}
+
+
+
+
+
 
 .wrapper {
-
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -85,6 +108,12 @@ button {
     padding-top: 10px;
 }
 
+
+.form {
+    margin-top: 30px;
+    width: 60vw;
+    z-index: 10;
+}
 
 
 
@@ -482,6 +511,14 @@ button {
     top: 0;
     transform: translateX(0);
 }
+
+
+
+
+
+
+
+
 
 
 

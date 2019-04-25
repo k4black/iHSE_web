@@ -84,31 +84,6 @@
 
 
 
-.login__button {
-    display: block;
-    height: 50px;
-    width: 100%;
-    border-radius: 25px;
-    overflow: hidden;
-    margin: 0 auto;
-
-
-    /*font-family: Poppins-Medium;*/
-    font-size: 15px;
-    color: #fff;
-    line-height: 1.2;
-    text-transform: uppercase;
-
-    z-index: 10;
-    background: #007ac5;
-}
-
-
-#ajax_form {
-    position: relative;
-    z-index: 10;
-    background-color: white;
-}
 
 
 .login__register {

@@ -8,7 +8,6 @@
 // TODO: Compile site - optimize
 
 
-// TODO: Select and move all navigation animation and requests
 
 
 
@@ -26,8 +25,10 @@
  * OnClick rty to open account.html
  */
 var isLogin = false;
+var sidebarAccount = document.querySelector('.mobile__sidebar__account');
 
-document.querySelector('.mobile__sidebar__account').addEventListener('click',
+if (sidebarAccount != null)
+sidebarAccount.addEventListener('click',
 function () {
 
     if (isLogin)
@@ -86,17 +87,19 @@ xhttp.send();
 /**
  * Add navigation button event - 'back'
  */
-var mobileNav = document.querySelector('.arrow__button');
+var mobileNav = document.querySelector('.arrow');
+
 if (mobileNav != null)
 mobileNav.addEventListener('click', function () {
 
     //alert(document.referrer);
 
     if (document.referrer == "http://ihse.tk/login.html")
-        window.location.href = "http://ihse.tk/account.html";
-
+        window.location.href = "http://ihse.tk/";
     else
         window.location.href = document.referrer;
+
+    // window.location.href = document.referrer;
 });
 
 

@@ -78,7 +78,11 @@ xhttp.onreadystatechange = function() {
             for (var time of day_data) {
 
                 time_html = '<div class="time">' +
-                    '<div class="bar"></div>' +
+                    '<div class="bar">' +
+                        '<div></div>' +
+                        '<div class="point"></div>' +
+                        '<div></div>' +
+                    '</div>' +
                     '<div class="events">' +
 
                     '<div>' + time.time + '</div>';
@@ -148,7 +152,7 @@ for (var i = 0; i < days.length; i++) {
         document.querySelector('.selected').classList.remove('selected');
         this.classList.add('selected');
 
-        var query = "?day=" + this.lastElementChild.textContent;
+        var query = "day=" + this.lastElementChild.textContent;
 
 
         var xhttp = new XMLHttpRequest();
