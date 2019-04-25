@@ -152,6 +152,12 @@ button {
 
 
 
+.loading {
+    margin: 30% auto;
+    width: 55px;
+}
+
+
 
 .border_line {
     background-color: #D1D4D3;
