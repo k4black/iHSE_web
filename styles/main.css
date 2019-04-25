@@ -36,6 +36,7 @@ a {
 p {
     vertical-align: middle;
     color: #0d0d2f;
+    margin: 0;
 }
 
 input {
@@ -49,6 +50,7 @@ button {
     border: none;
     margin: 0;
 }
+
 
 
 button {
@@ -70,9 +72,31 @@ button {
     background: #007ac5;
 }
 
+label {
+    font-size: 16px;
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    vertical-align: middle;
+}
 
 
+input {
+    color: #333333;
+    font-size: 15px;
+    width: 100%;
+    height: 35px;
 
+    padding-left: 5px;
+}
+
+.input_div {
+    margin-bottom: 40px;
+    display: block;
+    position: relative;
+    /*border: 1px black solid;*/
+    border-bottom: 2px solid #adadad;
+}
 
 
 .wrapper {

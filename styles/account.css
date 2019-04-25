@@ -5,7 +5,7 @@ body {
 
 .wrapper {
     height: auto;
-    padding-top: 0;
+    padding-top: 15px;
 }
 
 
@@ -59,4 +59,39 @@ body {
 
 .header__button i {
     color: white;
+}
+
+
+.credits {
+    width: 100%;
+    height: auto;
+
+    white-space: nowrap;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 15px;
+    /*margin: 0 27px;*/
+
+    overflow: hidden;
+}
+
+.credits__description {
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.credits__description p:first-child {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+
+.border_line {
+    margin: 15px 0;
 }

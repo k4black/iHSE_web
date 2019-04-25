@@ -19,6 +19,7 @@
 
 accountName = document.querySelector('.topbar__name');
 accountPhone = document.querySelector('.topbar__phone');
+accountCredits = document.querySelector('.credits');
 title = document.querySelector('.title');
 
 var xhttp = new XMLHttpRequest();
@@ -44,6 +45,10 @@ xhttp.onreadystatechange = function() {
                     title.innerText = 'Admin';
                     break;
             }
+
+            setProgress(user.credits / user.total);
+
+            accountCredits.querySelector('.credits__title').innerText = user.credits + '/' + user.total;
 
         }
     }
@@ -78,5 +83,34 @@ document.querySelector('.header__button').addEventListener('click', function () 
     xhttp.send();
 
 });
+
+
+
+
+
+
+/**
+ * Control progress circle
+ * Send http POST request to get session id
+ */
+var progress = document.querySelector('.c100');
+var procentage = progress.querySelector('span');
+function setProgress(percent) {
+    console.log(percent);
+
+    percent = Math.min(100, percent);
+    percent = Math.round(percent);
+
+    console.log(percent);
+
+    progress.className = "";
+    progress.classList.add('c100');
+    progress.classList.add("p" + percent);
+
+    procentage.innerText = percent + "%";
+}
+
+
+
 
 

@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/account.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="styles/circle.css">
 
     <!--Onpage logic -->
     <script defer async src="scripts/account.js"></script>
@@ -55,13 +56,44 @@
     </div>
 </div>
 
-<hr class="border_line">
+<!--<hr class="border_line">-->
 
 
 <div class="wrapper">
 
+    <div class="credits">
 
+        <div class="credits__description">
+            <p>Credits:</p>
+            <p class="credits__title">0\300</p>
+        </div>
 
+        <div class="c100 p0">
+            <span>0%</span>
+            <div class="slice">
+                <div class="bar"></div>
+                <div class="fill"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <hr class="border_line">
+
+    <div style="background-color: #c6c6c6; height: 180px; width: 100%">
+
+    </div>
+
+    <hr class="border_line">
+
+    <p>Input code of the lecture:</p>
+
+    <div class="input_div code__input">
+        <label for="code" class="code__label">Code</label>
+        <input id="code" type="text" name="code"  maxlength="6"/>
+    </div>
+
+    <button id="btn" class="code__button">Save</button>
 
 
 </div>
