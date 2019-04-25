@@ -49,8 +49,13 @@
     border-radius: 50%;
  }
 
-.today {
+.selected {
     background-color: #00000020;
+    background: linear-gradient(0deg, #00000030 0%, #00000020 60%, #00000010 80%, #00000000 100%);
+}
+
+.selected .day__num {
+    background-color: #0085d6;
 }
 
 .today .day__num {

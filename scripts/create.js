@@ -26,10 +26,10 @@ button.addEventListener('click', function() {
 
 
     var data = JSON.stringify({"title": form.querySelector('#title').value,
-                                     "type": form.querySelector('#type').value,
-                                     "name": form.querySelector('#name').value,
-                                     "desc": form.querySelector('#desc').textContent,
-                                     "anno": form.querySelector('#anno').textContent
+                               "type": form.querySelector('#type').value,
+                               "name": form.querySelector('#name').value,
+                               "desc": form.querySelector('#desc').textContent,
+                               "anno": form.querySelector('#anno').textContent
                               });
 
 

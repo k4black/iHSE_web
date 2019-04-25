@@ -62,7 +62,7 @@ footer div {
     flex-direction: row;
     justify-content: left;
 
-    background-color: #e3e6e5;
+
 
 
 }
@@ -76,9 +76,42 @@ footer div {
 
 .bar {
     width: 30px;
+    position: static;
+
     height: inherit;
 
-    background-color: #03053b;
+    margin-right: 15px;
+
+
+}
+
+.bar .point {  /* point */
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: orange;
+    position: absolute;
+
+    /* TODO: Fix this shit */
+    transform: translate(3px, -10px);
+}
+
+.bar div:first-child {
+
+    margin: 0 auto;
+    height: 15px;
+    width: 10px;
+    background-color: #e3e6e5;
+    background-color: #006cae;
+
+}
+
+.bar div:last-child {
+
+    margin: 0 auto;
+    width: 10px;
+    background-color: #006cae;
+    height: calc(100% - 15px);
 }
 
 
@@ -89,6 +122,8 @@ footer div {
     width: 100%;
 
     /*background-color: #007ac5;*/
+
+    background-color: #e3e6e5;
 
     padding-bottom: 10px;
 }
@@ -128,6 +163,9 @@ footer div {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: flex-end;
+
+    margin-top: 5px;
 }
 
 .event__last_line span:first-child {
@@ -135,12 +173,17 @@ footer div {
     font-weight: lighter;
     color: #333333;
     width: -webkit-fill-available;
+
+    /*display: table-cell;*/
+    /*vertical-align: bottom;*/
+    height: 100%;
 }
 
 .event__last_line span:last-child {
     font-size: 14px;
     color: #8a8a8a;
     text-align: right;
+    width: 100%;
 }
 
 .event__title {

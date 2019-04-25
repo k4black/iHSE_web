@@ -27,7 +27,7 @@ topbar_html = "";
 
 for (var i = 0; i < numOfDays; ++i) {
     if ( (startDay + i) == 15) {
-        topbar_html += '<div class="day today">'
+        topbar_html += '<div class="day today selected">'
     } else {
         topbar_html += '<div class="day">'
     }
@@ -56,6 +56,9 @@ for (var i = 0; i < days.length; i++) {
     days[i].addEventListener('click', function() {
 
         alert(this.querySelector('.day__name').innerText);
+
+        document.querySelector('.selected').classList.remove('selected');
+        this.classList.add('selected');
 
 
         var query = "?day=" + this.lastElementChild.textContent;

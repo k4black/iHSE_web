@@ -40,7 +40,11 @@ xhttp.onreadystatechange = function() {
             for (var time of day_data) {
 
                 time_html = '<div class="time">' +
-                                '<div class="bar"></div>' +
+                                '<div class="bar">' +
+                                    '<div></div>' +
+                                    '<div class="point"></div>' +
+                                    '<div></div>' +
+                                '</div>' +
                                 '<div class="events">' +
 
                                     '<div>' + time.time + '</div>';
