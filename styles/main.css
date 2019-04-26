@@ -56,7 +56,7 @@ button {
 button {
     display: block;
     height: 50px;
-    width: 100%;
+    width: 200px;
     border-radius: 25px;
     overflow: hidden;
     margin: 0 auto;
@@ -135,7 +135,7 @@ input {
 
 .form {
     margin-top: 30px;
-    width: 60vw;
+    width: 200px;
     z-index: 10;
 }
 

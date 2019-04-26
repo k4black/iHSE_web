@@ -95,3 +95,8 @@ body {
 .border_line {
     margin: 15px 0;
 }
+
+
+.code__input {
+    margin-top: 15px;
+}
