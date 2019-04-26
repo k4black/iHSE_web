@@ -114,3 +114,46 @@ function setProgress(percent) {
 
 
 
+
+/**
+ * Add button event - 'code input'
+ * Send http POST request to sing up lecture
+ */
+var button = document.querySelector('#btn');
+button.addEventListener('click', function () {
+
+    var code = button.parentElement.querySelector('#code');
+
+
+    if (code.value == "") // If some field are empty - do nothing
+        return;
+
+
+    // Pass not password but hashcode of it
+    var query = "?code=" + code.value;
+
+
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {  // When request is done
+
+            if (this.status === 200) {  // Authorized
+                alert("ok!");  // TODO: Redirection
+
+                code.value = "";
+
+            }
+
+            if (this.status === 401) {  // Authorization error
+                alert("not!");  // TODO: show Html error message
+
+                code.value = "";
+            }
+        }
+    };
+
+    xhttp.open("POST", "http://ihse.tk:50000/credits" + query, true);
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+});

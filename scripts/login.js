@@ -48,7 +48,7 @@ button.addEventListener('click', function () {
 
 
     if (name.value == "" || pass.value == "") // If some field are empty - do nothing
-        return
+        return;
 
 
     // Pass not password but hashcode of it
