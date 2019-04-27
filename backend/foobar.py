@@ -102,20 +102,38 @@ def get(env, start_response, query, cookie):
 
     # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/save':
-        users_list = sql_get_users()
 
+        users_list = sql_get_users()
         gsheets_save_users(users_list)
-        return
+
+        start_response('200 OK',
+                       [('Access-Control-Allow-Origin', '*')
+                        ])
+        return []
 
     # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/load':
 
         users_list = gsheets_get_users()
-
         sql_load_users(users_list)
 
-        return
+        event_list =  gsheets_get_events()
+        sql_load_events(events_list)
 
+        start_response('200 OK',
+                       [('Access-Control-Allow-Origin', '*')
+                        ])
+        return []
+
+    # TODO: Remove or move in admin panel
+    if env['PATH_INFO'] == '/update':
+
+        gsheets_update_events()
+
+        start_response('200 OK',
+                       [('Access-Control-Allow-Origin', '*')
+                        ])
+        return []
 
 
     # TMP for TESTing
