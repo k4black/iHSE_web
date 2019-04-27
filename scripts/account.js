@@ -55,11 +55,11 @@ xhttp.onreadystatechange = function() {
                     break;
 
                 case 1:  // Host
-                    accountName.parentElement.querySelector('.topbar__type').innerText = 'Host';
+                    accountName.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Host';
                     break;
 
                 case 2:  // Admin
-                    accountName.parentElement.querySelector('.topbar__type').innerText = 'Admin';
+                    accountName.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Admin';
                     break;
             }
         }
