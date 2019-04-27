@@ -14,7 +14,7 @@ document.querySelector('.save').addEventListener('click', function () {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/save" + today, true);
+    xhttp.open("GET", "http://ihse.tk:50000/save", true);
     xhttp.send();
 });
 
@@ -30,7 +30,7 @@ document.querySelector('.update').addEventListener('click', function () {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/update" + today, true);
+    xhttp.open("GET", "http://ihse.tk:50000/update", true);
     xhttp.send();
 });
 
@@ -46,7 +46,7 @@ document.querySelector('.load').addEventListener('click', function () {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/load" + today, true);
+    xhttp.open("GET", "http://ihse.tk:50000/load", true);
     xhttp.send();
 });
 

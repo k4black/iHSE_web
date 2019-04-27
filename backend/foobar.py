@@ -70,6 +70,8 @@ def application(env, start_response):
 """ ---===---==========================================---===--- """
 
 
+# TODO: Optimize cookie and get user sql
+
 def get(env, start_response, query, cookie):
     """ GET HTTP request
     Will manage and call specific function [account, registration]
@@ -101,6 +103,7 @@ def get(env, start_response, query, cookie):
         return get_projects(env, start_response, query)
 
     # TODO: Remove or move in admin panel
+    # TODO: Permitions cheking
     if env['PATH_INFO'] == '/save':
 
         users_list = sql_get_users()
