@@ -43,7 +43,7 @@ def application(env, start_response):
     # which is incompatible with requests. Manually construct a dictionary instead.
     cookie = {}
     for key, morsel in cookie.items():
-        cookies[key] = morsel.value
+        cookie[key] = morsel.value
 
     print(cookie)
 
