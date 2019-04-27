@@ -822,7 +822,6 @@ def post_project(env, start_response, query, cookie):
     #print(parced)
 
 
-
     # Get session id or ''
     sessid = bytes.fromhex( cookies.get('sessid', '') )
 
@@ -870,7 +869,7 @@ def post_project(env, start_response, query, cookie):
 """                    SQLite database creation                  """
 """ ---===---==========================================---===--- """
 
-# TODO: SQL inj
+# TODO: SQL injections
 
 
 # TODO: place this in sql-specific functions?
@@ -912,11 +911,22 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
                """)
 
 
+# Events
+cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
+                    "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    "type"	INTEGER,
+                    "title"	TEXT,
+                    "credits"	INTEGER
+                  );
+               """)
+
+
 """ ---===---==========================================---===--- """
 """           SQLite database interaction via sqlite3            """
 """ ---===---==========================================---===--- """
 
 
+# TODO: Safety sql
 def sql_safety_request(sql):
     """ Try to run sql code event if db is bisy
 
@@ -947,15 +957,34 @@ def sql_safety_request(sql):
 
 
 def sql_get_users():
-    # TODO Remove or comment
-    cursor.execute("SELECT * FROM sessions")
+    """ Get all users from sql table
+
+    Args:
+        None
+
+    Returns:
+        user objects: list of user objects - [(id, user_id, user_type, user_agent, last_ip, time), ...]
+
+    """
+
     cursor.execute("SELECT * FROM users")
     users_list = cursor.fetchall()
     return users_list
 
 
 def sql_load_users(users_list):
-    # TODO Remove or comment
+    """ Load all users to sql table
+    Clear users table and sessinos table and insert all users in users table
+
+    Args:
+        users_list: list of user objects - [(id, user_id, user_type, user_agent, last_ip, time), ...]
+
+    Returns:
+        None
+
+    """
+
+    cursor.execute("DELETE FROM sessions")
     cursor.execute("DELETE FROM users")
     conn.commit()
 
@@ -967,6 +996,32 @@ def sql_load_users(users_list):
                           SELECT ?, ?, ?, ?, ?
                           WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
                        (user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[3], user_obj[4]))
+        conn.commit()
+
+
+def sql_load_events(events_list):
+    """ Load all users to sql table
+    Clear users table and sessinos table and insert all users in users table
+
+    Args:
+        events_list: list of event objects - [(id, evets_type, title, credits), ...]
+
+    Returns:
+        None
+
+    """
+
+    cursor.execute("DELETE FROM events")
+    conn.commit()
+
+    for event_obj in events_list:
+
+
+
+        cursor.execute("""INSERT INTO events(type, title, credits)
+                          SELECT ?, ?, ?
+                          WHERE NOT EXISTS(SELECT 1 FROM events WHERE title=?)""",
+                       (event_obj[1], event_obj[2], event_obj[3], user_obj[2]))
         conn.commit()
 
 
@@ -1108,8 +1163,11 @@ def sql_login(name, passw, agent, ip, time='0'):
 """           Google Sheets interaction via GSheetsAPI           """
 """ ---===---==========================================---===--- """
 
-
+# TODO: Split file for 3 different for each type of communication (gsheets, sql, http)
 # TODO: Max Optimize gsheet api
+# TODO: Max Refactoring and comment
+
+
 def gsheets_get_day(day: str) -> list:
     """ Gets timetable from Google Sheets
         and returns it in pseudo-json format
@@ -1120,6 +1178,7 @@ def gsheets_get_day(day: str) -> list:
         Returns:
             timetable: timetable of the corresponding day in pseudo-json - list
     """
+
     # TODO waiting for Serova to get real day, not template
     # If modifying these scopes, delete the file token.pickle.
     # SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -1263,6 +1322,22 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
     return True  # TODO: check GSheetsAPI how to track success
 
 
+# TODO: Max generate reg codes
+def gsheets_generate_codes(users, hosts, admins):
+    """ Generate registration codes in google sheets
+    Each code is a 6-characters-number-letter code
+
+    Args:
+        users, hosts, admins: Number  of codes for each type
+
+    Returns:
+        None
+
+    """
+
+    pass
+
+
 def gsheets_check_code(code):
     """ Check registration code in google sheets
     Get user type according this code
@@ -1311,6 +1386,7 @@ def gsheets_check_code(code):
         return None
 
 
+# TODO: Max get feedback
 def gsheet_get_feedback(day):
     """ Get description of day for feedback in google sheets
     Create new user if it does not exist
@@ -1381,16 +1457,6 @@ def gsheets_get_projects(filter_obj):
         projects[-1]['anno'] = project[4]
 
     return projects
-
-    # return [ {  "title": "TITLE",
-    #             "name": "NAME",
-    #             "type": "TYPE",
-    #             "desc": "DESC" },
-    #             {"title": "Title of the pr",
-    #              "name": "Name of user",
-    #              "type": "Ted",
-    #              "desc": "Some description of the project"
-    #              } ]
 
 
 def gsheets_save_users(users_list):
@@ -1527,20 +1593,54 @@ def gsheets_save_project(user_obj, project_data):
     return True  # TODO: check GSheetsAPI how to track success
 
 
+# TODO: Max save credits
 def gsheets_save_credits(user_obj, event_obj):
-    """ Save feedback of user in google sheets
+    """ Save credits for some event of user in google sheets
     Create new user if it does not exist
-    Save in table id, name, phone type and team
 
     Args:
         user_obj: User object - (id, type, phone, name, pass, team)
-        event_obj: Умуте щиоусе - (id, type, title, credits)
+        event_obj: Event object - (id, type, title, credits)
 
     Returns:
         state: Sucsess or not - bool
 
     """
     pass
+
+
+# TODO: Max update events
+def gsheets_update_events():
+    """ Undate events with description in google sheets
+    Read and poarce it from days sheets and save in 'Events' sheet
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
+
+    pass
+
+
+# TODO: Max get events
+def gsheets_get_events():
+    """ Get events with description from google sheets
+
+    Args:
+        None
+
+    Returns:
+        events: description of the events - list [ {title, type, credits}, ....
+                                                 ]
+
+    """
+
+
+    return [{'event 1', 0, 20}, {'othe one ', 1, 40}, {'And more one', 2, 0}]
+
+
 
 
 """ TEST """
