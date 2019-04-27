@@ -36,13 +36,13 @@ def application(env, start_response):
 
     # Parce cookie
     rawdata = env.get('HTTP_COOKIE', '')
-    cookie = SimpleCookie()
-    cookie.load(rawdata)
+    cookie_obj = SimpleCookie()
+    cookie_obj.load(rawdata)
 
     # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
     # which is incompatible with requests. Manually construct a dictionary instead.
     cookie = {}
-    for key, morsel in cookie.items():
+    for key, morsel in cookie_obj.items():
         cookie[key] = morsel.value
 
     print(cookie)
