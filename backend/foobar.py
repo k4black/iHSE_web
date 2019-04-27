@@ -30,13 +30,29 @@ def application(env, start_response):
 
     """
 
+    # Parce query string
     query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
 
+
+    # Parce cookie
+    rawdata = env.get('HTTP_COOKIE', '')
+    cookie = SimpleCookie()
+    cookie.load(rawdata)
+
+    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
+    # which is incompatible with requests. Manually construct a dictionary instead.
+    cookie = {}
+    for key, morsel in cookie.items():
+        cookies[key] = morsel.value
+
+#     print(cookie)
+
+
     if env['REQUEST_METHOD'] == 'GET':
-        return get(env, start_response, query)
+        return get(env, start_response, query, cookie)
 
     if env['REQUEST_METHOD'] == 'POST':
-        return post(env, start_response, query)
+        return post(env, start_response, query, cookie)
 
     if env['REQUEST_METHOD'] == 'OPTIONS':
         start_response('200 OK',
@@ -54,7 +70,7 @@ def application(env, start_response):
 """ ---===---==========================================---===--- """
 
 
-def get(env, start_response, query):
+def get(env, start_response, query, cookie):
     """ GET HTTP request
     Will manage and call specific function [account, registration]
 
@@ -62,6 +78,7 @@ def get(env, start_response, query):
         env: HTTP request environment - dict
         start_response: HTTP response headers place
         query: url query parameters - dict
+        cookie: http cookie parameters - dict (may be empty)
 
     Returns:
         data: which will be transmited
@@ -69,16 +86,16 @@ def get(env, start_response, query):
     """
 
     if env['PATH_INFO'] == '/account':
-        return get_account(env, start_response, query)
+        return get_account(env, start_response, query, cookie)
 
     if env['PATH_INFO'] == '/user':
-        return get_user(env, start_response, query)
+        return get_user(env, start_response, query, cookie)
 
     if env['PATH_INFO'] == '/day':
         return get_day(env, start_response, query)
 
     if env['PATH_INFO'] == '/feedback':
-        return get_feedback(env, start_response, query)
+        return get_feedback(env, start_response, query, cookie)
 
     if env['PATH_INFO'] == '/projects':
         return get_projects(env, start_response, query)
@@ -133,7 +150,7 @@ def get(env, start_response, query):
     return [message_return, message_env, request_body]
 
 
-def get_user(env, start_response, query):
+def get_user(env, start_response, query, cookie):
     """ User data HTTP request
     Will check session id and return data according to user
 
@@ -141,6 +158,7 @@ def get_user(env, start_response, query):
         env: HTTP request environment - dict
         start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
 
     Note:
         If there is no cookie or it is incorrect - it returns guest profile
@@ -150,25 +168,12 @@ def get_user(env, start_response, query):
 
     """
 
-    # Parce cookie
-    rawdata = env.get('HTTP_COOKIE', '')
-    cookie = SimpleCookie()
-    cookie.load(rawdata)
-
-    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
-    # which is incompatible with requests. Manually construct a dictionary instead.
-    cookies = {}
-    for key, morsel in cookie.items():
-        cookies[key] = morsel.value
-
-
-#     print(cookies)
 
     # Json account data
     data = {}
 
     # Get session id or ''
-    sessid = bytes.fromhex( cookies.get('sessid', '') )
+    sessid = bytes.fromhex( cookie.get('sessid', '') )
 
 
     if sessid == b'':  # No cookie
@@ -231,7 +236,7 @@ def get_user(env, start_response, query):
 
 
 
-def get_account(env, start_response, query):
+def get_account(env, start_response, query, cookie):
     """ Account data HTTP request
     Will check session id and return data according to user
 
@@ -239,6 +244,7 @@ def get_account(env, start_response, query):
         env: HTTP request environment - dict
         start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
 
     Note:
         If there is no cookie or it is incorrect - it returns guest profile
@@ -248,25 +254,11 @@ def get_account(env, start_response, query):
 
     """
 
-    # Parce cookie
-    rawdata = env.get('HTTP_COOKIE', '')
-    cookie = SimpleCookie()
-    cookie.load(rawdata)
-
-    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
-    # which is incompatible with requests. Manually construct a dictionary instead.
-    cookies = {}
-    for key, morsel in cookie.items():
-        cookies[key] = morsel.value
-
-
-#     print(cookies)
-
     # Json account data
     data = {}
 
     # Get session id or ''
-    sessid = bytes.fromhex( cookies.get('sessid', '') )
+    sessid = bytes.fromhex( cookie.get('sessid', '') )
 
 
     if sessid == b'':  # No cookie
@@ -333,7 +325,7 @@ def get_account(env, start_response, query):
     return [json_data]
 
 
-def get_feedback(env, start_response, query):
+def get_feedback(env, start_response, query, cookie):
     """ Account data HTTP request
     Got day num and return day event for feedback
 
@@ -341,6 +333,7 @@ def get_feedback(env, start_response, query):
         env: HTTP request environment - dict
         start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
 
     Returns:
         data: which will be transmited
@@ -473,7 +466,7 @@ def get_day(env, start_response, query):
     return [json_data]
 
 
-def post(env, start_response, query):
+def post(env, start_response, query, cookie):
     """ POST HTTP request
     Will manage and call specific function [login, register]
 
@@ -481,6 +474,7 @@ def post(env, start_response, query):
         env: HTTP request environment - dict
         start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
 
     Returns:
          None; Only http answer
@@ -494,16 +488,16 @@ def post(env, start_response, query):
         return post_register(env, start_response, query['name'], query['phone'], query['pass'], query['code'])
 
     if env['PATH_INFO'] == '/feedback':
-        return post_feedback(env, start_response, query)
+        return post_feedback(env, start_response, query, cookie)
 
     if env['PATH_INFO'] == '/project':
-        return post_project(env, start_response, query)
+        return post_project(env, start_response, query, cookie)
 
     if env['PATH_INFO'] == '/logout':
-        return post_logout(env, start_response, query)
+        return post_logout(env, start_response, query, cookie)
 
     if env['PATH_INFO'] == '/credits':
-        return post_credits(env, start_response, query)
+        return post_credits(env, start_response, query, cookie)
 
 
 def post_login(env, start_response, name, passw):
@@ -568,20 +562,8 @@ def post_logout(env, start_response, query):
          None; Only http answer
 
     """
-
-    # Parse cookie
-    rawdata = env.get('HTTP_COOKIE', '')
-    cookie = SimpleCookie()
-    cookie.load(rawdata)
-
-    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
-    # which is incompatible with requests. Manually construct a dictionary instead.
-    cookies = {}
-    for key, morsel in cookie.items():
-        cookies[key] = morsel.value
-
     # Get session id or ''
-    sessid = bytes.fromhex( cookies.get('sessid', '') )
+    sessid = bytes.fromhex( cookie.get('sessid', '') )
 
     sql_logout(sessid)
 
@@ -619,16 +601,16 @@ def post_register(env, start_response, name, phone, passw, code):
 
     """
 
-    print("Registration code: ", code)
+    #print("Registration code: ", code)
 
     user_type = gsheets_check_code(code)
 
-    print("Registration user type: ", user_type)
+    #print("Registration user type: ", user_type)
 
     if user_type is not None:
         sql_register(name, passw, user_type, phone, 0)
 
-        print("Registration user name: ", name)
+        #print("Registration user name: ", name)
 
         post_login(env, start_response, name, passw)
 
@@ -641,7 +623,7 @@ def post_register(env, start_response, name, phone, passw, code):
     return
 
 
-def post_feedback(env, start_response, query):
+def post_feedback(env, start_response, query, cookie):
     """ Login HTTP request
     By cookie create feedback for day
 
@@ -649,6 +631,7 @@ def post_feedback(env, start_response, query):
         env: HTTP request environment - dict
         start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
 
     Note:
         Send:
@@ -681,21 +664,10 @@ def post_feedback(env, start_response, query):
 
     parced = json.loads(request_body)
 
-    print("Feedback data: ", parced)
-
-    # Parse cookie
-    rawdata = env.get('HTTP_COOKIE', '')
-    cookie = SimpleCookie()
-    cookie.load(rawdata)
-
-    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
-    # which is incompatible with requests. Manually construct a dictionary instead.
-    cookies = {}
-    for key, morsel in cookie.items():
-        cookies[key] = morsel.value
+    #print("Feedback data: ", parced)
 
     # Get session id or ''
-    sessid = bytes.fromhex( cookies.get('sessid', '') )
+    sessid = bytes.fromhex( cookie.get('sessid', '') )
 
     sess_obj = sql_get_session(sessid)
 
@@ -706,7 +678,7 @@ def post_feedback(env, start_response, query):
                        )
         return
 
-    print("Feedback by sess: ", sess_obj)
+    # print("Feedback by sess: ", sess_obj)
 
     user_obj = sql_get_user(sess_obj[1])
 
@@ -718,7 +690,7 @@ def post_feedback(env, start_response, query):
                        )
         return
 
-    print("Feedback by user: ", user_obj)
+    #print("Feedback by user: ", user_obj)
 
     if True:   # TODO: If writing ok
         gsheets_save_feedback(user_obj, day, parced)
@@ -737,7 +709,7 @@ def post_feedback(env, start_response, query):
     return
 
 
-def post_credits(env, start_response, query):
+def post_credits(env, start_response, query, cookie):
     """ Sing in at lectutre  HTTP request (by student )
     By cookie create feedback for day
 
@@ -745,6 +717,7 @@ def post_credits(env, start_response, query):
         env: HTTP request environment - dict
         start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
 
     Note:
         Send:
@@ -762,19 +735,8 @@ def post_credits(env, start_response, query):
     print('Credits code: ', code)
 
 
-    # Parse cookie
-    rawdata = env.get('HTTP_COOKIE', '')
-    cookie = SimpleCookie()
-    cookie.load(rawdata)
-
-    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
-    # which is incompatible with requests. Manually construct a dictionary instead.
-    cookies = {}
-    for key, morsel in cookie.items():
-        cookies[key] = morsel.value
-
     # Get session id or ''
-    sessid = bytes.fromhex( cookies.get('sessid', '') )
+    sessid = bytes.fromhex( cookie.get('sessid', '') )
 
     sess_obj = sql_get_session(sessid)
 
@@ -814,7 +776,8 @@ def post_credits(env, start_response, query):
 
     return
 
-def post_project(env, start_response, query):
+
+def post_project(env, start_response, query, cookie):
     """ Post project HTTP request
     Create new project signed by cookie
 
@@ -822,6 +785,7 @@ def post_project(env, start_response, query):
         env: HTTP request environment - dict
         start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
 
     Note:
         Send:
@@ -834,7 +798,7 @@ def post_project(env, start_response, query):
 
     """
 
-    print('project')
+    #print('project')
 
     # Json project data
 
@@ -855,19 +819,9 @@ def post_project(env, start_response, query):
     parced = json.loads(request_body)
 
 
-    print(parced)
+    #print(parced)
 
 
-    # Parse cookie
-    rawdata = env.get('HTTP_COOKIE', '')
-    cookie = SimpleCookie()
-    cookie.load(rawdata)
-
-    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
-    # which is incompatible with requests. Manually construct a dictionary instead.
-    cookies = {}
-    for key, morsel in cookie.items():
-        cookies[key] = morsel.value
 
     # Get session id or ''
     sessid = bytes.fromhex( cookies.get('sessid', '') )
@@ -881,7 +835,7 @@ def post_project(env, start_response, query):
                        )
         return
 
-    print("Project by sess: ", sess_obj)
+    # print("Project by sess: ", sess_obj)
 
     user_obj = sql_get_user(sess_obj[1])
 
