@@ -46,10 +46,22 @@ xhttp.onreadystatechange = function() {
                     break;
             }
 
-            setProgress(user.credits / user.total);
+            setProgress(user.credits, user.total);
+            accountCredits.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
 
-            accountCredits.querySelector('.credits__title').innerText = user.credits + '/' + user.total;
+            switch (user.type) {
+                case 0:  // User
 
+                    break;
+
+                case 1:  // Host
+                    accountName.parentElement.querySelector('.topbar__type').innerText = 'Host';
+                    break;
+
+                case 2:  // Admin
+                    accountName.parentElement.querySelector('.topbar__type').innerText = 'Admin';
+                    break;
+            }
         }
     }
 };
@@ -95,7 +107,9 @@ document.querySelector('.header__button').addEventListener('click', function () 
  */
 var progress = document.querySelector('.c100');
 var procentage = progress.querySelector('span');
-function setProgress(percent) {
+function setProgress(value, total) {
+    var percent = value / total * 100;
+
     console.log(percent);
 
     percent = Math.min(100, percent);
@@ -156,4 +170,31 @@ button.addEventListener('click', function () {
     xhttp.open("POST", "http://ihse.tk:50000/credits" + query, true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
+});
+
+
+
+
+/** ===============  ANIMATIONS  =============== */
+
+
+
+/**
+ * Add code field animations
+ * Hint Rise up when there is some text or cursor inside it
+ * TODO: optimize selection
+ */
+var code = document.querySelector('#code');
+code.addEventListener('focus', function () {
+    code.closest('div').querySelector("label").classList.add('active');
+    console.log('COde active');
+
+});
+
+code.addEventListener('blur', function () {
+    if (code.value != "")
+        return;
+
+    code.closest('div').querySelector("label").classList.remove('active');
+    console.log('Code inactive');
 });

@@ -10,7 +10,7 @@ body {
 
 
 .topbar  {
-
+    position: relative;
 
     background-color: #007ac5;
 
@@ -52,6 +52,16 @@ body {
     font-size: 14px;
     color: #e3e6e5;
 }
+
+
+.topbar__type {
+    position: absolute;
+    bottom: 10px;
+    right: 27px;
+    font-size: 16px;
+    color: #dadddc;
+}
+
 
 .topbar img {
     height: 60px;
@@ -99,4 +109,14 @@ body {
 
 .code__input {
     margin-top: 15px;
+}
+
+
+.code__label {
+    transform: translateY(0);
+    transition: transform 300ms ease-out;
+}
+
+.active {
+    transform: translateY(-20px);
 }

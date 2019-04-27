@@ -45,7 +45,7 @@ def application(env, start_response):
     for key, morsel in cookie_obj.items():
         cookie[key] = morsel.value
 
-    print(cookie)
+    #print(cookie)
 
 
     if env['REQUEST_METHOD'] == 'GET':
