@@ -502,6 +502,9 @@ def post(env, start_response, query):
     if env['PATH_INFO'] == '/logout':
         return post_logout(env, start_response, query)
 
+    if env['PATH_INFO'] == '/credits':
+        return post_credits(env, start_response, query)
+
 
 def post_login(env, start_response, name, passw):
     """ Login HTTP request
@@ -733,6 +736,83 @@ def post_feedback(env, start_response, query):
 
     return
 
+
+def post_credits(env, start_response, query):
+    """ Sing in at lectutre  HTTP request (by student )
+    By cookie create feedback for day
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if all are ok
+            401 Unauthorized: if wrong session id
+            405 Method Not Allowed: already got it or timeout
+
+    Returns:
+         None; Only http answer
+
+    """
+
+    # Event code
+    code  = query['code']
+    print('Credits code: ', code)
+
+
+    # Parse cookie
+    rawdata = env.get('HTTP_COOKIE', '')
+    cookie = SimpleCookie()
+    cookie.load(rawdata)
+
+    # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
+    # which is incompatible with requests. Manually construct a dictionary instead.
+    cookies = {}
+    for key, morsel in cookie.items():
+        cookies[key] = morsel.value
+
+    # Get session id or ''
+    sessid = bytes.fromhex( cookies.get('sessid', '') )
+
+    sess_obj = sql_get_session(sessid)
+
+    # If no session
+    if False and sess_obj is None:
+        start_response('401 Unauthorized',
+                       [('Access-Control-Allow-Origin', '*'), ]
+                       )
+        return
+
+
+    user_obj = sql_get_user(sess_obj[1])
+
+    # If no such user (wrong cookie)
+    if False and user_obj is None:
+
+        start_response('401 Unauthorized',
+                       [('Access-Control-Allow-Origin', '*'), ]
+                       )
+        return
+
+
+    if True:   # TODO: If writing ok
+        event_obj = (1, 0, 'Event title', 20)
+        gsheets_save_credits(user_obj, event_obj)
+
+        start_response('200 Ok',
+                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                        #('Location', 'http://ihse.tk/login.html')
+                        ])
+
+    else:
+        start_response('405 Method Not Allowed',
+                       [('Access-Control-Allow-Origin', '*'),
+                        ])
+
+    return
 
 def post_project(env, start_response, query):
     """ Post project HTTP request
@@ -1491,6 +1571,22 @@ def gsheets_save_project(user_obj, project_data):
     print('updating done')
 
     return True  # TODO: check GSheetsAPI how to track success
+
+
+def gsheets_save_credits(user_obj, event_obj):
+    """ Save feedback of user in google sheets
+    Create new user if it does not exist
+    Save in table id, name, phone type and team
+
+    Args:
+        user_obj: User object - (id, type, phone, name, pass, team)
+        event_obj: Умуте щиоусе - (id, type, title, credits)
+
+    Returns:
+        state: Sucsess or not - bool
+
+    """
+    pass
 
 
 """ TEST """
