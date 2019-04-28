@@ -44,16 +44,16 @@ var button = document.querySelector('#btn');
 var button2 = document.querySelector('#btn2');
 button.addEventListener('click', function () {
 
-    var name = button.parentElement.querySelector('#name');
+    var phone = button.parentElement.querySelector('#phone');
     var pass = button.parentElement.querySelector('#pass');
 
 
-    if (name.value == "" || pass.value == "") // If some field are empty - do nothing
+    if (phone.value == "" || pass.value == "") // If some field are empty - do nothing
         return;
 
 
     // Pass not password but hashcode of it
-    var query = "?name=" + name.value + "&pass=" + hashCode(pass.value);
+    var query = "?phone=" + phone.value + "&pass=" + hashCode(pass.value);
     
         
     var xhttp = new XMLHttpRequest();
@@ -72,12 +72,12 @@ button.addEventListener('click', function () {
             if (this.status === 200) {  // Authorized
                 alert("ok!");  // TODO: Redirection
 
-                name.value = "";
+                phone.value = "";
                 pass.value = "";
             }
 
             if (this.status === 401) {  // Authorization error
-                alert("Wrong Login/Password!");  // TODO: show Html error message
+                alert("Wrong Phone/Password!");  // TODO: show Html error message
 
                 pass.value = "";
             }
@@ -106,21 +106,21 @@ button.addEventListener('click', function () {
  * Hint Rise up when there is some text or cursor inside it
  * TODO: optimize selection
  */
-var name_ = document.querySelector('#name');
-name_.addEventListener('focus', function () {
+var phone = document.querySelector('#name');
+phone.addEventListener('focus', function () {
     onFocus(true);
-    name_.closest('div').querySelector("label").classList.add('active');
-    console.log('Name active');
+    phone.closest('div').querySelector("label").classList.add('active');
+    console.log('phone active');
 
 });
 
-name_.addEventListener('blur', function () {
+phone.addEventListener('blur', function () {
     onFocus(false);
-    if (name_.value != "")
+    if (phone.value != "")
         return;
 
-    name_.closest('div').querySelector("label").classList.remove('active');
-    console.log('Name inactive');
+    phone.closest('div').querySelector("label").classList.remove('active');
+    console.log('phone inactive');
 });
 
 

@@ -514,7 +514,7 @@ def post(env, start_response, query, cookie):
     """
 
     if env['PATH_INFO'] == '/login':
-        return post_login(env, start_response, query['name'], query['pass'])
+        return post_login(env, start_response, query['phone'], query['pass'])
 
     if env['PATH_INFO'] == '/register':
         return post_register(env, start_response, query['name'], query['phone'], query['pass'], query['code'])
@@ -532,14 +532,14 @@ def post(env, start_response, query, cookie):
         return post_credits(env, start_response, query, cookie)
 
 
-def post_login(env, start_response, name, passw):
+def post_login(env, start_response, phone, passw):
     """ Login HTTP request
     Create new session if it does not exist and send cookie sessid
 
     Args:
         env: HTTP request environment - dict
         start_response: HTTP response headers place
-        query: url query parameters - dict (may be empty)
+
 
     Note:
         Send:
@@ -553,7 +553,7 @@ def post_login(env, start_response, name, passw):
     """
 
     # Get session obj or None
-    res = sql_login(name, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
+    res = sql_login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
 
     # TODO: redirection by '302 Found'
     if res is not None:
@@ -1144,12 +1144,12 @@ def sql_register(name, passw, type, phone, team):
     conn.commit()
 
 
-def sql_login(name, passw, agent, ip, time='0'):
+def sql_login(phone, passw, agent, ip, time='0'):
     """ Login user
     Create new session if it does not exist and return sess id
 
     Args:
-        name: User name - string
+        phone: User phone - string
         passw: Password hash - int
         agent: User agent - string
         ip: ip - string
@@ -1165,7 +1165,7 @@ def sql_login(name, passw, agent, ip, time='0'):
     """
 
     # Check user with name and pass exist and got it
-    cursor.execute("SELECT * FROM users WHERE name=? AND pass=?", (name, passw))
+    cursor.execute("SELECT * FROM users WHERE phone=? AND pass=?", (phone, passw))
     users = cursor.fetchall()
 
     if len(users) == 0:    # No such user
