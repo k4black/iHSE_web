@@ -88,16 +88,29 @@ xhttp.send();
  * Add navigation button event - 'back'
  */
 var mobileNav = document.querySelector('.arrow');
-
 if (mobileNav != null)
 mobileNav.addEventListener('click', function () {
 
     //alert(document.referrer);
 
-    if (document.referrer == "http://ihse.tk/login.html")
-        window.location.href = "http://ihse.tk/";
-    else
-        window.location.href = document.referrer;
+    switch (document.referrer) {
+        case "http://ihse.tk/login.html":
+            window.location.href = "http://ihse.tk/";
+            break;
+
+        case "http://ihse.tk/register.html":
+            window.location.href = "http://ihse.tk/login.html";
+            break;
+
+        case "http://ihse.tk/account.html":
+            window.location.href = "http://ihse.tk/";
+            break;
+
+        default:
+            window.location.href = document.referrer;
+            break;
+    }
+
 
     // window.location.href = document.referrer;
 });

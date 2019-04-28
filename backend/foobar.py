@@ -141,7 +141,7 @@ def get(env, start_response, query, cookie):
     # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/codes':
 
-        gsheets_generate_codes(20, 10, 2):
+        gsheets_generate_codes(20, 10, 2)
 
         start_response('200 OK',
                        [('Access-Control-Allow-Origin', '*')

@@ -185,6 +185,7 @@ var focus = false;  // Is there virtual keyboard?
 var form = document.querySelector('.wrapper');
 
 function onFocus(focus) {
+    return;
     if (focus) {
         form.classList.add('close');
     }

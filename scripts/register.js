@@ -34,7 +34,6 @@ function hashCode(s) {
 /**
  * Add button event - 'register'
  * Send http POST request to register and automatically login - get session id
- * TODO: Register formne
  */
 var buttonReg = document.querySelector('#btnReg');
 buttonReg.addEventListener('click', function () {
@@ -225,6 +224,8 @@ var focus = false;  // Is there virtual keyboard?
 var form = document.querySelector('.wrapper');
 
 function onFocus(focus) {
+
+    return;
     if (focus) {
         form.classList.add('close');
     }
