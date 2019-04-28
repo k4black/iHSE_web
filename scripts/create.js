@@ -80,7 +80,7 @@ button.addEventListener('click', function() {
  */
 var title = document.querySelector('#title');
 title.addEventListener('focus', function () {
-    title.closest('div').querySelector("label").classList.add('active');
+    title.closest('div').querySelector("label").parentElement.classList.add('active');
     console.log('title active');
 });
 
@@ -88,7 +88,7 @@ title.addEventListener('blur', function () {
     if (title.value != "")
         return;
 
-    title.closest('div').querySelector("label").classList.remove('active');
+    title.closest('div').querySelector("label").parentElement.classList.remove('active');
     console.log('title inactive');
 });
 
@@ -100,7 +100,7 @@ title.addEventListener('blur', function () {
  */
 var name_ = document.querySelector('#name');
 name_.addEventListener('focus', function () {
-    name_.closest('div').querySelector("label").classList.add('active');
+    name_.closest('div').querySelector("label").parentElement.classList.add('active');
     console.log('Name active');
 });
 
@@ -108,7 +108,7 @@ name_.addEventListener('blur', function () {
     if (name_.value != "")
         return;
 
-    name_.closest('div').querySelector("label").classList.remove('active');
+    name_.closest('div').querySelector("label").parentElement.classList.remove('active');
     console.log('Name inactive');
 });
 
@@ -120,7 +120,7 @@ name_.addEventListener('blur', function () {
  */
 var desc = document.querySelector('#desc');
 desc.addEventListener('focus', function () {
-    desc.parentElement.querySelector("label").classList.add('active');
+    desc.parentElement.querySelector("label").parentElement.classList.add('active');
     console.log('desc active');
 });
 
@@ -128,7 +128,7 @@ desc.addEventListener('blur', function () {
     if (desc.textContent != "")
         return;
 
-    desc.parentElement.querySelector("label").classList.remove('active');
+    desc.parentElement.querySelector("label").parentElement.classList.remove('active');
     console.log('desc inactive');
 });
 
@@ -141,7 +141,7 @@ desc.addEventListener('blur', function () {
  */
 var anno = document.querySelector('#anno');
 anno.addEventListener('focus', function () {
-    anno.parentElement.querySelector("label").classList.add('active');
+    anno.parentElement.querySelector("label").parentElement.classList.add('active');
     console.log('anno active');
 });
 
@@ -149,7 +149,7 @@ anno.addEventListener('blur', function () {
     if (anno.textContent != "")
         return;
 
-    anno.parentElement.querySelector("label").classList.remove('active');
+    anno.parentElement.querySelector("label").parentElement.classList.remove('active');
     console.log('anno inactive');
 });
 

@@ -108,7 +108,7 @@
     transition: transform 300ms ease-out;
 }
 
-.active {
+.active .create__label {
     transform: translateY(-20px);
 }
 

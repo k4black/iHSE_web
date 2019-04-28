@@ -106,20 +106,25 @@ button.addEventListener('click', function () {
  * Hint Rise up when there is some text or cursor inside it
  * TODO: optimize selection
  */
-var phone = document.querySelector('#name');
+var phone = document.querySelector('#phone');
 phone.addEventListener('focus', function () {
     onFocus(true);
-    phone.closest('div').querySelector("label").classList.add('active');
+    phone.closest('div').querySelector("label").parentElement.classList.add('active');
     console.log('phone active');
 
 });
 
 phone.addEventListener('blur', function () {
     onFocus(false);
+
+    if (phone.value == "+") {
+        phone.value = "";
+    }
+
     if (phone.value != "")
         return;
 
-    phone.closest('div').querySelector("label").classList.remove('active');
+    phone.closest('div').querySelector("label").parentElement.classList.remove('active');
     console.log('phone inactive');
 });
 
@@ -133,7 +138,7 @@ var pass = document.querySelector('#pass');
 
 pass.addEventListener('focus', function () {
     onFocus(true);
-    pass.closest('div').querySelector("label").classList.add('active');
+    pass.closest('div').querySelector("label").parentElement.classList.add('active');
     console.log('Pass active');
 });
 
@@ -142,7 +147,7 @@ pass.addEventListener('blur', function () {
     if (pass.value != "")
         return;
 
-    pass.closest('div').querySelector("label").classList.remove('active');
+    pass.closest('div').querySelector("label").parentElement.classList.remove('active');
     console.log('Pass inactive');
 });
 

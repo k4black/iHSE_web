@@ -89,7 +89,7 @@ body {
     transition: transform 300ms ease-out;
 }
 
-.active {
+.active .register__label {
     transform: translateY(-20px);
 }
 
@@ -139,4 +139,48 @@ body {
     font-size: 20px;
     width: 20px;
     height: 20px;
+}
+
+
+
+
+
+
+
+
+.shell {
+    position: relative;
+    line-height: 1; }
+.shell span {
+    position: absolute;
+    left: 3px;
+    top: 1px;
+    color: #ccc;
+    pointer-events: none;
+    z-index: -1; }
+.shell span i {
+    font-style: normal;
+    /* any of these 3 will work */
+    color: transparent;
+    opacity: 0;
+    visibility: hidden; }
+
+input.masked,
+.shell span {
+    font-size: 16px;
+    font-family: monospace;
+    padding-right: 10px;
+    background-color: transparent;
+    text-transform: uppercase; }
+
+
+
+#phoneMask {
+    opacity: 0;
+
+    transition: opacity 300ms ease-out;
+}
+
+.active #phoneMask {
+    opacity: 1;
 }

@@ -104,7 +104,7 @@ buttonReg.addEventListener('click', function () {
 var name_ = document.querySelector('#name');
 name_.addEventListener('focus', function () {
     onFocus(true);
-    name_.closest('div').querySelector("label").classList.add('active');
+    name_.closest('div').querySelector("label").parentElement.classList.add('active');
     console.log('Name active');
 });
 
@@ -113,7 +113,7 @@ name_.addEventListener('blur', function () {
     if (name_.value != "")
         return;
 
-    name_.closest('div').querySelector("label").classList.remove('active');
+    name_.closest('div').querySelector("label").parentElement.classList.remove('active');
     console.log('Name inactive');
 });
 
@@ -126,16 +126,21 @@ name_.addEventListener('blur', function () {
 var phone = document.querySelector('#phone');
 phone.addEventListener('focus', function () {
     onFocus(true);
-    phone.closest('div').querySelector("label").classList.add('active');
+    phone.closest('div').querySelector("label").parentElement.classList.add('active');
     console.log('phone active');
 });
 
 phone.addEventListener('blur', function () {
     onFocus(false);
+
+    if (phone.value == "+") {
+        phone.value = "";
+    }
+
     if (phone.value != "")
         return;
 
-    phone.closest('div').querySelector("label").classList.remove('active');
+    phone.closest('div').querySelector("label").parentElement.classList.remove('active');
     console.log('phone inactive');
 });
 
@@ -148,7 +153,7 @@ var pass = document.querySelector('#pass');
 
 pass.addEventListener('focus', function () {
     onFocus(true);
-    pass.closest('div').querySelector("label").classList.add('active');
+    pass.closest('div').querySelector("label").parentElement.classList.add('active');
     console.log('Pass active');
 });
 
@@ -157,7 +162,7 @@ pass.addEventListener('blur', function () {
     if (pass.value != "")
         return;
 
-    pass.closest('div').querySelector("label").classList.remove('active');
+    pass.closest('div').querySelector("label").parentElement.classList.remove('active');
     console.log('Pass inactive');
 });
 
@@ -196,7 +201,7 @@ var code = document.querySelector('#code');
 
 code.addEventListener('focus', function () {
     onFocus(true);
-    code.closest('div').querySelector("label").classList.add('active');
+    code.closest('div').querySelector("label").parentElement.classList.add('active');
     console.log('Code active');
 });
 
@@ -205,7 +210,7 @@ code.addEventListener('blur', function () {
     if (code.value != "")
         return;
 
-    code.closest('div').querySelector("label").classList.remove('active');
+    code.closest('div').querySelector("label").parentElement.classList.remove('active');
     console.log('Code inactive');
 });
 
