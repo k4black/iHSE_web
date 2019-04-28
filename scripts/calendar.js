@@ -48,10 +48,6 @@ document.querySelector('.topbar').innerHTML = topbar_html;
 
 
 
-
-// TODO: Loading icon
-
-
 /**
  * Get day information from server
  * Send http GET request and get today json schedule
@@ -158,6 +154,9 @@ for (var i = 0; i < days.length; i++) {
         var xhttp = new XMLHttpRequest();
 
         xhttp.onreadystatechange = function() {
+            if (this.readyState === 1) { // Opened
+                form.innerHTML = '<img class="loading" alt="Loading" src="images/loading.gif">'
+            }
             if (this.readyState === 4) {
                 if (this.status === 200) { // If ok set up day field
 

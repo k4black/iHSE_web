@@ -20,9 +20,23 @@
  * Send http POST request to create new project
  */
 var button = document.querySelector('#btn');
+var button2 = document.querySelector('#btn2');
 
 button.addEventListener('click', function() {
     var form = button.parentElement;
+
+    // TODO : USER names list
+
+    var title = button.parentElement.querySelector('#title');
+    var type = button.parentElement.querySelector('#type');
+    var name = button.parentElement.querySelector('#name');
+    var desc = button.parentElement.querySelector('#desc');
+    var anno = button.parentElement.querySelector('#anno');
+
+
+    if (title.value == "" || type.value == "" || name.value == "" || desc.value == "" || anno.value == "") // If some field are empty - do nothing
+        return; // TODO: Message
+
 
 
     var data = JSON.stringify({"title": form.querySelector('#title').value,
@@ -36,7 +50,15 @@ button.addEventListener('click', function() {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
+        if (this.readyState === 1) {  // Opened
+            button.style.display = 'none';
+            button2.style.display = 'block';
+        }
+
         if (this.readyState === 4) {  // When request is done
+
+            button.style.display = 'block';
+            button2.style.display = 'none';
 
             if (this.status === 200) {  // Got it
                 alert("ok!");  // TODO: Redirection

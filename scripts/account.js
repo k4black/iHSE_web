@@ -17,10 +17,10 @@
  * TODO: optimize selection
  */
 
-accountName = document.querySelector('.topbar__name');
-accountPhone = document.querySelector('.topbar__phone');
-accountCredits = document.querySelector('.credits');
-title = document.querySelector('.title');
+var accountName = document.querySelector('.topbar__name');
+var accountPhone = document.querySelector('.topbar__phone');
+var accountCredits = document.querySelector('.credits');
+var title = document.querySelector('.title');
 
 var xhttp = new XMLHttpRequest();
 
@@ -34,17 +34,17 @@ xhttp.onreadystatechange = function() {
             accountName.innerText = user.name;
             accountPhone.innerText = user.phone;
             
-            switch (user.type) {
-                case 0:
-                    title.innerText = 'User';
-                    break;
-                case 1:
-                    title.innerText = 'Host';
-                    break;
-                case 2:
-                    title.innerText = 'Admin';
-                    break;
-            }
+            // switch (user.type) {
+            //     case 0:
+            //         title.innerText = 'User';
+            //         break;
+            //     case 1:
+            //         title.innerText = 'Host';
+            //         break;
+            //     case 2:
+            //         title.innerText = 'Admin';
+            //         break;
+            // }
 
             setProgress(user.credits, user.total);
             accountCredits.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;

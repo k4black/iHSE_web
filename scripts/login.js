@@ -49,7 +49,7 @@ button.addEventListener('click', function () {
 
 
     if (phone.value == "" || pass.value == "") // If some field are empty - do nothing
-        return;
+        return; // TODO: Message
 
 
     // Pass not password but hashcode of it

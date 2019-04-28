@@ -106,6 +106,10 @@ mobileNav.addEventListener('click', function () {
             window.location.href = "http://ihse.tk/";
             break;
 
+        case "http://ihse.tk/create.html":
+            window.location.href = "http://ihse.tk/projects.html";
+            break;
+
         default:
             window.location.href = document.referrer;
             break;
@@ -122,6 +126,7 @@ mobileNav.addEventListener('click', function () {
 /**
  * Mobile Floating button management
  * OnScroll hide and appear
+ * TODO: Position error
  */
 var floatingButton = document.querySelector('.mobile__floating__button');
 
@@ -159,6 +164,7 @@ function floatingButtonOnScroll() {
     lastScrollTop = st <= 0 ? 0 : st; // For Mobile or negative scrolling
 }
 
+if (floatingButton != null)
 window.addEventListener('scroll', floatingButtonOnScroll);
 
 

@@ -35,17 +35,18 @@ function hashCode(s) {
  * Add button event - 'register'
  * Send http POST request to register and automatically login - get session id
  */
-var buttonReg = document.querySelector('#btnReg');
-buttonReg.addEventListener('click', function () {
+var button = document.querySelector('#btn');
+var button2 = document.querySelector('#btn2');
+button.addEventListener('click', function () {
 
-    var name_ = buttonReg.parentElement.querySelector('#name');
-    var phone = buttonReg.parentElement.querySelector('#phone');
-    var pass = buttonReg.parentElement.querySelector('#pass');
-    var code = buttonReg.parentElement.querySelector('#code');
+    var name_ = button.parentElement.querySelector('#name');
+    var phone = button.parentElement.querySelector('#phone');
+    var pass = button.parentElement.querySelector('#pass');
+    var code = button.parentElement.querySelector('#code');
 
 
     if (name_.value == "" || pass.value == "" || code.value == "" || phone.value == "") // If some field are empty - do nothing
-        return
+        return;  // TODO: Message
 
 
 
@@ -58,7 +59,15 @@ buttonReg.addEventListener('click', function () {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
+        if (this.readyState === 1) {  // Opened
+            button.style.display = 'none';
+            button2.style.display = 'block';
+        }
+
         if (this.readyState === 4) {  // When request is done
+
+            button.style.display = 'block';
+            button2.style.display = 'none';
 
             if (this.status === 200) {  // Authorized
                 alert("ok reg!");  // TODO: Redirection
