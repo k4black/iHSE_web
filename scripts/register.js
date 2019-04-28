@@ -70,8 +70,15 @@ buttonReg.addEventListener('click', function () {
                 code.value = "";
             }
 
+            if (this.status === 403) {  // Authorization error
+                alert("Wrong registration code!");  // TODO: show Html error message
+
+                pass.value = "";
+                code.value = "";
+            }
+
             if (this.status === 401) {  // Authorization error
-                alert("not reg!");  // TODO: show Html error message
+                alert("Wrong Login/Password!");  // TODO: show Html error message
 
                 pass.value = "";
             }
@@ -154,6 +161,30 @@ pass.addEventListener('blur', function () {
     pass.closest('div').querySelector("label").classList.remove('active');
     console.log('Pass inactive');
 });
+
+
+/**
+ * Add password hide/show button
+ * Change type of password field
+ */
+var hideButton = pass.parentElement.querySelector('.hide__pass');
+
+hideButton.addEventListener('click', function () {
+
+    if (pass.type == 'password') {
+        pass.type = 'text';
+        hideButton.firstElementChild.style.display = 'block';
+        hideButton.lastElementChild.style.display = 'none';
+    }
+
+    else {
+        pass.type = 'password';
+        hideButton.firstElementChild.style.display = 'none';
+        hideButton.lastElementChild.style.display = 'block';
+    }
+
+});
+
 
 
 

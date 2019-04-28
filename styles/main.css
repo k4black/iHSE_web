@@ -178,7 +178,10 @@ input {
 
 .loading {
     margin: 30% auto;
-    width: 55px;
+    width: 45px;
+
+
+    opacity: 30%;
 }
 
 

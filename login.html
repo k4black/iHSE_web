@@ -56,9 +56,14 @@
         <div class="login__input">
             <label for="pass" class="login__label">Password</label>
             <input id="pass" type="password" name="pass"  maxlength="20"/>
+            <div class="hide__pass">
+                <i style="display: none" class="mobile__item__icon large material-icons">visibility</i>
+                <i style="display: block" class="mobile__item__icon large material-icons">visibility_off</i>
+            </div>
         </div>
 
         <button id="btn" class="login__button">Login</button>
+        <button id="btn2" class="login__button" style="display: none"><img class="loading" style="margin: 0" src="images/loading.gif"></button>
 
     </div>
 

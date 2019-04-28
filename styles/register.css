@@ -120,3 +120,22 @@ body {
     color: #03053b;
     text-decoration: none;
 }
+
+
+
+.hide__pass {
+    position: absolute;
+
+    /*background-color: #b4b4b4;*/
+    width: 20px;
+    height: 20px;
+
+    right: 5px;
+    bottom: 8px;
+}
+
+.hide__pass i {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}

@@ -41,6 +41,7 @@ function hashCode(s) {
  * Send http POST request to get session id
  */
 var button = document.querySelector('#btn');
+var button2 = document.querySelector('#btn2');
 button.addEventListener('click', function () {
 
     var name = button.parentElement.querySelector('#name');
@@ -58,7 +59,15 @@ button.addEventListener('click', function () {
     var xhttp = new XMLHttpRequest();
     
     xhttp.onreadystatechange = function() {
+        if (this.readyState === 1) {  // Opened
+            button.style.display = 'none';
+            button2.style.display = 'block';
+        }
+
         if (this.readyState === 4) {  // When request is done
+
+            button.style.display = 'block';
+            button2.style.display = 'none';
 
             if (this.status === 200) {  // Authorized
                 alert("ok!");  // TODO: Redirection
@@ -68,7 +77,7 @@ button.addEventListener('click', function () {
             }
 
             if (this.status === 401) {  // Authorization error
-                alert("not!");  // TODO: show Html error message
+                alert("Wrong Login/Password!");  // TODO: show Html error message
 
                 pass.value = "";
             }
@@ -85,6 +94,10 @@ button.addEventListener('click', function () {
 
 
 /** ===============  ANIMATIONS  =============== */
+
+
+
+
 
 
 
@@ -137,6 +150,31 @@ pass.addEventListener('blur', function () {
 
 
 /**
+ * Add password hide/show button
+ * Change type of password field
+ */
+var hideButton = pass.parentElement.querySelector('.hide__pass');
+
+hideButton.addEventListener('click', function () {
+
+    if (pass.type == 'password') {
+        pass.type = 'text';
+        hideButton.firstElementChild.style.display = 'block';
+        hideButton.lastElementChild.style.display = 'none';
+    }
+
+    else {
+        pass.type = 'password';
+        hideButton.firstElementChild.style.display = 'none';
+        hideButton.lastElementChild.style.display = 'block';
+    }
+
+});
+
+
+
+
+/**
  * Add icon field animations
  * Hide icon if there is virtual keyboard
  * TODO: optimize selection
@@ -154,3 +192,7 @@ function onFocus(focus) {
         form.classList.remove('close');
     }
 }
+
+
+
+
