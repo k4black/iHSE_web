@@ -1,6 +1,7 @@
 
 .wrapper {
     padding-top: 10px;
+    margin-top: 10px;
 }
 
 
@@ -22,13 +23,30 @@
 
 
 
+
+
+
+.day:hover {
+    background: linear-gradient(0deg, #00000025 0%, #00000005 40%, #00000000 100%);
+
+}
+
+.day:hover .day__num {
+    background-color: #0083d4;
+}
+
+
 .day {
     width: auto;
     display: flex;
     flex-direction: column;
 }
 
+.day {
+    display: inline-block;
 
+    transition: background-color 300ms ease-out;
+}
 
 
 .day__num {
@@ -43,19 +61,21 @@
     color: white;
     font-size: 18px;
     border-radius: 50%;
+
+    transition: background-color 300ms ease-out;
 }
 
 .selected {
     background-color: #00000020;
-    background: linear-gradient(0deg, #00000030 0%, #00000020 60%, #00000010 80%, #00000000 100%);
+    background: linear-gradient(0deg, #00000030 0%, #00000020 60%, #00000010 80%, #00000000 100%) !important;
 }
 
 .selected .day__num {
-    background-color: #0085d6;
+    background-color: #0085d6 !important;
 }
 
 .today .day__num {
-    background-color: orange;
+    background-color: orange !important;
 }
 
 .day__name {
@@ -72,10 +92,6 @@
 
 
 
-.day {
-    display: inline-block;
-}
-
 
 
 
@@ -87,3 +103,27 @@
 
 
 
+
+
+
+@media (min-width : 769px) {
+    .header {
+        height: 0;
+    }
+
+    .wrapper {
+        margin-top: 70px;
+    }
+
+
+    .topbar {
+        margin-top: 0;
+        position: fixed;
+        top: 0px;
+        z-index: 100;
+        padding-left: calc(50% - 250px);
+        padding-right: calc(50% - 250px);
+
+
+    }
+}

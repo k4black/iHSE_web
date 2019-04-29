@@ -5,11 +5,13 @@ body {
 
 .wrapper {
     height: auto;
-    padding-top: 15px;
+    margin-top: 15px;
 }
 
 
 .topbar  {
+    /* TODO: MOve in main.css */
+
     position: relative;
 
     background-color: #007ac5;
@@ -119,4 +121,33 @@ body {
 
 .active {
     transform: translateY(-20px);
+}
+
+
+
+
+@media (min-width : 769px) {
+    .header {
+        transition: height 300ms ease-out;
+        height: 70px;
+        background: none;
+        z-index: 200;
+    }
+
+    .wrapper {
+        margin-top: 85px;
+    }
+
+
+    .topbar {
+        margin-top: 0;
+        position: fixed;
+        top: 0px;
+        z-index: 100;
+        padding-left: calc(50% - 250px);
+        padding-right: calc(50% - 250px);
+        /**/
+        /*padding-left: auto;*/
+        /*padding-right: auto;*/
+    }
 }

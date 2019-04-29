@@ -184,3 +184,13 @@ input.masked,
 .active #phoneMask {
     opacity: 1;
 }
+
+
+
+
+@media (min-width : 769px) {
+    .wrapper {
+        margin-top: 80px;
+        max-width: 350px;
+    }
+}

@@ -111,9 +111,13 @@ input {
     padding: 15px;
     height: 100%;
     height: auto;
-    padding-top: 60px;
 
     overflow-x: hidden;
+
+    max-width: 400px;
+    margin: 0 auto;
+
+    margin-top: 60px;
 }
 
 
@@ -362,6 +366,7 @@ input {
     z-index: 100;
     background: white;
     width: 80vw;
+    max-width: 300px;
     height: 100vh;
     display: block;
     justify-content: center;
@@ -566,8 +571,24 @@ input {
 /*@media device-aspect-ratio (min-device-aspect-ratio, max-device-aspect-ratio) {*/
 @media (min-width : 769px) {
 
-    .header {
-        justify-content: space-between;
+
+    .mobile__sidebar {
+        transform: translateX(0) !important;
+        max-width: 270px;
+        border-right: 1px #b4b4b4 solid;
+    }
+
+    body {
+        background-color: #00000010;
+    }
+
+    .wrapper {
+        margin-top: 70px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px #e3e6e5 solid;
+        max-width: 500px;
+        background-color: white;
     }
 
     .title {
@@ -583,7 +604,7 @@ input {
     }
 
     .mobile {
-        display: none;
+        /*display: none;*/
     }
 
     .mobile__floating__button {
