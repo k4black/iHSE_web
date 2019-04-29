@@ -1238,7 +1238,7 @@ def gsheets_get_day(day: str) -> list:
 
     # function for removing crlf from human-generated timetable
     def crlf(x):
-        y = x.replace('\n', ' - ')
+        #y = x.replace('\n', ' - ')
         return y
 
     # removing \n
