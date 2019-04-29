@@ -12,15 +12,8 @@ body {
 .topbar  {
     /* TODO: MOve in main.css */
 
-    position: relative;
-
-    background-color: #007ac5;
-
-    margin-top: 60px;
-    width: 100%;
     height: auto;
 
-    white-space: nowrap;
 
     display: flex;
     flex-direction: row;

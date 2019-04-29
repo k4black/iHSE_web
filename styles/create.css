@@ -1,18 +1,5 @@
 
 
-
-.wrapper form {
-    color: #9f9f9f;
-    display: flex;
-
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: stretch;
-
-
-
-}
-
 .create__title {
     color: #333333;
     font-size: 30px;
@@ -48,31 +35,7 @@
     margin-bottom: 20px;
 }
 
-.create__input {
-    margin-bottom: 40px;
-    display: block;
-    position: relative;
-    /*border: 1px black solid;*/
-    border-bottom: 2px solid #adadad;
-}
 
-.create__input label {
-    font-size: 16px;
-    position: absolute;
-    top: 10px;
-    width: 100%;
-    vertical-align: middle;
-}
-
-
-.create__input input {
-    color: #333333;
-    font-size: 15px;
-    width: 100%;
-    height: 35px;
-
-    padding-left: 5px;
-}
 
 .create__input div {
 
@@ -88,30 +51,10 @@
 }
 
 
-.create__input select {
-    width: 100%;
-    height: 35px;
-    font-size: 15px;
-
-    outline: none;
-    background-color: white;
-    border: none;
-}
 
 .create__input__div label {
     z-index: -10;
 }
-
-
-.create__label {
-    transform: translateY(0);
-    transition: transform 300ms ease-out;
-}
-
-.active .create__label {
-    transform: translateY(-20px);
-}
-
 
 
 

@@ -2,15 +2,6 @@
 
 
 
-.wrapper form {
-    color: #9f9f9f;
-    display: flex;
-
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: stretch;
-}
-
 .login__title {
     color: #333333;
     font-size: 30px;
@@ -46,44 +37,6 @@
     margin-bottom: 20px;
 }
 
-.login__input {
-
-    margin-bottom: 40px;
-    display: block;
-    position: relative;
-    /*border: 1px black solid;*/
-    border-bottom: 2px solid #adadad;
-}
-
-.login__input label {
-    font-size: 16px;
-    position: absolute;
-    top: 10px;
-    width: 100%;
-    vertical-align: middle;
-}
-
-
-.login__input input {
-    color: #333333;
-    font-size: 15px;
-    width: 100%;
-    height: 35px;
-
-    padding-left: 5px;
-}
-
-
-.login__label {
-    transform: translateY(0);
-    transition: transform 300ms ease-out;
-}
-
-.active .login__label {
-    transform: translateY(-20px);
-}
-
-
 
 
 
@@ -114,65 +67,6 @@
     text-decoration: none;
 }
 
-
-.hide__pass {
-    position: absolute;
-
-    /*background-color: #b4b4b4;*/
-    width: 20px;
-    height: 20px;
-
-    right: 5px;
-    bottom: 8px;
-}
-
-.hide__pass i {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-}
-
-
-
-
-
-
-.shell {
-    position: relative;
-    line-height: 1; }
-.shell span {
-    position: absolute;
-    left: 3px;
-    top: 1px;
-    color: #ccc;
-    pointer-events: none;
-    z-index: -1; }
-.shell span i {
-    font-style: normal;
-    /* any of these 3 will work */
-    color: transparent;
-    opacity: 0;
-    visibility: hidden; }
-
-input.masked,
-.shell span {
-    font-size: 16px;
-    font-family: monospace;
-    padding-right: 10px;
-    background-color: transparent;
-    text-transform: uppercase; }
-
-
-
-#phoneMask {
-    opacity: 0;
-
-    transition: opacity 300ms ease-out;
-}
-
-.active #phoneMask {
-    opacity: 1;
-}
 
 
 
