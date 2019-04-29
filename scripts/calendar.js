@@ -121,7 +121,7 @@ xhttp.send();
 
 
 
-// TODO: Optimize html creation 
+// TODO: Optimize html creation
 
 
 

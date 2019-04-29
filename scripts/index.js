@@ -51,7 +51,7 @@ xhttp.onreadystatechange = function() {
 
                                         (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
 
-                                        (event.host == undefined && event.loc == undefined ? "" :
+                                        ( (event.host == undefined || event.host == '') && (event.loc == undefined || event.loc == '') ? "" : '' +
                                         '<div class="event__last_line">' +
                                             '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
                                             '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
