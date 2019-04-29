@@ -121,6 +121,7 @@ xhttp.send();
 
 
 
+// TODO: Optimize html creation 
 
 
 
@@ -162,38 +163,33 @@ for (var i = 0; i < days.length; i++) {
                     var time_html;
                     var event_html;
 
+
                     for (var time of day_data) {
 
                         time_html = '<div class="time">' +
                             '<div class="bar">' +
-                                '<div></div>' +
-                                '<div class="point"></div>' +
-                                '<div></div>' +
+                            '<div>' + time.time + '</div>' +
                             '</div>' +
-                            '<div class="events">' +
-
-                            '<div>' + time.time + '</div>';
+                            '<div class="events">';
 
                         for (var event of time.events) {
                             event_html =    '<div class="event">' +
                                 '<p class="event__title">' + event.title + '</p>' +
 
-                                '<p class="event__desc">' + (event.desc == undefined ? "" : event.desc) + '</p>' +
+                                (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
 
-                                '<div class="event__last_line">' +
-                                '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
-                                '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
-                                '</div>' +
-                                '</div>' +
-                                '<hr class="border_line">';
+                                (event.host == undefined && event.loc == undefined ? "" :
+                                    '<div class="event__last_line">' +
+                                    '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
+                                    '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
+                                    '</div>') +
+                                '</div>';
 
                             time_html += event_html;
 
-
-
                         }
 
-                        time_html += '</div>' + '</div>';
+                        time_html += '</div>' + '</div>' + '<hr class="border_line">';
 
                         day_html += time_html;
                     }
