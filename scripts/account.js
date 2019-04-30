@@ -22,55 +22,56 @@ var accountPhone = document.querySelector('.topbar__phone');
 var accountCredits = document.querySelector('.credits');
 var title = document.querySelector('.title');
 
-var xhttp = new XMLHttpRequest();
+if (accountName == null || accountPhone == null) {
+    var xhttp = new XMLHttpRequest();
 
-xhttp.onreadystatechange = function() {
-    if (this.readyState === 4) {
-        if (this.status === 200) { // If ok set up fields name and phone
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
 
-            // console.log(this.responseText);
+                // console.log(this.responseText);
 
-            var user = JSON.parse( this.responseText );
-            accountName.innerText = user.name;
-            accountPhone.innerText = user.phone;
-            
-            // switch (user.type) {
-            //     case 0:
-            //         title.innerText = 'User';
-            //         break;
-            //     case 1:
-            //         title.innerText = 'Host';
-            //         break;
-            //     case 2:
-            //         title.innerText = 'Admin';
-            //         break;
-            // }
+                var user = JSON.parse(this.responseText);
+                accountName.innerText = user.name;
+                accountPhone.innerText = user.phone;
 
-            setProgress(user.credits, user.total);
-            accountCredits.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
+                // switch (user.type) {
+                //     case 0:
+                //         title.innerText = 'User';
+                //         break;
+                //     case 1:
+                //         title.innerText = 'Host';
+                //         break;
+                //     case 2:
+                //         title.innerText = 'Admin';
+                //         break;
+                // }
 
-            switch (user.type) {
-                case 0:  // User
+                setProgress(user.credits, user.total);
+                accountCredits.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
 
-                    break;
+                switch (user.type) {
+                    case 0:  // User
 
-                case 1:  // Host
-                    accountName.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Host';
-                    break;
+                        break;
 
-                case 2:  // Admin
-                    accountName.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Admin';
-                    break;
+                    case 1:  // Host
+                        accountName.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Host';
+                        break;
+
+                    case 2:  // Admin
+                        accountName.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Admin';
+                        break;
+                }
             }
         }
-    }
-};
+    };
 
-xhttp.open("GET", "http://ihse.tk:50000/account", true);
-xhttp.withCredentials = true; // To send Cookie;
-xhttp.send();
+    xhttp.open("GET", "http://ihse.tk:50000/account", true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
 
-
+}
 
 
 

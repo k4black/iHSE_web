@@ -47,35 +47,36 @@ function () {
  */
 var accountName = document.querySelector('.mobile__sidebar__name');
 var accountPhone = document.querySelector('.mobile__sidebar__phone');
+if (accountName == null || accountPhone == null) {
+    var xhttp = new XMLHttpRequest();
 
-var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
 
-xhttp.onreadystatechange = function() {
-    if (this.readyState === 4) {
-        if (this.status === 200) { // If ok set up fields name and phone
+                // console.log(this.responseText);
+                var user = JSON.parse(this.responseText);
+                accountName.innerText = user.name;
+                accountPhone.innerText = user.phone;
 
-            // console.log(this.responseText);
-            var user = JSON.parse( this.responseText );
-            accountName.innerText = user.name;
-            accountPhone.innerText = user.phone;
+                isLogin = true;
 
-            isLogin = true;
-
-            if (isLogin) {
-                hidden = document.querySelectorAll('.mobile__item__hidden');
-                for (var i = 0; i < hidden.length; ++i) {
-                    hidden[i].classList.remove('mobile__item__hidden');
+                if (isLogin) {
+                    hidden = document.querySelectorAll('.mobile__item__hidden');
+                    for (var i = 0; i < hidden.length; ++i) {
+                        hidden[i].classList.remove('mobile__item__hidden');
+                    }
                 }
+
             }
-
         }
-    }
-};
+    };
 
-xhttp.open("GET", "http://ihse.tk:50000/user", true);
-xhttp.withCredentials = true; // To send Cookie;
-xhttp.send();
+    xhttp.open("GET", "http://ihse.tk:50000/user", true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
 
+}
 
 
 
