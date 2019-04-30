@@ -68,6 +68,17 @@ if (accountName != null && accountPhone != null) {
                     }
                 }
 
+                if (user.calendar)
+                    accountName.parentElement.parentElement.querySelector('#nt__home').classList.add('active');
+
+
+                if (user.feedback)
+                    accountName.parentElement.parentElement.querySelector('#nt__feed').classList.add('active');
+
+
+                if (user.calendar)
+                    accountName.parentElement.parentElement.querySelector('#nt__cal').classList.add('active');
+
             }
         }
     };

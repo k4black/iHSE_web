@@ -516,6 +516,12 @@ form {
 
     position: absolute;
     right: 20px;
+
+    visibility: hidden;
+}
+
+.mobile__item__notification.active {
+    visibility: visible;
 }
 
 

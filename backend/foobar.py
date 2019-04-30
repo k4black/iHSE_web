@@ -252,6 +252,8 @@ def get_user(env, start_response, query, cookie):
     data['phone'] = usr[2]
     data['type'] = usr[1]
     data['group'] = usr[5]
+    data['calendar'] = True
+    data['feedback'] = False  # TODO: Notifacation 
     json_data = json.dumps(data)
 
 #     print(json_data)
