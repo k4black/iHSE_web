@@ -17,12 +17,12 @@
  * TODO: optimize selection
  */
 
-var accountName = document.querySelector('.topbar__name');
-var accountPhone = document.querySelector('.topbar__phone');
-var accountCredits = document.querySelector('.credits');
+var name_ = document.querySelector('.topbar__name');
+var phone = document.querySelector('.topbar__phone');
+var credits = document.querySelector('.credits');
 var title = document.querySelector('.title');
 
-if (accountName != null && accountPhone != null) {
+if (name_ != null && phone != null) {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
@@ -32,8 +32,8 @@ if (accountName != null && accountPhone != null) {
                 // console.log(this.responseText);
 
                 var user = JSON.parse(this.responseText);
-                accountName.innerText = user.name;
-                accountPhone.innerText = user.phone;
+                name_.innerText = user.name;
+                phone.innerText = user.phone;
 
                 // switch (user.type) {
                 //     case 0:
@@ -48,7 +48,7 @@ if (accountName != null && accountPhone != null) {
                 // }
 
                 setProgress(user.credits, user.total);
-                accountCredits.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
+                credits.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
 
                 switch (user.type) {
                     case 0:  // User
@@ -56,11 +56,11 @@ if (accountName != null && accountPhone != null) {
                         break;
 
                     case 1:  // Host
-                        accountName.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Host';
+                        name_.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Host';
                         break;
 
                     case 2:  // Admin
-                        accountName.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Admin';
+                        name_.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Admin';
                         break;
                 }
             }
