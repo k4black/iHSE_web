@@ -47,7 +47,7 @@ function () {
  */
 var accountName = document.querySelector('.mobile__sidebar__name');
 var accountPhone = document.querySelector('.mobile__sidebar__phone');
-if (accountName == null || accountPhone == null) {
+if (accountName != null && accountPhone != null) {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {

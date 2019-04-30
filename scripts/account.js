@@ -22,7 +22,7 @@ var accountPhone = document.querySelector('.topbar__phone');
 var accountCredits = document.querySelector('.credits');
 var title = document.querySelector('.title');
 
-if (accountName == null || accountPhone == null) {
+if (accountName != null && accountPhone != null) {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
