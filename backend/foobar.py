@@ -1602,7 +1602,7 @@ def gsheets_save_project(user_obj, project_data):
     print(position)
     write_range = 'Projects!A' + position + ':E' + position
 
-    # writing actual feedback    # TODO: Names by list
+    # writing actual feedback    # TODO: Max Names by list
     data = {'values': [[project_data['title'], project_data['type'], str(project_data['name']), project_data['desc'], project_data['anno']]],
             'range': write_range
             }
