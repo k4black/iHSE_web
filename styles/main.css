@@ -505,7 +505,7 @@ form {
     height: 20px;
     vertical-align: middle;
 
-    font-weight: bold;
+    /*font-weight: bold;*/
 }
 
 .mobile__item__notification {
@@ -545,6 +545,8 @@ form {
 .mobile__item__hidden i {
     color: #eaeaea;
 }
+
+
 
 
 
