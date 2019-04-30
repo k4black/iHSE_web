@@ -158,7 +158,7 @@ pass.addEventListener('blur', function () {
  * Add password hide/show button
  * Change type of password field
  */
-var hideButton = pass.parentElement.querySelector('.hide__pass');
+var hideButton = pass.parentElement.querySelector('.input__icon');
 
 hideButton.addEventListener('click', function () {
 

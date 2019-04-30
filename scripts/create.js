@@ -39,9 +39,18 @@ button.addEventListener('click', function() {
 
 
 
+    console.log(form.querySelectorAll('#name'));
+
+    names = Array.from(form.querySelectorAll('#name')).map(function(name) {
+        return name.value;
+    });
+
+    console.log(names);
+
+
     var data = JSON.stringify({"title": form.querySelector('#title').value,
                                "type": form.querySelector('#type').value,
-                               "name": form.querySelector('#name').value,
+                               "name": names,
                                "desc": form.querySelector('#desc').textContent,
                                "anno": form.querySelector('#anno').textContent
                               });
@@ -93,6 +102,59 @@ button.addEventListener('click', function() {
 /** ===============  ANIMATIONS  =============== */
 
 
+/**
+ * Add new  button
+ * Change type of password field
+ * TODO: Optimize
+ */
+var addButton = document.querySelector('.input__icon');
+addButton.addEventListener('click', addField);
+
+function addField() {
+    // console.log(this);
+
+    if (this.lastElementChild.style.display == 'block') {
+        this.parentElement.classList.add('active');
+
+        this.parentElement.style.marginBottom = 0;
+
+        this.firstElementChild.style.display = 'block';
+        this.lastElementChild.style.display = 'none';
+
+        var newObj = document.createElement('div');
+        newObj.classList = 'form__input active name__input';
+        newObj.innerHTML = '<label for="name" class="create__label">Names</label>'+
+                        '<input id="name" type="text" name="name" maxlength=""/>' +
+                        '<div class="input__icon">' +
+                            '<i style="display: none" class="mobile__item__icon large material-icons">-</i>' +
+                            '<i style="display: block" class="mobile__item__icon large material-icons">+</i>' +
+                        '</div>';
+
+        this.parentElement.parentElement.insertBefore(newObj, this.parentElement.nextSibling);
+
+
+        var newField = this.parentElement.nextSibling;
+        newField.lastChild.addEventListener('click', addField);
+
+        document.querySelector('#name').removeEventListener('focus', nameActive);
+        document.querySelector('#name').removeEventListener('blur', nameDisactive);
+    }
+
+    else {
+
+        if (!this.parentElement.classList.contains('name__input')) {
+            this.parentElement.nextElementSibling.classList.remove('name__input');
+        }
+
+        this.parentElement.parentNode.removeChild(this.parentElement);
+    }
+
+}
+
+
+
+
+
 
 
 /**
@@ -121,18 +183,20 @@ title.addEventListener('blur', function () {
  * TODO: optimize selection
  */
 var name_ = document.querySelector('#name');
-name_.addEventListener('focus', function () {
+name_.addEventListener('focus', nameActive);
+function nameActive() {
     name_.closest('div').querySelector("label").parentElement.classList.add('active');
     console.log('Name active');
-});
+}
 
-name_.addEventListener('blur', function () {
+name_.addEventListener('blur', nameDisactive);
+function nameDisactive() {
     if (name_.value != "")
         return;
 
     name_.closest('div').querySelector("label").parentElement.classList.remove('active');
     console.log('Name inactive');
-});
+}
 
 
 /**

@@ -58,6 +58,27 @@
 
 
 
+.name__input label{
+    display: none;
+}
+
+
+.input__icon {
+    opacity: 0;
+    transition: opacity 300ms ease-out;
+}
+
+.active .input__icon {
+    opacity: 1;
+}
+
+
+
+
+
+
+
+
 
 @media (min-width : 769px) {
     .wrapper {

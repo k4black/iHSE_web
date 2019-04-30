@@ -858,7 +858,7 @@ def post_project(env, start_response, query, cookie):
 
 
     # Get session id or ''
-    sessid = bytes.fromhex( cookies.get('sessid', '') )
+    sessid = bytes.fromhex( cookie.get('sessid', '') )
 
     sess_obj = sql_get_session(sessid)
 
@@ -1569,7 +1569,7 @@ def gsheets_save_project(user_obj, project_data):
         user_obj: User object - (id, type, phone, name, pass, team)
         project_data: Python obj of project - dictionary
                   {"title": string,
-                   "name": string,
+                   "name": [string, ...],
                    "type": string,
                    "desc": string,
                    "anno": string
@@ -1602,8 +1602,8 @@ def gsheets_save_project(user_obj, project_data):
     print(position)
     write_range = 'Projects!A' + position + ':E' + position
 
-    # writing actual feedback
-    data = {'values': [[project_data['title'], project_data['type'], project_data['name'], project_data['desc'], project_data['anno']]],
+    # writing actual feedback    # TODO: Names by list
+    data = {'values': [[project_data['title'], project_data['type'], str(project_data['name']), project_data['desc'], project_data['anno']]],
             'range': write_range
             }
     body = {
