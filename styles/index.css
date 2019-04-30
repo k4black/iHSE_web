@@ -114,7 +114,7 @@ footer div {
     margin-bottom: 0;
 }
 
-.events hr:last-child {
+.calendar__day hr:last-child {
     display: none;
 }
 
