@@ -253,7 +253,8 @@ def get_user(env, start_response, query, cookie):
     data['type'] = usr[1]
     data['group'] = usr[5]
     data['calendar'] = True
-    data['feedback'] = False  # TODO: Notifacation 
+    data['feedback'] = False
+    data['projects'] = True  # TODO: Notifacation
     json_data = json.dumps(data)
 
 #     print(json_data)

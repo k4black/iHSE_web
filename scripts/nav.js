@@ -76,8 +76,12 @@ if (accountName != null && accountPhone != null) {
                     accountName.parentElement.parentElement.querySelector('#nt__feed').classList.add('active');
 
 
-                if (user.calendar)
-                    accountName.parentElement.parentElement.querySelector('#nt__cal').classList.add('active');
+                // if (user.calendar)
+                //     accountName.parentElement.parentElement.querySelector('#nt__cal').classList.add('active');
+
+
+                if (user.projects)
+                    accountName.parentElement.parentElement.querySelector('#nt__prj').classList.add('active');
 
             }
         }
