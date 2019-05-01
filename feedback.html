@@ -176,7 +176,7 @@
 
 <div class="wrapper">
 
-    <form class="form feedback_form">
+    <div id="ajax_form" class="form feedback_form">
         <h1 class="">Day one</h1>
 
         <hr class="border_line">
@@ -199,13 +199,13 @@
         <!--<input class="user" type="text" list="users_list" id="user2">-->
         <!--<input class="user" type="text" list="users_list" id="user3">-->
         <div class="form__input">
-            <input id="user1" type="text" name="user" list="users_list" maxlength=""/>
+            <input class="user" id="user1" type="text" name="user" list="users_list" maxlength=""/>
         </div>
         <div class="form__input">
-            <input id="user2" type="text" name="user" list="users_list" maxlength=""/>
+            <input class="user" id="user2" type="text" name="user" list="users_list" maxlength=""/>
         </div>
         <div class="form__input">
-            <input id="user3" type="text" name="user" list="users_list" maxlength=""/>
+            <input class="user" id="user3" type="text" name="user" list="users_list" maxlength=""/>
         </div>
 
 
@@ -255,8 +255,8 @@
 
 <!--        <hr class="border_line">-->
 
-        <button id="btn">Save</button>
-    </form>
+        <button id="btn" class="save__button">Save</button>
+    </div>
 
 
 </div>
