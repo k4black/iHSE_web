@@ -46,16 +46,18 @@ xhttp.onreadystatechange = function() {
                                 '<div class="events">';
 
                 for (var event of time.events) {
-                    event_html =    '<div class="event">' +
-                                        '<p class="event__title">' + event.title + '</p>' +
+                    event_html =    '<div class="event" data-id="' + (event.id == undefined ? "" : event.id ) + '">' +
+                                        (event.id == undefined ? "" : '<a href="event.html?id=' + event.id + '">') +
+                                            '<p class="event__title">' + event.title + '</p>' +
 
-                                        (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+                                            (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
 
-                                        ( (event.host == undefined || event.host == '') && (event.loc == undefined || event.loc == '') ? "" : '' +
-                                        '<div class="event__last_line">' +
-                                            '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
-                                            '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
-                                        '</div>') +
+                                            ( (event.host == undefined || event.host == '') && (event.loc == undefined || event.loc == '') ? "" : '' +
+                                            '<div class="event__last_line">' +
+                                                '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
+                                                '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
+                                            '</div>') +
+                                        (event.id == undefined ? "" : '</a>') +
                                     '</div>';
 
                     time_html += event_html;
