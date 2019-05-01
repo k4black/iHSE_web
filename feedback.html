@@ -176,7 +176,7 @@
 
 <div class="wrapper">
 
-    <div class="feedback_form">
+    <form class="form feedback_form">
         <h1 class="">Day one</h1>
 
         <hr class="border_line">
@@ -185,9 +185,9 @@
         <p>Please, score overall impression of the day: </p>
 
         <h3>Overall</h3>
-        <input type="text" id="slider" class="slider">
+        <div style="width: 100%; margin: 0 auto"><input type="text" id="slider" class="slider"></div>
 
-        <hr class="border_line">
+        <hr class="border">
 
         <p>Select 3 participant you remember the most this day (<b>not</b> teamers)</p>
 
@@ -195,47 +195,68 @@
         </datalist>
 
         <!-- TODO: Check Different -->
-        <input class="user" type="text" list="users_list" id="user1">
-        <input class="user" type="text" list="users_list" id="user2">
-        <input class="user" type="text" list="users_list" id="user3">
+        <!--<input class="user" type="text" list="users_list" id="user1">-->
+        <!--<input class="user" type="text" list="users_list" id="user2">-->
+        <!--<input class="user" type="text" list="users_list" id="user3">-->
+        <div class="form__input">
+            <input id="user1" type="text" name="user" list="users_list" maxlength=""/>
+        </div>
+        <div class="form__input">
+            <input id="user2" type="text" name="user" list="users_list" maxlength=""/>
+        </div>
+        <div class="form__input">
+            <input id="user3" type="text" name="user" list="users_list" maxlength=""/>
+        </div>
 
-        <hr class="border_line">
+
+        <hr class="border">
 
         <p>Please, score your events for today:</p>
 
         <div class="event">
             <h3>Event 1 Title</h3>
 
-            <input type="text" id="event1" class="slider">
+            <div style="width: 100%; margin: 0 auto"><input type="text" id="event1" class="slider"></div>
             <textarea type="text" ></textarea>
 
             <p>Comments and feedback:</p>
-            <div class="content" contentEditable="true"></div>
+            <!--<div class="content" contentEditable="true"></div>-->
+            <div class="form__input feedback__input feedback__input__div">
+                <div class="content" contenteditable></div>
+            </div>
         </div>
 
         <div class="event">
             <h3>Event 2 Title</h3>
 
-            <input type="text" id="event2" class="slider">
+            <div style="width: 100%; margin: 0 auto"><input type="text" id="event2" class="slider"></div>
             <textarea type="text" ></textarea>
 
-            <div class="content" contentEditable="true"></div>
+            <p>Comments and feedback:</p>
+            <!--<div class="content" contentEditable="true"></div>-->
+            <div class="form__input feedback__input feedback__input__div">
+                <div class="content" contenteditable></div>
+            </div>
         </div>
 
         <div class="event">
             <h3>Event 3 Title</h3>
 
-            <input type="text" id="event3" class="slider">
+            <div style="width: 100%; margin: 0 auto"><input type="text" id="event3" class="slider"></div>
             <textarea type="text" ></textarea>
 
-            <div class="content" contentEditable="true"></div>
+            <p>Comments and feedback:</p>
+            <!--<div class="content" contentEditable="true"></div>-->
+            <div class="form__input feedback__input feedback__input__div">
+                <div class="content" contenteditable></div>
+            </div>
         </div>
 
 
 <!--        <hr class="border_line">-->
 
         <button id="btn">Save</button>
-    </div>
+    </form>
 
 
 </div>

@@ -40,19 +40,20 @@ var button2 = document.querySelector('#btn2');
 button.addEventListener('click', function () {
 
     var name_ = button.parentElement.querySelector('#name');
+    var surname = button.parentElement.querySelector('#surname');
     var phone = button.parentElement.querySelector('#phone');
     var pass = button.parentElement.querySelector('#pass');
     var code = button.parentElement.querySelector('#code');
 
 
-    if (name_.value == "" || pass.value == "" || code.value == "" || phone.value == "") // If some field are empty - do nothing
+    if (name_.value == "" || surname.value == "" || pass.value == "" || code.value == "" || phone.value == "") // If some field are empty - do nothing
         return;  // TODO: Message
 
 
 
     // Pass not password but hashcode of it
     // code - registration code
-    var query = "?name=" + name_.value + "&phone=" + phone.value + "&pass=" + hashCode(pass.value) + "&code=" + code.value;
+    var query = "?name=" + name_.value + " " + surname.value + "&phone=" + phone.value + "&pass=" + hashCode(pass.value) + "&code=" + code.value;
 
 
 
@@ -123,6 +124,28 @@ name_.addEventListener('blur', function () {
         return;
 
     name_.closest('div').querySelector("label").parentElement.classList.remove('active');
+    console.log('Name inactive');
+});
+
+
+/**
+ * Add surname field animations
+ * Hint Rise up when there is some text or cursor inside it
+ * TODO: optimize selection
+ */
+var surname = document.querySelector('#surname');
+surname.addEventListener('focus', function () {
+    onFocus(true);
+    surname.closest('div').querySelector("label").parentElement.classList.add('active');
+    console.log('Name active');
+});
+
+surname.addEventListener('blur', function () {
+    onFocus(false);
+    if (surname.value != "")
+        return;
+
+    surname.closest('div').querySelector("label").parentElement.classList.remove('active');
     console.log('Name inactive');
 });
 

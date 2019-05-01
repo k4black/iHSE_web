@@ -45,7 +45,7 @@
     overflow: auto;
     padding: 10px 0 3px 5px;
     vertical-align: center;
-    width: 200px;
+    width: 100%;
 
     outline: none;
 }

@@ -140,7 +140,6 @@ var overallSlider = new rSlider({
     values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     range: false, // range slider
     set:    [5], // an array of preselected values
-    width:    null,
     scale:    true,
     labels:   true,
     tooltip:  false,
