@@ -334,7 +334,7 @@ def get_names(env, start_response, query, cookie):
 
 
     # Names
-    data = [ i[4] for i in sql_get_users() ]
+    data = [ i[3] for i in sql_get_users() ]
     json_data = json.dumps(data)
 
 
