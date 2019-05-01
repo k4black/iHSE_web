@@ -94,7 +94,7 @@ def get(env, start_response, query, cookie):
         return get_user(env, start_response, query, cookie)
 
     if env['PATH_INFO'] == '/names':
-        return get_unames(env, start_response, query, cookie)
+        return get_names(env, start_response, query, cookie)
 
     if env['PATH_INFO'] == '/day':
         return get_day(env, start_response, query)
@@ -273,7 +273,7 @@ def get_user(env, start_response, query, cookie):
     return [json_data]
 
 
-def get_unames(env, start_response, query, cookie):
+def get_names(env, start_response, query, cookie):
     """ Send names data HTTP request
     Will check session id and return data according to user
 
