@@ -93,6 +93,9 @@ def get(env, start_response, query, cookie):
     if env['PATH_INFO'] == '/user':
         return get_user(env, start_response, query, cookie)
 
+    if env['PATH_INFO'] == '/names':
+        return get_unames(env, start_response, query, cookie)
+
     if env['PATH_INFO'] == '/day':
         return get_day(env, start_response, query)
 
@@ -258,6 +261,82 @@ def get_user(env, start_response, query, cookie):
     json_data = json.dumps(data)
 
 #     print(json_data)
+
+    json_data = json_data.encode('utf-8')
+
+    start_response('200 OK',
+                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                    ('Content-type', 'application/json'),
+                    ('Content-Length', str(len(json_data))) ])
+
+    return [json_data]
+
+
+def get_unames(env, start_response, query, cookie):
+    """ Send names data HTTP request
+    Will check session id and return data according to user
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
+
+    Note:
+        If there is no cookie or it is incorrect - it returns guest profile
+
+    Returns:
+        data: which will be transmited
+
+    """
+
+
+    # Get session id or ''
+    sessid = bytes.fromhex( cookie.get('sessid', '') )
+
+
+    if sessid == b'':  # No cookie
+
+        start_response('401 Unauthorized',
+                       [('Access-Control-Allow-Origin', '*'),
+                        ])
+
+        return
+
+    sess = sql_get_session(sessid)
+
+    if sess is None:  # Wrong cookie
+
+        start_response('401 Unauthorized',
+                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                        ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
+                        #('Location', 'http://ihse.tk/login.html')
+                        ])
+
+        return
+
+    # Cookie - ok
+
+    usr = sql_get_user( sess[1] )  # get user by user id
+
+    if usr is None:  # Wrong cookie
+
+            start_response('401 Unauthorized',
+                           [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                            ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                            ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
+                            #('Location', 'http://ihse.tk/login.html')
+                            ])
+
+            return
+
+
+    # Names
+    data = [ i[4] for i in sql_get_users() ]
+    json_data = json.dumps(data)
+
 
     json_data = json_data.encode('utf-8')
 

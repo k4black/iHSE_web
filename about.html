@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, viewport-fit=cover">
+
+    <meta name="theme-color" content="#006cae">
+
+    <title>About</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/about.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+<body>
+
+
+<header class="header">
+    <nav class="arrow">
+        <button class="arrow__button">
+            <i class="mobile__item__icon large material-icons">arrow_back</i>
+
+        </button>
+    </nav>
+
+
+    <div class="title">Create</div>
+
+</header>
+
+
+<div class="wrapper">
+
+    <input type="text" name="name" id="name_input" list="users_list">Name
+    <datalist id="users_list">
+        <option value="Текст1">
+        <option value="Текст2">
+    </datalist>
+
+</div>
+
+<!--Onpage logic -->
+<script defer async src="scripts/about.js"></script>
+<!--STD nav logic -->
+<script defer async src="scripts/nav.js"></script>
+
+<script defer async>
+
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+
+                // console.log(this.responseText);
+                var users = JSON.parse(this.responseText);
+
+                var datalist_html = "";
+
+                for (var i = 0; i < users.length; ++i) {
+                    datalist_html += '<option value="' + users[i] + '">';
+                }
+
+
+                document.querySelector('#users_list').innerHTML = datalist_html;
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/users", true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+
+</script>
+
+</body>
+</html>

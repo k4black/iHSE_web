@@ -95,6 +95,36 @@ button.addEventListener('click', function() {
 
 
 
+/**
+ * Loading users in list
+ * Send http GET request to get users
+ */
+var xhttp = new XMLHttpRequest();
+
+xhttp.onreadystatechange = function () {
+    if (this.readyState === 4) {
+        if (this.status === 200) { // If ok set up fields name and phone
+
+            // console.log(this.responseText);
+            var users = JSON.parse(this.responseText);
+
+            var datalist_html = "";
+
+            for (var i = 0; i < users.length; ++i) {
+                datalist_html += '<option value="' + users[i] + '">';
+            }
+
+
+            document.querySelector('#users_list').innerHTML = datalist_html;
+        }
+    }
+};
+
+xhttp.open("GET", "http://ihse.tk:50000/users", true);
+xhttp.withCredentials = true; // To send Cookie;
+xhttp.send();
+
+
 
 
 
