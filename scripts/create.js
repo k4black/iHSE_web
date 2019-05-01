@@ -154,7 +154,7 @@ function addField() {
         var newObj = document.createElement('div');
         newObj.classList = 'form__input active name__input';
         newObj.innerHTML = '<label for="name" class="create__label">Names</label>'+
-                        '<input id="name" type="text" name="name" maxlength=""/>' +
+                        '<input id="name" type="text" name="name" list="users_list" maxlength=""/>' +
                         '<div class="input__icon">' +
                             '<i style="display: none" class="mobile__item__icon large material-icons">-</i>' +
                             '<i style="display: block" class="mobile__item__icon large material-icons">+</i>' +

@@ -84,7 +84,16 @@ input {
     height: 35px;
 
     padding-left: 5px;
+
+    border:0;
+    outline:0;
 }
+
+
+input::-webkit-calendar-picker-indicator {
+    display: none;
+}
+
 
 
 form {
