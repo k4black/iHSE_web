@@ -858,7 +858,7 @@ def post_feedback(env, start_response, query, cookie):
     sess_obj = sql_get_session(sessid)
 
     # If no session
-    if False and sess_obj is None:
+    if sess_obj is None:
         start_response('401 Unauthorized',
                        [('Access-Control-Allow-Origin', '*'), ]
                        )
@@ -869,7 +869,7 @@ def post_feedback(env, start_response, query, cookie):
     user_obj = sql_get_user(sess_obj[1])
 
     # If no such user (wrong cookie)
-    if False and user_obj is None:
+    if user_obj is None:
 
         start_response('401 Unauthorized',
                        [('Access-Control-Allow-Origin', '*'), ]
@@ -927,7 +927,7 @@ def post_credits(env, start_response, query, cookie):
     sess_obj = sql_get_session(sessid)
 
     # If no session
-    if False and sess_obj is None:
+    if sess_obj is None:
         start_response('401 Unauthorized',
                        [('Access-Control-Allow-Origin', '*'), ]
                        )
@@ -937,7 +937,7 @@ def post_credits(env, start_response, query, cookie):
     user_obj = sql_get_user(sess_obj[1])
 
     # If no such user (wrong cookie)
-    if False and user_obj is None:
+    if user_obj is None:
 
         start_response('401 Unauthorized',
                        [('Access-Control-Allow-Origin', '*'), ]
@@ -994,7 +994,7 @@ def post_enroll(env, start_response, query, cookie):
     sess_obj = sql_get_session(sessid)
 
     # If no session
-    if False and sess_obj is None:
+    if sess_obj is None:
         start_response('401 Unauthorized',
                        [('Access-Control-Allow-Origin', '*'), ]
                        )
@@ -1004,7 +1004,7 @@ def post_enroll(env, start_response, query, cookie):
     user_obj = sql_get_user(sess_obj[1])
 
     # If no such user (wrong cookie)
-    if False and user_obj is None:
+    if user_obj is None:
 
         start_response('401 Unauthorized',
                        [('Access-Control-Allow-Origin', '*'), ]
