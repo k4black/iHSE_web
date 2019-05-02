@@ -4,18 +4,59 @@
 
 const urlParams = new URLSearchParams(window.location.search);
 
-const myParam = urlParams.get('id');
-console.log(myParam);
+var eventId = urlParams.get('id');
+console.log(eventId);
+
+var wrapper = document.querySelector('.wrapper');
+var xhttp = new XMLHttpRequest();
+
+xhttp.onreadystatechange = function () {
+    if (this.readyState === 4) {
+        if (this.status === 200) { // If ok set up fields
+
+
+            var event = JSON.parse( this.responseText );
+
+            document.querySelector('.title').innerText = event.title;
+
+            wrapper.querySelector('.time').firstElementChild.innerText = event.date;
+            wrapper.querySelector('.time').lastElementChild.innerText = event.time;
+
+            wrapper.querySelector('.location').firstElementChild.innerText = event.loc;
+
+            wrapper.querySelector('.host').firstElementChild.innerText = event.host;
+
+            wrapper.querySelector('.desc').firstElementChild.innerText = event.desc;
+
+
+            wrapper.querySelector('.count').innerText = event.count + ' / ' + event.total;
+            // TODO: Add backend
+            bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+
+            if (event.count >= event.total) {
+                wrapper.querySelector('#btn').classList.add('inactive');
+            }
+        }
+    }
+};
+
+xhttp.open("GET", "http://ihse.tk:50000/event?id" + eventId, true);
+// xhttp.withCredentials = true; // To send Cookie;
+xhttp.send();
+
+
+
 
 
 
 
 // https://kimmobrunfeldt.github.io/progressbar.js/
 // var ProgressBar = require('scripts/progressbar.js');
+var bar;
 window.addEventListener('load', function () {
     console.log('Load');
 
-    var bar = new window.ProgressBar.Line('#container', {
+    bar = new window.ProgressBar.Line('#container', {
         strokeWidth: 4,
         easing: 'easeInOut',
         duration: 1400,
@@ -29,7 +70,4 @@ window.addEventListener('load', function () {
             bar.path.setAttribute('stroke', state.color);
         }
     });
-
-    bar.animate(1.0);  // Number from 0.0 to 1.0
-
 });

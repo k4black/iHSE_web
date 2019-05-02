@@ -54,7 +54,7 @@
 
 
 .count {
-
+    align-self: left;
     margin-top: 30px;
     font-weight: lighter;
     font-size: 14px;
@@ -72,6 +72,11 @@
     margin-top: 60px;
 }
 
+
+.inactive {
+    background-color: #8da6cd;
+    pointer-events: none;
+}
 
 
 
