@@ -1345,10 +1345,10 @@ def gsheets_get_day(day: str) -> list:
             if titleplus == 0:
                 for pos, index in enumerate(mask):
                     timetable[-1]['events'][pos]['desc'] = line[index]
-                    timetable[-1]['events'][pos]['id'] = 43  # TODO: See abow
             elif titleplus == 1:
                 for pos, index in enumerate(mask):
                     timetable[-1]['events'][pos]['host'] = line[index]
+                    timetable[-1]['events'][pos]['id'] = 43  # TODO: See abow
             elif titleplus == 2:
                 for pos, index in enumerate(mask):
                     timetable[-1]['events'][pos]['loc'] = line[index]

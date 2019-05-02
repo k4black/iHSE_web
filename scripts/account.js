@@ -47,6 +47,10 @@ if (name_ != null && phone != null) {
                 //         break;
                 // }
 
+
+                // TODO: Optimize
+                bar.animate(user.credits / user.total);  // Number from 0.0 to 1.0
+
                 setProgress(user.credits, user.total);
                 credits.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
 
@@ -174,6 +178,47 @@ button.addEventListener('click', function () {
 });
 
 
+
+
+
+
+
+
+
+// https://kimmobrunfeldt.github.io/progressbar.js/
+// var ProgressBar = require('scripts/progressbar.js');
+var bar;
+window.addEventListener('load', function () {
+    bar = new ProgressBar.Circle('.progress', {
+        color: '#aaaaaa',
+        // This has to be the same size as the maximum width to
+        // prevent clipping
+        strokeWidth: 4,
+        trailWidth: 1,
+        easing: 'bounce',
+        duration: 1400,
+        text: {
+            autoStyleContainer: false
+        },
+        from: {color: '#0085d6', width: 1},
+        to: {color: '#ed9324', width: 4},
+        // Set default step function for all animate calls
+        step: function (state, circle) {
+            circle.path.setAttribute('stroke', state.color);
+            circle.path.setAttribute('stroke-width', state.width);
+
+            var value = Math.round(circle.value() * 100);
+            if (value === 0) {
+                circle.setText('');
+            } else {
+                circle.setText(value + '%');
+            }
+
+        }
+    });
+    bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    bar.text.style.fontSize = '2rem';
+});
 
 
 /** ===============  ANIMATIONS  =============== */

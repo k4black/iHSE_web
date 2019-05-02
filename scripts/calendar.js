@@ -57,6 +57,9 @@ document.querySelector('.topbar').innerHTML = topbar_html;
  */
 var day = document.querySelector('.calendar__day');
 
+const urlParams = new URLSearchParams(window.location.search);
+var dayNum = urlParams.get('day');
+
 var xhttp = new XMLHttpRequest();
 
 xhttp.onreadystatechange = function() {
@@ -80,17 +83,33 @@ xhttp.onreadystatechange = function() {
                     '<div class="events">';
 
                 for (var event of time.events) {
-                    event_html =    '<div class="event">' +
-                        '<p class="event__title">' + event.title + '</p>' +
+                    if (event.id == undefined)
+                        event_html =    '<div class="event">' +
+                            '<p class="event__title">' + event.title + '</p>' +
 
-                        (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+                            (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
 
-                        (event.host == undefined && event.loc == undefined ? "" :
-                            '<div class="event__last_line">' +
-                            '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
-                            '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
-                            '</div>') +
-                        '</div>';
+                            ( (event.host == undefined || event.host == '') && (event.loc == undefined || event.loc == '') ? "" : '' +
+                                '<div class="event__last_line">' +
+                                '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
+                                '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
+                                '</div>') +
+                            '</div>';
+
+                    else
+                        event_html =    '<div class="event" data-id="' + (event.id == undefined ? "" : event.id ) + '">' +
+                            (event.id == undefined ? "" : '<a href="event.html?id=' + event.id + '">') +
+                            '<p class="event__title">' + event.title + '</p>' +
+
+                            (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+
+                            ( (event.host == undefined || event.host == '') && (event.loc == undefined || event.loc == '') ? "" : '' +
+                                '<div class="event__last_line">' +
+                                '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
+                                '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
+                                '</div>') +
+                            (event.id == undefined ? "" : '</a>') +
+                            '</div>';
 
                     time_html += event_html;
 
@@ -115,7 +134,8 @@ var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 
 today = mm + '.' + dd;
 
-xhttp.open("GET", "http://ihse.tk:50000/day?day=" + today, true);
+
+xhttp.open("GET", "http://ihse.tk:50000/day?day=" + (dayNum != null ? dayNum : today), true);
 xhttp.send();
 
 
@@ -173,17 +193,33 @@ for (var i = 0; i < days.length; i++) {
                             '<div class="events">';
 
                         for (var event of time.events) {
-                            event_html =    '<div class="event">' +
-                                '<p class="event__title">' + event.title + '</p>' +
+                            if (event.id == undefined)
+                                event_html =    '<div class="event">' +
+                                    '<p class="event__title">' + event.title + '</p>' +
 
-                                (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+                                    (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
 
-                                (event.host == undefined && event.loc == undefined ? "" :
-                                    '<div class="event__last_line">' +
-                                    '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
-                                    '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
-                                    '</div>') +
-                                '</div>';
+                                    ( (event.host == undefined || event.host == '') && (event.loc == undefined || event.loc == '') ? "" : '' +
+                                        '<div class="event__last_line">' +
+                                        '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
+                                        '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
+                                        '</div>') +
+                                    '</div>';
+
+                            else
+                                event_html =    '<div class="event" data-id="' + (event.id == undefined ? "" : event.id ) + '">' +
+                                    (event.id == undefined ? "" : '<a href="event.html?id=' + event.id + '">') +
+                                    '<p class="event__title">' + event.title + '</p>' +
+
+                                    (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+
+                                    ( (event.host == undefined || event.host == '') && (event.loc == undefined || event.loc == '') ? "" : '' +
+                                        '<div class="event__last_line">' +
+                                        '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
+                                        '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
+                                        '</div>') +
+                                    (event.id == undefined ? "" : '</a>') +
+                                    '</div>';
 
                             time_html += event_html;
 

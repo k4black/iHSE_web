@@ -119,6 +119,17 @@ body {
 
 
 
+
+.progress {
+    /*margin: 20px;*/
+    width: 130px;
+    height: 130px;
+    position: relative;
+}
+
+
+
+
 @media (min-width : 769px) {
     .header {
         transition: height 300ms ease-out;
