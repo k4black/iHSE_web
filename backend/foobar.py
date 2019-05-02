@@ -1099,7 +1099,9 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
                     "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
                     "type"	INTEGER,
                     "title"	TEXT,
-                    "credits"	INTEGER
+                    "credits"	INTEGER,
+                    "count" INTEGER DEFAULT (0),
+                    "total" INTEGER
                   );
                """)
 
@@ -1187,7 +1189,7 @@ def sql_load_events(events_list):
     Clear users table and sessinos table and insert all users in users table
 
     Args:
-        events_list: list of event objects - [ (id, event_type, title, credits), ...]
+        events_list: list of event objects - [ (id, event_type, title, credits, total), ...]
 
     Returns:
         None
@@ -1198,10 +1200,10 @@ def sql_load_events(events_list):
     conn.commit()
 
     for event_obj in events_list:
-        cursor.execute("""INSERT INTO events(id, type, title, credits)
+        cursor.execute("""INSERT INTO events(id, type, title, credits, total)
                           SELECT ?, ?, ?
                           WHERE NOT EXISTS(SELECT 1 FROM events WHERE title=?)""",
-                       (event_obj[0], event_obj[1], event_obj[2], event_obj[3], user_obj[2]))
+                       (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], user_obj[2]))
         conn.commit()
 
 
@@ -1809,12 +1811,12 @@ def gsheets_get_events():
         None
 
     Returns:
-        events: description of the events - list [ (title, ), ....
+        events: description of the events - list [ (id, event_type, title, credits, total), ....
                                                  ]
 
     """
 
-    return [{'event 1', 0, 20}, {'othe one ', 1, 40}, {'And more one', 2, 0}]
+    return [(0, 'type1', 'event 1', 20, 20), (1, 'type2', 'othe one ', 100, 40), (2, 'type1', 'And more one', 10, 10)]
 
 
 # TODO: Max get event
