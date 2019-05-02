@@ -45,8 +45,6 @@ def application(env, start_response):
     for key, morsel in cookie_obj.items():
         cookie[key] = morsel.value
 
-    #print(cookie)
-
 
     if env['REQUEST_METHOD'] == 'GET':
         return get(env, start_response, query, cookie)
@@ -101,6 +99,9 @@ def get(env, start_response, query, cookie):
 
     if env['PATH_INFO'] == '/feedback':
         return get_feedback(env, start_response, query, cookie)
+
+    if env['PATH_INFO'] == '/event':
+        return get_event(env, start_response, query, cookie)
 
     if env['PATH_INFO'] == '/projects':
         return get_projects(env, start_response, query)
@@ -361,15 +362,12 @@ def get_account(env, start_response, query, cookie):
         cookie: http cookie parameters - dict (may be empty)
 
     Note:
-        If there is no cookie or it is incorrect - it returns guest profile
+        If there is no cookie or it is incorrect
 
     Returns:
         data: which will be transmited
 
     """
-
-    # Json account data
-    data = {}
 
     # Get session id or ''
     sessid = bytes.fromhex( cookie.get('sessid', '') )
@@ -416,6 +414,8 @@ def get_account(env, start_response, query, cookie):
             return
 
 #     print(usr)
+    # Json account data
+    data = {}
 
     data['name'] = usr[3]
     data['phone'] = usr[2]
@@ -433,6 +433,72 @@ def get_account(env, start_response, query, cookie):
     start_response('200 OK',
                    [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
                     ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                    ('Content-type', 'application/json'),
+                    ('Content-Length', str(len(json_data))) ])
+
+    return [json_data]
+
+
+
+def get_event(env, start_response, query, cookie):
+    """ Event data HTTP request
+    Get event description by event id
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
+
+    Note:
+        If there is no cookie or it is incorrect
+
+    Returns:
+        data: which will be transmited
+
+    """
+
+    # Get session id or ''
+    sessid = bytes.fromhex( cookie.get('sessid', '') )
+    sess = sql_get_session(sessid)
+    usr = sql_get_user( sess[1] )  # get user by user id
+
+
+    event = gsheets_get_event(query['id'])
+
+    # Json account data
+    data = {}
+
+#     data['title'] = "Event No1"
+#     data['time'] = "8:00 - 21:00"
+#     data['date'] = "4 april 2110"
+#     data['loc'] = "Location - 12"
+#     data['host'] = "Host Eventovitch"
+#     data['desc'] = "SOME description of the event in several lines lines lines lines lines."
+#
+#     data['count'] = 12
+#     data['total'] = 24
+
+    data['title'] = event[1]
+    data['time'] = event[2]
+    data['date'] = event[3]
+    data['loc'] = event[4]
+    data['host'] = event[5]
+    data['desc'] = event[6]
+
+    data['count'] = 12   # TODO: Count in sql bd
+    data['total'] = event[9]
+
+    (id, title, time, date, location, host, descriptiom, type, credits, total)
+    json_data = json.dumps(data)
+
+
+    json_data = json_data.encode('utf-8')
+
+    start_response('200 OK',
+                   [('Access-Control-Allow-Origin', '*'),
+#                    [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+#                     ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
                     ('Content-type', 'application/json'),
                     ('Content-Length', str(len(json_data))) ])
 
@@ -1118,7 +1184,7 @@ def sql_load_events(events_list):
     Clear users table and sessinos table and insert all users in users table
 
     Args:
-        events_list: list of event objects - [(id, evets_type, title, credits), ...]
+        events_list: list of event objects - [ (id, event_type, title, credits), ...]
 
     Returns:
         None
@@ -1129,13 +1195,10 @@ def sql_load_events(events_list):
     conn.commit()
 
     for event_obj in events_list:
-
-
-
-        cursor.execute("""INSERT INTO events(type, title, credits)
+        cursor.execute("""INSERT INTO events(id, type, title, credits)
                           SELECT ?, ?, ?
                           WHERE NOT EXISTS(SELECT 1 FROM events WHERE title=?)""",
-                       (event_obj[1], event_obj[2], event_obj[3], user_obj[2]))
+                       (event_obj[0], event_obj[1], event_obj[2], event_obj[3], user_obj[2]))
         conn.commit()
 
 
@@ -1215,8 +1278,6 @@ def sql_register(name, passw, type, phone, team):
 
     """
 
-#     print('Register:', name, passw)
-
     # cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(?, ?, ?, ?, ?)", ('USER_TYPE', 'PHONE', 'NAME', 'PASS', 'TEAM'))
     # Register new user if there is no user with name and pass
     cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
@@ -1254,8 +1315,6 @@ def sql_login(phone, passw, agent, ip, time='0'):
         return None
 
     user = users[0]
-#     print('User: ', user)
-
 
     # Create new session if there is no session with user_id and user_agent
     cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
@@ -1269,7 +1328,6 @@ def sql_login(phone, passw, agent, ip, time='0'):
     cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
     result = cursor.fetchone()
 
-#     print('Loggined: ', result)
     return result
 
 
@@ -1742,21 +1800,34 @@ def gsheets_update_events():
 
 # TODO: Max get events
 def gsheets_get_events():
-    """ Get events with description from google sheets
+    """ Get events from google sheets
 
     Args:
         None
 
     Returns:
-        events: description of the events - list [ {title, type, credits}, ....
+        events: description of the events - list [ (title, ), ....
                                                  ]
 
     """
 
-
     return [{'event 1', 0, 20}, {'othe one ', 1, 40}, {'And more one', 2, 0}]
 
 
+# TODO: Max get event
+def gsheets_get_event(id):
+    """ Get event with description from google sheets
+    Return full description
+
+    Args:
+        None
+
+    Returns:
+        event: description of the event - (id, title, time, date, location, host, descriptiom, type, credits, total), ....
+
+    """
+
+    return (32, "title", "time", "date", "location", "host", "descriptiom", "type", 300,  24)
 
 
 """ TEST """

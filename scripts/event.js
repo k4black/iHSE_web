@@ -28,9 +28,9 @@ xhttp.onreadystatechange = function () {
 
             wrapper.querySelector('.desc').firstElementChild.innerText = event.desc;
 
-
+            // TODO: Hide when there is no enrollment
             wrapper.querySelector('.count').innerText = event.count + ' / ' + event.total;
-            // TODO: Add backend
+
             bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
 
             if (event.count >= event.total) {
@@ -40,11 +40,14 @@ xhttp.onreadystatechange = function () {
     }
 };
 
-xhttp.open("GET", "http://ihse.tk:50000/event?id" + eventId, true);
+xhttp.open("GET", "http://ihse.tk:50000/event?id=" + eventId, true);
 // xhttp.withCredentials = true; // To send Cookie;
 xhttp.send();
 
 
+
+// TODO: If admin get list of enrolled
+// TODO: Add unenrollment
 
 
 
