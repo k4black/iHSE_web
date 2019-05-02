@@ -461,7 +461,10 @@ def get_event(env, start_response, query, cookie):
     # Get session id or ''
     sessid = bytes.fromhex( cookie.get('sessid', '') )
     sess = sql_get_session(sessid)
-    usr = sql_get_user( sess[1] )  # get user by user id
+    if sess is not None:
+        usr = sql_get_user( sess[1] )  # get user by user id
+    else
+        usr = None
 
 
     event = gsheets_get_event(query['id'])
