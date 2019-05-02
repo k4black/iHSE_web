@@ -463,7 +463,7 @@ def get_event(env, start_response, query, cookie):
     sess = sql_get_session(sessid)
     if sess is not None:
         usr = sql_get_user( sess[1] )  # get user by user id
-    else
+    else:
         usr = None
 
 
