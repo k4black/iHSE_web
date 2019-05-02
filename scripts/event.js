@@ -1,6 +1,8 @@
 
 
 
+var tmp = 0;
+
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -31,7 +33,12 @@ xhttp.onreadystatechange = function () {
             // TODO: Hide when there is no enrollment
             wrapper.querySelector('.count').innerText = event.count + ' / ' + event.total;
 
-            bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+            tmp = event.count / event.total;
+
+            window.addEventListener('load', function () {
+
+                bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+            });
 
             if (event.count >= event.total) {
                 wrapper.querySelector('#btn').classList.add('inactive');
@@ -74,3 +81,49 @@ window.addEventListener('load', function () {
         }
     });
 });
+
+
+
+
+
+// TODO: Enroll
+var button = document.querySelector('#btn');
+var button2 = document.querySelector('#btn2');
+button.addEventListener('click', function () {
+
+    if (tmp >= 1) // If no places
+        return; // TODO: Message
+
+
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 1) {  // Opened
+            button.style.display = 'none';
+            button2.style.display = 'block';
+        }
+
+        if (this.readyState === 4) {  // When request is done
+
+            button.style.display = 'block';
+            button2.style.display = 'none';
+
+            if (this.status === 200) {  // Authorized
+                alert("ok!");  // TODO: Redirection
+            }
+
+            if (this.status === 401) {  // Authorization error
+                alert("Wrong Phone/Password!");  // TODO: show Html error message
+            }
+
+            if (this.status === 405) {  // TODO: No places
+                alert("No places");  // TODO: show Html error message
+            }
+        }
+    };
+
+    xhttp.open("POST", "http://ihse.tk:50000/enroll?id=" + eventId, true);
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+});
+

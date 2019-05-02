@@ -682,6 +682,9 @@ def post(env, start_response, query, cookie):
     if env['PATH_INFO'] == '/credits':
         return post_credits(env, start_response, query, cookie)
 
+    if env['PATH_INFO'] == '/enroll':
+        return post_enroll(env, start_response, query, cookie)
+
 
 def post_login(env, start_response, phone, passw):
     """ Login HTTP request
@@ -894,7 +897,7 @@ def post_feedback(env, start_response, query, cookie):
 
 def post_credits(env, start_response, query, cookie):
     """ Sing in at lectutre  HTTP request (by student )
-    By cookie create feedback for day
+    By cookie add credits to user
 
     Args:
         env: HTTP request environment - dict
@@ -945,6 +948,72 @@ def post_credits(env, start_response, query, cookie):
     if True:   # TODO: If writing ok
         event_obj = (1, 0, 'Event title', 20)
         gsheets_save_credits(user_obj, event_obj)
+
+        start_response('200 Ok',
+                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                        #('Location', 'http://ihse.tk/login.html')
+                        ])
+
+    else:
+        start_response('405 Method Not Allowed',
+                       [('Access-Control-Allow-Origin', '*'),
+                        ])
+
+    return
+
+
+def post_enroll(env, start_response, query, cookie):
+    """ Enroll at lectutre  HTTP request (by student )
+    By cookie add user to this event
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if all are ok
+            401 Unauthorized: if wrong session id
+            405 Method Not Allowed: already got it or nop places
+
+    Returns:
+         None; Only http answer
+
+    """
+
+    # Event code
+    event_id  = query['id']
+
+
+    # Get session id or ''
+    sessid = bytes.fromhex( cookie.get('sessid', '') )
+
+    sess_obj = sql_get_session(sessid)
+
+    # If no session
+    if False and sess_obj is None:
+        start_response('401 Unauthorized',
+                       [('Access-Control-Allow-Origin', '*'), ]
+                       )
+        return
+
+
+    user_obj = sql_get_user(sess_obj[1])
+
+    # If no such user (wrong cookie)
+    if False and user_obj is None:
+
+        start_response('401 Unauthorized',
+                       [('Access-Control-Allow-Origin', '*'), ]
+                       )
+        return
+
+
+    if True:   # TODO: If writing ok
+        # TODO: Enroll user
 
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
