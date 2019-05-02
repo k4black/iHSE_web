@@ -492,7 +492,7 @@ def get_event(env, start_response, query, cookie):
     data['count'] = 12   # TODO: Count in sql bd
     data['total'] = event[9]
 
-    (id, title, time, date, location, host, descriptiom, type, credits, total)
+
     json_data = json.dumps(data)
 
 
