@@ -1368,7 +1368,7 @@ def sql_get_event(id):
         return events[0]
 
 
-def sql_enroll_user(event_id, user_obj)
+def sql_enroll_user(event_id, user_obj):
     """ Enroll user in event
 
     Args:
