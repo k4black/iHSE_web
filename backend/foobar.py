@@ -1630,6 +1630,42 @@ def gsheets_save_feedback(user_obj, day, feedback_data):
     return True  # TODO: check GSheetsAPI how to track success
 
 
+import random
+
+def generate_codes(num, type=0):
+    """ Generate registration codes by number
+    Each code is a 6-characters-number-letter code
+
+    Args:
+        num: Number of codes
+        type: Type of user [0, 1, 2, 3]
+
+    Returns:
+        Codes: 6-characters-number-letter code - [string, ...]
+
+    """
+
+    # string.ascii_uppercase
+    symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "0123456789" + "0123456789"
+    random.seed(0)
+    symbols = ''.join(random.sample(symbols, len(symbols)))
+    size = len(symbols)
+
+    rez = []
+
+    for i in range(num):
+        code = symbols[random.randint(0, size-1)] + \
+               symbols[random.randint(0, size-1)] + \
+               symbols[i // size] + \
+               symbols[i % size] + \
+               symbols[i*i % size] + \
+               symbols[( type % (size//5) + 1 ) * random.randint(0, size//5)]
+
+        rez.append(code)
+
+    return rez
+
+
 # TODO: Max generate reg codes
 def gsheets_generate_codes(users, hosts, admins):
     """ Generate registration codes in google sheets
@@ -1642,6 +1678,10 @@ def gsheets_generate_codes(users, hosts, admins):
         None
 
     """
+
+    codes = generate_codes(users, 0)
+    codes = generate_codes(hosts, 1)
+    codes = generate_codes(admins, 2)
 
     pass
 
