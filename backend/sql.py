@@ -6,10 +6,10 @@ import time
 """                    SQLite database creation                  """
 """ ---===---==========================================---===--- """
 
-# TODO: check SQL injections
 conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread=False)
 conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
 cursor = conn.cursor()
+
 
 # Users
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
@@ -57,13 +57,13 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
                """)
 
 
-
 """ ---===---==========================================---===--- """
 """           SQLite database interaction via sqlite3            """
 """ ---===---==========================================---===--- """
 
 
-# TODO: Safety sql
+# TODO: Safety sql (if bd busy)
+# TODO: check SQL injections
 def safety_request(sql):
     """ Try to run sql code event if db is busy
 

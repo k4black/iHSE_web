@@ -31,9 +31,9 @@ def application(env, start_response):
 
 
     # Parse cookie
-    rawdata = env.get('HTTP_COOKIE', '')
+    raw_json = env.get('HTTP_COOKIE', '')
     cookie_obj = SimpleCookie()
-    cookie_obj.load(rawdata)
+    cookie_obj.load(raw_json)
 
     # Even though SimpleCookie is dictionary-like, it internally uses a Morsel object
     # which is incompatible with requests. Manually construct a dictionary instead.
@@ -53,7 +53,7 @@ def application(env, start_response):
                      [('Access-Control-Allow-Origin', '*'),
                       ('Access-Control-Allow-Methods', 'GET, POST, HEAD, OPTIONS'),
                       ('Access-Control-Allow-Headers', '*'),
-                      ('Allow', 'GET, POST, HEAD, OPTIONS') # TODO: Add content application/json
+                      ('Allow', 'GET, POST, HEAD, OPTIONS')  # TODO: Add content application/json
                       ])
 
         return
@@ -75,7 +75,7 @@ def get_user_by_response(start_response, cookie):
         Send 401 Unauthorized - if no such user
 
     Returns:
-        user_obj or None if wrong sessid
+        user_obj or None if wrong session id
 
     """
 
@@ -478,7 +478,7 @@ def get_feedback(env, start_response, query, cookie):
     json_data = json_data.encode('utf-8')
 
     start_response('200 OK',
-                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),  # Because in js there is xhttp.withCredentials = true;
                     ('Content-type', 'application/json'),
                     ('Content-Length', str(len(json_data)))
                     ])
@@ -650,11 +650,12 @@ def post_login(env, start_response, phone, passw):
     # TODO: redirection by '302 Found'
     if res is not None:
 
-        sessid = res[0].hex()  # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
+        # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
+        sessid = res[0].hex()
 
         start_response('200 Ok',
-                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),  # Because in js there is xhttp.withCredentials = true;
+                        ('Access-Control-Allow-Credentials', 'true'),  # To receive cookie
                         ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=31536000;'),
                         #('Location', 'http://ihse.tk/login.html')
                         ])
@@ -695,8 +696,8 @@ def post_logout(env, start_response, query, cookie):
         # TODO: redirection by '302 Found'
         # TODO: if sess does not exist
         start_response('200 Ok',
-                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),  # Because in js there is xhttp.withCredentials = true;
+                        ('Access-Control-Allow-Credentials', 'true'),  # To receive cookie
                         ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
                         #('Location', 'http://ihse.tk/login.html')
                         ])
