@@ -110,6 +110,22 @@ button.addEventListener('click', function () {
 
             if (this.status === 200) {  // Authorized
                 alert("ok!");  // TODO: Redirection
+
+
+                var event = JSON.parse( this.responseText );
+
+                // TODO: Hide when there is no enrollment
+                wrapper.querySelector('.count').innerText = event.count + ' / ' + event.total;
+
+                tmp = event.count / event.total;
+
+                bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+
+                if (event.count >= event.total) {
+                    wrapper.querySelector('#btn').classList.add('inactive');
+                }
+
+
             }
 
             if (this.status === 401) {  // Authorization error

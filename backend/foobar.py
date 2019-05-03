@@ -469,7 +469,7 @@ def get_event(env, start_response, query, cookie):
 
     event = gsheets_get_event(query['id'])
 
-    # Json account data
+    # Json event data
     data = {}
 
 #     data['title'] = "Event No1"
@@ -1012,21 +1012,36 @@ def post_enroll(env, start_response, query, cookie):
         return
 
 
-    if True:   # TODO: If writing ok
+    if True or event is not None:   # TODO: If writing ok
         # TODO: Enroll user
+        sql_enroll_user(event_id, user_obj)
+
+        event = sql_get_event(event_id)
+        # Json event data
+        data = {}
+
+        data['count'] = event[4]
+        data['total'] = event[5]
+
+        json_data = json.dumps(data)  # creating real json here
+        json_data = json_data.encode('utf-8')
 
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
                         ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
                         #('Location', 'http://ihse.tk/login.html')
+                        ('Content-type', 'text/plant'),
+                        ('Content-Length', str(len(json_data)))
                         ])
+
+        return [json_data]
 
     else:
         start_response('405 Method Not Allowed',
                        [('Access-Control-Allow-Origin', '*'),
                         ])
 
-    return
+        return
 
 
 def post_project(env, start_response, query, cookie):
@@ -1333,6 +1348,51 @@ def sql_get_user(id):
         return users[0]
 
 
+def sql_get_event(id):
+    """ Get event obj by id
+
+    Args:
+        id: event id from bd
+
+    Returns:
+        event_obj: (id, type, title, credits, count, total)
+
+    """
+
+    cursor.execute("SELECT * FROM events WHERE id=?", (id, ))
+    events = cursor.fetchall()
+
+    if len(events) == 0:    # No such event
+        return None
+    else:
+        return events[0]
+
+
+def sql_enroll_user(event_id, user_obj)
+    """ Enroll user in event
+
+    Args:
+        event_id: event id from bd
+        user_obj: (id, user_type, phone, name, pass, team)
+                     or None if there is no such user
+
+    Returns:
+        True/False: Success or not
+
+    """
+
+    cursor.execute("SELECT * FROM events WHERE id=?", (event_id, ))
+    events = cursor.fetchall()
+
+    if len(events) == 0 or events[0][4] >= events[0][5]:    # No such event  or to many people
+        return False
+
+    cursor.execute("UPDATE events SET count=? WHERE id=?", (events[0][4] + 1, event_id, ))
+    conn.commit()
+
+    return True
+
+
 def sql_register(name, passw, type, phone, team):
     """ Register new user
     There is no verification - create anywhere
@@ -1340,7 +1400,7 @@ def sql_register(name, passw, type, phone, team):
     Args:
         name: User name - string
         passw: Password hash - int
-        type: User type - int  [GUEST, USER, ADMIN]
+        type: User type - int  [0 - USER, 1 - HOST, 2 - ADMIN]
         phone: phone - string
         team: number of group - int
 
