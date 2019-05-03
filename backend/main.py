@@ -1641,7 +1641,7 @@ def generate_codes(num, type=0):
         type: Type of user [0, 1, 2, 3]
 
     Returns:
-        Codes: 6-characters-number-letter code - [string, ...]
+        Codes: 6-characters-number-letter code - list [string, ...]
 
     """
 
