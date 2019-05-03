@@ -68,7 +68,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
 
 # TODO: Safety sql
 def safety_request(sql):
-    """ Try to run sql code event if db is bisy
+    """ Try to run sql code event if db is busy
 
     Args:
         sql: sql - string
@@ -114,7 +114,7 @@ def get_users():
 
 def load_users(users_list):
     """ Load all users to sql table
-    Clear users table and sessinos table and insert all users in users table
+    Clear users table and sessions table and insert all users in users table
 
     Args:
         users_list: list of user objects - [(id, user_id, user_type, user_agent, last_ip, time), ...]
@@ -141,7 +141,7 @@ def load_users(users_list):
 
 def load_events(events_list):
     """ Load all users to sql table
-    Clear users table and sessinos table and insert all users in users table
+    Clear users table and sessions table and insert all users in users table
 
     Args:
         events_list: list of event objects - [ (id, event_type, title, credits, total), ...]
@@ -285,7 +285,6 @@ def register(name, passw, type, phone, team):
 
     """
 
-    # cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(?, ?, ?, ?, ?)", ('USER_TYPE', 'PHONE', 'NAME', 'PASS', 'TEAM'))
     # Register new user if there is no user with name and pass
     cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
                       SELECT ?, ?, ?, ?, ?

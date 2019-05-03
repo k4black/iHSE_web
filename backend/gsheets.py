@@ -4,6 +4,8 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
+import random
+
 
 """ ---===---==========================================---===--- """
 """           Google Sheets interaction via GSheetsAPI           """
@@ -18,11 +20,12 @@ def get_day(day: str) -> list:
     """ Gets timetable from Google Sheets
         and returns it in pseudo-json format
 
-        Args:
-            day: calendar day, has to be same as sheet in GSheets - string
+    Args:
+        day: calendar day, has to be same as sheet in GSheets - string
 
-        Returns:
-            timetable: timetable of the corresponding day in pseudo-json - list
+    Returns:
+        timetable: timetable of the corresponding day in pseudo-json - list
+
     """
 
     # TODO waiting for Serova to get real day, not template
@@ -111,7 +114,7 @@ def save_feedback(user_obj, day, feedback_data):
                    }
 
     Returns:
-        state: Sucsess or not - bool
+        state: Success or not - bool
 
     """
 
@@ -169,8 +172,6 @@ def save_feedback(user_obj, day, feedback_data):
 
     return True  # TODO: check GSheetsAPI how to track success
 
-
-import random
 
 def generate_codes(num, type=0):
     """ Generate registration codes by number
@@ -348,10 +349,11 @@ def get_projects(filter_obj):
 
 
 def save_users(users_list):
-    """ Save list of registred users in google sheets
+    """ Save list of registered users in google sheets
 
     Args:
         users_list: User objects - list [ (id, type, phone, name, pass, team), ....]
+
     Returns:
         none
 
@@ -429,7 +431,7 @@ def save_project(user_obj, project_data):
                    }
 
     Returns:
-        state: Sucsess or not - bool
+        state: Success or not - bool
 
     """
 
@@ -491,7 +493,7 @@ def save_credits(user_obj, event_obj):
         event_obj: Event object - (id, type, title, credits)
 
     Returns:
-        state: Sucsess or not - bool
+        state: Success or not - bool
 
     """
     pass
@@ -499,8 +501,8 @@ def save_credits(user_obj, event_obj):
 
 # TODO: Max update events
 def update_events():
-    """ Undate events with description in google sheets
-    Read and poarce it from days sheets and save in 'Events' sheet
+    """ Update events with description in google sheets
+    Read and parse it from days sheets and save in 'Events' sheet
 
     Args:
         None

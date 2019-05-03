@@ -26,11 +26,11 @@ def application(env, start_response):
 
     """
 
-    # Parce query string
+    # Parse query string
     query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
 
 
-    # Parce cookie
+    # Parse cookie
     rawdata = env.get('HTTP_COOKIE', '')
     cookie_obj = SimpleCookie()
     cookie_obj.load(rawdata)
@@ -103,7 +103,8 @@ def get(env, start_response, query, cookie):
         return get_projects(env, start_response, query)
 
     # TODO: Remove or move in admin panel
-    # TODO: Permitions cheking
+    # TODO: Permission checking
+
     if env['PATH_INFO'] == '/save':
 
         users_list = sql.get_users()
@@ -114,7 +115,6 @@ def get(env, start_response, query, cookie):
                         ])
         return []
 
-    # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/load':
 
         users_list = gsheets.get_users()
@@ -128,7 +128,6 @@ def get(env, start_response, query, cookie):
                         ])
         return []
 
-    # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/update':
 
         gsheets.update_events()
@@ -138,7 +137,6 @@ def get(env, start_response, query, cookie):
                         ])
         return []
 
-    # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/codes':
 
         gsheets.generate_codes(20, 10, 2)
@@ -284,7 +282,6 @@ def get_names(env, start_response, query, cookie):
 
     """
 
-
     # Get session id or ''
     sessid = bytes.fromhex( cookie.get('sessid', '') )
 
@@ -402,7 +399,6 @@ def get_account(env, start_response, query, cookie):
 
             return
 
-#     print(usr)
     # Json account data
     data = {}
 
@@ -444,15 +440,6 @@ def get_event(env, start_response, query, cookie):
         data: which will be transmitted
 
     """
-
-    # Get session id or ''
-    sessid = bytes.fromhex( cookie.get('sessid', '') )
-    sess = sql.get_session(sessid)
-    if sess is not None:
-        usr = sql.get_user( sess[1] )  # get user by user id
-    else:
-        usr = None
-
 
     event = gsheets.get_event(query['id'])
 
@@ -668,7 +655,7 @@ def post_login(env, start_response, phone, passw):
 
     Note:
         Send:
-            200 Ok: if user exist and session created correnctly
+            200 Ok: if user exist and session created correctly
                     and send cookie with sess id
             401 Unauthorized: if wrong name of pass
 
@@ -702,7 +689,7 @@ def post_login(env, start_response, phone, passw):
 
 def post_logout(env, start_response, query, cookie):
     """ Logout HTTP request
-    Delate current session and send clear cookie sessid
+    Delete current session and send clear cookie sessid
 
     Args:
         env: HTTP request environment - dict
@@ -930,7 +917,7 @@ def post_credits(env, start_response, query, cookie):
 
 
 def post_enroll(env, start_response, query, cookie):
-    """ Enroll at lectutre  HTTP request (by student )
+    """ Enroll at lecture HTTP request (by student )
     By cookie add user to this event
 
     Args:
