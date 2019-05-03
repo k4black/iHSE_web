@@ -1,15 +1,11 @@
 import urllib.parse
 from http.cookies import SimpleCookie
-import time
 import json
+
 # Sqlite import
-import sqlite3
+from backend import sql
 # GSheetsAPI imports
-import pickle
-import os.path
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
+from backend import gsheets
 
 
 """ ---===---==========================================---===--- """
@@ -81,7 +77,7 @@ def get(env, start_response, query, cookie):
         cookie: http cookie parameters - dict (may be empty)
 
     Returns:
-        data: which will be transmited
+        data: which will be transmitted
 
     """
 
@@ -110,8 +106,8 @@ def get(env, start_response, query, cookie):
     # TODO: Permitions cheking
     if env['PATH_INFO'] == '/save':
 
-        users_list = sql_get_users()
-        gsheets_save_users(users_list)
+        users_list = sql.get_users()
+        gsheets.save_users(users_list)
 
         start_response('200 OK',
                        [('Access-Control-Allow-Origin', '*')
@@ -121,11 +117,11 @@ def get(env, start_response, query, cookie):
     # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/load':
 
-        users_list = gsheets_get_users()
-        sql_load_users(users_list)
+        users_list = gsheets.get_users()
+        sql.load_users(users_list)
 
-        event_list =  gsheets_get_events()
-        sql_load_events(events_list)
+        event_list = gsheets.get_events()
+        sql.load_events(event_list)
 
         start_response('200 OK',
                        [('Access-Control-Allow-Origin', '*')
@@ -135,7 +131,7 @@ def get(env, start_response, query, cookie):
     # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/update':
 
-        gsheets_update_events()
+        gsheets.update_events()
 
         start_response('200 OK',
                        [('Access-Control-Allow-Origin', '*')
@@ -145,12 +141,14 @@ def get(env, start_response, query, cookie):
     # TODO: Remove or move in admin panel
     if env['PATH_INFO'] == '/codes':
 
-        gsheets_generate_codes(20, 10, 2)
+        gsheets.generate_codes(20, 10, 2)
 
         start_response('200 OK',
                        [('Access-Control-Allow-Origin', '*')
                         ])
         return []
+
+
 
 
 
@@ -200,13 +198,9 @@ def get_user(env, start_response, query, cookie):
         If there is no cookie or it is incorrect - it returns guest profile
 
     Returns:
-        data: which will be transmited
+        data: which will be transmitted
 
     """
-
-
-    # Json account data
-    data = {}
 
     # Get session id or ''
     sessid = bytes.fromhex( cookie.get('sessid', '') )
@@ -220,7 +214,8 @@ def get_user(env, start_response, query, cookie):
 
         return
 
-    sess = sql_get_session(sessid)
+
+    sess = sql.get_session(sessid)
 
     if sess is None:  # Wrong cookie
 
@@ -235,9 +230,7 @@ def get_user(env, start_response, query, cookie):
 
     # Cookie - ok
 
-#     print(sess)
-
-    usr = sql_get_user( sess[1] )  # get user by user id
+    usr = sql.get_user( sess[1] )  # get user by user id
 
     if usr is None:  # Wrong cookie
 
@@ -250,7 +243,8 @@ def get_user(env, start_response, query, cookie):
 
             return
 
-#     print(usr)
+    # Json account data
+    data = {}
 
     data['name'] = usr[3]
     data['phone'] = usr[2]
@@ -259,10 +253,8 @@ def get_user(env, start_response, query, cookie):
     data['calendar'] = True
     data['feedback'] = False
     data['projects'] = True  # TODO: Notifacation
+
     json_data = json.dumps(data)
-
-#     print(json_data)
-
     json_data = json_data.encode('utf-8')
 
     start_response('200 OK',
@@ -288,7 +280,7 @@ def get_names(env, start_response, query, cookie):
         If there is no cookie or it is incorrect - it returns guest profile
 
     Returns:
-        data: which will be transmited
+        data: which will be transmitted
 
     """
 
@@ -305,7 +297,7 @@ def get_names(env, start_response, query, cookie):
 
         return
 
-    sess = sql_get_session(sessid)
+    sess = sql.get_session(sessid)
 
     if sess is None:  # Wrong cookie
 
@@ -320,7 +312,7 @@ def get_names(env, start_response, query, cookie):
 
     # Cookie - ok
 
-    usr = sql_get_user( sess[1] )  # get user by user id
+    usr = sql.get_user( sess[1] )  # get user by user id
 
     if usr is None:  # Wrong cookie
 
@@ -335,10 +327,9 @@ def get_names(env, start_response, query, cookie):
 
 
     # Names
-    data = [ i[3] for i in sql_get_users() ]
+    data = [ i[3] for i in sql.get_users() ]
+
     json_data = json.dumps(data)
-
-
     json_data = json_data.encode('utf-8')
 
     start_response('200 OK',
@@ -365,7 +356,7 @@ def get_account(env, start_response, query, cookie):
         If there is no cookie or it is incorrect
 
     Returns:
-        data: which will be transmited
+        data: which will be transmitted
 
     """
 
@@ -381,7 +372,7 @@ def get_account(env, start_response, query, cookie):
 
         return
 
-    sess = sql_get_session(sessid)
+    sess = sql.get_session(sessid)
 
     if sess is None:  # Wrong cookie
 
@@ -397,9 +388,7 @@ def get_account(env, start_response, query, cookie):
 
     # Cookie - ok
 
-#     print(sess)
-
-    usr = sql_get_user( sess[1] )  # get user by user id
+    usr = sql.get_user( sess[1] )  # get user by user id
 
     if usr is None:  # Wrong cookie
 
@@ -424,10 +413,8 @@ def get_account(env, start_response, query, cookie):
 
     data['credits'] = 120
     data['total'] = 300
+
     json_data = json.dumps(data)
-
-#     print(json_data)
-
     json_data = json_data.encode('utf-8')
 
     start_response('200 OK',
@@ -454,33 +441,23 @@ def get_event(env, start_response, query, cookie):
         If there is no cookie or it is incorrect
 
     Returns:
-        data: which will be transmited
+        data: which will be transmitted
 
     """
 
     # Get session id or ''
     sessid = bytes.fromhex( cookie.get('sessid', '') )
-    sess = sql_get_session(sessid)
+    sess = sql.get_session(sessid)
     if sess is not None:
-        usr = sql_get_user( sess[1] )  # get user by user id
+        usr = sql.get_user( sess[1] )  # get user by user id
     else:
         usr = None
 
 
-    event = gsheets_get_event(query['id'])
+    event = gsheets.get_event(query['id'])
 
     # Json event data
     data = {}
-
-#     data['title'] = "Event No1"
-#     data['time'] = "8:00 - 21:00"
-#     data['date'] = "4 april 2110"
-#     data['loc'] = "Location - 12"
-#     data['host'] = "Host Eventovitch"
-#     data['desc'] = "SOME description of the event in several lines lines lines lines lines."
-#
-#     data['count'] = 12
-#     data['total'] = 24
 
     data['title'] = event[1]
     data['time'] = event[2]
@@ -494,8 +471,6 @@ def get_event(env, start_response, query, cookie):
 
 
     json_data = json.dumps(data)
-
-
     json_data = json_data.encode('utf-8')
 
     start_response('200 OK',
@@ -519,18 +494,16 @@ def get_feedback(env, start_response, query, cookie):
         cookie: http cookie parameters - dict (may be empty)
 
     Returns:
-        data: which will be transmited
+        data: which will be transmitted
 
     """
 
     day = query['day']
 
-    # Json account data
-    data = {}
-
-    tmp = gsheet_get_feedback(day)  # return (title, [event1, event2, event3] ) or None
+    tmp = gsheets.get_feedback(day)  # return (title, [event1, event2, event3] ) or None
 
     # TODO: SQL
+    data = {}
     data['title'] = day + ': ' + tmp[0]
     data['events'] = [ {'title': tmp[1][0]},
                        {'title': tmp[1][1]},
@@ -538,10 +511,6 @@ def get_feedback(env, start_response, query, cookie):
                      ]
 
     json_data = json.dumps(data)
-
-
-#     print(json_data)
-
     json_data = json_data.encode('utf-8')
 
     start_response('200 OK',
@@ -552,7 +521,6 @@ def get_feedback(env, start_response, query, cookie):
     return [json_data]
 
 
-# TODO: Max
 def get_projects(env, start_response, query):
     """ Projects HTTP request
     Send list of projects in json format
@@ -563,7 +531,7 @@ def get_projects(env, start_response, query):
         query: url query parameters - dict (may be empty)
 
     Returns:
-        data: which will be transmited
+        data: which will be transmitted
 
     """
 
@@ -604,7 +572,8 @@ def get_projects(env, start_response, query):
     # data.append(project1)
     # data.append(project2)
 
-    data = gsheets_get_projects(None)
+    data = gsheets.get_projects(None)
+
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
 
@@ -636,7 +605,8 @@ def get_day(env, start_response, query):
     # format is "dd.mm"
     day = query['day']
 
-    data = gsheets_get_day(day)  # getting pseudo-json here
+    data = gsheets.get_day(day)  # getting pseudo-json here
+
     json_data = json.dumps(data)  # creating real json here
     json_data = json_data.encode('utf-8')
 
@@ -693,7 +663,8 @@ def post_login(env, start_response, phone, passw):
     Args:
         env: HTTP request environment - dict
         start_response: HTTP response headers place
-
+        phone: User phone - string
+        passw: Password hash - int
 
     Note:
         Send:
@@ -707,11 +678,10 @@ def post_login(env, start_response, phone, passw):
     """
 
     # Get session obj or None
-    res = sql_login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
+    res = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
 
     # TODO: redirection by '302 Found'
     if res is not None:
-#         print(res, type(res))
 
         sessid = res[0].hex()  # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
 
@@ -730,7 +700,7 @@ def post_login(env, start_response, phone, passw):
     return
 
 
-def post_logout(env, start_response, query):
+def post_logout(env, start_response, query, cookie):
     """ Logout HTTP request
     Delate current session and send clear cookie sessid
 
@@ -738,6 +708,7 @@ def post_logout(env, start_response, query):
         env: HTTP request environment - dict
         start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
 
     Note:
         Send:
@@ -748,19 +719,25 @@ def post_logout(env, start_response, query):
          None; Only http answer
 
     """
+
     # Get session id or ''
     sessid = bytes.fromhex( cookie.get('sessid', '') )
 
-    sql_logout(sessid)
+    if sql.logout(sessid):
 
-    # TODO: redirection by '302 Found'
-    # TODO: if sess does not exist
-    start_response('200 Ok',
-                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
-                    ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
-                    #('Location', 'http://ihse.tk/login.html')
-                    ])
+        # TODO: redirection by '302 Found'
+        # TODO: if sess does not exist
+        start_response('200 Ok',
+                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
+                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
+                        ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
+                        #('Location', 'http://ihse.tk/login.html')
+                        ])
+    else:
+        start_response('403 Forbidden',
+                       [('Access-Control-Allow-Origin', '*'),
+                        #('Content-type', 'text/html'),
+                        ])
 
     return
 
@@ -787,16 +764,11 @@ def post_register(env, start_response, name, phone, passw, code):
 
     """
 
-    #print("Registration code: ", code)
+    user_type = gsheets.check_code(code)
 
-    user_type = gsheets_check_code(code)
-
-    #print("Registration user type: ", user_type)
 
     if user_type is not None:
-        sql_register(name, passw, user_type, phone, 0)
-
-        #print("Registration user name: ", name)
+        sql.register(name, passw, user_type, phone, 0)
 
         post_login(env, start_response, name, passw)
 
@@ -832,8 +804,6 @@ def post_feedback(env, start_response, query, cookie):
 
     day = query['day']
 
-    # Json feedback data
-
     # the environment variable CONTENT_LENGTH may be empty or missing
     try:
         request_body_size = int(env.get('CONTENT_LENGTH', 0))
@@ -846,16 +816,14 @@ def post_feedback(env, start_response, query, cookie):
     request_body = env['wsgi.input'].read(request_body_size)
     request_body = request_body.decode("utf-8")
 
-#     print(request_body)
 
     parced = json.loads(request_body)
 
-    #print("Feedback data: ", parced)
 
     # Get session id or ''
     sessid = bytes.fromhex( cookie.get('sessid', '') )
 
-    sess_obj = sql_get_session(sessid)
+    sess_obj = sql.get_session(sessid)
 
     # If no session
     if sess_obj is None:
@@ -864,9 +832,8 @@ def post_feedback(env, start_response, query, cookie):
                        )
         return
 
-    # print("Feedback by sess: ", sess_obj)
 
-    user_obj = sql_get_user(sess_obj[1])
+    user_obj = sql.get_user(sess_obj[1])
 
     # If no such user (wrong cookie)
     if user_obj is None:
@@ -876,10 +843,8 @@ def post_feedback(env, start_response, query, cookie):
                        )
         return
 
-    #print("Feedback by user: ", user_obj)
 
-    if True:   # TODO: If writing ok
-        gsheets_save_feedback(user_obj, day, parced)
+    if gsheets.save_feedback(user_obj, day, parced):   # TODO: If writing ok
 
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
@@ -896,7 +861,7 @@ def post_feedback(env, start_response, query, cookie):
 
 
 def post_credits(env, start_response, query, cookie):
-    """ Sing in at lectutre  HTTP request (by student )
+    """ Sing in at lecture  HTTP request (by student )
     By cookie add credits to user
 
     Args:
@@ -920,11 +885,13 @@ def post_credits(env, start_response, query, cookie):
     code  = query['code']
     print('Credits code: ', code)
 
+    event_id = 42 # TODO: Get event id
+
 
     # Get session id or ''
     sessid = bytes.fromhex( cookie.get('sessid', '') )
 
-    sess_obj = sql_get_session(sessid)
+    sess_obj = sql.get_session(sessid)
 
     # If no session
     if sess_obj is None:
@@ -934,7 +901,7 @@ def post_credits(env, start_response, query, cookie):
         return
 
 
-    user_obj = sql_get_user(sess_obj[1])
+    user_obj = sql.get_user(sess_obj[1])
 
     # If no such user (wrong cookie)
     if user_obj is None:
@@ -944,10 +911,9 @@ def post_credits(env, start_response, query, cookie):
                        )
         return
 
-
-    if True:   # TODO: If writing ok
-        event_obj = (1, 0, 'Event title', 20)
-        gsheets_save_credits(user_obj, event_obj)
+    event_obj = sql.get_event(event_id)
+    if True or event_obj is not None:   # TODO: If writing ok
+        gsheets.save_credits(user_obj, event_obj)
 
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
@@ -991,7 +957,7 @@ def post_enroll(env, start_response, query, cookie):
     # Get session id or ''
     sessid = bytes.fromhex( cookie.get('sessid', '') )
 
-    sess_obj = sql_get_session(sessid)
+    sess_obj = sql.get_session(sessid)
 
     # If no session
     if sess_obj is None:
@@ -1001,7 +967,7 @@ def post_enroll(env, start_response, query, cookie):
         return
 
 
-    user_obj = sql_get_user(sess_obj[1])
+    user_obj = sql.get_user(sess_obj[1])
 
     # If no such user (wrong cookie)
     if user_obj is None:
@@ -1012,11 +978,11 @@ def post_enroll(env, start_response, query, cookie):
         return
 
 
-    if True or event is not None:   # TODO: If writing ok
+    if True or sql.enroll_user(event_id, user_obj):   # TODO: If writing ok
         # TODO: Enroll user
-        sql_enroll_user(event_id, user_obj)
 
-        event = sql_get_event(event_id)
+        event = sql.get_event(event_id)
+
         # Json event data
         data = {}
 
@@ -1065,10 +1031,6 @@ def post_project(env, start_response, query, cookie):
 
     """
 
-    #print('project')
-
-    # Json project data
-
     # the environment variable CONTENT_LENGTH may be empty or missing
     try:
         request_body_size = int(env.get('CONTENT_LENGTH', 0))
@@ -1081,42 +1043,33 @@ def post_project(env, start_response, query, cookie):
     request_body = env['wsgi.input'].read(request_body_size)
     request_body = request_body.decode("utf-8")
 
-#     print(request_body)
-
     parced = json.loads(request_body)
-
-
-    #print(parced)
-
 
     # Get session id or ''
     sessid = bytes.fromhex( cookie.get('sessid', '') )
 
-    sess_obj = sql_get_session(sessid)
+    sess_obj = sql.get_session(sessid)
 
     # If no session
-    if False and sess_obj is None:
+    if sess_obj is None:
         start_response('401 Unauthorized',
                        [('Access-Control-Allow-Origin', '*'), ]
                        )
         return
 
-    # print("Project by sess: ", sess_obj)
 
-    user_obj = sql_get_user(sess_obj[1])
+    user_obj = sql.get_user(sess_obj[1])
 
     # If no such user (wrong cookie)
-    if False and user_obj is None:
+    if user_obj is None:
 
         start_response('401 Unauthorized',
                        [('Access-Control-Allow-Origin', '*'), ]
                        )
         return
 
-    print("Project by user: ", user_obj)
 
-    if user_obj is not None:   # If user exist
-        gsheets_save_project(user_obj, parced)
+    if gsheets.save_project(user_obj, parced):   # If user exist
 
         start_response('200 Ok',
                        [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
@@ -1132,893 +1085,6 @@ def post_project(env, start_response, query, cookie):
     return
 
 
-""" ---===---==========================================---===--- """
-"""                    SQLite database creation                  """
-""" ---===---==========================================---===--- """
-
-# TODO: SQL injections
-
-
-# TODO: place this in sql-specific functions?
-conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread=False)
-conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
-cursor = conn.cursor()
-
-# Users
-cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
-                    "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                    "user_type"	INTEGER,
-                    "phone"	TEXT,
-                    "name"	TEXT,
-                    "pass"	INTEGER,
-                    "team"	INTEGER
-                  );
-               """)
-
-# Sessions
-cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
-                    "id"	BLOB NOT NULL PRIMARY KEY UNIQUE DEFAULT (randomblob(16)),
-                    "user_id"	INTEGER,
-                    "user_type"	INTEGER,
-                    "user_agent"	TEXT,
-                    "last_ip"	TEXT,
-                    "time"	TEXT,
-                    FOREIGN KEY("user_id") REFERENCES "users"("id")
-                  );
-               """)
-
-
-# Feedback: voite or not
-cursor.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
-                    "user_id"	INTEGER NOT NULL PRIMARY KEY,
-                    "days"	TEXT,
-                    "time"	TEXT DEFAULT(datetime('now','localtime')),
-                    FOREIGN KEY("user_id") REFERENCES "users"("id")
-                  );
-               """)
-
-
-# Events
-cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
-                    "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                    "type"	INTEGER,
-                    "title"	TEXT,
-                    "credits"	INTEGER,
-                    "count" INTEGER DEFAULT (0),
-                    "total" INTEGER
-                  );
-               """)
-
-
-""" ---===---==========================================---===--- """
-"""           SQLite database interaction via sqlite3            """
-""" ---===---==========================================---===--- """
-
-
-# TODO: Safety sql
-def sql_safety_request(sql):
-    """ Try to run sql code event if db is bisy
-
-    Args:
-        sql: sql - string
-
-    Returns:
-        None
-
-    """
-
-    timeout = 10
-
-    for x in range(0, timeout):
-        try:
-            with conn:
-                conn.execute(sql)
-                conn.commit()
-        except:
-            time.sleep(1)
-            pass
-        finally:
-            break
-    else:
-        with conn:
-            conn.execute(sql)
-            conn.commit()
-
-
-def sql_get_users():
-    """ Get all users from sql table
-
-    Args:
-        None
-
-    Returns:
-        user objects: list of user objects - [(id, user_id, user_type, user_agent, last_ip, time), ...]
-
-    """
-
-    cursor.execute("SELECT * FROM users")
-    users_list = cursor.fetchall()
-    return users_list
-
-
-def sql_load_users(users_list):
-    """ Load all users to sql table
-    Clear users table and sessinos table and insert all users in users table
-
-    Args:
-        users_list: list of user objects - [(id, user_id, user_type, user_agent, last_ip, time), ...]
-
-    Returns:
-        None
-
-    """
-
-    cursor.execute("DELETE FROM sessions")
-    cursor.execute("DELETE FROM users")
-    conn.commit()
-
-    for user_obj in users_list:
-
-
-
-        cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
-                          SELECT ?, ?, ?, ?, ?
-                          WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
-                       (user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[3], user_obj[4]))
-        conn.commit()
-
-
-def sql_load_events(events_list):
-    """ Load all users to sql table
-    Clear users table and sessinos table and insert all users in users table
-
-    Args:
-        events_list: list of event objects - [ (id, event_type, title, credits, total), ...]
-
-    Returns:
-        None
-
-    """
-
-    cursor.execute("DELETE FROM events")
-    conn.commit()
-
-    for event_obj in events_list:
-        cursor.execute("""INSERT INTO events(id, type, title, credits, total)
-                          SELECT ?, ?, ?
-                          WHERE NOT EXISTS(SELECT 1 FROM events WHERE title=?)""",
-                       (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], user_obj[2]))
-        conn.commit()
-
-
-def sql_get_session(id):
-    """ Get session obj by id
-
-    Args:
-        id: session id from bd
-
-    Returns:
-        session obj: (id, user_id, user_type, user_agent, last_ip, time)
-                     or None if there is no such session
-
-    """
-
-    cursor.execute("SELECT * FROM sessions WHERE id=?", (id, ))
-    sessions = cursor.fetchall()
-
-    if len(sessions) == 0:    # No such session
-        return None
-    else:
-        return sessions[0]
-
-
-def sql_logout(id):
-    """ Delete current session by sessid
-
-    Args:
-        id: session id from bd
-
-    Returns:
-        None # TODO True/False
-
-    """
-
-    cursor.execute("DELETE FROM sessions WHERE id=?", (id, ))
-    conn.commit()
-
-
-def sql_get_user(id):
-    """ Get user obj by id
-
-    Args:
-        id: user id from bd
-
-    Returns:
-        user_obj: (id, user_type, phone, name, pass, team)
-                     or None if there is no such user
-
-    """
-
-    cursor.execute("SELECT * FROM users WHERE id=?", (id, ))
-    users = cursor.fetchall()
-
-    if len(users) == 0:    # No such user
-        return None
-    else:
-        return users[0]
-
-
-def sql_get_event(id):
-    """ Get event obj by id
-
-    Args:
-        id: event id from bd
-
-    Returns:
-        event_obj: (id, type, title, credits, count, total)
-
-    """
-
-    cursor.execute("SELECT * FROM events WHERE id=?", (id, ))
-    events = cursor.fetchall()
-
-    if len(events) == 0:    # No such event
-        return None
-    else:
-        return events[0]
-
-
-def sql_enroll_user(event_id, user_obj):
-    """ Enroll user in event
-
-    Args:
-        event_id: event id from bd
-        user_obj: (id, user_type, phone, name, pass, team)
-                     or None if there is no such user
-
-    Returns:
-        True/False: Success or not
-
-    """
-
-    cursor.execute("SELECT * FROM events WHERE id=?", (event_id, ))
-    events = cursor.fetchall()
-
-    if len(events) == 0 or events[0][4] >= events[0][5]:    # No such event  or to many people
-        return False
-
-    cursor.execute("UPDATE events SET count=? WHERE id=?", (events[0][4] + 1, event_id, ))
-    conn.commit()
-
-    return True
-
-
-def sql_register(name, passw, type, phone, team):
-    """ Register new user
-    There is no verification - create anywhere
-
-    Args:
-        name: User name - string
-        passw: Password hash - int
-        type: User type - int  [0 - USER, 1 - HOST, 2 - ADMIN]
-        phone: phone - string
-        team: number of group - int
-
-    Note:
-        user id is automatically generated
-
-    Returns:
-        user id: - int (because it is for internal use only)
-
-    """
-
-    # cursor.execute("INSERT INTO users(user_type, phone, name, pass, team) VALUES(?, ?, ?, ?, ?)", ('USER_TYPE', 'PHONE', 'NAME', 'PASS', 'TEAM'))
-    # Register new user if there is no user with name and pass
-    cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
-                      SELECT ?, ?, ?, ?, ?
-                      WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
-                   (type, phone, name, passw, team, name, passw))
-    conn.commit()
-
-
-def sql_login(phone, passw, agent, ip, time='0'):
-    """ Login user
-    Create new session if it does not exist and return sess id
-
-    Args:
-        phone: User phone - string
-        passw: Password hash - int
-        agent: User agent - string
-        ip: ip - string
-        time: time of session creation
-
-    Note:
-        session id is automatically generated
-
-    Returns:
-        session id: string of hex
-                    b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
-
-    """
-
-    # Check user with name and pass exist and got it
-    cursor.execute("SELECT * FROM users WHERE phone=? AND pass=?", (phone, passw))
-    users = cursor.fetchall()
-
-    if len(users) == 0:    # No such user
-        return None
-
-    user = users[0]
-
-    # Create new session if there is no session with user_id and user_agent
-    cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
-                      SELECT ?, ?, ?, ?, ?
-                      WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_id=? AND user_agent=?)""",
-                   (user[0], user[1], agent, ip, time, user[0], agent))
-    conn.commit()
-
-
-    # Get session corresponding to user_id and user_agent
-    cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
-    result = cursor.fetchone()
-
-    return result
-
-
-""" ---===---==========================================---===--- """
-"""           Google Sheets interaction via GSheetsAPI           """
-""" ---===---==========================================---===--- """
-
-# TODO: Split file for 3 different for each type of communication (gsheets, sql, http)
-# TODO: Max Optimize gsheet api
-# TODO: Max Refactoring and comment
-
-
-def gsheets_get_day(day: str) -> list:
-    """ Gets timetable from Google Sheets
-        and returns it in pseudo-json format
-
-        Args:
-            day: calendar day, has to be same as sheet in GSheets - string
-
-        Returns:
-            timetable: timetable of the corresponding day in pseudo-json - list
-    """
-
-    # TODO waiting for Serova to get real day, not template
-    # If modifying these scopes, delete the file token.pickle.
-    # SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-
-    day = 'Template'
-    # The ID and range of a sample spreadsheet.
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    spreadsheet_range = day + '!A1:J32'  # TODO: MAX J32 may be other
-
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-
-    # Call the Sheets API
-    service = build('sheets', 'v4', credentials=creds)
-    sheet = service.spreadsheets()
-    request = sheet.values().get(spreadsheetId=spreadsheet_id,
-                                 range=spreadsheet_range)
-    result = request.execute()
-    values = result.get('values', [])
-
-    # function for removing crlf from human-generated timetable
-    def crlf(x):
-        #y = x.replace('\n', ' - ')
-        return x
-
-    # removing \n
-    for index, line in enumerate(values[2::], start=2):
-        values[index] = list(map(lambda x: crlf(x), line))
-    timetable = []  # resulting timetable
-    mask = []  # selector for correct selection of GSheets verbose data
-    titleplus = 0  # selector for correct differentiation of desc, loc, name
-    for line in values[2::]:
-        if line[0] != '':
-            timetable.append({})
-            timetable[-1]['time'] = line[0]
-            timetable[-1]['events'] = []
-            mask.clear()
-            titleplus = 0
-            for index, cell in enumerate(line[1::], start=1):
-                if cell != '' and cell != '.':
-                    mask.append(index)
-                    timetable[-1]['events'].append({'title': cell})
-        else:
-            # TODO: Add correct event id
-            if titleplus == 0:
-                for pos, index in enumerate(mask):
-                    timetable[-1]['events'][pos]['desc'] = line[index]
-            elif titleplus == 1:
-                for pos, index in enumerate(mask):
-                    timetable[-1]['events'][pos]['host'] = line[index]
-                    timetable[-1]['events'][pos]['id'] = 43  # TODO: See abow
-            elif titleplus == 2:
-                for pos, index in enumerate(mask):
-                    timetable[-1]['events'][pos]['loc'] = line[index]
-            titleplus += 1
-
-    return timetable
-
-
-def gsheets_save_feedback(user_obj, day, feedback_data):
-    """ Save feedback of user in google sheets
-    Create new user if it does not exist
-    Save in table name, phone and team
-
-    Args:
-        user_obj: User object - (id, type, phone, name, pass, team)
-        day: num of the day - string '16.04'
-        feedback_data: Python obj of feedback - dictionary
-                  {"overall": int,
-                   "user1": string,
-                   "user2": string,
-                   "user3": string,
-                   "event1": int,
-                   "event2": int,
-                   "event3": int,
-                   "event1_text": string,
-                   "event2_text": string,
-                   "event3_text": string
-                   }
-
-    Returns:
-        state: Sucsess or not - bool
-
-    """
-
-    # TODO: remove after registration is complete
-    if user_obj is None:
-        user_obj = (21321, 2, '+7 Error', 'ERROR', 666, 99)
-
-    print('User obj:', user_obj)
-    print('Feedback data:', feedback_data)
-
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
-
-    # getting position to write to
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Feedback!A1')
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
-    position = read_values[0][0]
-    print(position)
-    write_range = 'Feedback!A' + position + ':H' + str(int(position) + 2)
-
-    # writing actual feedback
-    data = {'values': [[user_obj[3], user_obj[2], user_obj[5],
-                        feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
-                       ['', '', '', '', feedback_data['user2'], feedback_data['event1_text'], feedback_data['event2_text'], feedback_data['event3_text']],
-                       ['', '', '', '', feedback_data['user3']]],
-            'range': write_range
-            }
-    body = {
-        'valueInputOption': 'RAW',
-        'data': data
-    }
-    write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
-                                                                body=body)
-    write_response = write_request.execute()
-    # print('{0} cells updated.'.format(write_response.get('updatedCells')))
-    print('writing done')
-
-    # updating next writing position
-    update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
-                                                            range='Feedback!A1',
-                                                            valueInputOption='RAW',
-                                                            body={'values': [[int(position) + 3]]})
-    update_response = update_request.execute()
-    # print('{0} cells updated.'.format(update_response.get('updatedCells')))
-    print('updating done')
-
-    return True  # TODO: check GSheetsAPI how to track success
-
-
-import random
-
-def generate_codes(num, type=0):
-    """ Generate registration codes by number
-    Each code is a 6-characters-number-letter code
-
-    Args:
-        num: Number of codes
-        type: Type of user [0, 1, 2, 3]
-
-    Returns:
-        Codes: 6-characters-number-letter code - list [string, ...]
-
-    """
-
-    # string.ascii_uppercase
-    symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "0123456789" + "0123456789"
-    random.seed(0)
-    symbols = ''.join(random.sample(symbols, len(symbols)))
-    size = len(symbols)
-
-    rez = []
-
-    for i in range(num):
-        code = symbols[random.randint(0, size-1)] + \
-               symbols[random.randint(0, size-1)] + \
-               symbols[i // size] + \
-               symbols[i % size] + \
-               symbols[i*i % size] + \
-               symbols[( type % (size//5) + 1 ) * random.randint(0, size//5)]
-
-        rez.append(code)
-
-    return rez
-
-
-# TODO: Max generate reg codes
-def gsheets_generate_codes(users, hosts, admins):
-    """ Generate registration codes in google sheets
-    Each code is a 6-characters-number-letter code
-
-    Args:
-        users, hosts, admins: Number  of codes for each type
-
-    Returns:
-        None
-
-    """
-
-    codes = generate_codes(users, 0)
-    codes = generate_codes(hosts, 1)
-    codes = generate_codes(admins, 2)
-
-    pass
-
-
-def gsheets_check_code(code):
-    """ Check registration code in google sheets
-    Get user type according this code
-
-    Args:
-        code: special code hash which will be responsible for the user type and permission to register - str
-
-
-    Returns:
-        type: type of user - int or None if registration allowed
-
-    """
-
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
-
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Codes!A5:C9')
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
-
-    reg_allowed = False
-    user_type = -1
-    for index, code_line in enumerate(read_values, start=5):
-        if code_line[0] == code and code_line[2] == '0':
-            user_type = int(code_line[1])
-            upd_range = 'Codes!C' + str(index)
-            update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
-                                                                    range=upd_range,
-                                                                    valueInputOption='RAW',
-                                                                    body={'values': [[1]]})
-            update_response = update_request.execute()
-            reg_allowed = True
-            break
-
-    if reg_allowed:
-        return user_type
-    else:
-        return None
-
-
-# TODO: Max get feedback
-def gsheet_get_feedback(day):
-    """ Get description of day for feedback in google sheets
-    Create new user if it does not exist
-    Save in table id, name, phone type and team
-
-    Args:
-        day: num of the day - string '16.04'
-
-    Returns:
-        (title, [event1, event2, event3] )                  (TODO: not now: or None if already done)
-
-    """
-
-    return ('Day of the Russia', ['Event 1', 'Other event', 'And the last one'])
-
-
-def gsheets_get_projects(filter_obj):
-    """ Get description of day for feedback in google sheets
-    Create new user if it does not exist
-    Save in table id, name, phone type and team
-
-    Args:
-        filter_obj: filter what we should return - (Name, type, name)   # TODO: Not now
-
-    Returns:
-        List of projects obj:
-              [ {
-                 "title": string,
-                 "name": string,
-                 "type": string,
-                 "desc": string,
-                 "anno": string
-                 }, .........  ]
-
-             (TODO: not now: or None if no one)
-    """
-
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
-
-    # getting range to read from
-    range_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                        range='Projects!A1')
-    range_response = range_request.execute()
-    range_values = range_response.get('values', [])
-    position = range_values[0][0]
-    read_range = 'Projects!A4:E' + str(int(position)-1)
-
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                        range=read_range)
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
-
-    projects = []
-    for project in read_values:
-        projects.append({})
-        projects[-1]['title'] = project[0]
-        projects[-1]['type'] = project[1]
-        projects[-1]['name'] = project[2]
-        projects[-1]['desc'] = project[3]
-        projects[-1]['anno'] = project[4]
-
-    return projects
-
-
-def gsheets_save_users(users_list):
-    """ Save list of registred users in google sheets
-
-    Args:
-        users_list: User objects - list [ (id, type, phone, name, pass, team), ....]
-    Returns:
-        none
-
-    """
-
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
-
-    # getting position to write to
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Users!A1')
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
-    position = read_values[0][0]
-
-    for i in range(len(users_list)):
-        write_range = 'Users!A' + str(5+i) + ':F' + str(5+i)
-
-        data = {'values': [[users_list[i][0], users_list[i][1], users_list[i][2], users_list[i][3], users_list[i][4], users_list[i][5]]],
-                'range': write_range
-                }
-        body = {
-            'valueInputOption': 'RAW',
-            'data': data
-        }
-        write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
-                                                                    body=body)
-        write_response = write_request.execute()
-        # print('{0} cells updated.'.format(write_response.get('updatedCells')))
-
-    print('Users saved')
-
-
-def gsheets_get_users():
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
-
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Users!A5:F15')  #TODO Max F15
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
-
-    print(read_values)
-
-    return read_values
-
-
-def gsheets_save_project(user_obj, project_data):
-    """ Save feedback of user in google sheets
-    Create new user if it does not exist
-    Save in table id, name, phone type and team
-
-    Args:
-        user_obj: User object - (id, type, phone, name, pass, team)
-        project_data: Python obj of project - dictionary
-                  {"title": string,
-                   "name": [string, ...],
-                   "type": string,
-                   "desc": string,
-                   "anno": string
-                   }
-
-    Returns:
-        state: Sucsess or not - bool
-
-    """
-
-    print('User obj:', user_obj)
-    print('Project data:', project_data)
-
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
-
-    # getting position to write to
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Projects!A1')
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
-    position = read_values[0][0]
-    print(position)
-    write_range = 'Projects!A' + position + ':E' + position
-
-    # writing actual feedback    # TODO: Max Names by list
-    data = {'values': [[project_data['title'], project_data['type'], str(project_data['name']), project_data['desc'], project_data['anno']]],
-            'range': write_range
-            }
-    body = {
-        'valueInputOption': 'RAW',
-        'data': data
-    }
-    write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
-                                                                body=body)
-    write_response = write_request.execute()
-    # print('{0} cells updated.'.format(write_response.get('updatedCells')))
-    print('writing done')
-
-    # updating next writing position
-    update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
-                                                            range='Projects!A1',
-                                                            valueInputOption='RAW',
-                                                            body={'values': [[int(position) + 1]]})
-    update_response = update_request.execute()
-    # print('{0} cells updated.'.format(update_response.get('updatedCells')))
-    print('updating done')
-
-    return True  # TODO: check GSheetsAPI how to track success
-
-
-# TODO: Max save credits
-def gsheets_save_credits(user_obj, event_obj):
-    """ Save credits for some event of user in google sheets
-    Create new user if it does not exist
-
-    Args:
-        user_obj: User object - (id, type, phone, name, pass, team)
-        event_obj: Event object - (id, type, title, credits)
-
-    Returns:
-        state: Sucsess or not - bool
-
-    """
-    pass
-
-
-# TODO: Max update events
-def gsheets_update_events():
-    """ Undate events with description in google sheets
-    Read and poarce it from days sheets and save in 'Events' sheet
-
-    Args:
-        None
-
-    Returns:
-        None
-    """
-
-    pass
-
-
-# TODO: Max get events
-def gsheets_get_events():
-    """ Get events from google sheets
-
-    Args:
-        None
-
-    Returns:
-        events: description of the events - list [ (id, event_type, title, credits, total), ....
-                                                 ]
-
-    """
-
-    return [(0, 'type1', 'event 1', 20, 20), (1, 'type2', 'othe one ', 100, 40), (2, 'type1', 'And more one', 10, 10)]
-
-
-# TODO: Max get event
-def gsheets_get_event(id):
-    """ Get event with description from google sheets
-    Return full description
-
-    Args:
-        None
-
-    Returns:
-        event: description of the event - (id, title, time, date, location, host, descriptiom, type, credits, total), ....
-
-    """
-
-    return (32, "title", "time", "date", "location", "host", "descriptiom", "type", 300,  24)
-
-
-""" TEST """
-# sql_register('user', 6445723, 0, '+7 915', 0)
-# sql_register('Hasd Trra', 23344112, 0, '+7 512', 0)
-# sql_register('ddds Ddsa', 33232455, 0, '+7 333', 1)
-# sql_register('aiuy Ddsa', 44542234, 0, '+7 234', 1)
-# sql_register('AArruyaa Ddsa', 345455, 1, '+7 745', 1)
-# sql_register('AAaa ryui', 23344234523112, 0, '+7 624', 0)
-# sql_register('AAruiria', 563563265, 0, '+7 146', 0)
-#
-#
-# print( sql_login('Name', 22222331, 'Gggg', '0:0:0:0') )
-# a = sql_login('user', 6445723, 'AgentUserAgent', '0:0:0:0')
-# print(a[0])
-# print(a[0].hex() )
-# print( sql_login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
 
 
 """
