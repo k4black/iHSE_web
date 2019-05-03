@@ -8,12 +8,54 @@ import random
 
 
 """ ---===---==========================================---===--- """
+"""          Auxiliary functions for gsheets interaction         """
+""" ---===---==========================================---===--- """
+
+
+def generate_registration_codes(num, type=0):
+    """ Generate registration codes by number
+    Each code is a 6-characters-number-letter code
+
+    Args:
+        num: Number of codes
+        type: Type of user [0, 1, 2, 3]
+
+    Returns:
+        Codes: 6-characters-number-letter code - list [string, ...]
+
+    """
+
+    # string.ascii_uppercase
+    symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "0123456789" + "0123456789"
+    random.seed(0)
+    symbols = ''.join(random.sample(symbols, len(symbols)))
+    size = len(symbols)
+
+    rez = []
+
+    for i in range(num):
+        code = symbols[random.randint(0, size-1)] + \
+               symbols[random.randint(0, size-1)] + \
+               symbols[i // size] + \
+               symbols[i % size] + \
+               symbols[i*i % size] + \
+               symbols[( type % (size//5) + 1 ) * random.randint(0, size//5)]
+
+        rez.append(code)
+
+    return rez
+
+
+# TODO: Max Optimize gsheet api
+# TODO: Max Refactoring and comment
+def api():
+    pass
+
+
+""" ---===---==========================================---===--- """
 """           Google Sheets interaction via GSheetsAPI           """
 """ ---===---==========================================---===--- """
 
-# TODO: Split file for 3 different for each type of communication (gsheets, sql, http)
-# TODO: Max Optimize gsheet api
-# TODO: Max Refactoring and comment
 
 
 def get_day(day: str) -> list:
@@ -35,7 +77,7 @@ def get_day(day: str) -> list:
     day = 'Template'
     # The ID and range of a sample spreadsheet.
     spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    spreadsheet_range = day + '!A1:J32'  # TODO: MAX J32 may be other
+    spreadsheet_range = day + '!A1:J32'  # TODO: MAX J32 -just for sometime,  may be other
 
     # token.pickle stores the user's access and refresh tokens,
     # providing read/write access to GSheets.
@@ -83,7 +125,7 @@ def get_day(day: str) -> list:
             elif titleplus == 1:
                 for pos, index in enumerate(mask):
                     timetable[-1]['events'][pos]['host'] = line[index]
-                    timetable[-1]['events'][pos]['id'] = 43  # TODO: See abow
+                    timetable[-1]['events'][pos]['id'] = 43  # TODO: See above
             elif titleplus == 2:
                 for pos, index in enumerate(mask):
                     timetable[-1]['events'][pos]['loc'] = line[index]
@@ -117,13 +159,6 @@ def save_feedback(user_obj, day, feedback_data):
         state: Success or not - bool
 
     """
-
-    # TODO: remove after registration is complete
-    if user_obj is None:
-        user_obj = (21321, 2, '+7 Error', 'ERROR', 666, 99)
-
-    print('User obj:', user_obj)
-    print('Feedback data:', feedback_data)
 
     spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     # token.pickle stores the user's access and refresh tokens,
@@ -173,40 +208,6 @@ def save_feedback(user_obj, day, feedback_data):
     return True  # TODO: check GSheetsAPI how to track success
 
 
-def generate_codes(num, type=0):
-    """ Generate registration codes by number
-    Each code is a 6-characters-number-letter code
-
-    Args:
-        num: Number of codes
-        type: Type of user [0, 1, 2, 3]
-
-    Returns:
-        Codes: 6-characters-number-letter code - list [string, ...]
-
-    """
-
-    # string.ascii_uppercase
-    symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "0123456789" + "0123456789"
-    random.seed(0)
-    symbols = ''.join(random.sample(symbols, len(symbols)))
-    size = len(symbols)
-
-    rez = []
-
-    for i in range(num):
-        code = symbols[random.randint(0, size-1)] + \
-               symbols[random.randint(0, size-1)] + \
-               symbols[i // size] + \
-               symbols[i % size] + \
-               symbols[i*i % size] + \
-               symbols[( type % (size//5) + 1 ) * random.randint(0, size//5)]
-
-        rez.append(code)
-
-    return rez
-
-
 # TODO: Max generate reg codes
 def generate_codes(users, hosts, admins):
     """ Generate registration codes in google sheets
@@ -220,9 +221,9 @@ def generate_codes(users, hosts, admins):
 
     """
 
-    codes = generate_codes(users, 0)
-    codes = generate_codes(hosts, 1)
-    codes = generate_codes(admins, 2)
+    codes = generate_registration_codes(users, 0)
+    codes = generate_registration_codes(hosts, 1)
+    codes = generate_registration_codes(admins, 2)
 
     pass
 
@@ -505,7 +506,6 @@ def update_events():
     Read and parse it from days sheets and save in 'Events' sheet
 
     Args:
-        None
 
     Returns:
         None
@@ -519,7 +519,6 @@ def get_events():
     """ Get events from google sheets
 
     Args:
-        None
 
     Returns:
         events: description of the events - list [ (id, event_type, title, credits, total), ....
@@ -536,7 +535,6 @@ def get_event(id):
     Return full description
 
     Args:
-        None
 
     Returns:
         event: description of the event - (id, title, time, date, location, host, descriptiom, type, credits, total), ....

@@ -6,10 +6,7 @@ import time
 """                    SQLite database creation                  """
 """ ---===---==========================================---===--- """
 
-# TODO: SQL injections
-
-
-# TODO: place this in sql-specific functions?
+# TODO: check SQL injections
 conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread=False)
 conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
 cursor = conn.cursor()
@@ -38,7 +35,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
                """)
 
 
-# Feedback: voite or not
+# Feedback: voted or not
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
                     "user_id"	INTEGER NOT NULL PRIMARY KEY,
                     "days"	TEXT,
@@ -71,7 +68,7 @@ def safety_request(sql):
     """ Try to run sql code event if db is busy
 
     Args:
-        sql: sql - string
+        sql: sql code - string
 
     Returns:
         None
@@ -88,6 +85,7 @@ def safety_request(sql):
         except:
             time.sleep(1)
             pass
+
         finally:
             break
     else:
@@ -100,7 +98,6 @@ def get_users():
     """ Get all users from sql table
 
     Args:
-        None
 
     Returns:
         user objects: list of user objects - [(id, user_id, user_type, user_agent, last_ip, time), ...]
@@ -109,6 +106,7 @@ def get_users():
 
     cursor.execute("SELECT * FROM users")
     users_list = cursor.fetchall()
+
     return users_list
 
 
@@ -120,17 +118,16 @@ def load_users(users_list):
         users_list: list of user objects - [(id, user_id, user_type, user_agent, last_ip, time), ...]
 
     Returns:
-        None
 
     """
 
+    # Clear user and sessions tables
     cursor.execute("DELETE FROM sessions")
     cursor.execute("DELETE FROM users")
     conn.commit()
 
+    # Add users in bd
     for user_obj in users_list:
-
-
 
         cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
                           SELECT ?, ?, ?, ?, ?
@@ -147,7 +144,6 @@ def load_events(events_list):
         events_list: list of event objects - [ (id, event_type, title, credits, total), ...]
 
     Returns:
-        None
 
     """
 
@@ -162,11 +158,11 @@ def load_events(events_list):
         conn.commit()
 
 
-def get_session(id):
+def get_session(sess_id):
     """ Get session obj by id
 
     Args:
-        id: session id from bd
+        sess_id: session id from bd
 
     Returns:
         session obj: (id, user_id, user_type, user_agent, last_ip, time)
@@ -174,37 +170,36 @@ def get_session(id):
 
     """
 
-    cursor.execute("SELECT * FROM sessions WHERE id=?", (id, ))
+    cursor.execute("SELECT * FROM sessions WHERE id=?", (sess_id, ))
     sessions = cursor.fetchall()
 
-    if len(sessions) == 0:    # No such session
+    if len(sessions) == 0:  # No such session
         return None
     else:
         return sessions[0]
 
 
-def logout(id):
+def logout(sess_id):
     """ Delete current session by sessid
 
     Args:
-        id: session id from bd
+        sess_id: session id from bd
 
     Returns:
-        None
 
     """
 
-    cursor.execute("DELETE FROM sessions WHERE id=?", (id, ))
+    cursor.execute("DELETE FROM sessions WHERE id=?", (sess_id, ))
     conn.commit()
 
     return True # TODO True/False
 
 
-def get_user(id):
+def get_user(user_id):
     """ Get user obj by id
 
     Args:
-        id: user id from bd
+        user_id: user id from bd
 
     Returns:
         user_obj: (id, user_type, phone, name, pass, team)
@@ -212,7 +207,7 @@ def get_user(id):
 
     """
 
-    cursor.execute("SELECT * FROM users WHERE id=?", (id, ))
+    cursor.execute("SELECT * FROM users WHERE id=?", (user_id, ))
     users = cursor.fetchall()
 
     if len(users) == 0:    # No such user
@@ -221,21 +216,21 @@ def get_user(id):
         return users[0]
 
 
-def get_event(id):
+def get_event(event_id):
     """ Get event obj by id
 
     Args:
-        id: event id from bd
+        event_id: event id from bd
 
     Returns:
         event_obj: (id, type, title, credits, count, total)
 
     """
 
-    cursor.execute("SELECT * FROM events WHERE id=?", (id, ))
+    cursor.execute("SELECT * FROM events WHERE id=?", (event_id, ))
     events = cursor.fetchall()
 
-    if len(events) == 0:    # No such event
+    if len(events) == 0:  # No such event
         return None
     else:
         return events[0]
@@ -308,7 +303,7 @@ def login(phone, passw, agent, ip, time='0'):
         session id is automatically generated
 
     Returns:
-        session id: string of hex
+        sess_id: session id - string of hex
                     b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
 
     """
