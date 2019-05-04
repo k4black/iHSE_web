@@ -396,6 +396,13 @@ def save_users(users_list):
 
 
 def get_users():
+    """ Get list of users form google sheets
+
+    Returns:
+        state: Readed users # TODO: Comment
+
+    """
+
     spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     # token.pickle stores the user's access and refresh tokens,
     # providing read/write access to GSheets.
@@ -497,6 +504,7 @@ def save_credits(user_obj, event_obj):
         state: Success or not - bool
 
     """
+
     pass
 
 
@@ -509,6 +517,7 @@ def update_events():
 
     Returns:
         None
+
     """
 
     pass
@@ -523,7 +532,6 @@ def get_events():
     Returns:
         events: description of the events - list [ (id, event_type, title, credits, total), ....
                                                  ]
-
     """
 
     return [(0, 'type1', 'event 1', 20, 20), (1, 'type2', 'othe one ', 100, 40), (2, 'type1', 'And more one', 10, 10)]

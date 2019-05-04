@@ -92,9 +92,12 @@ def get_user_by_response(start_response, cookie):
 
     if sess is None:  # No such session - wrong cookie
         start_response('401 Unauthorized',
-                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),  # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Credentials', 'true'),  # To receive cookie
-                        ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),  # Clear user sessid cookie
+                       [    # Because in js there is xhttp.withCredentials = true;
+                            ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                            # To receive cookie
+                            ('Access-Control-Allow-Credentials', 'true'),
+                            # Clear user sessid cookie
+                            ('Set-Cookie', 'sessid=none; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
                         ])
         return None
 
@@ -102,9 +105,12 @@ def get_user_by_response(start_response, cookie):
 
     if user_obj is None:  # No such user - wrong cookie or smth wrong
         start_response('401 Unauthorized',
-                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),  # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Credentials', 'true'),  # To receive cookie
-                        ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),  # Clear user sessid cookie
+                       [    # Because in js there is xhttp.withCredentials = true;
+                            ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                            # To receive cookie
+                            ('Access-Control-Allow-Credentials', 'true'),
+                            # Clear user sessid cookie
+                            ('Set-Cookie', 'sessid=none; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
                         ])
         return None
 
@@ -178,50 +184,10 @@ def get(env, start_response, query, cookie):
     if env['PATH_INFO'] == '/projects':
         return get_projects(env, start_response, query)
 
-    # TODO: Remove or move in admin panel
-    # TODO: Permission checking
 
-    if env['PATH_INFO'] == '/save':
-
-        users_list = sql.get_users()
-        gsheets.save_users(users_list)
-
-        start_response('200 OK',
-                       [('Access-Control-Allow-Origin', '*')
-                        ])
-        return []
-
-    if env['PATH_INFO'] == '/load':
-
-        users_list = gsheets.get_users()
-        sql.load_users(users_list)
-
-        event_list = gsheets.get_events()
-        sql.load_events(event_list)
-
-        start_response('200 OK',
-                       [('Access-Control-Allow-Origin', '*')
-                        ])
-        return []
-
-    if env['PATH_INFO'] == '/update':
-
-        gsheets.update_events()
-
-        start_response('200 OK',
-                       [('Access-Control-Allow-Origin', '*')
-                        ])
-        return []
-
-    if env['PATH_INFO'] == '/codes':
-
-        gsheets.generate_codes(20, 10, 2)
-
-        start_response('200 OK',
-                       [('Access-Control-Allow-Origin', '*')
-                        ])
-        return []
-
+    # Manage admin actions
+    if env['PATH_INFO'][:6] == '/admin':
+        return admin_panel(env, start_response, query, cookie)
 
 
 
@@ -258,6 +224,73 @@ def get(env, start_response, query, cookie):
     return [message_return, message_env, request_body]
 
 
+def admin_panel(env, start_response, query, cookie):
+    """ Manage admin HTTP request
+    Will check session id and permissions
+
+    Args:
+        env: HTTP request environment - dict
+        start_response: HTTP response headers place
+        query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
+
+    Note:
+        If there is no cookie or it is incorrect -
+
+    Returns:
+        data: which will be transmitted
+
+    """
+
+    # Safety get user_obj
+    user_obj = get_user_by_response(start_response, cookie)
+
+    if user_obj is None or user_obj[1] < 1:  # No User or no Permissions
+        return
+
+
+    if env['PATH_INFO'] == '/admin_save':
+
+        users_list = sql.get_users()
+        gsheets.save_users(users_list)
+
+        start_response('200 OK',
+                       [('Access-Control-Allow-Origin', '*')
+                        ])
+        return []
+
+    if env['PATH_INFO'] == '/admin_load':
+
+        users_list = gsheets.get_users()
+        sql.load_users(users_list)
+
+        event_list = gsheets.get_events()
+        sql.load_events(event_list)
+
+        start_response('200 OK',
+                       [('Access-Control-Allow-Origin', '*')
+                        ])
+        return []
+
+    if env['PATH_INFO'] == '/admin_update':
+
+        gsheets.update_events()
+
+        start_response('200 OK',
+                       [('Access-Control-Allow-Origin', '*')
+                        ])
+        return []
+
+    if env['PATH_INFO'] == '/admin_codes':
+
+        gsheets.generate_codes(20, 10, 2)
+
+        start_response('200 OK',
+                       [('Access-Control-Allow-Origin', '*')
+                        ])
+        return []
+
+
 def get_user(env, start_response, query, cookie):
     """ User data HTTP request
     Will check session id and return data according to user
@@ -269,7 +302,6 @@ def get_user(env, start_response, query, cookie):
         cookie: http cookie parameters - dict (may be empty)
 
     Note:
-        If there is no cookie or it is incorrect - it returns guest profile
 
     Returns:
         data: which will be transmitted
@@ -318,7 +350,6 @@ def get_names(env, start_response, query, cookie):
         cookie: http cookie parameters - dict (may be empty)
 
     Note:
-        If there is no cookie or it is incorrect - it returns guest profile
 
     Returns:
         data: which will be transmitted
@@ -359,7 +390,6 @@ def get_account(env, start_response, query, cookie):
         cookie: http cookie parameters - dict (may be empty)
 
     Note:
-        If there is no cookie or it is incorrect
 
     Returns:
         data: which will be transmitted
@@ -409,7 +439,6 @@ def get_event(env, start_response, query, cookie):
         cookie: http cookie parameters - dict (may be empty)
 
     Note:
-        If there is no cookie or it is incorrect
 
     Returns:
         data: which will be transmitted

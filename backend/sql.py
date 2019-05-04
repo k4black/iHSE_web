@@ -1,5 +1,6 @@
 import sqlite3
 import time
+import string
 
 
 """ ---===---==========================================---===--- """
@@ -58,12 +59,34 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
 
 
 """ ---===---==========================================---===--- """
-"""           SQLite database interaction via sqlite3            """
+"""           Auxiliary functions for sql interactions           """
 """ ---===---==========================================---===--- """
 
 
-# TODO: Safety sql (if bd busy)
 # TODO: check SQL injections
+def safety_injections(param):
+    """ Check and remove sql injections
+
+    Args:
+        param: parameter - any type
+
+    Returns:
+        Safety param: parameter clear of injections
+
+    """
+
+    if type(param) == 'int':
+        return param
+
+    if type(param) == 'str':
+        param.replace('"', '')
+        param.replace('\'', '')
+        param.replace(',', '')
+
+    return param
+
+
+# TODO: Safety sql (if bd busy)
 def safety_request(sql):
     """ Try to run sql code event if db is busy
 
@@ -92,6 +115,11 @@ def safety_request(sql):
         with conn:
             conn.execute(sql)
             conn.commit()
+
+
+""" ---===---==========================================---===--- """
+"""           SQLite database interaction via sqlite3            """
+""" ---===---==========================================---===--- """
 
 
 def get_users():
