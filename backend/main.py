@@ -1,6 +1,7 @@
 import urllib.parse
 from http.cookies import SimpleCookie
 import json
+import time
 
 # Sqlite import
 from backend import sql
@@ -11,25 +12,12 @@ from backend import gsheets
 # Threading for sync
 from threading import Timer
 
-# Timeout of all objects
-TIMEOUT = 30  # In seconds TODO: Couple of hours
+# Timeout of updating objects (from gsheets)
+TIMEOUT = 30  # In seconds 2h = 2 * 60m * 60s = 720s TODO: Couple of hours
 
 print('init')
 
 
-def foo():
-    print('sync: ' + str(TIMEOUT))
-
-    start_thread()
-
-
-def start_thread():
-    th = Timer(TIMEOUT, foo, [])
-    th.setDaemon(True)
-    th.start()
-
-
-start_thread()
 
 
 """ ---===---==========================================---===--- """
@@ -86,6 +74,48 @@ def application(env, start_response):
 """ ---===---==========================================---===--- """
 """          Auxiliary functions for processing requests         """
 """ ---===---==========================================---===--- """
+
+
+def sync():
+    """ Update cash and sync events, projects and etc
+
+    Args:
+
+    Note:
+        Run every TIMEOUT seconds
+
+    Returns:
+
+    """
+
+    # TODO: Sync itself
+    print('sync: ' + str(time.time()))
+
+    start_sync()  # Update - to call again
+
+
+def start_sync():
+    """ Start sync() in new thread
+    This function will run every TIMEOUT seconds
+
+    Args:
+
+    See:
+        sync()
+
+    Returns:
+
+    """
+
+    th = Timer(TIMEOUT, sync, [])  # Run foo() through TIMEOUT seconds
+    th.setDaemon(True)  # Can close without trouble
+    th.start()
+
+
+start_sync()  # Start sync
+
+
+# TODO: Cache
 
 
 def get_user_by_response(start_response, cookie):
