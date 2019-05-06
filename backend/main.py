@@ -13,7 +13,7 @@ from backend import gsheets
 from threading import Timer
 
 # Timeout of updating objects (from gsheets)
-TIMEOUT = 30  # In seconds 2h = 2 * 60m * 60s = 720s TODO: Couple of hours
+TIMEOUT = 720  # In seconds 2h = 2 * 60m * 60s = 720s TODO: Couple of hours
 
 print('init')
 
@@ -77,7 +77,7 @@ def application(env, start_response):
 
 
 def sync():
-    """ Update cash and sync events, projects and etc
+    """ Update cache and sync events, projects and etc
 
     Args:
 
@@ -89,6 +89,15 @@ def sync():
     """
 
     # TODO: Sync itself
+
+    # Update events
+    events = gsheets.get_events()
+    sql.load_events(events)
+
+    # Update cache
+
+
+
     print('sync: ' + str(time.time()))
 
     start_sync()  # Update - to call again

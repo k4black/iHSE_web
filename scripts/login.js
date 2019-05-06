@@ -7,14 +7,6 @@
 
 
 
-// TODO: Hide .html
-// ihse.tk/login.html -> ihse.tk/login
-
-
-
-
-
-
 /** ===============  LOGIC and REQUESTS  =============== */
 
 
@@ -22,7 +14,6 @@
 
 /**
  * Calculate hash from password
- * TODO: Check security
  * @param {string} s - password with which the hash is calculated
  * @return {int}
  */
@@ -40,34 +31,25 @@ function hashCode(s) {
  * Add button event - 'login'
  * Send http POST request to get session id
  */
-var button = document.querySelector('#btn');
-var button2 = document.querySelector('#btn2');
-button.addEventListener('click', function () {
+document.querySelector('#btn').addEventListener('click', function () {
 
-    var phone = button.parentElement.querySelector('#phone');
-    var pass = button.parentElement.querySelector('#pass');
+    var phone = document.querySelector('#phone');
+    var pass = document.querySelector('#pass');
 
 
     if (phone.value == "" || pass.value == "") // If some field are empty - do nothing
         return; // TODO: Message
 
 
-    // Pass not password but hashcode of it
-    var query = "?phone=" + phone.value + "&pass=" + hashCode(pass.value);
-    
-        
     var xhttp = new XMLHttpRequest();
     
     xhttp.onreadystatechange = function() {
         if (this.readyState === 1) {  // Opened
-            button.style.display = 'none';
-            button2.style.display = 'block';
+            setLoading();
         }
 
         if (this.readyState === 4) {  // When request is done
-
-            button.style.display = 'block';
-            button2.style.display = 'none';
+            setLoaded();
 
             if (this.status === 200) {  // Authorized
                 alert("ok!");  // TODO: Redirection
@@ -84,6 +66,8 @@ button.addEventListener('click', function () {
         }
     };
 
+    // Pass not password but hashcode of it
+    var query = "?phone=" + phone.value + "&pass=" + hashCode(pass.value);
     xhttp.open("POST", "http://ihse.tk:50000/login" + query, true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
@@ -92,9 +76,24 @@ button.addEventListener('click', function () {
 
 
 
-
 /** ===============  ANIMATIONS  =============== */
 
+
+
+/**
+ * Show and hide loading button
+ */
+var button = document.querySelector('#btn');
+var button2 = document.querySelector('#btn2');
+function setLoading() {
+    button.style.display = 'none';
+    button2.style.display = 'block';
+}
+
+function setLoaded() {
+    button.style.display = 'block';
+    button2.style.display = 'none';
+}
 
 
 
@@ -104,19 +103,13 @@ button.addEventListener('click', function () {
 /**
  * Add name field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var phone = document.querySelector('#phone');
 phone.addEventListener('focus', function () {
-    onFocus(true);
     phone.closest('div').querySelector("label").parentElement.classList.add('active');
-    console.log('phone active');
-
 });
 
 phone.addEventListener('blur', function () {
-    onFocus(false);
-
     if (phone.value == "+") {
         phone.value = "";
     }
@@ -125,30 +118,24 @@ phone.addEventListener('blur', function () {
         return;
 
     phone.closest('div').querySelector("label").parentElement.classList.remove('active');
-    console.log('phone inactive');
 });
 
 
 /**
  * Add password field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var pass = document.querySelector('#pass');
 
 pass.addEventListener('focus', function () {
-    onFocus(true);
     pass.closest('div').querySelector("label").parentElement.classList.add('active');
-    console.log('Pass active');
 });
 
 pass.addEventListener('blur', function () {
-    onFocus(false);
     if (pass.value != "")
         return;
 
     pass.closest('div').querySelector("label").parentElement.classList.remove('active');
-    console.log('Pass inactive');
 });
 
 
@@ -159,7 +146,6 @@ pass.addEventListener('blur', function () {
  * Change type of password field
  */
 var hideButton = pass.parentElement.querySelector('.input__icon');
-
 hideButton.addEventListener('click', function () {
 
     if (pass.type == 'password') {
@@ -175,30 +161,5 @@ hideButton.addEventListener('click', function () {
     }
 
 });
-
-
-
-
-/**
- * Add icon field animations
- * Hide icon if there is virtual keyboard
- * TODO: optimize selection
- */
-
-var focus = false;  // Is there virtual keyboard?
-
-var form = document.querySelector('.wrapper');
-
-function onFocus(focus) {
-    return;
-    if (focus) {
-        form.classList.add('close');
-    }
-    else {
-        form.classList.remove('close');
-    }
-}
-
-
 
 

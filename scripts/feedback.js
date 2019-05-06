@@ -10,6 +10,11 @@
 
 
 
+/** ===============  LOGIC and REQUESTS  =============== */
+
+
+
+
 /**
  * Loading users in list
  * Send http GET request to get users
@@ -75,16 +80,46 @@ document.querySelector('.topbar').innerHTML = topbar_html;
 
 
 
+/**
+ * Get and set feedback day description
+ * GET request to get day data
+ */
+function getDay(dayNum) {
+
+    form = document.querySelector('.feedback_form');
+
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+
+                var day = JSON.parse( this.responseText );
+
+                form.firstElementChild.innerText = day.title;
+
+                var events = form.querySelectorAll('.event');
+
+                for (var i = 0; i < events.length; i++) {
+                    events[i].firstElementChild.innerText = day.events[i].title;
+                }
+
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/feedback?day=" + dayNum, true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
 
 /**
  * Add button event - press topbar
  * Set up day feedback form. GET request to get day data
  */
 var days = document.querySelectorAll('.day');
-
-for (var i = 0; i < days.length; i++) {
-
-    form = document.querySelector('.feedback_form');
+for (let i = 0; i < days.length; i++) {
 
     days[i].addEventListener('click', function() {
 
@@ -94,47 +129,35 @@ for (var i = 0; i < days.length; i++) {
         this.classList.add('selected');
 
 
-        var query = "?day=" + this.lastElementChild.textContent;
-
-
-        var xhttp = new XMLHttpRequest();
-
-        xhttp.onreadystatechange = function() {
-            if (this.readyState === 4) {
-                if (this.status === 200) { // If ok set up fields name and phone
-
-                    // console.log(this.responseText);
-                    var day = JSON.parse( this.responseText );
-
-                    form.firstElementChild.innerText = day.title;
-
-                    var events = form.querySelectorAll('.event');
-
-                    for (var i = 0; i < events.length; i++) {
-                        events[i].firstElementChild.innerText = day.events[i].title;
-                    }
-
-                }
-            }
-        };
-
-        xhttp.open("GET", "http://ihse.tk:50000/feedback" + query, true);
-        xhttp.withCredentials = true; // To send Cookie;
-        xhttp.send();
-
-
-        // TODO: set today
+        getDay(this.lastElementChild.textContent)
     });
-
 
 }
 
 
 
 
+/**
+ * First time Set up day feedback form.
+ * GET request to get day data
+ */
+var today_date = new Date();
+var dd = String(today_date.getDate()).padStart(2, '0');
+var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
 
-// https://www.cssscript.com/animated-customizable-range-slider-pure-javascript-rslider-js/
 
+var today = mm + '.' + dd;
+
+getDay(today);
+
+
+
+
+
+/**
+ * Setup sliders
+ * https://www.cssscript.com/animated-customizable-range-slider-pure-javascript-rslider-js/
+ */
 var overallSlider = new rSlider({
     target: '#slider',
     values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -179,29 +202,13 @@ eventSliders[2] = new rSlider({
 
 
 /**
- * Add button event - 'feedback'
+ * Add button event - 'send feedback'
  * Send http POST request to set feedback message
  */
-var button = document.querySelector('#btn');
+document.querySelector('#btn').addEventListener('click', function() {
 
-button.addEventListener('click', function() {
-
-    console.log("Overall: " + overallSlider.getValue() );
-
-    events = button.parentElement.querySelectorAll('.event');
-    for (var i = 0; i < events.length; i++) {
-        console.log("Event " + i + " " + events[i].firstElementChild.textContent + ": " + eventSliders[i].getValue() + " - " + events[i].lastElementChild.textContent );
-    }
-
-    users = button.parentElement.querySelectorAll('.user');
-    for (var i = 0; i < users.length; i++) {
-        console.log("User " + i + ": " + users[i].value );
-    }
-
-
-
-    var query = "?day=" + document.querySelector('.today').lastElementChild.textContent;
-
+    events = document.querySelectorAll('.event');
+    users = document.querySelectorAll('.user');
 
     var data = JSON.stringify({"overall": overallSlider.getValue(),
                                      "user1": users[0].value,
@@ -219,32 +226,54 @@ button.addEventListener('click', function() {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
+        if (this.readyState === 1) {  // Opened
+            setLoading();
+        }
+
         if (this.readyState === 4) {  // When request is done
+            setLoaded();
 
             if (this.status === 200) {  // Got it
                 alert("ok!");  // TODO: Redirection
-
             }
 
             if (this.status === 405) {  //  Method Not Allowed or already got it
                 alert("not!");  // TODO: show Html error message
-
             }
         }
     };
 
 
+    var query = "?day=" + document.querySelector('.today').lastElementChild.textContent;
     xhttp.open("POST", "http://ihse.tk:50000/feedback" + query, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
-
     xhttp.withCredentials = true;  // To receive cookie
-
     xhttp.send(data);
 
 });
 
 
+
+
+/** ===============  ANIMATIONS  =============== */
+
+
+
+/**
+ * Show and hide loading button
+ */
+var button = document.querySelector('#btn');
+var button2 = document.querySelector('#btn2');
+function setLoading() {
+    button.style.display = 'none';
+    button2.style.display = 'block';
+}
+
+function setLoaded() {
+    button.style.display = 'block';
+    button2.style.display = 'none';
+}
 
 
 

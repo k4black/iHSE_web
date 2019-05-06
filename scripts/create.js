@@ -19,40 +19,28 @@
  * Add button event - 'create project'
  * Send http POST request to create new project
  */
-var button = document.querySelector('#btn');
-var button2 = document.querySelector('#btn2');
-
-button.addEventListener('click', function() {
-    var form = button.parentElement;
-
-    // TODO : USER names list
-
-    var title = button.parentElement.querySelector('#title');
-    var type = button.parentElement.querySelector('#type');
-    var name = button.parentElement.querySelector('#name');
-    var desc = button.parentElement.querySelector('#desc');
-    var anno = button.parentElement.querySelector('#anno');
+document.querySelector('#btn').addEventListener('click', function() {
+    var form = document.querySelector('.form');
 
 
-    if (title.value == "" || type.value == "" || name.value == "" || desc.value == "" || anno.value == "") // If some field are empty - do nothing
-        return; // TODO: Message
-
-
-
-    console.log(form.querySelectorAll('#name'));
-
-    names = Array.from(form.querySelectorAll('#name')).map(function(name) {
+    var title = form.querySelector('#title');
+    var type = form.querySelector('#type');
+    var desc = form.querySelector('#desc');
+    var anno = form.querySelector('#anno');
+    var names = Array.from(form.querySelectorAll('#name')).map(function(name) {
         return name.value;
     });
 
-    console.log(names);
+
+    if (title.value == "" || type.value == "" || names == null || desc.value == "" || anno.value == "") // If some field are empty - do nothing
+        return; // TODO: Message
 
 
-    var data = JSON.stringify({"title": form.querySelector('#title').value,
-                               "type": form.querySelector('#type').value,
+    let data = JSON.stringify({"title": title.value,
+                               "type": type.value,
                                "name": names,
-                               "desc": form.querySelector('#desc').textContent,
-                               "anno": form.querySelector('#anno').textContent
+                               "desc": desc.textContent,
+                               "anno": anno.textContent
                               });
 
 
@@ -60,14 +48,11 @@ button.addEventListener('click', function() {
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 1) {  // Opened
-            button.style.display = 'none';
-            button2.style.display = 'block';
+            setLoading();
         }
 
         if (this.readyState === 4) {  // When request is done
-
-            button.style.display = 'block';
-            button2.style.display = 'none';
+            setLoaded();
 
             if (this.status === 200) {  // Got it
                 alert("ok!");  // TODO: Redirection
@@ -85,63 +70,56 @@ button.addEventListener('click', function() {
     xhttp.open("POST", "http://ihse.tk:50000/project", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
-
     xhttp.withCredentials = true;  // To receive cookie
-
     xhttp.send(data);
-
 });
 
 
 
 
 /**
- * Loading users in list
+ * Loading user names in list to auto
  * Send http GET request to get users
  */
-var xhttp = new XMLHttpRequest();
+{
+    var xhttp = new XMLHttpRequest();
 
-xhttp.onreadystatechange = function () {
-    if (this.readyState === 4) {
-        if (this.status === 200) { // If ok set up fields name and phone
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
 
-            // console.log(this.responseText);
-            var users = JSON.parse(this.responseText);
+                // console.log(this.responseText);
+                var names = JSON.parse(this.responseText);
 
-            var datalist_html = "";
+                var datalist_html = "";
 
-            for (var i = 0; i < users.length; ++i) {
-                datalist_html += '<option value="' + users[i] + '">';
+                for (let i = 0; i < names.length; ++i) {
+                    datalist_html += '<option value="' + names[i] + '">';
+                }
+
+                document.querySelector('#users_list').innerHTML = datalist_html;
             }
-
-
-            document.querySelector('#users_list').innerHTML = datalist_html;
         }
-    }
-};
+    };
 
-xhttp.open("GET", "http://ihse.tk:50000/names", true);
-xhttp.withCredentials = true; // To send Cookie;
-xhttp.send();
-
-
+    xhttp.open("GET", "http://ihse.tk:50000/names", true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
 
 
 
 
-/** ===============  ANIMATIONS  =============== */
 
 
 /**
- * Add new  button
- * Change type of password field
+ * Add new name field (or remove )
  * TODO: Optimize
  */
 var addButton = document.querySelector('.input__icon');
 addButton.addEventListener('click', addField);
 
 function addField() {
-    // console.log(this);
 
     if (this.lastElementChild.style.display == 'block') {
         this.parentElement.classList.add('active');
@@ -156,8 +134,8 @@ function addField() {
         newObj.innerHTML = '<label for="name" class="create__label">Names</label>'+
                         '<input id="name" type="text" name="name" list="users_list" maxlength=""/>' +
                         '<div class="input__icon">' +
-                            '<i style="display: none" class="mobile__item__icon large material-icons">-</i>' +
-                            '<i style="display: block" class="mobile__item__icon large material-icons">+</i>' +
+                            '<i style="display:none" class="mobile__item__icon large material-icons">-</i>' +
+                            '<i style="display:block" class="mobile__item__icon large material-icons">+</i>' +
                         '</div>';
 
         this.parentElement.parentElement.insertBefore(newObj, this.parentElement.nextSibling);
@@ -184,13 +162,29 @@ function addField() {
 
 
 
+/** ===============  ANIMATIONS  =============== */
+
+
+/**
+ * Show and hide loading button
+ */
+var button = document.querySelector('#btn');
+var button2 = document.querySelector('#btn2');
+function setLoading() {
+    button.style.display = 'none';
+    button2.style.display = 'block';
+}
+
+function setLoaded() {
+    button.style.display = 'block';
+    button2.style.display = 'none';
+}
 
 
 
 /**
  * Add title field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var title = document.querySelector('#title');
 title.addEventListener('focus', function () {
@@ -210,7 +204,6 @@ title.addEventListener('blur', function () {
 /**
  * Add name field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var name_ = document.querySelector('#name');
 name_.addEventListener('focus', nameActive);
@@ -232,7 +225,6 @@ function nameDisactive() {
 /**
  * Add description field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var desc = document.querySelector('#desc');
 desc.addEventListener('focus', function () {
@@ -253,7 +245,6 @@ desc.addEventListener('blur', function () {
 /**
  * Add annotation field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var anno = document.querySelector('#anno');
 anno.addEventListener('focus', function () {

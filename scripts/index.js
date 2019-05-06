@@ -5,6 +5,10 @@
  */
 
 
+// TODO: Hide .html
+// ihse.tk/login.html -> ihse.tk/login
+
+
 
 
 
@@ -17,74 +21,66 @@
  * Get day information from server
  * Send http GET request and get today json schedule
  * than parse of json data and create html
- * TODO: optimize selection
- * TODO: optimize html generation
  */
-var day = document.querySelector('.calendar__day');
-
-var xhttp = new XMLHttpRequest();
+ var xhttp = new XMLHttpRequest();
 
 xhttp.onreadystatechange = function() {
-    if (this.readyState === 4) {
-        if (this.status === 200) { // If ok set up day field
+    if (this.readyState === 4 && this.status === 200) { // If ok set up day field
 
-            var day_data = JSON.parse( this.responseText );
-
+        var day_data = JSON.parse( this.responseText );
 
 
-            var day_html = "";
-            var time_html;
-            var event_html;
+        var day_html = "";
+        var time_html;
+        var event_html;
 
-            for (var time of day_data) {
+        for (let time of day_data) {
 
-                time_html = '<div class="time">' +
-                                '<div class="bar">' +
-                                    '<div>' + time.time + '</div>' +
-                                '</div>' +
-                                '<div class="events">';
+            time_html = '<div class="time">' +
+                '<div class="bar">' +
+                '<div>' + time.time + '</div>' +
+                '</div>' +
+                '<div class="events">';
 
-                for (var event of time.events) {
-                    if (event.id == undefined)
-                        event_html =    '<div class="event">' +
-                                            '<p class="event__title">' + event.title + '</p>' +
+            for (let event of time.events) {
+                if (event.id === undefined)
+                    event_html =    '<div class="event">' +
+                        '<p class="event__title">' + event.title + '</p>' +
 
-                                            (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+                        (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
 
-                                            ( (event.host == undefined || event.host == '') && (event.loc == undefined || event.loc == '') ? "" : '' +
-                                            '<div class="event__last_line">' +
-                                                '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
-                                                '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
-                                            '</div>') +
-                                        '</div>';
+                        ( (event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
+                            '<div class="event__last_line">' +
+                            '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
+                            '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
+                            '</div>') +
+                        '</div>';
 
-                    else
-                        event_html =    '<div class="event" data-id="' + (event.id == undefined ? "" : event.id ) + '">' +
-                                            (event.id == undefined ? "" : '<a href="event.html?id=' + event.id + '">') +
-                                                '<p class="event__title">' + event.title + '</p>' +
+                else
+                    event_html =  '<div class="event" data-id="' + event.id + '">' +
+                        '<a href="event.html?id=' + event.id + '">' +
+                        '<p class="event__title">' + event.title + '</p>' +
 
-                                                (event.desc == undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+                        (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
 
-                                                ( (event.host == undefined || event.host == '') && (event.loc == undefined || event.loc == '') ? "" : '' +
-                                                    '<div class="event__last_line">' +
-                                                    '<span class="event__names">' + (event.host == undefined ? "" : event.host) + '</span>' +
-                                                    '<span class="event__loc">' + (event.loc == undefined ? "" : event.loc) + '</span>' +
-                                                    '</div>') +
-                                            (event.id == undefined ? "" : '</a>') +
-                                        '</div>';
+                        ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
+                            '<div class="event__last_line">' +
+                            '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
+                            '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
+                            '</div>') +
+                        '</div>';
 
-                    time_html += event_html;
+                time_html += event_html;
 
-                }
-
-                time_html += '</div>' + '</div>' + '<hr class="border_line">';
-
-                day_html += time_html;
             }
 
+            time_html += '</div>' + '</div>' + '<hr class="border_line">';
 
-            day.innerHTML = day_html;
+            day_html += time_html;
         }
+
+
+        document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
     }
 };
 

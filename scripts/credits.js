@@ -5,10 +5,6 @@
  */
 
 
-// TODO: Loading indicator
-
-
-
 
 
 /** ===============  LOGIC and REQUESTS  =============== */

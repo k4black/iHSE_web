@@ -5,6 +5,7 @@
  */
 
 
+// TODO: Graph
 
 
 
@@ -14,15 +15,10 @@
 /**
  * Get account information from server
  * Send http GET request and get user bio (or guest bio if cookie does not exist)
- * TODO: optimize selection
  */
+{
+    let topbar = document.querySelector('.topbar');
 
-var name_ = document.querySelector('.topbar__name');
-var phone = document.querySelector('.topbar__phone');
-var credits = document.querySelector('.credits');
-var title = document.querySelector('.title');
-
-if (name_ != null && phone != null) {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
@@ -31,9 +27,9 @@ if (name_ != null && phone != null) {
 
                 // console.log(this.responseText);
 
-                var user = JSON.parse(this.responseText);
-                name_.innerText = user.name;
-                phone.innerText = user.phone;
+                let user = JSON.parse(this.responseText);
+                topbar.querySelector('.topbar__name').innerText = user.name;
+                topbar.querySelector('.topbar__phone').innerText = user.phone;
 
                 // switch (user.type) {
                 //     case 0:
@@ -48,11 +44,12 @@ if (name_ != null && phone != null) {
                 // }
 
 
-                // TODO: Optimize
-                bar.animate(user.credits / user.total);  // Number from 0.0 to 1.0
+                // TODO: Work?
+                window.addEventListener('load', function () {
+                    bar.animate(user.credits / user.total);  // Number from 0.0 to 1.0
+                });
 
-                setProgress(user.credits, user.total);
-                credits.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
+                document.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
 
                 switch (user.type) {
                     case 0:  // User
@@ -60,13 +57,17 @@ if (name_ != null && phone != null) {
                         break;
 
                     case 1:  // Host
-                        name_.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Host';
+                        topbar.querySelector('.topbar__type').innerText = 'Host';
                         break;
 
                     case 2:  // Admin
-                        name_.parentElement.parentElement.querySelector('.topbar__type').innerText = 'Admin';
+                        topbar.querySelector('.topbar__type').innerText = 'Admin';
                         break;
                 }
+            }
+
+            else if (this.status === 401) {  // No account data
+                // TODO: Notification
             }
         }
     };
@@ -79,19 +80,20 @@ if (name_ != null && phone != null) {
 
 
 
-
+/**
+ * Logout button
+ * Send http POST request to clear session id
+ */
 document.querySelector('.header__button').addEventListener('click', function () {
 
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields name and phone
+        if (this.readyState === 4 && this.status === 200) {
 
                 alert('LOGOUT!');
-                document.referrer = 'http://ihse.tk/';
+                document.referrer = 'http://ihse.tk/';  // Refer to start page
 
-            }
         }
     };
 
@@ -107,54 +109,20 @@ document.querySelector('.header__button').addEventListener('click', function () 
 
 
 /**
- * Control progress circle
- * Send http POST request to get session id
- */
-var progress = document.querySelector('.c100');
-var procentage = progress.querySelector('span');
-function setProgress(value, total) {
-    var percent = value / total * 100;
-
-    console.log(percent);
-
-    percent = Math.min(100, percent);
-    percent = Math.round(percent);
-
-    console.log(percent);
-
-    progress.className = "";
-    progress.classList.add('c100');
-    progress.classList.add("p" + percent);
-
-    procentage.innerText = percent + "%";
-}
-
-
-
-
-
-
-/**
  * Add button event - 'code input'
  * Send http POST request to sing up lecture
  */
-var button = document.querySelector('#btn');
-button.addEventListener('click', function () {
+document.querySelector('#btn').addEventListener('click', function () {
 
-    var code = button.parentElement.querySelector('#code');
+    let code = document.querySelector('#code');
 
-
-    if (code.value == "") // If some field are empty - do nothing
+    if (code.value === "")  // If some field are empty - do nothing
         return;
-
-
-    // Pass not password but hashcode of it
-    var query = "?code=" + code.value;
 
 
     var xhttp = new XMLHttpRequest();
 
-    xhttp.onreadystatechange = function() {
+    xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {  // When request is done
 
             if (this.status === 200) {  // Authorized
@@ -172,7 +140,7 @@ button.addEventListener('click', function () {
         }
     };
 
-    xhttp.open("POST", "http://ihse.tk:50000/credits" + query, true);
+    xhttp.open("POST", "http://ihse.tk:50000/credits?code=" + code.value, true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 });
@@ -221,6 +189,8 @@ window.addEventListener('load', function () {
 });
 
 
+
+
 /** ===============  ANIMATIONS  =============== */
 
 
@@ -228,13 +198,10 @@ window.addEventListener('load', function () {
 /**
  * Add code field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var code = document.querySelector('#code');
 code.addEventListener('focus', function () {
     code.closest('div').querySelector("label").classList.add('active');
-    console.log('COde active');
-
 });
 
 code.addEventListener('blur', function () {
@@ -242,5 +209,4 @@ code.addEventListener('blur', function () {
         return;
 
     code.closest('div').querySelector("label").classList.remove('active');
-    console.log('Code inactive');
 });

@@ -7,13 +7,14 @@
 
 
 
+/** ===============  LOGIC and REQUESTS  =============== */
+
+
 
 /**
  * Get day information from server
  * Send http GET request and get list of projects
  * than parse of json data and create html
- * TODO: optimize selection
- * TODO: optimize html generation
  */
 var projects = document.querySelector('.wrapper');
 
@@ -24,9 +25,6 @@ xhttp.onreadystatechange = function() {
         if (this.status === 200) { // If ok set up day field
 
             var projects_data = JSON.parse( this.responseText );
-
-            console.log(projects_data);
-
 
             var projects_html = "";
             var project_html;

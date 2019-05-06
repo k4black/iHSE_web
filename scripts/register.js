@@ -35,40 +35,28 @@ function hashCode(s) {
  * Add button event - 'register'
  * Send http POST request to register and automatically login - get session id
  */
-var button = document.querySelector('#btn');
-var button2 = document.querySelector('#btn2');
-button.addEventListener('click', function () {
+document.querySelector('#btn').addEventListener('click', function () {
 
-    var name_ = button.parentElement.querySelector('#name');
-    var surname = button.parentElement.querySelector('#surname');
-    var phone = button.parentElement.querySelector('#phone');
-    var pass = button.parentElement.querySelector('#pass');
-    var code = button.parentElement.querySelector('#code');
+    var name_ = document.querySelector('#name');
+    var surname = document.querySelector('#surname');
+    var phone = document.querySelector('#phone');
+    var pass = document.querySelector('#pass');
+    var code = document.querySelector('#code');
 
 
     if (name_.value == "" || surname.value == "" || pass.value == "" || code.value == "" || phone.value == "") // If some field are empty - do nothing
         return;  // TODO: Message
 
 
-
-    // Pass not password but hashcode of it
-    // code - registration code
-    var query = "?name=" + name_.value + " " + surname.value + "&phone=" + phone.value + "&pass=" + hashCode(pass.value) + "&code=" + code.value;
-
-
-
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 1) {  // Opened
-            button.style.display = 'none';
-            button2.style.display = 'block';
+            setLoading();
         }
 
         if (this.readyState === 4) {  // When request is done
-
-            button.style.display = 'block';
-            button2.style.display = 'none';
+            setLoaded();
 
             if (this.status === 200) {  // Authorized
                 alert("ok reg!");  // TODO: Redirection
@@ -94,6 +82,10 @@ button.addEventListener('click', function () {
         }
     };
 
+
+    // Pass not password but hashcode of it
+    // code - registration code
+    var query = "?name=" + name_.value + " " + surname.value + "&phone=" + phone.value + "&pass=" + hashCode(pass.value) + "&code=" + code.value;
     xhttp.open("POST", "http://ihse.tk:50000/register" + query, true);
     xhttp.send();
 });
@@ -105,67 +97,71 @@ button.addEventListener('click', function () {
 
 
 
+/**
+ * Show and hide loading button
+ */
+var button = document.querySelector('#btn');
+var button2 = document.querySelector('#btn2');
+function setLoading() {
+    button.style.display = 'none';
+    button2.style.display = 'block';
+}
+
+function setLoaded() {
+    button.style.display = 'block';
+    button2.style.display = 'none';
+}
+
+
+
+
+
 
 /**
  * Add name field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var name_ = document.querySelector('#name');
 name_.addEventListener('focus', function () {
-    onFocus(true);
     name_.closest('div').querySelector("label").parentElement.classList.add('active');
-    console.log('Name active');
 });
 
 name_.addEventListener('blur', function () {
-    onFocus(false);
     if (name_.value != "")
         return;
 
     name_.closest('div').querySelector("label").parentElement.classList.remove('active');
-    console.log('Name inactive');
 });
 
 
 /**
  * Add surname field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var surname = document.querySelector('#surname');
 surname.addEventListener('focus', function () {
-    onFocus(true);
     surname.closest('div').querySelector("label").parentElement.classList.add('active');
-    console.log('Name active');
 });
 
 surname.addEventListener('blur', function () {
-    onFocus(false);
     if (surname.value != "")
         return;
 
     surname.closest('div').querySelector("label").parentElement.classList.remove('active');
-    console.log('Name inactive');
 });
 
 
 /**
  * Add phone field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var phone = document.querySelector('#phone');
 phone.addEventListener('focus', function () {
-    onFocus(true);
     phone.closest('div').querySelector("label").parentElement.classList.add('active');
-    console.log('phone active');
 });
 
 phone.addEventListener('blur', function () {
-    onFocus(false);
-
-    if (phone.value == "+") {
+    if (phone.value == "+") {  // Kostyl
         phone.value = "";
     }
 
@@ -173,29 +169,23 @@ phone.addEventListener('blur', function () {
         return;
 
     phone.closest('div').querySelector("label").parentElement.classList.remove('active');
-    console.log('phone inactive');
 });
 
 /**
  * Add password field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var pass = document.querySelector('#pass');
 
 pass.addEventListener('focus', function () {
-    onFocus(true);
     pass.closest('div').querySelector("label").parentElement.classList.add('active');
-    console.log('Pass active');
 });
 
 pass.addEventListener('blur', function () {
-    onFocus(false);
     if (pass.value != "")
         return;
 
     pass.closest('div').querySelector("label").parentElement.classList.remove('active');
-    console.log('Pass inactive');
 });
 
 
@@ -204,7 +194,6 @@ pass.addEventListener('blur', function () {
  * Change type of password field
  */
 var hideButton = pass.parentElement.querySelector('.input__icon');
-
 hideButton.addEventListener('click', function () {
 
     if (pass.type == 'password') {
@@ -227,46 +216,18 @@ hideButton.addEventListener('click', function () {
 /**
  * Add code field animations
  * Hint Rise up when there is some text or cursor inside it
- * TODO: optimize selection
  */
 var code = document.querySelector('#code');
 
 code.addEventListener('focus', function () {
-    onFocus(true);
     code.closest('div').querySelector("label").parentElement.classList.add('active');
-    console.log('Code active');
 });
 
 code.addEventListener('blur', function () {
-    onFocus(false);
     if (code.value != "")
         return;
 
     code.closest('div').querySelector("label").parentElement.classList.remove('active');
-    console.log('Code inactive');
 });
 
 
-
-
-
-/**
- * Add icon field animations
- * Hide icon if there is virtual keyboard
- * TODO: optimize selection
- */
-
-var focus = false;  // Is there virtual keyboard?
-
-var form = document.querySelector('.wrapper');
-
-function onFocus(focus) {
-
-    return;
-    if (focus) {
-        form.classList.add('close');
-    }
-    else {
-        form.classList.remove('close');
-    }
-}
