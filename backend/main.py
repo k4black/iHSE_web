@@ -13,7 +13,7 @@ from backend import gsheets
 from threading import Timer
 
 # Timeout of updating objects (from gsheets)
-TIMEOUT = 720  # In seconds 2h = 2 * 60m * 60s = 720s TODO: Couple of hours
+TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 720s TODO: Couple of hours
 
 print('init')
 

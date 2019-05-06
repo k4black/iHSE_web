@@ -109,7 +109,7 @@ function getDay(dayNum) {
     };
 
     xhttp.open("GET", "http://ihse.tk:50000/feedback?day=" + dayNum, true);
-    xhttp.withCredentials = true; // To send Cookie;
+    // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
 
