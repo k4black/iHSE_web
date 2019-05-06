@@ -18,7 +18,7 @@ print('init')
 
 
 def foo():
-    print('sync')
+    print('sync: ' + str(TIMEOUT))
 
     start_thread()
 
