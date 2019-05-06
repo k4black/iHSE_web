@@ -8,6 +8,30 @@ from backend import sql
 from backend import gsheets
 
 
+# Threading for sync
+from threading import Timer
+
+# Timeout of all objects
+TIMEOUT = 30  # In seconds TODO: Couple of hours
+
+print('init')
+
+
+def foo():
+    print('sync')
+
+    start_thread()
+
+
+def start_thread():
+    th = Timer(TIMEOUT, foo, [])
+    th.setDaemon(True)
+    th.start()
+
+
+start_thread()
+
+
 """ ---===---==========================================---===--- """
 """                    uWSGI main input function                 """
 """ ---===---==========================================---===--- """
