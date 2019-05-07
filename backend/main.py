@@ -18,8 +18,6 @@ TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 720s TODO: Couple of hours
 print('init')
 
 
-
-
 """ ---===---==========================================---===--- """
 """                    uWSGI main input function                 """
 """ ---===---==========================================---===--- """
@@ -37,6 +35,8 @@ def application(env, start_response):
         data: which will be transmitted
 
     """
+
+    print(start_response)
 
     # Parse query string
     query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
@@ -125,6 +125,56 @@ start_sync()  # Start sync
 
 
 # TODO: Cache
+cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
+
+
+def cache(foo):
+    """ Decorator for cache some function
+    Wil check exist cache version response or not and send it
+
+    Args:
+        foo: Function to cache foo(env, start_response, query)
+
+    Usage:
+        @cache
+        foo(env, start_response, query):
+            pass
+
+    Returns:
+        Decorated function foo
+
+    """
+
+    def decorated_foo(env, start_response, query):
+        """ Decorated function
+        Try to get cached data from dict. if no data - create it
+        And manage start_response - headers
+        Run the foo
+
+        Args:
+            env: HTTP request environment - dict
+            start_response: HTTP response headers place
+            query: url query parameters - dict
+
+        Note:
+            foo: Function to cache foo(env, start_response, query)
+
+
+        Returns:
+            foo response
+
+        """
+
+
+        cached_data = cache_dict[env['REQUEST_URI']]
+
+        if cached_data is None:  # If no cache data - create it
+            cached_data = foo(env, start_response, query)
+            cache_dict[env['REQUEST_URI']] = (cached_data, start_response, )
+
+        return cached_data
+
+    return decorated_foo
 
 
 def get_user_by_response(start_response, cookie):
@@ -278,13 +328,12 @@ def get(env, start_response, query, cookie):
     request_body = ("<p>" + request_body.decode("utf-8") + "</p>").encode('utf-8')
 
 
-    start_response('200 OK',
-                   [('Access-Control-Allow-Origin', '*'),
-                    ('Content-type', 'text/html'),
-                    ('Content-Length', str(len(message_return) + len(message_env) + len(request_body)))
-                    ])
-
-    return [message_return, message_env, request_body]
+    return ('200 OK',
+           [('Access-Control-Allow-Origin', '*'),
+            ('Content-type', 'text/html'),
+            ('Content-Length', str(len(message_return) + len(message_env) + len(request_body)))
+            ],
+           [message_return, message_env, request_body])
 
 
 def admin_panel(env, start_response, query, cookie):
