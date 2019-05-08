@@ -11,7 +11,7 @@ import string
 conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread=False)
 conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
 cursor = conn.cursor()
-
+cursor.execute("PRAGMA wal_checkpoint(PASSIVE)")
 
 # Users
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
