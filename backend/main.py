@@ -3,11 +3,12 @@ from http.cookies import SimpleCookie
 import json
 import time
 
+
+import backend
 # Sqlite import
 from backend import sql
 # GSheetsAPI imports
 from backend import gsheets
-
 
 # Threading for sync
 from threading import Timer
