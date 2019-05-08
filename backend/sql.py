@@ -11,11 +11,13 @@ import string
 conn = sqlite3.connect("/home/ubuntu/db/main.sqlite", check_same_thread=False)
 conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
 conn.execute("PRAGMA wal_autocheckpoint=100")
+conn.execute("PRAGMA synchronous=1")
 
 cursor = conn.cursor()
 
 def checkpoint():
     conn.execute("PRAGMA wal_checkpoint(FULL)")  # WAL
+    conn.execute("VACUUM;")  # Repack database file
 
 checkpoint()
 
