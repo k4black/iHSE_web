@@ -328,12 +328,7 @@ def get(env, start_response, query, cookie):
     request_body = ("<p>" + request_body.decode("utf-8") + "</p>").encode('utf-8')
 
 
-    return ('200 OK',
-           [('Access-Control-Allow-Origin', '*'),
-            ('Content-type', 'text/html'),
-            ('Content-Length', str(len(message_return) + len(message_env) + len(request_body)))
-            ],
-           [message_return, message_env, request_body])
+    return '200 OK', [('Access-Control-Allow-Origin', '*'), ('Content-type', 'text/html'), ('Content-Length', str(len(message_return) + len(message_env) + len(request_body)))], [message_return, message_env, request_body]
 
 
 def admin_panel(env, start_response, query, cookie):
