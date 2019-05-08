@@ -30,7 +30,7 @@ def application(env, start_response):
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
+        start_response: HTTP response headers function
 
     Returns:
         data: which will be transmitted
@@ -55,21 +55,29 @@ def application(env, start_response):
         cookie[key] = morsel.value
 
 
+    status = '200 OK'
+    headers = []
+    data = []
+
+
     if env['REQUEST_METHOD'] == 'GET':
-        return get(env, start_response, query, cookie)
+        status, headers, data = get(env, query, cookie)
 
     if env['REQUEST_METHOD'] == 'POST':
-        return post(env, start_response, query, cookie)
+        status, headers, data = post(env, query, cookie)
 
     if env['REQUEST_METHOD'] == 'OPTIONS':
-        start_response('200 OK',
-                     [('Access-Control-Allow-Origin', '*'),
-                      ('Access-Control-Allow-Methods', 'GET, POST, HEAD, OPTIONS'),
-                      ('Access-Control-Allow-Headers', '*'),
-                      ('Allow', 'GET, POST, HEAD, OPTIONS')  # TODO: Add content application/json
-                      ])
+        status = '200 OK'
+        headers = [
+                       ('Access-Control-Allow-Origin', '*'),
+                       ('Access-Control-Allow-Methods', 'GET, POST, HEAD, OPTIONS'),
+                       ('Access-Control-Allow-Headers', '*'),
+                       ('Allow', 'GET, POST, HEAD, OPTIONS')  # TODO: Add content application/json
+                   ]
 
-        return
+
+    start_response(status, headers)
+    return data
 
 
 """ ---===---==========================================---===--- """
@@ -89,14 +97,12 @@ def sync():
 
     """
 
-    # TODO: Sync itself
-
     # Update events
     events = gsheets.get_events()
     sql.load_events(events)
 
     # Update cache
-
+    # TODO: Sync itself
 
 
     print('sync: ' + str(time.time()))
@@ -125,7 +131,6 @@ def start_sync():
 start_sync()  # Start sync
 
 
-# TODO: Cache
 cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
 
 
@@ -134,11 +139,11 @@ def cache(foo):
     Wil check exist cache version response or not and send it
 
     Args:
-        foo: Function to cache foo(env, start_response, query)
+        foo: Function to cache foo(env, query)
 
     Usage:
         @cache
-        foo(env, start_response, query):
+        foo(env, query):
             pass
 
     Returns:
@@ -146,19 +151,18 @@ def cache(foo):
 
     """
 
-    def decorated_foo(env, start_response, query):
+    def decorated_foo(env, query):
         """ Decorated function
         Try to get cached data from dict. if no data - create it
-        And manage start_response - headers
+        And manage headers
         Run the foo
 
         Args:
             env: HTTP request environment - dict
-            start_response: HTTP response headers place
             query: url query parameters - dict
 
         Note:
-            foo: Function to cache foo(env, start_response, query)
+            foo: Function to cache foo(env, query)
 
 
         Returns:
@@ -167,22 +171,21 @@ def cache(foo):
         """
 
 
-        cached_data = cache_dict[env['REQUEST_URI']]
+        cached_status, cached_headers, cached_data = cache_dict[env['REQUEST_URI']]
 
         if cached_data is None:  # If no cache data - create it
-            cached_data = foo(env, start_response, query)
-            cache_dict[env['REQUEST_URI']] = (cached_data, start_response, )
+            cached_status, cached_headers, cached_data = foo(env, query)
+            cache_dict[env['REQUEST_URI']] = (cached_status, cached_headers, cached_data)
 
-        return cached_data
+        return (cached_status, cached_data)
 
     return decorated_foo
 
 
-def get_user_by_response(start_response, cookie):
+def get_user_by_response(cookie):
     """ Manage get user operation
 
     Args:
-        start_response: HTTP response headers place
         cookie: http cookie parameters - dict (may be empty)
 
     Note:
@@ -197,36 +200,38 @@ def get_user_by_response(start_response, cookie):
     sessid = bytes.fromhex(cookie.get('sessid', ''))  # Get session id from cookie
 
     if sessid == b'':  # No cookie
-        start_response('401 Unauthorized',
-                       [('Access-Control-Allow-Origin', '*'),
-                        ])
-        return None
+
+        return ('401 Unauthorized',
+                [('Access-Control-Allow-Origin', '*')],
+                None)
 
     sess = sql.get_session(sessid)  # Get session object
 
     if sess is None:  # No such session - wrong cookie
-        start_response('401 Unauthorized',
-                       [    # Because in js there is xhttp.withCredentials = true;
-                            ('Access-Control-Allow-Origin', 'http://ihse.tk'),
-                            # To receive cookie
-                            ('Access-Control-Allow-Credentials', 'true'),
-                            # Clear user sessid cookie
-                            ('Set-Cookie', 'sessid=none; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
-                        ])
-        return None
+
+        return ('401 Unauthorized',
+                [    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                    # Clear user sessid cookie
+                    ('Set-Cookie', 'sessid=none; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
+                ],
+                None)
 
     user_obj = sql.get_user(sess[1])  # Get user by user id
 
     if user_obj is None:  # No such user - wrong cookie or smth wrong
-        start_response('401 Unauthorized',
-                       [    # Because in js there is xhttp.withCredentials = true;
-                            ('Access-Control-Allow-Origin', 'http://ihse.tk'),
-                            # To receive cookie
-                            ('Access-Control-Allow-Credentials', 'true'),
-                            # Clear user sessid cookie
-                            ('Set-Cookie', 'sessid=none; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
-                        ])
-        return None
+
+        return ('401 Unauthorized',
+                [    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                    # Clear user sessid cookie
+                    ('Set-Cookie', 'sessid=none; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
+                ],
+                None)
 
     return user_obj
 
@@ -262,13 +267,12 @@ def get_json_by_response(env):
 """ ---===---==========================================---===--- """
 
 
-def get(env, start_response, query, cookie):
+def get(env, query, cookie):
     """ GET HTTP request
     Will manage and call specific function [account, registration]
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict
         cookie: http cookie parameters - dict (may be empty)
 
@@ -278,30 +282,30 @@ def get(env, start_response, query, cookie):
     """
 
     if env['PATH_INFO'] == '/account':
-        return get_account(env, start_response, query, cookie)
+        return get_account(env, query, cookie)
 
     if env['PATH_INFO'] == '/user':
-        return get_user(env, start_response, query, cookie)
+        return get_user(env, query, cookie)
 
     if env['PATH_INFO'] == '/names':
-        return get_names(env, start_response, query, cookie)
+        return get_names(env, query, cookie)
 
     if env['PATH_INFO'] == '/day':
-        return get_day(env, start_response, query)
+        return get_day(env, query)
 
     if env['PATH_INFO'] == '/feedback':
-        return get_feedback(env, start_response, query, cookie)
+        return get_feedback(env, query, cookie)
 
     if env['PATH_INFO'] == '/event':
-        return get_event(env, start_response, query, cookie)
+        return get_event(env, query, cookie)
 
     if env['PATH_INFO'] == '/projects':
-        return get_projects(env, start_response, query)
+        return get_projects(env, query)
 
 
     # Manage admin actions
     if env['PATH_INFO'][:6] == '/admin':
-        return admin_panel(env, start_response, query, cookie)
+        return admin_panel(env, query, cookie)
 
 
 
@@ -329,16 +333,21 @@ def get(env, start_response, query, cookie):
     request_body = ("<p>" + request_body.decode("utf-8") + "</p>").encode('utf-8')
 
 
-    return '200 OK', [('Access-Control-Allow-Origin', '*'), ('Content-type', 'text/html'), ('Content-Length', str(len(message_return) + len(message_env) + len(request_body)))], [message_return, message_env, request_body]
+    return ('200 OK',
+            [
+                ('Access-Control-Allow-Origin', '*'),
+                ('Content-type', 'text/html'),
+                ('Content-Length', str(len(message_return) + len(message_env) + len(request_body)))
+             ],
+            [message_return, message_env, request_body])
 
 
-def admin_panel(env, start_response, query, cookie):
+def admin_panel(env, query, cookie):
     """ Manage admin HTTP request
     Will check session id and permissions
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -351,10 +360,10 @@ def admin_panel(env, start_response, query, cookie):
     """
 
     # Safety get user_obj
-    user_obj = get_user_by_response(start_response, cookie)
+    user_obj = get_user_by_response(cookie)
 
-    if user_obj is None or user_obj[1] < 1:  # No User or no Permissions
-        return
+    if user_obj[2] is None or user_obj[2][1] < 1:  # No User or no Permissions
+        return user_obj
 
 
     if env['PATH_INFO'] == '/admin_save':
@@ -362,10 +371,9 @@ def admin_panel(env, start_response, query, cookie):
         users_list = sql.get_users()
         gsheets.save_users(users_list)
 
-        start_response('200 OK',
-                       [('Access-Control-Allow-Origin', '*')
-                        ])
-        return []
+        return ('200 OK',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
     if env['PATH_INFO'] == '/admin_load':
 
@@ -375,37 +383,33 @@ def admin_panel(env, start_response, query, cookie):
         event_list = gsheets.get_events()
         sql.load_events(event_list)
 
-        start_response('200 OK',
-                       [('Access-Control-Allow-Origin', '*')
-                        ])
-        return []
+        return ('200 OK',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
     if env['PATH_INFO'] == '/admin_update':
 
         gsheets.update_events()
 
-        start_response('200 OK',
-                       [('Access-Control-Allow-Origin', '*')
-                        ])
-        return []
+        return ('200 OK',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
     if env['PATH_INFO'] == '/admin_codes':
 
         gsheets.generate_codes(20, 10, 2)
 
-        start_response('200 OK',
-                       [('Access-Control-Allow-Origin', '*')
-                        ])
-        return []
+        return ('200 OK',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
 
-def get_user(env, start_response, query, cookie):
+def get_user(env, query, cookie):
     """ User data HTTP request
     Will check session id and return data according to user
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -417,10 +421,10 @@ def get_user(env, start_response, query, cookie):
     """
 
     # Safety get user_obj
-    user_obj = get_user_by_response(start_response, cookie)
+    user_obj = get_user_by_response(cookie)
 
-    if user_obj is None:
-        return
+    if user_obj[2] is None or user_obj[2][1] < 1:  # No User or no Permissions
+        return user_obj
 
 
     # Json account data
@@ -437,23 +441,24 @@ def get_user(env, start_response, query, cookie):
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
 
-    start_response('200 OK',
-                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
-                    ('Content-type', 'application/json'),
-                    ('Content-Length', str(len(json_data)))
-                    ])
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
 
-    return [json_data]
 
-
-def get_names(env, start_response, query, cookie):
+def get_names(env, query, cookie):
     """ Send names data HTTP request
     Will check session id and return data according to user
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -465,10 +470,10 @@ def get_names(env, start_response, query, cookie):
     """
 
     # Safety get user_obj
-    user_obj = get_user_by_response(start_response, cookie)
+    user_obj = get_user_by_response(cookie)
 
-    if user_obj is None:
-        return
+    if user_obj[2] is None or user_obj[2][1] < 1:  # No User or no Permissions
+        return user_obj
 
 
     # Names
@@ -477,23 +482,24 @@ def get_names(env, start_response, query, cookie):
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
 
-    start_response('200 OK',
-                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
-                    ('Content-type', 'application/json'),
-                    ('Content-Length', str(len(json_data)))
-                    ])
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
 
-    return [json_data]
 
-
-def get_account(env, start_response, query, cookie):
+def get_account(env, query, cookie):
     """ Account data HTTP request
     Will check session id and return data according to user
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -505,10 +511,10 @@ def get_account(env, start_response, query, cookie):
     """
 
     # Safety get user_obj
-    user_obj = get_user_by_response(start_response, cookie)
+    user_obj = get_user_by_response(cookie)
 
-    if user_obj is None:
-        return
+    if user_obj[2] is None or user_obj[2][1] < 1:  # No User or no Permissions
+        return user_obj
 
 
     # Json account data
@@ -525,24 +531,24 @@ def get_account(env, start_response, query, cookie):
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
 
-    start_response('200 OK',
-                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
-                    ('Content-type', 'application/json'),
-                    ('Content-Length', str(len(json_data)))
-                    ])
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
 
-    return [json_data]
 
-
-
-def get_event(env, start_response, query, cookie):
+def get_event(env, query, cookie):
     """ Event data HTTP request
     Get event description by event id
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -572,24 +578,21 @@ def get_event(env, start_response, query, cookie):
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
 
-    start_response('200 OK',
-                   [('Access-Control-Allow-Origin', '*'),
-#                    [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-#                     ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
-                    ('Content-type', 'application/json'),
-                    ('Content-Length', str(len(json_data)))
-                    ])
-
-    return [json_data]
+    return ('200 OK',
+            [
+                ('Access-Control-Allow-Origin', '*'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
 
 
-def get_feedback(env, start_response, query, cookie):
+def get_feedback(env, query, cookie):
     """ Account data HTTP request
     Got day num and return day event for feedback
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -614,22 +617,21 @@ def get_feedback(env, start_response, query, cookie):
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
 
-    start_response('200 OK',
-                   [('Access-Control-Allow-Origin', 'http://ihse.tk'),  # Because in js there is xhttp.withCredentials = true;
-                    ('Content-type', 'application/json'),
-                    ('Content-Length', str(len(json_data)))
-                    ])
+    return ('200 OK',
+            [
+                ('Access-Control-Allow-Origin', '*'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
 
-    return [json_data]
 
-
-def get_projects(env, start_response, query):
+def get_projects(env, query):
     """ Projects HTTP request
     Send list of projects in json format
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
 
     Returns:
@@ -680,22 +682,21 @@ def get_projects(env, start_response, query):
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
 
-    start_response('200 OK',
-                   [('Access-Control-Allow-Origin', '*'),
-                    ('Content-type', 'application/json'),
-                    ('Content-Length', str(len(json_data)))
-                    ])
+    return ('200 OK',
+            [
+                ('Access-Control-Allow-Origin', '*'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
 
-    return [json_data]
 
-
-def get_day(env, start_response, query):
+def get_day(env, query):
     """ Day schedule data HTTP request
     Get day num and return html
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
 
     Note:
@@ -714,22 +715,21 @@ def get_day(env, start_response, query):
     json_data = json.dumps(data)  # creating real json here
     json_data = json_data.encode('utf-8')
 
-    start_response('200 OK',
-                   [('Access-Control-Allow-Origin', '*'),
-                    ('Content-type', 'text/plant'),
-                    ('Content-Length', str(len(json_data)))
-                    ])
+    return ('200 OK',
+            [
+                ('Access-Control-Allow-Origin', '*'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
 
-    return [json_data]
 
-
-def post(env, start_response, query, cookie):
+def post(env, query, cookie):
     """ POST HTTP request
     Will manage and call specific function [login, register]
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -739,34 +739,33 @@ def post(env, start_response, query, cookie):
     """
 
     if env['PATH_INFO'] == '/login':
-        return post_login(env, start_response, query['phone'], query['pass'])
+        return post_login(env, query['phone'], query['pass'])
 
     if env['PATH_INFO'] == '/register':
-        return post_register(env, start_response, query['name'], query['phone'], query['pass'], query['code'])
+        return post_register(env, query['name'], query['phone'], query['pass'], query['code'])
 
     if env['PATH_INFO'] == '/feedback':
-        return post_feedback(env, start_response, query, cookie)
+        return post_feedback(env, query, cookie)
 
     if env['PATH_INFO'] == '/project':
-        return post_project(env, start_response, query, cookie)
+        return post_project(env, query, cookie)
 
     if env['PATH_INFO'] == '/logout':
-        return post_logout(env, start_response, query, cookie)
+        return post_logout(env, query, cookie)
 
     if env['PATH_INFO'] == '/credits':
-        return post_credits(env, start_response, query, cookie)
+        return post_credits(env, query, cookie)
 
     if env['PATH_INFO'] == '/enroll':
-        return post_enroll(env, start_response, query, cookie)
+        return post_enroll(env, query, cookie)
 
 
-def post_login(env, start_response, phone, passw):
+def post_login(env, phone, passw):
     """ Login HTTP request
     Create new session if it does not exist and send cookie sessid
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         phone: User phone - string
         passw: Password hash - int
 
@@ -790,28 +789,28 @@ def post_login(env, start_response, phone, passw):
         # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
         sessid = res[0].hex()
 
-        start_response('200 Ok',
-                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),  # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Credentials', 'true'),  # To receive cookie
-                        ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=31536000;'),
-                        #('Location', 'http://ihse.tk/login.html')
-                        ])
+        return ('200 OK',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                    ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=15768000;')  # 1/2 year
+                 ],
+                [])
 
     else:
-        start_response('401 Unauthorized',
-                       [('Access-Control-Allow-Origin', '*'),
-                        ])
-
-    return
+        return ('401 Unauthorized',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
 
-def post_logout(env, start_response, query, cookie):
+def post_logout(env, query, cookie):
     """ Logout HTTP request
     Delete current session and send clear cookie sessid
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -832,28 +831,29 @@ def post_logout(env, start_response, query, cookie):
 
         # TODO: redirection by '302 Found'
         # TODO: if sess does not exist
-        start_response('200 Ok',
-                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),  # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Credentials', 'true'),  # To receive cookie
-                        ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
-                        #('Location', 'http://ihse.tk/login.html')
-                        ])
+        return ('200 Ok',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                    # Clear cookie
+                    ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
+                    #('Location', 'http://ihse.tk/login.html')
+                 ],
+                [])
     else:
-        start_response('403 Forbidden',
-                       [('Access-Control-Allow-Origin', '*'),
-                        #('Content-type', 'text/html'),
-                        ])
-
-    return
+        return ('403 Forbidden',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
 
-def post_register(env, start_response, name, phone, passw, code):
+def post_register(env, name, phone, passw, code):
     """ Register HTTP request
     Create new user if it does not exist and login user
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         name: User name - string
         phone: User phone - string
         passw: Password hash - int
@@ -861,7 +861,7 @@ def post_register(env, start_response, name, phone, passw, code):
 
     Note:
         Send:
-            200 Ok: if user exist and session created correnctly
+            200 Ok: if user exist and session created correctly
                     and send cookie with sess id
             401 Unauthorized: if wrong name of pass
 
@@ -876,23 +876,20 @@ def post_register(env, start_response, name, phone, passw, code):
 
         sql.register(name, passw, user_type, phone, 0)  # Create new user
 
-        post_login(env, start_response, name, passw)  # Automatically login user
+        return post_login(env, name, passw)  # Automatically login user
 
     else:
-        start_response('403 Forbidden',
-                       [('Access-Control-Allow-Origin', '*'),
-                        ])
-
-    return
+        return ('403 Forbidden',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
 
-def post_feedback(env, start_response, query, cookie):
+def post_feedback(env, query, cookie):
     """ Login HTTP request
     By cookie create feedback for day
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -915,34 +912,35 @@ def post_feedback(env, start_response, query, cookie):
 
 
     # Safety get user_obj
-    user_obj = get_user_by_response(start_response, cookie)
+    user_obj = get_user_by_response(cookie)
 
-    if user_obj is None:
-        return
+    if user_obj[2] is None or user_obj[2][1] < 1:  # No User or no Permissions
+        return user_obj
 
 
     if gsheets.save_feedback(user_obj, day, feedback_obj):   # TODO: If writing ok
 
-        start_response('200 Ok',
-                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
-                        ])
+        return ('200 Ok',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                 ],
+                [])
 
     else:
-        start_response('405 Method Not Allowed',
-                       [('Access-Control-Allow-Origin', '*'),
-                        ])
-
-    return
+        return ('405 Method Not Allowed',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
 
-def post_credits(env, start_response, query, cookie):
+def post_credits(env, query, cookie):
     """ Sing in at lecture  HTTP request (by student )
     By cookie add credits to user
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -958,43 +956,44 @@ def post_credits(env, start_response, query, cookie):
     """
 
     # Event code
-    code  = query['code']
+    code = query['code']
     print('Credits code: ', code)
 
     event_id = 42 # TODO: Get event id
 
 
     # Safety get user_obj
-    user_obj = get_user_by_response(start_response, cookie)
+    user_obj = get_user_by_response(cookie)
 
-    if user_obj is None:
-        return
+    if user_obj[2] is None or user_obj[2][1] < 1:  # No User or no Permissions
+        return user_obj
 
 
     event_obj = sql.get_event(event_id)
     if True or event_obj is not None:   # TODO: If writing ok
         gsheets.save_credits(user_obj, event_obj)
 
-        start_response('200 Ok',
-                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
-                        ])
+        return ('200 Ok',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                 ],
+                [])
 
     else:
-        start_response('405 Method Not Allowed',
-                       [('Access-Control-Allow-Origin', '*'),
-                        ])
-
-    return
+        return ('405 Method Not Allowed',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
 
-def post_enroll(env, start_response, query, cookie):
+def post_enroll(env, query, cookie):
     """ Enroll at lecture HTTP request (by student )
     By cookie add user to this event
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -1010,14 +1009,14 @@ def post_enroll(env, start_response, query, cookie):
     """
 
     # Event code
-    event_id  = query['id']
+    event_id = query['id']
 
 
     # Safety get user_obj
-    user_obj = get_user_by_response(start_response, cookie)
+    user_obj = get_user_by_response(cookie)
 
-    if user_obj is None:
-        return
+    if user_obj[2] is None or user_obj[2][1] < 1:  # No User or no Permissions
+        return user_obj
 
 
     if True or sql.enroll_user(event_id, user_obj):   # TODO: If writing ok
@@ -1034,30 +1033,29 @@ def post_enroll(env, start_response, query, cookie):
         json_data = json.dumps(data)  # creating real json here
         json_data = json_data.encode('utf-8')
 
-        start_response('200 Ok',
-                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),  # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Credentials', 'true'),  # To receive cookie
-                        ('Content-type', 'text/plant'),
-                        ('Content-Length', str(len(json_data)))
-                        ])
-
-        return [json_data]
+        return ('200 Ok',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                    ('Content-type', 'text/plant'),
+                    ('Content-Length', str(len(json_data)))
+                 ],
+                [json_data])
 
     else:
-        start_response('405 Method Not Allowed',
-                       [('Access-Control-Allow-Origin', '*'),
-                        ])
-
-        return
+        return ('405 Method Not Allowed',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
 
-def post_project(env, start_response, query, cookie):
+def post_project(env, query, cookie):
     """ Post project HTTP request
     Create new project signed by cookie
 
     Args:
         env: HTTP request environment - dict
-        start_response: HTTP response headers place
         query: url query parameters - dict (may be empty)
         cookie: http cookie parameters - dict (may be empty)
 
@@ -1077,28 +1075,28 @@ def post_project(env, start_response, query, cookie):
 
 
     # Safety get user_obj
-    user_obj = get_user_by_response(start_response, cookie)
+    user_obj = get_user_by_response(cookie)
 
-    if user_obj is None:
-        return
+    if user_obj[2] is None or user_obj[2][1] < 1:  # No User or no Permissions
+        return user_obj
 
 
     if gsheets.save_project(user_obj, project_obj):   # If user exist
         # TODO: redirection
-        start_response('200 Ok',
-                       [('Access-Control-Allow-Origin', 'http://ihse.tk'),    # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Credentials', 'true'),         # To receive cookie
-                        #('Location', 'http://ihse.tk/login.html')
-                        ])
+        return ('200 Ok',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                    #('Location', 'http://ihse.tk/login.html')
+                 ],
+                [])
 
     else:
-        start_response('405 Method Not Allowed',
-                       [('Access-Control-Allow-Origin', '*'), ]
-                       )
-
-    return
-
-
+        return ('405 Method Not Allowed',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
 
 """
