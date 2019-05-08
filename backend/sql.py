@@ -8,7 +8,7 @@ import string
 """ ---===---==========================================---===--- """
 
 
-conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread=False)
+conn = sqlite3.connect("/home/ubuntu/db/main.sqlite", check_same_thread=False)
 conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
 conn.execute("PRAGMA wal_autocheckpoint=100")
 
