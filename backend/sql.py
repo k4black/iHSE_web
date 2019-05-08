@@ -11,6 +11,7 @@ import string
 conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread=False)
 conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
 conn.commit()
+
 cursor = conn.cursor()
 
 # Users
@@ -39,6 +40,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
 
 
 # Feedback: voted or not
+cursor.execute('DROP TABLE "feedback"')
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
                     "user_id"	INTEGER NOT NULL PRIMARY KEY,
                     "days"	TEXT,
@@ -229,7 +231,7 @@ def logout(sess_id):
     cursor.execute("DELETE FROM sessions WHERE id=?", (sess_id, ))
     conn.commit()
 
-    return True # TODO True/False
+    return True  # TODO True/False
 
 
 def get_user(user_id):
