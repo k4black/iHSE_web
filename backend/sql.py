@@ -40,7 +40,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
 
 
 # Feedback: voted or not
-cursor.execute('DROP TABLE "feedback"')
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
                     "user_id"	INTEGER NOT NULL PRIMARY KEY,
                     "days"	TEXT,
@@ -51,6 +50,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
 
 
 # Events
+cursor.execute('DROP TABLE "events"')
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
                     "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
                     "type"	INTEGER,
