@@ -362,7 +362,7 @@ def admin_panel(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is [] or user_obj[2][1] < 1:  # No User or no Permissions
+    if user_obj[2] == [] or user_obj[2][1] < 1:  # No User or no Permissions
         return user_obj
 
 
@@ -423,7 +423,7 @@ def get_user(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is [] or user_obj[2][1] < 1:  # No User or no Permissions
+    if user_obj[2] == [] or user_obj[2][1] < 1:  # No User or no Permissions
         return user_obj
 
 
@@ -472,7 +472,7 @@ def get_names(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is [] or user_obj[2][1] < 1:  # No User or no Permissions
+    if user_obj[2] == [] or user_obj[2][1] < 1:  # No User or no Permissions
         return user_obj
 
 
@@ -513,7 +513,7 @@ def get_account(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is [] or user_obj[2][1] < 1:  # No User or no Permissions
+    if user_obj[2] == [] or user_obj[2][1] < 1:  # No User or no Permissions
         return user_obj
 
 
@@ -914,7 +914,7 @@ def post_feedback(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is [] or user_obj[2][1] < 1:  # No User or no Permissions
+    if user_obj[2] == [] or user_obj[2][1] < 1:  # No User or no Permissions
         return user_obj
 
 
@@ -965,7 +965,7 @@ def post_credits(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is [] or user_obj[2][1] < 1:  # No User or no Permissions
+    if user_obj[2] == [] or user_obj[2][1] < 1:  # No User or no Permissions
         return user_obj
 
 
@@ -1015,7 +1015,7 @@ def post_enroll(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is [] or user_obj[2][1] < 1:  # No User or no Permissions
+    if user_obj[2] == [] or user_obj[2][1] < 1:  # No User or no Permissions
         return user_obj
 
 
@@ -1077,7 +1077,7 @@ def post_project(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is [] or user_obj[2][1] < 1:  # No User or no Permissions
+    if user_obj[2] == [] or user_obj[2][1] < 1:  # No User or no Permissions
         return user_obj
 
 
