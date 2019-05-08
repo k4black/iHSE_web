@@ -10,9 +10,14 @@ import string
 
 conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread=False)
 conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
-conn.commit()
+conn.execute("PRAGMA wal_autocheckpoint=100")
 
 cursor = conn.cursor()
+
+def checkpoint():
+    conn.execute("PRAGMA wal_checkpoint(FULL)")  # WAL
+
+checkpoint()
 
 # Users
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
@@ -50,7 +55,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
 
 
 # Events
-cursor.execute('DROP TABLE "events"')
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
                     "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
                     "type"	INTEGER,

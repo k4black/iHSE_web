@@ -98,6 +98,9 @@ def sync():
 
     """
 
+    # SQL sync - wal checkpoint
+    sql.checkpoint()
+
     # Update events
     events = gsheets.get_events()
     sql.load_events(events)
