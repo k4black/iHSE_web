@@ -16,7 +16,7 @@
  * Get account information from server
  * Send http GET request and get user bio (or guest bio if cookie does not exist)
  */
-{
+function loadAccount() {
     let topbar = document.querySelector('.topbar');
 
     var xhttp = new XMLHttpRequest();
@@ -127,6 +127,7 @@ document.querySelector('#btn').addEventListener('click', function () {
 
             if (this.status === 200) {  // Authorized
                 alert("ok!");  // TODO: Redirection
+                loadAccount();
 
                 code.value = "";
 
