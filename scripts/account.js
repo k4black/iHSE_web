@@ -16,6 +16,7 @@
  * Get account information from server
  * Send http GET request and get user bio (or guest bio if cookie does not exist)
  */
+window.addEventListener('load', loadAccount);
 function loadAccount() {
     let topbar = document.querySelector('.topbar');
 
