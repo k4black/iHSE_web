@@ -424,7 +424,7 @@ def get_user(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
+    if user_obj[2] is None:  # No User
         return user_obj
 
 
@@ -473,7 +473,7 @@ def get_names(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
+    if user_obj[2] is None:  # No User
         return user_obj
 
 
@@ -514,7 +514,7 @@ def get_account(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
+    if user_obj[2] is None:  # No User
         return user_obj
 
 
@@ -915,7 +915,7 @@ def post_feedback(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
+    if user_obj[2] is None:  # No User
         return user_obj
 
 
@@ -960,15 +960,14 @@ def post_credits(env, query, cookie):
     code = query['code']
     print('Credits code: ', code)
 
-    event_id = 42 # TODO: Get event id
+    event_id = 42  # TODO: Get event id from code
 
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
+    if user_obj[2] is None:  # No User
         return user_obj
-
 
     event_obj = sql.get_event(event_id)
     if True or event_obj is not None:   # TODO: If writing ok
@@ -1017,7 +1016,7 @@ def post_enroll(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
+    if user_obj[2] is None:  # No User
         return user_obj
 
 
@@ -1079,7 +1078,7 @@ def post_project(env, query, cookie):
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
+    if user_obj[2] is None:  # No User
         return user_obj
 
 
