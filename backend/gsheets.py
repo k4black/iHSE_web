@@ -380,7 +380,13 @@ def save_users(users_list):
     for i in range(len(users_list)):
         write_range = 'Users!A' + str(5+i) + ':F' + str(5+i)
 
-        data = {'values': [[users_list[i][0], users_list[i][1], users_list[i][2], users_list[i][3], users_list[i][4], users_list[i][5]]],
+        data = {'values': [[users_list[i][0],
+                            users_list[i][1],
+                            users_list[i][2],
+                            users_list[i][3],
+                            users_list[i][4],
+                            users_list[i][5],
+                            users_list[i][6]]],
                 'range': write_range
                 }
         body = {
@@ -414,7 +420,7 @@ def get_users():
     service = build('sheets', 'v4', credentials=creds)
 
     read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Users!A5:F15')  #TODO Max F15
+                                                       range='Users!A5:H15')  #TODO Max F15
     read_response = read_request.execute()
     read_values = read_response.get('values', [])
 

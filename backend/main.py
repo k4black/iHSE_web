@@ -15,6 +15,7 @@ from threading import Timer
 
 # Timeout of updating objects (from gsheets)
 TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 720s TODO: Couple of hours
+CREDITS = 300  # Max credits # TODO: Get from table?
 
 print('init')
 
@@ -525,8 +526,8 @@ def get_account(env, query, cookie):
     data['type'] = user_obj[1]
     data['group'] = user_obj[5]
 
-    data['credits'] = 120  # TODO: User credits
-    data['total'] = 300
+    data['credits'] = user_obj[6]
+    data['total'] = CREDITS
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
@@ -972,6 +973,7 @@ def post_credits(env, query, cookie):
     event_obj = sql.get_event(event_id)
     if True or event_obj is not None:   # TODO: If writing ok
         gsheets.save_credits(user_obj, event_obj)
+        sql.checkin_user(user_obj, event_obj)
 
         return ('200 Ok',
                 [

@@ -20,7 +20,8 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
                     "phone"	TEXT,
                     "name"	TEXT,
                     "pass"	INTEGER,
-                    "team"	INTEGER
+                    "team"	INTEGER,
+                    "credits"	INTEGER DEFAULT (0)
                   );
                """)
 
@@ -57,6 +58,12 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
                     "total" INTEGER
                   );
                """)
+
+
+# TODO: REMOVE Test
+cursor.execute("""INSERT INTO events(id, type, title, credits, total)
+                  SELECT ?, ?, ?, ?, ?""", (42, 0, 'Title', 5, 30))
+conn.commit()
 
 
 """ ---===---==========================================---===--- """
@@ -129,7 +136,7 @@ def get_users():
     Args:
 
     Returns:
-        user objects: list of user objects - [(id, user_id, user_type, user_agent, last_ip, time), ...]
+        user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits), ...]
 
     """
 
@@ -144,7 +151,7 @@ def load_users(users_list):
     Clear users table and sessions table and insert all users in users table
 
     Args:
-        users_list: list of user objects - [(id, user_id, user_type, user_agent, last_ip, time), ...]
+        users_list: list of user objects - [(id, user_type, phone, name, pass, team, credits), ...]
 
     Returns:
 
@@ -158,10 +165,10 @@ def load_users(users_list):
     # Add users in bd
     for user_obj in users_list:
 
-        cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
-                          SELECT ?, ?, ?, ?, ?
+        cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team, credits)
+                          SELECT ?, ?, ?, ?, ?, ?
                           WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
-                       (user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[3], user_obj[4]))
+                       (user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[6], user_obj[3], user_obj[4]))
         conn.commit()
 
 
@@ -231,7 +238,7 @@ def get_user(user_id):
         user_id: user id from bd
 
     Returns:
-        user_obj: (id, user_type, phone, name, pass, team)
+        user_obj: (id, user_type, phone, name, pass, team, credits)
                      or None if there is no such user
 
     """
@@ -270,8 +277,7 @@ def enroll_user(event_id, user_obj):
 
     Args:
         event_id: event id from bd
-        user_obj: (id, user_type, phone, name, pass, team)
-                     or None if there is no such user
+        user_obj: (id, user_type, phone, name, pass, team, credits)
 
     Returns:
         True/False: Success or not
@@ -285,6 +291,25 @@ def enroll_user(event_id, user_obj):
         return False
 
     cursor.execute("UPDATE events SET count=? WHERE id=?", (events[0][4] + 1, event_id, ))
+    conn.commit()
+
+    return True
+
+
+def checkin_user(user_obj, event_obj):
+    """ Checkin user in event
+    Add user credits for the event
+
+    Args:
+        user_obj: (id, user_type, phone, name, pass, team, credits)
+        event_obj: (id, type, title, credits, count, total)
+
+    Returns:
+        True/False: Success or not
+
+    """
+
+    cursor.execute("UPDATE users SET credits=? WHERE id=?", (user_obj[6] + event_obj[3], user_obj[0], ))
     conn.commit()
 
     return True
