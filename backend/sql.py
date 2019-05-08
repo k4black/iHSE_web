@@ -10,8 +10,8 @@ import string
 
 conn = sqlite3.connect("/home/ubuntu/bd/main.sqlite", check_same_thread=False)
 conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
+conn.commit()
 cursor = conn.cursor()
-cursor.execute("PRAGMA wal_checkpoint(PASSIVE)")
 
 # Users
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
@@ -62,7 +62,8 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
 
 # TODO: REMOVE Test
 cursor.execute("""INSERT INTO events(id, type, title, credits, total)
-                  SELECT ?, ?, ?, ?, ?""", (42, 0, 'Title', 5, 30))
+                  SELECT ?, ?, ?, ?, ?
+                  WHERE NOT EXISTS(SELECT 1 FROM events WHERE id=?)""", (42, 0, 'Title', 5, 30, 42))
 conn.commit()
 
 
