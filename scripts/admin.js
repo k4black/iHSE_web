@@ -21,6 +21,7 @@ document.querySelector('.save').addEventListener('click', function () {
     };
 
     xhttp.open("GET", "http://ihse.tk:50000/admin_save", true);
+    xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });
 
@@ -37,6 +38,7 @@ document.querySelector('.update').addEventListener('click', function () {
     };
 
     xhttp.open("GET", "http://ihse.tk:50000/admin_update", true);
+    xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });
 
@@ -53,6 +55,7 @@ document.querySelector('.load').addEventListener('click', function () {
     };
 
     xhttp.open("GET", "http://ihse.tk:50000/admin_load", true);
+    xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });
 
@@ -69,6 +72,7 @@ document.querySelector('.codes').addEventListener('click', function () {
     };
 
     xhttp.open("GET", "http://ihse.tk:50000/admin_codes", true);
+    xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });
 
