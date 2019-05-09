@@ -362,6 +362,8 @@ def admin_panel(env, query, cookie):
 
     """
 
+    print("Admin try: ", cookie)
+
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 

@@ -45,7 +45,8 @@ function loadAccount() {
                 // }
 
                 //setup avatar
-                topbar.querySelector('.topbar__avatar').src = user.avatar;
+                if (user.avatar != null)
+                    topbar.querySelector('.topbar__avatar').src = user.avatar;
 
 
                 bar.animate(user.credits / user.total);  // Number from 0.0 to 1.0
