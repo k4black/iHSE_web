@@ -353,7 +353,7 @@ def save_users(users_list):
     """ Save list of registered users in google sheets
 
     Args:
-        users_list: User objects - list [ (id, type, phone, name, pass, team), ....]
+        users_list: User objects - list [ (id, type, phone, name, pass, team, credits, avatar), ....]
 
     Returns:
         none
@@ -386,7 +386,8 @@ def save_users(users_list):
                             users_list[i][3],
                             users_list[i][4],
                             users_list[i][5],
-                            users_list[i][6]]],
+                            users_list[i][6],
+                            users_list[i][7]]],
                 'range': write_range
                 }
         body = {
@@ -420,7 +421,7 @@ def get_users():
     service = build('sheets', 'v4', credentials=creds)
 
     read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Users!A5:H15')  #TODO Max F15
+                                                       range='Users!A5:I15')  #TODO Max F15
     read_response = read_request.execute()
     read_values = read_response.get('values', [])
 
@@ -435,7 +436,7 @@ def save_project(user_obj, project_data):
     Save in table id, name, phone type and team
 
     Args:
-        user_obj: User object - (id, type, phone, name, pass, team)
+        user_obj: User object - (id, type, phone, name, pass, team, credits, avatar)
         project_data: Python obj of project - dictionary
                   {"title": string,
                    "name": [string, ...],
@@ -503,7 +504,7 @@ def save_credits(user_obj, event_obj):
     Create new user if it does not exist
 
     Args:
-        user_obj: User object - (id, type, phone, name, pass, team)
+        user_obj: User object - (id, type, phone, name, pass, team, credits, avatar)
         event_obj: Event object - (id, type, title, credits)
 
     Returns:

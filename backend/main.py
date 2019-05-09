@@ -174,14 +174,13 @@ def cache(foo):
 
         """
 
-
         cached_status, cached_headers, cached_data = cache_dict[env['REQUEST_URI']]
 
         if cached_data is None:  # If no cache data - create it
             cached_status, cached_headers, cached_data = foo(env, query)
             cache_dict[env['REQUEST_URI']] = (cached_status, cached_headers, cached_data)
 
-        return (cached_status, cached_data)
+        return cached_status, cached_data
 
     return decorated_foo
 
@@ -438,9 +437,12 @@ def get_user(env, query, cookie):
     data['phone'] = user_obj[2]
     data['type'] = user_obj[1]
     data['group'] = user_obj[5]
+
     data['calendar'] = True
     data['feedback'] = False
     data['projects'] = True  # TODO: Notifacation
+
+    data['avatar'] = user_obj[7]
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
@@ -531,6 +533,8 @@ def get_account(env, query, cookie):
 
     data['credits'] = user_obj[6]
     data['total'] = CREDITS
+
+    data['avatar'] = user_obj[7]
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')

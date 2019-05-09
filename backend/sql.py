@@ -31,7 +31,8 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
                     "name"	TEXT,
                     "pass"	INTEGER,
                     "team"	INTEGER,
-                    "credits"	INTEGER DEFAULT (0)
+                    "credits"	INTEGER DEFAULT (0),
+                    "avatar" TEXT  DEFAULT ("")
                   );
                """)
 
@@ -147,7 +148,7 @@ def get_users():
     Args:
 
     Returns:
-        user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits), ...]
+        user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar), ...]
 
     """
 
@@ -162,7 +163,7 @@ def load_users(users_list):
     Clear users table and sessions table and insert all users in users table
 
     Args:
-        users_list: list of user objects - [(id, user_type, phone, name, pass, team, credits), ...]
+        users_list: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar), ...]
 
     Returns:
 
@@ -176,10 +177,10 @@ def load_users(users_list):
     # Add users in bd
     for user_obj in users_list:
 
-        cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team, credits)
-                          SELECT ?, ?, ?, ?, ?, ?
+        cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team, credits, avatar)
+                          SELECT ?, ?, ?, ?, ?, ?, ?
                           WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
-                       (user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[6], user_obj[3], user_obj[4]))
+                       (user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[6], user_obj[7], user_obj[3], user_obj[4]))
         conn.commit()
 
 

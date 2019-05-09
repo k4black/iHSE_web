@@ -45,9 +45,8 @@ function () {
  * Send http GET request and get user bio (or guest bio if cookie does not exist)
  * TODO: optimize selection
  */
-var accountName = document.querySelector('.mobile__sidebar__name');
-var accountPhone = document.querySelector('.mobile__sidebar__phone');
-if (accountName != null && accountPhone != null) {
+var sidebar = document.querySelector('.mobile__sidebar');
+if (sidebar != null) {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
@@ -56,32 +55,34 @@ if (accountName != null && accountPhone != null) {
 
                 // console.log(this.responseText);
                 var user = JSON.parse(this.responseText);
-                accountName.innerText = user.name;
-                accountPhone.innerText = user.phone;
+                sidebar.querySelector('.mobile__sidebar__name').innerText = user.name;
+                sidebar.querySelector('.mobile__sidebar__phone').innerText = user.phone;
 
                 isLogin = true;
 
-                if (isLogin) {
-                    hidden = document.querySelectorAll('.mobile__item__hidden');
-                    for (var i = 0; i < hidden.length; ++i) {
-                        hidden[i].classList.remove('mobile__item__hidden');
-                    }
+                // Show menu items
+                hidden = sidebar.querySelectorAll('.mobile__item__hidden');
+                for (var i = 0; i < hidden.length; ++i) {
+                    hidden[i].classList.remove('mobile__item__hidden');
                 }
 
-                if (user.calendar)
-                    accountName.parentElement.parentElement.querySelector('#nt__home').classList.add('active');
 
+                // Setup avatar
+                sidebar.querySelector('.mobile__sidebar__avatar').style.backgroundImage = "url(" + useer.avatar + ")";
+
+
+                // Notification
+                if (user.calendar)
+                    sidebar.querySelector('#nt__home').classList.add('active');
 
                 if (user.feedback)
-                    accountName.parentElement.parentElement.querySelector('#nt__feed').classList.add('active');
-
+                    sidebar.querySelector('#nt__feed').classList.add('active');
 
                 // if (user.calendar)
-                //     accountName.parentElement.parentElement.querySelector('#nt__cal').classList.add('active');
-
+                //     sidebar.querySelector('#nt__cal').classList.add('active');
 
                 if (user.projects)
-                    accountName.parentElement.parentElement.querySelector('#nt__prj').classList.add('active');
+                    sidebar.querySelector('#nt__prj').classList.add('active');
 
             }
         }
