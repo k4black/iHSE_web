@@ -378,7 +378,7 @@ def save_users(users_list):
     position = read_values[0][0]
 
     for i in range(len(users_list)):
-        write_range = 'Users!A' + str(5+i) + ':F' + str(5+i)
+        write_range = 'Users!A' + str(5+i) + ':I' + str(5+i)
 
         data = {'values': [[users_list[i][0],
                             users_list[i][1],
