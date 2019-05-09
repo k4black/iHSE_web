@@ -46,7 +46,7 @@ function loadAccount() {
 
                 //setup avatar
                 if (user.avatar != null)
-                    topbar.querySelector('.topbar__avatar').src = user.avatar;
+                    topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
 
                 bar.animate(user.credits / user.total);  // Number from 0.0 to 1.0

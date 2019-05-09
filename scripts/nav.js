@@ -69,7 +69,7 @@ if (sidebar != null) {
 
                 // Setup avatar
                 if (user.avatar != null)
-                    sidebar.querySelector('.mobile__sidebar__avatar').style.backgroundImage = "url(" + useer.avatar + ")";
+                    sidebar.querySelector('.mobile__sidebar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
 
                 // Notification
