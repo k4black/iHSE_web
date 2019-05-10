@@ -301,29 +301,9 @@ def get_projects(filter_obj):
              (TODO: not now: or None if no one)
     """
 
-        # spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-        # token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-        # creds = pickle.load(token)
-        # service = build('sheets', 'v4', credentials=creds)
-        #
-        # # getting range to read from
-        # range_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-        #                                                     range='Projects!A1')
-        # range_response = range_request.execute()
-        # range_values = range_response.get('values', [])
-        #
-        # position = range_values[0][0]
-
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     position = gsheets_get(token, id_, "Projects", "A1")[0][0]
-
-        # read_range = 'Projects!A4:E' + str(int(position)-1)
-        #
-        # read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-        #                                                     range=read_range)
-        # read_response = read_request.execute()
-        # read_values = read_response.get('values', [])
 
     read_values = gsheets_get(token,
                               id_,
@@ -343,7 +323,7 @@ def get_projects(filter_obj):
 
 
 def save_users(users_list):
-    """ Save list of registered users in google sheets
+    """ Save list of registered users to google sheets
 
     Args:
         users_list: User objects - list [ (id, type, phone, name, pass, team, credits, avatar), ....]
@@ -352,45 +332,32 @@ def save_users(users_list):
         none
 
     """
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
 
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
-
-    # getting position to write to
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Users!A1')
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
-    position = read_values[0][0]
-
+    position = gsheets_get(token, id_, "Users", "A1")[0][0]
     for i in range(len(users_list)):
-        write_range = 'Users!A' + str(5+i) + ':I' + str(5+i)
-
-        data = {'values': [[users_list[i][0],
+        data = [[users_list[i][0],
                             users_list[i][1],
                             users_list[i][2],
                             users_list[i][3],
                             users_list[i][4],
                             users_list[i][5],
                             users_list[i][6],
-                            users_list[i][7]]],
-                'range': write_range
-                }
-        body = {
-            'valueInputOption': 'RAW',
-            'data': data
-        }
-        write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
-                                                                    body=body)
-        write_response = write_request.execute()
+                            users_list[i][7]]]
+        write_response = gsheets_post(token,
+                                      id_,
+                                      "Users",
+                                      "A" + str(5+i) + ":I" + str(5+i),
+                                      data)
         # print('{0} cells updated.'.format(write_response.get('updatedCells')))
+
+    response = gsheets_post(token,
+                            id_,
+                            "Users",
+                            "A1",
+                            [[int(position) + len(users_list)]])
+    # print('{0} cells updated.'.format(update_response.get('updatedCells')))
 
     print('Users saved')
 
@@ -399,26 +366,16 @@ def get_users():
     """ Get list of users form google sheets
 
     Returns:
-        state: Readed users # TODO: Comment
+        state: Read users # TODO: Comment
 
     """
 
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
 
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Users!A5:I15')  #TODO Max F15
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
-
-    print(read_values)
+    position = gsheets_get(token, id_, "Users", "A1")[0][0]
+    read_values = gsheets_get(token, id_, "Users", "A5:H" + position)
+    # print(read_values)
 
     return read_values
 
@@ -442,49 +399,30 @@ def save_project(user_obj, project_data):
         state: Success or not - bool
 
     """
-
     print('User obj:', user_obj)
     print('Project data:', project_data)
 
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    position = gsheets_get(token, id_, "Projects", "A1")[0][0]
 
-    # getting position to write to
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Projects!A1')
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
-    position = read_values[0][0]
     print(position)
-    write_range = 'Projects!A' + position + ':E' + position
 
-    # writing actual feedback    # TODO: Max Names by list
-    data = {'values': [[project_data['title'], project_data['type'], str(project_data['name']), project_data['desc'], project_data['anno']]],
-            'range': write_range
-            }
-    body = {
-        'valueInputOption': 'RAW',
-        'data': data
-    }
-    write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
-                                                                body=body)
-    write_response = write_request.execute()
+    values = [[project_data['title'], project_data['type'], str(project_data['name']), project_data['desc'], project_data['anno']]]
+    write_response = gsheets_post(token,
+                                  id_,
+                                  "Projects",
+                                  "A" + position + ":E" + position,
+                                  values)
     # print('{0} cells updated.'.format(write_response.get('updatedCells')))
     print('writing done')
 
     # updating next writing position
-    update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
-                                                            range='Projects!A1',
-                                                            valueInputOption='RAW',
-                                                            body={'values': [[int(position) + 1]]})
-    update_response = update_request.execute()
+    update_response = gsheets_post(token,
+                                   id_,
+                                   "Projects",
+                                   "A1",
+                                   [[int(position) + 1]])
     # print('{0} cells updated.'.format(update_response.get('updatedCells')))
     print('updating done')
 
