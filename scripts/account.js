@@ -279,12 +279,12 @@ xhttp.onreadystatechange = function () {
             };
 
             // Run and draw chart
-            window.addEventListener('load', function () {
-                chart = new ApexCharts(document.querySelector("#credits__chart"), options);
+            // window.addEventListener('load', function () {
+                var chart = new ApexCharts(document.querySelector("#credits__chart"), options);
 
                 console.log(chart);
                 chart.render();
-            });
+            // });
         }
     }
 };
