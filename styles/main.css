@@ -129,6 +129,7 @@ form {
     box-sizing: border-box;
 
     padding: 15px;
+    min-height: 0.9vh;
     height: 100%;
     height: auto;
 
@@ -795,6 +796,10 @@ input.masked,
 
     .mobile {
         /*display: none;*/
+    }
+
+    .mobile__hidden {
+        display: block!important;
     }
 
     .mobile__floating__button {
