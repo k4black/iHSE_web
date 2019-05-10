@@ -581,7 +581,7 @@ def get_credits(env, query, cookie):
 
 
     # Json credits data
-    data = gsheets.get_credits(user_obj)['data']
+    data = gsheets.get_credits(user_obj)
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
