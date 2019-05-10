@@ -63,18 +63,34 @@ def gsheets_get(token_path: str, sheet_id: str, list_name: str, list_range: str)
     """
     token = open(token_path, "rb")
     creds = pickle.load(token)
-    range_ = list_name + "!" + list_range
     service = build('sheets', 'v4', credentials=creds)
     sheet = service.spreadsheets()
+    range_ = list_name + "!" + list_range
     request = sheet.values().get(spreadsheetId=sheet_id, range=range_)
     result = request.execute()
     values = result.get('values', [])
     return values
 
 
-def gsheets_post():
-    """Generic function for saving values to Google Sheets"""
-    pass
+def gsheets_post(token_path: str, sheet_id: str, list_name: str, list_range: str, values: list):
+    """Generic function for saving values to Google Sheets
+
+    :param token_path - absolute path to token file
+    :param sheet_id - id of Google Spreadsheet
+    :param list_name - name of list of Google Spreadsheet
+    :param list_range - range of values requested
+    :param values - values to save to the given range
+    """
+    token = open(token_path, "rb")
+    creds = pickle.load(token)
+    service = build('sheets', 'v4', credentials=creds)
+    sheet = service.spreadsheets()
+    range_ = list_name + "!" + list_range
+    data = {"values": values, "range": range_}
+    body = {"valueInputOption": "RAW", "data": data}
+    request = sheet.values().batchUpdate(spreadsheetId=sheet_id, body=body)
+    response = request.execute()
+    return response
 
 
 """ ---===---==========================================---===--- """
@@ -163,6 +179,7 @@ def get_day(day: str) -> list:
 
 
 def save_feedback(user_obj, day, feedback_data):
+    # TODO: save to day, not to default position
     """ Save feedback of user in google sheets
     Create new user if it does not exist
     Save in table name, phone and team
@@ -188,48 +205,64 @@ def save_feedback(user_obj, day, feedback_data):
 
     """
 
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
+        # spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+        # # token.pickle stores the user's access and refresh tokens,
+        # # providing read/write access to GSheets.
+        # # It was actually created on local machine ( where it was created
+        # # automatically when the authorization flow completed for the first
+        # # time) and ctrl-pasted to server.
+        # token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
+        # creds = pickle.load(token)
+        # service = build('sheets', 'v4', credentials=creds)
 
-    # getting position to write to
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Feedback!A1')
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
-    position = read_values[0][0]
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+
+        # # getting position to write to
+        # read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+        #                                                    range='Feedback!A1')
+        # read_response = read_request.execute()
+        # read_values = read_response.get('values', [])
+        # position = read_values[0][0]
+
+    position = gsheets_get(token, id_, "Feedback", "A1")[0][0]
+
     print(position)
-    write_range = 'Feedback!A' + position + ':H' + str(int(position) + 2)
+        # write_range = 'Feedback!A' + position + ':H' + str(int(position) + 2)
+        #
+        # # writing actual feedback
+        # data = {'values': [[user_obj[3], user_obj[2], user_obj[5],
+        #                     feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
+        #                    ['', '', '', '', feedback_data['user2'], feedback_data['event1_text'], feedback_data['event2_text'], feedback_data['event3_text']],
+        #                    ['', '', '', '', feedback_data['user3']]],
+        #         'range': write_range
+        #         }
+        # body = {
+        #     'valueInputOption': 'RAW',
+        #     'data': data
+        # }
+        # write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
+        #                                                             body=body)
+        # write_response = write_request.execute()
+        # # print('{0} cells updated.'.format(write_response.get('updatedCells')))
+        # # print('writing done')
 
-    # writing actual feedback
-    data = {'values': [[user_obj[3], user_obj[2], user_obj[5],
-                        feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
-                       ['', '', '', '', feedback_data['user2'], feedback_data['event1_text'], feedback_data['event2_text'], feedback_data['event3_text']],
-                       ['', '', '', '', feedback_data['user3']]],
-            'range': write_range
-            }
-    body = {
-        'valueInputOption': 'RAW',
-        'data': data
-    }
-    write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
-                                                                body=body)
-    write_response = write_request.execute()
+    range_ = "A" + position + ":H" + str(int(position) + 2)
+    values = [[user_obj[3], user_obj[2], user_obj[5], feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
+              ['', '', '', '', feedback_data['user2'], feedback_data['event1_text'], feedback_data['event2_text'], feedback_data['event3_text']],
+              ['', '', '', '', feedback_data['user3']]]
+    response = gsheets_post(token, id_, "Feedback", range_, values)
     # print('{0} cells updated.'.format(write_response.get('updatedCells')))
-    print('writing done')
+    # print('writing done')
 
-    # updating next writing position
-    update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
-                                                            range='Feedback!A1',
-                                                            valueInputOption='RAW',
-                                                            body={'values': [[int(position) + 3]]})
-    update_response = update_request.execute()
+        # # updating next writing position
+        # update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
+        #                                                         range='Feedback!A1',
+        #                                                         valueInputOption='RAW',
+        #                                                         body={'values': [[int(position) + 3]]})
+        # update_response = update_request.execute()
+
+    response = gsheets_post(token, id_, "Feedback", "A1", [[int(position) + 3]])
     # print('{0} cells updated.'.format(update_response.get('updatedCells')))
     print('updating done')
 
