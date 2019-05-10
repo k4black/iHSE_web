@@ -38,8 +38,6 @@ def application(env, start_response):
 
     """
 
-    print(start_response)
-
     # Parse query string
     query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
 
@@ -300,10 +298,13 @@ def get(env, query, cookie):
         return get_feedback(env, query, cookie)
 
     if env['PATH_INFO'] == '/event':
-        return get_event(env, query, cookie)
+        return get_event(env, query)
 
     if env['PATH_INFO'] == '/projects':
         return get_projects(env, query)
+
+    if env['PATH_INFO'] == '/credits':
+        return get_credits(env, query, cookie)
 
 
     # Manage admin actions
@@ -555,7 +556,49 @@ def get_account(env, query, cookie):
             [json_data])
 
 
-def get_event(env, query, cookie):
+def get_credits(env, query, cookie):
+    """ Credits data HTTP request
+    Get credits data for chart according to user
+
+    Args:
+        env: HTTP request environment - dict
+        query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
+
+    Note:
+
+
+    Returns:
+        data: which will be transmitted - [int, int, ...]
+
+    """
+
+    # Safety get user_obj
+    user_obj = get_user_by_response(cookie)
+
+    if user_obj[2] is None:  # No User
+        return user_obj
+
+
+    # Json credits data
+    data = gsheets.get_credits(user_obj)['data']
+
+    json_data = json.dumps(data)
+    json_data = json_data.encode('utf-8')
+
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
+
+
+def get_event(env, query):
     """ Event data HTTP request
     Get event description by event id
 
@@ -602,6 +645,7 @@ def get_event(env, query, cookie):
 def get_feedback(env, query, cookie):
     """ Account data HTTP request
     Got day num and return day event for feedback
+    # TODO: Get data if feedback already exist
 
     Args:
         env: HTTP request environment - dict
@@ -980,6 +1024,7 @@ def post_credits(env, query, cookie):
     if user_obj[2] is None:  # No User
         return user_obj
 
+
     event_obj = sql.get_event(event_id)
     if True or event_obj is not None:   # TODO: If writing ok
         gsheets.save_credits(user_obj, event_obj)
@@ -1032,7 +1077,6 @@ def post_enroll(env, query, cookie):
 
 
     if True or sql.enroll_user(event_id, user_obj):   # TODO: If writing ok
-        # TODO: Enroll user
 
         event = sql.get_event(event_id)
 
@@ -1059,7 +1103,7 @@ def post_enroll(env, query, cookie):
     else:
         return ('405 Method Not Allowed',
                 [('Access-Control-Allow-Origin', '*')],
-                [])
+                [])  # TODO: Return count and total
 
 
 def post_project(env, query, cookie):

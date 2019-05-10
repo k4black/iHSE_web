@@ -156,8 +156,10 @@ document.querySelector('#btn').addEventListener('click', function () {
 
 
 
-
-// https://kimmobrunfeldt.github.io/progressbar.js/
+/**
+ * Setup barchart - credits circle
+ * https://kimmobrunfeldt.github.io/progressbar.js/
+ */
 // var ProgressBar = require('scripts/progressbar.js');
 var bar;
 window.addEventListener('load', function () {
@@ -190,6 +192,113 @@ window.addEventListener('load', function () {
     });
     bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
     bar.text.style.fontSize = '2rem';
+});
+
+
+
+
+
+
+/**
+ * Setup linechart - credits for days
+ * https://apexcharts.com/docs/installation/
+ */
+startDay = 5;
+numOfDays = 14;
+
+topbar_html = "";
+
+var days = [];
+for (var i = 0; i < numOfDays; ++i) {
+    days.push( (startDay + i) + "." + "06" );
+}
+
+
+// Get chart data
+data = [1, 2, 3, 4, 5];
+var xhttp = new XMLHttpRequest();
+
+xhttp.onreadystatechange = function () {
+    if (this.readyState === 4) {  // When request is done
+
+        if (this.status === 200) {  // Authorized
+
+            let credits = JSON.parse(this.responseText);
+            data = credits.data;
+
+            chart.render();
+        }
+    }
+};
+
+xhttp.open("GET", "http://ihse.tk:50000/credits", true);
+xhttp.withCredentials = true;  // To receive cookie
+xhttp.send();
+
+
+
+// Chart options
+var options = {
+    chart: {
+        height: '110%',
+        width: numOfDays * 40,  // TODO: Set width according num of elemets
+        type: 'line',
+        zoom: {
+            enabled: false
+        },
+        toolbar: {
+            show: false
+        }
+    },
+    colors: ['#007ac5'],
+    dataLabels: {
+        enabled: false
+    },
+    stroke: {
+        curve: 'straight'
+    },
+    series: [{
+        name: "Credits",
+        data: data
+    }],
+    animations: {
+        enabled: true,
+        easing: 'easeinout',
+        speed: 800,
+        animateGradually: {
+            enabled: true,
+            delay: 150
+        },
+        dynamicAnimation: {
+            enabled: true,
+            speed: 350
+        }
+    },
+    background: '#fff',
+    grid: {
+        // borderColor: '#111',
+        row: {
+            // colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+            opacity: 0.5
+        },
+    },
+    // labels: series.monthDataSeries1.dates,
+    xaxis: {
+        categories: days,
+    },
+};
+
+// Run and draw chart
+var chart;
+window.addEventListener('load', function () {
+
+    chart = new ApexCharts(
+        document.querySelector("#credits__chart"),
+        options
+    );
+
+    console.log(chart);
+    chart.render();
 });
 
 

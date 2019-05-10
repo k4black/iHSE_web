@@ -165,3 +165,21 @@ body {
         /*padding-right: auto;*/
     }
 }
+
+
+.credits__chart__scroll {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    width: 100%;
+    height: 200px;
+
+    background-color: #f6f6f6;
+    border-radius: 5px;
+
+    padding-bottom: 10px;
+    padding-top: 5px;
+}
+
+.wrapper div::-webkit-scrollbar-thumb {
+    background-color: #000000;
+}

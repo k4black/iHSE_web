@@ -13,6 +13,16 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="styles/circle.css">
 
+    <style>
+        .credits__chart__scroll {
+            overflow: scroll;
+            width: 100%;
+        }
+
+        .wrapper div::-webkit-scrollbar-thumb {
+            background-color: #000000;
+        }
+    </style>
 </head>
 <body>
 
@@ -137,6 +147,9 @@
     <button type="button" style="height: 40px; width: 100px; background-color: #007ac5  " onclick="loadDoc()">Change Content</button>
     <div id="demo" class="demo">def</div>
 
+    <div class="credits__chart__scroll" style="">
+        <div id="credits__chart"></div>
+    </div>
 </div>
 
 
@@ -148,6 +161,9 @@
 
 <!-- Google Charts -->
 <script defer async src="scripts/loader.js"></script>
+
+
+<script defer async src="scripts/apexcharts.js"></script>
 
 <!--Onpage logic -->
 <script defer async src="scripts/credits.js"></script>

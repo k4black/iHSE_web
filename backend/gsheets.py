@@ -545,11 +545,12 @@ def get_events():
 
 
 # TODO: Max get event
-def get_event(id):
+def get_event(event_id):
     """ Get event with description from google sheets
     Return full description
 
     Args:
+        event_id: Event id
 
     Returns:
         event: description of the event - (id, title, time, date, location, host, descriptiom, type, credits, total), ....
@@ -557,4 +558,19 @@ def get_event(id):
     """
 
     return (32, "title", "time", "date", "location", "host", "descriptiom", "type", 300,  24)
+
+
+# TODO: Max get credits chart
+def get_credits(user_obj):
+    """ Get credits data from google sheets
+
+    Args:
+        user_obj: User object - (id, type, phone, name, pass, team, credits, avatar)
+
+    Returns:
+        credits: credits data -  {'total': 123, 'data': [1, 2, 4, 3, ...]}
+
+    """
+
+    return {'total': 122, 'data': [30, 41, 35, 51, 49, 62, 69, 83, 36, 84, 90, 20, 21]}
 

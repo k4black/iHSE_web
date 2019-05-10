@@ -39,7 +39,80 @@ setProgress(64.7);
 
 
 
+startDay = 5;
+numOfDays = 14;
+
+topbar_html = "";
+
+var days = [];
+for (var i = 0; i < numOfDays; ++i) {
+    days.push( (startDay + i) + "." + "06" );
+}
+
 // TODO: Graph
+
+data = [30, 41, 35, 51, 49, 62, 69, 91, 26, 84, 90, 20, 20, 25];
+
+// https://apexcharts.com/docs/installation/
+var options = {
+    chart: {
+        height: 300,
+        width: numOfDays * 40,
+        type: 'line',
+        zoom: {
+            enabled: false
+        },
+        toolbar: {
+            show: false
+        }
+    },
+    dataLabels: {
+        enabled: false
+    },
+    stroke: {
+        curve: 'straight'
+    },
+    series: [{
+        name: "Credits",
+        data: data
+    }],
+    animations: {
+        enabled: true,
+        easing: 'easeinout',
+        speed: 800,
+        animateGradually: {
+            enabled: true,
+            delay: 150
+        },
+        dynamicAnimation: {
+            enabled: true,
+            speed: 350
+        }
+    },
+    background: '#fff',
+    grid: {
+        // borderColor: '#111',
+        row: {
+            // colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+            opacity: 0.5
+        },
+    },
+    // labels: series.monthDataSeries1.dates,
+    xaxis: {
+        categories: days,
+    },
+};
+
+window.addEventListener('load', function () {
+    var chart = new ApexCharts(
+        document.querySelector("#credits__chart"),
+        options
+    );
+
+
+    chart.render();
+});
+
 
 
 // Chart

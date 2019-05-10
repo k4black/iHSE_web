@@ -71,11 +71,11 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
                """)
 
 
-# TODO: REMOVE Test
-cursor.execute("""INSERT INTO events(id, type, title, credits, total)
-                  SELECT ?, ?, ?, ?, ?
-                  WHERE NOT EXISTS(SELECT 1 FROM events WHERE id=?)""", (42, 0, 'Title', 5, 30, 42))
-conn.commit()
+# # TODO: REMOVE Test
+# cursor.execute("""INSERT INTO events(id, type, title, credits, total)
+#                   SELECT ?, ?, ?, ?, ?
+#                   WHERE NOT EXISTS(SELECT 1 FROM events WHERE id=?)""", (42, 0, 'Title', 5, 30, 42))
+# conn.commit()
 
 
 """ ---===---==========================================---===--- """
