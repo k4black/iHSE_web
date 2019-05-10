@@ -49,6 +49,11 @@ def generate_registration_codes(num, type=0):
 # TODO: Max Refactoring and comment
 
 
+""" ---===---==========================================---===--- """
+"""            Main functions for gsheets interaction            """
+""" ---===---==========================================---===--- """
+
+
 def gsheets_get(token_path: str, sheet_id: str, list_name: str, list_range: str) -> list:
     """Generic function for getting values from Google Sheets
 
@@ -132,7 +137,7 @@ def get_day(day: str) -> list:
             elif titleplus == 1:
                 for pos, index in enumerate(mask):
                     timetable[-1]['events'][pos]['host'] = line[index]
-                    timetable[-1]['events'][pos]['id'] = 43  # TODO: See above
+                    timetable[-1]['events'][pos]['id'] = 42  # TODO: See above
             elif titleplus == 2:
                 for pos, index in enumerate(mask):
                     timetable[-1]['events'][pos]['loc'] = line[index]

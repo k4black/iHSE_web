@@ -226,7 +226,65 @@ xhttp.onreadystatechange = function () {
             let credits = JSON.parse(this.responseText);
             data = credits.data;
 
-            chart.render();
+
+            // Chart options
+            var options = {
+                chart: {
+                    height: '110%',
+                    width: data.length * 40,  // TODO: Set width according num of elemets
+                    type: 'line',
+                    zoom: {
+                        enabled: false
+                    },
+                    toolbar: {
+                        show: false
+                    }
+                },
+                colors: ['#007ac5'],
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'straight'
+                },
+                series: [{
+                    name: "Credits",
+                    data: data
+                }],
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 800,
+                    animateGradually: {
+                        enabled: true,
+                        delay: 150
+                    },
+                    dynamicAnimation: {
+                        enabled: true,
+                        speed: 350
+                    }
+                },
+                background: '#fff',
+                grid: {
+                    // borderColor: '#111',
+                    row: {
+                        // colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                        opacity: 0.5
+                    },
+                },
+                // labels: series.monthDataSeries1.dates,
+                xaxis: {
+                    categories: days,
+                },
+            };
+
+            // Run and draw chart
+            window.addEventListener('load', function () {
+                chart = new ApexCharts(document.querySelector("#credits__chart"), options);
+
+                console.log(chart);
+                chart.render();
+            });
         }
     }
 };
@@ -234,72 +292,6 @@ xhttp.onreadystatechange = function () {
 xhttp.open("GET", "http://ihse.tk:50000/credits", true);
 xhttp.withCredentials = true;  // To receive cookie
 xhttp.send();
-
-
-
-// Chart options
-var options = {
-    chart: {
-        height: '110%',
-        width: numOfDays * 40,  // TODO: Set width according num of elemets
-        type: 'line',
-        zoom: {
-            enabled: false
-        },
-        toolbar: {
-            show: false
-        }
-    },
-    colors: ['#007ac5'],
-    dataLabels: {
-        enabled: false
-    },
-    stroke: {
-        curve: 'straight'
-    },
-    series: [{
-        name: "Credits",
-        data: data
-    }],
-    animations: {
-        enabled: true,
-        easing: 'easeinout',
-        speed: 800,
-        animateGradually: {
-            enabled: true,
-            delay: 150
-        },
-        dynamicAnimation: {
-            enabled: true,
-            speed: 350
-        }
-    },
-    background: '#fff',
-    grid: {
-        // borderColor: '#111',
-        row: {
-            // colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-            opacity: 0.5
-        },
-    },
-    // labels: series.monthDataSeries1.dates,
-    xaxis: {
-        categories: days,
-    },
-};
-
-// Run and draw chart
-var chart;
-window.addEventListener('load', function () {
-
-    chart = new ApexCharts(
-        document.querySelector("#credits__chart"),
-        options
-    );
-
-    console.log(chart);
-    chart.render();
-});
 
 
 
