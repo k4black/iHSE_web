@@ -112,14 +112,6 @@ def get_day(day: str) -> list:
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     values = gsheets_get(token, id_, 'Template', 'A1:J32')  # TODO: MAX J32 -just for sometime, may be other
 
-    # function for removing crlf from human-generated timetable
-    def crlf(x):
-        #y = x.replace('\n', ' - ')
-        return x
-
-    # removing \n
-    # for index, line in enumerate(values[2::], start=2):
-    #     values[index] = list(map(lambda x: crlf(x), line))
     timetable = []  # resulting timetable
     mask = []  # selector for correct selection of GSheets verbose data
     titleplus = 0  # selector for correct differentiation of desc, loc, name
@@ -153,6 +145,7 @@ def get_day(day: str) -> list:
 
 def save_feedback(user_obj, day, feedback_data):
     # TODO: save to day, not to default position
+    # TODO: check GSheetsAPI how to track success
     """ Save feedback of user in google sheets
     Create new user if it does not exist
     Save in table name, phone and team
@@ -191,13 +184,11 @@ def save_feedback(user_obj, day, feedback_data):
               ['', '', '', '', feedback_data['user3']]]
     response = gsheets_post(token, id_, "Feedback", range_, values)
     # print('{0} cells updated.'.format(write_response.get('updatedCells')))
-    # print('writing done')
 
     response = gsheets_post(token, id_, "Feedback", "A1", [[int(position) + 3]])
     # print('{0} cells updated.'.format(update_response.get('updatedCells')))
-    # print('updating done')
 
-    return True  # TODO: check GSheetsAPI how to track success
+    return True
 
 
 # TODO: Max generate reg codes
@@ -233,32 +224,36 @@ def check_code(code):
 
     """
 
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
+        # spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+        # token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
+        # creds = pickle.load(token)
+        # service = build('sheets', 'v4', credentials=creds)
+        #
+        # read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+        #                                                    range='Codes!A5:C9')
+        # read_response = read_request.execute()
+        # read_values = read_response.get('values', [])
 
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                       range='Codes!A5:C9')
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    read_values = gsheets_get(token, id_, "Codes", "A5:C9")
 
     reg_allowed = False
     user_type = -1
     for index, code_line in enumerate(read_values, start=5):
         if code_line[0] == code and code_line[2] == '0':
             user_type = int(code_line[1])
-            upd_range = 'Codes!C' + str(index)
-            update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
-                                                                    range=upd_range,
-                                                                    valueInputOption='RAW',
-                                                                    body={'values': [[1]]})
-            update_response = update_request.execute()
+                # upd_range = 'Codes!C' + str(index)
+                # update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
+                #                                                         range=upd_range,
+                #                                                         valueInputOption='RAW',
+                #                                                         body={'values': [[1]]})
+                # update_response = update_request.execute()
+
+            update_response = gsheets_post(token, id_,
+                                           "Codes",
+                                           "C" + str(index),
+                                           [[1]])
             reg_allowed = True
             break
 
@@ -306,28 +301,34 @@ def get_projects(filter_obj):
              (TODO: not now: or None if no one)
     """
 
-    spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # token.pickle stores the user's access and refresh tokens,
-    # providing read/write access to GSheets.
-    # It was actually created on local machine ( where it was created
-    # automatically when the authorization flow completed for the first
-    # time) and ctrl-pasted to server.
-    token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    creds = pickle.load(token)
-    service = build('sheets', 'v4', credentials=creds)
+        # spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+        # token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
+        # creds = pickle.load(token)
+        # service = build('sheets', 'v4', credentials=creds)
+        #
+        # # getting range to read from
+        # range_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+        #                                                     range='Projects!A1')
+        # range_response = range_request.execute()
+        # range_values = range_response.get('values', [])
+        #
+        # position = range_values[0][0]
 
-    # getting range to read from
-    range_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                        range='Projects!A1')
-    range_response = range_request.execute()
-    range_values = range_response.get('values', [])
-    position = range_values[0][0]
-    read_range = 'Projects!A4:E' + str(int(position)-1)
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    position = gsheets_get(token, id_, "Projects", "A1")[0][0]
 
-    read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-                                                        range=read_range)
-    read_response = read_request.execute()
-    read_values = read_response.get('values', [])
+        # read_range = 'Projects!A4:E' + str(int(position)-1)
+        #
+        # read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
+        #                                                     range=read_range)
+        # read_response = read_request.execute()
+        # read_values = read_response.get('values', [])
+
+    read_values = gsheets_get(token,
+                              id_,
+                              "Projects",
+                              "A4:E" + str(int(position)-1))
 
     projects = []
     for project in read_values:
