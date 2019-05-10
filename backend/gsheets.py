@@ -45,11 +45,8 @@ def generate_registration_codes(num, type=0):
 
     return rez
 
-
 # TODO: Max Optimize gsheet api
 # TODO: Max Refactoring and comment
-def api():
-    pass
 
 
 def gsheets_get(token_path: str, sheet_id: str, list_name: str, list_range: str) -> list:
@@ -104,13 +101,14 @@ def get_day(day: str) -> list:
     :param day - has to be same as sheet in GSheets
     :return timetable of the corresponding day in pseudo-json
     """
-    # TODO waiting for Serova to get real day, not template
+    # TODO: waiting for Serova to get real day, not template
     # If modifying these scopes, delete the file token.pickle.
     # SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    values = gsheets_get(token, id_, 'Template', 'A1:J32')  # TODO: MAX J32 -just for sometime, may be other
+    # TODO: MAX J32 -just for sometime, may be other
+    values = gsheets_get(token, id_, 'Template', 'A1:J32')
 
     timetable = []  # resulting timetable
     mask = []  # selector for correct selection of GSheets verbose data
@@ -143,17 +141,16 @@ def get_day(day: str) -> list:
     return timetable
 
 
-def save_feedback(user_obj, day, feedback_data):
+def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
     # TODO: save to day, not to default position
     # TODO: check GSheetsAPI how to track success
     """ Save feedback of user in google sheets
     Create new user if it does not exist
     Save in table name, phone and team
 
-    Args:
-        user_obj: User object - (id, type, phone, name, pass, team)
-        day: num of the day - string '16.04'
-        feedback_data: Python obj of feedback - dictionary
+    :param user_obj - User object (id, type, phone, name, pass, team)
+    :param day - num of the day 'DD.MM'
+    :param feedback_data - feedback in the following format
                   {"overall": int,
                    "user1": string,
                    "user2": string,
@@ -165,12 +162,8 @@ def save_feedback(user_obj, day, feedback_data):
                    "event2_text": string,
                    "event3_text": string
                    }
-
-    Returns:
-        state: Success or not - bool
-
+    :return state - success or not
     """
-
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
 
@@ -193,47 +186,30 @@ def save_feedback(user_obj, day, feedback_data):
 
 # TODO: Max generate reg codes
 def generate_codes(users, hosts, admins):
-    """ Generate registration codes in google sheets
+    """ Generate registration codes to google sheets
     Each code is a 6-characters-number-letter code
 
-    Args:
-        users, hosts, admins: Number  of codes for each type
-
-    Returns:
-        None
-
+    :param users - number of codes for this type of users
+    :param hosts - number of codes for this type of users
+    :param admins - number of codes for this type of users
     """
 
     codes = generate_registration_codes(users, 0)
     codes = generate_registration_codes(hosts, 1)
     codes = generate_registration_codes(admins, 2)
-
     pass
 
 
-def check_code(code):
-    """ Check registration code in google sheets
+def check_code(code: str):
+    """ Check registration code in Google Sheets
     Get user type according this code
 
-    Args:
-        code: special code hash which will be responsible for the user type and permission to register - str
+    :param code - special code hash which will be responsible for
+                    the user type and permission to register
 
 
-    Returns:
-        type: type of user - int or None if registration allowed
-
+    :return type - type of user, int or None if registration rejected
     """
-
-        # spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-        # token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-        # creds = pickle.load(token)
-        # service = build('sheets', 'v4', credentials=creds)
-        #
-        # read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-        #                                                    range='Codes!A5:C9')
-        # read_response = read_request.execute()
-        # read_values = read_response.get('values', [])
-
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     read_values = gsheets_get(token, id_, "Codes", "A5:C9")
@@ -243,12 +219,6 @@ def check_code(code):
     for index, code_line in enumerate(read_values, start=5):
         if code_line[0] == code and code_line[2] == '0':
             user_type = int(code_line[1])
-                # upd_range = 'Codes!C' + str(index)
-                # update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
-                #                                                         range=upd_range,
-                #                                                         valueInputOption='RAW',
-                #                                                         body={'values': [[1]]})
-                # update_response = update_request.execute()
 
             update_response = gsheets_post(token, id_,
                                            "Codes",
@@ -273,7 +243,7 @@ def get_feedback(day):
         day: num of the day - string '16.04'
 
     Returns:
-        (title, [event1, event2, event3] )                  (TODO: not now: or None if already done)
+        (title, [event1, event2, event3] )  #  TODO not now: or None if already done
 
     """
 
