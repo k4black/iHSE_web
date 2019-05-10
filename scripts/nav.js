@@ -61,9 +61,15 @@ if (sidebar != null) {
                 isLogin = true;
 
                 // Show menu items
-                hidden = sidebar.querySelectorAll('.mobile__item__hidden');
+                var hidden = sidebar.querySelectorAll('.mobile__item__hidden');
                 for (var i = 0; i < hidden.length; ++i) {
                     hidden[i].classList.remove('mobile__item__hidden');
+                }
+
+                // Show sidebar items
+                var hidden = sidebar.querySelectorAll('.header__item__hidden');
+                for (var i = 0; i < hidden.length; ++i) {
+                    hidden[i].classList.remove('header__item__hidden');
                 }
 
 

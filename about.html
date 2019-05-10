@@ -25,18 +25,31 @@
     </nav>
 
 
-    <div class="title">Create</div>
+    <div class="title">About</div>
 
 </header>
 
 
 <div class="wrapper">
 
-    <input type="text" name="name" id="name_input" list="users_list">Name
-    <datalist id="users_list">
-        <option value="Текст1">
-        <option value="Текст2">
-    </datalist>
+    <h2>Описание:</h2>
+    <p>Сайт для многопрофильного детского лагеря iВышка.</p>
+
+    <p>Позволяет не толькоследить за рассписанием, но и оставлять фидбек о мероприятиях, записываться на курсы и осуществлять работу с проектами.</p>
+
+    <h2>Цель:</h2>
+    <p>Успростить рутинный процесс заполнения 'зачёток' и перевести это в эклектронную версию. А так же дать возможность участникам оставить свой отзыл, комментарий и пожелания по работе лагеря.</p>
+
+    <h2>Разработчики:</h2>
+    <div>
+        <p>Константин Чернышев</p>
+        <p>kdchernyshev@edu.hse.ru</p>
+    </div>
+
+    <div>
+        <p>Максим Макридин</p>
+        <p>mmmakridin@edu.hse.ru</p>
+    </div>
 
 </div>
 
@@ -44,45 +57,6 @@
 <script defer async src="scripts/about.js"></script>
 <!--STD nav logic -->
 <script defer async src="scripts/nav.js"></script>
-
-<script defer async>
-
-
-    const urlParams = new URLSearchParams(window.location.search);
-
-
-    const myParam = urlParams.get('id');
-    console.log(myParam);
-
-
-
-
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields name and phone
-
-                // console.log(this.responseText);
-                var users = JSON.parse(this.responseText);
-
-                var datalist_html = "";
-
-                for (var i = 0; i < users.length; ++i) {
-                    datalist_html += '<option value="' + users[i] + '">';
-                }
-
-
-                document.querySelector('#users_list').innerHTML = datalist_html;
-            }
-        }
-    };
-
-    xhttp.open("GET", "http://ihse.tk:50000/names", true);
-    xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
-
-</script>
 
 </body>
 </html>
