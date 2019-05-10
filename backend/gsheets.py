@@ -94,46 +94,19 @@ def gsheets_post(token_path: str, sheet_id: str, list_name: str, list_range: str
 
 
 """ ---===---==========================================---===--- """
-"""           Google Sheets interaction via GSheetsAPI           """
+"""       Google Sheets interaction via generic GSheetsAPI       """
 """ ---===---==========================================---===--- """
 
 
 def get_day(day: str) -> list:
-    """ Gets timetable from Google Sheets
-        and returns it in pseudo-json format
+    """ Gets timetable from Google Sheets and returns it in pseudo-json format
 
-    Args:
-        day: calendar day, has to be same as sheet in GSheets - string
-
-    Returns:
-        timetable: timetable of the corresponding day in pseudo-json - list
-
+    :param day - has to be same as sheet in GSheets
+    :return timetable of the corresponding day in pseudo-json
     """
-
     # TODO waiting for Serova to get real day, not template
     # If modifying these scopes, delete the file token.pickle.
     # SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-
-        # day = 'Template'
-        # # The ID and range of a sample spreadsheet.
-        # spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-        # spreadsheet_range = day + '!A1:J32'
-        #
-        # # token.pickle stores the user's access and refresh tokens,
-        # # providing read/write access to GSheets.
-        # # It was actually created on local machine ( where it was created
-        # # automatically when the authorization flow completed for the first
-        # # time) and ctrl-pasted to server.
-        # token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-        # creds = pickle.load(token)
-        #
-        # # Call the Sheets API
-        # service = build('sheets', 'v4', credentials=creds)
-        # sheet = service.spreadsheets()
-        # request = sheet.values().get(spreadsheetId=spreadsheet_id,
-        #                              range=spreadsheet_range)
-        # result = request.execute()
-        # values = result.get('values', [])
 
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
@@ -145,8 +118,8 @@ def get_day(day: str) -> list:
         return x
 
     # removing \n
-    for index, line in enumerate(values[2::], start=2):
-        values[index] = list(map(lambda x: crlf(x), line))
+    # for index, line in enumerate(values[2::], start=2):
+    #     values[index] = list(map(lambda x: crlf(x), line))
     timetable = []  # resulting timetable
     mask = []  # selector for correct selection of GSheets verbose data
     titleplus = 0  # selector for correct differentiation of desc, loc, name
@@ -205,47 +178,12 @@ def save_feedback(user_obj, day, feedback_data):
 
     """
 
-        # spreadsheet_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-        # # token.pickle stores the user's access and refresh tokens,
-        # # providing read/write access to GSheets.
-        # # It was actually created on local machine ( where it was created
-        # # automatically when the authorization flow completed for the first
-        # # time) and ctrl-pasted to server.
-        # token = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-        # creds = pickle.load(token)
-        # service = build('sheets', 'v4', credentials=creds)
-
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-
-        # # getting position to write to
-        # read_request = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id,
-        #                                                    range='Feedback!A1')
-        # read_response = read_request.execute()
-        # read_values = read_response.get('values', [])
-        # position = read_values[0][0]
 
     position = gsheets_get(token, id_, "Feedback", "A1")[0][0]
 
     print(position)
-        # write_range = 'Feedback!A' + position + ':H' + str(int(position) + 2)
-        #
-        # # writing actual feedback
-        # data = {'values': [[user_obj[3], user_obj[2], user_obj[5],
-        #                     feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
-        #                    ['', '', '', '', feedback_data['user2'], feedback_data['event1_text'], feedback_data['event2_text'], feedback_data['event3_text']],
-        #                    ['', '', '', '', feedback_data['user3']]],
-        #         'range': write_range
-        #         }
-        # body = {
-        #     'valueInputOption': 'RAW',
-        #     'data': data
-        # }
-        # write_request = service.spreadsheets().values().batchUpdate(spreadsheetId=spreadsheet_id,
-        #                                                             body=body)
-        # write_response = write_request.execute()
-        # # print('{0} cells updated.'.format(write_response.get('updatedCells')))
-        # # print('writing done')
 
     range_ = "A" + position + ":H" + str(int(position) + 2)
     values = [[user_obj[3], user_obj[2], user_obj[5], feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
@@ -255,16 +193,9 @@ def save_feedback(user_obj, day, feedback_data):
     # print('{0} cells updated.'.format(write_response.get('updatedCells')))
     # print('writing done')
 
-        # # updating next writing position
-        # update_request = service.spreadsheets().values().update(spreadsheetId=spreadsheet_id,
-        #                                                         range='Feedback!A1',
-        #                                                         valueInputOption='RAW',
-        #                                                         body={'values': [[int(position) + 3]]})
-        # update_response = update_request.execute()
-
     response = gsheets_post(token, id_, "Feedback", "A1", [[int(position) + 3]])
     # print('{0} cells updated.'.format(update_response.get('updatedCells')))
-    print('updating done')
+    # print('updating done')
 
     return True  # TODO: check GSheetsAPI how to track success
 
