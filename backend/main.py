@@ -174,9 +174,9 @@ def cache(foo):
 
         """
 
-        cached_status, cached_headers, cached_data = cache_dict[env['REQUEST_URI']]
-
-        if cached_data is None:  # If no cache data - create it
+        if env['REQUEST_URI'] in cache_dict.keys():  # If no cache data - create it
+            cached_status, cached_headers, cached_data = cache_dict[env['REQUEST_URI']]
+        else:
             cached_status, cached_headers, cached_data = foo(env, query)
             cache_dict[env['REQUEST_URI']] = (cached_status, cached_headers, cached_data)
 
