@@ -45,8 +45,10 @@ def generate_registration_codes(num, type=0):
 
     return rez
 
+
 # TODO: Max Optimize gsheet api
 # TODO: Max Refactoring and comment
+# TODO: Check post by position - if 2 write in one time
 
 
 """ ---===---==========================================---===--- """
@@ -54,15 +56,20 @@ def generate_registration_codes(num, type=0):
 """ ---===---==========================================---===--- """
 
 
-def gsheets_get(token_path: str, sheet_id: str, list_name: str, list_range: str) -> list:
+def get(token_path: str, sheet_id: str, list_name: str, list_range: str) -> list:
     """Generic function for getting values from Google Sheets
 
-    :param token_path - absolute path to token file
-    :param sheet_id - id of Google Spreadsheet
-    :param list_name - name of list of Google Spreadsheet
-    :param list_range - range of values requested
-    :return values - list of values requested
+    Args:
+        token_path - absolute path to token file
+        sheet_id - id of Google Spreadsheet
+        list_name - name of list of Google Spreadsheet
+        list_range - range of values requested
+        
+    Return:
+        values - list of values requested
+        
     """
+    
     token = open(token_path, "rb")
     creds = pickle.load(token)
     service = build('sheets', 'v4', credentials=creds)
@@ -71,18 +78,22 @@ def gsheets_get(token_path: str, sheet_id: str, list_name: str, list_range: str)
     request = sheet.values().get(spreadsheetId=sheet_id, range=range_)
     result = request.execute()
     values = result.get('values', [])
+    
     return values
 
 
-def gsheets_post(token_path: str, sheet_id: str, list_name: str, list_range: str, values: list):
+def post(token_path: str, sheet_id: str, list_name: str, list_range: str, values: list):
     """Generic function for saving values to Google Sheets
 
-    :param token_path - absolute path to token file
-    :param sheet_id - id of Google Spreadsheet
-    :param list_name - name of list of Google Spreadsheet
-    :param list_range - range of values requested
-    :param values - values to save to the given range
+    Args:
+        token_path - absolute path to token file
+        sheet_id - id of Google Spreadsheet
+        list_name - name of list of Google Spreadsheet
+        list_range - range of values requested
+        values - values to save to the given range
+        
     """
+
     token = open(token_path, "rb")
     creds = pickle.load(token)
     service = build('sheets', 'v4', credentials=creds)
@@ -92,6 +103,7 @@ def gsheets_post(token_path: str, sheet_id: str, list_name: str, list_range: str
     body = {"valueInputOption": "RAW", "data": data}
     request = sheet.values().batchUpdate(spreadsheetId=sheet_id, body=body)
     response = request.execute()
+
     return response
 
 
@@ -103,9 +115,14 @@ def gsheets_post(token_path: str, sheet_id: str, list_name: str, list_range: str
 def get_day(day: str) -> list:
     """ Gets timetable from Google Sheets and returns it in pseudo-json format
 
-    :param day - has to be same as sheet in GSheets
-    :return timetable of the corresponding day in pseudo-json
+    Args:
+        day: has to be same as sheet in GSheets
+        
+    Return:
+        timetable of the corresponding day in pseudo-json
+        
     """
+
     # TODO: waiting for Serova to get real day, not template
     # If modifying these scopes, delete the file token.pickle.
     # SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -113,7 +130,7 @@ def get_day(day: str) -> list:
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     # TODO: MAX J32 -just for sometime, may be other
-    values = gsheets_get(token, id_, 'Template', 'A1:J32')
+    values = get(token, id_, 'Template', 'A1:J32')
 
     timetable = []  # resulting timetable
     mask = []  # selector for correct selection of GSheets verbose data
@@ -153,9 +170,10 @@ def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
     Create new user if it does not exist
     Save in table name, phone and team
 
-    :param user_obj - User object (id, type, phone, name, pass, team)
-    :param day - num of the day 'DD.MM'
-    :param feedback_data - feedback in the following format
+    Args:
+        user_obj: User object (id, type, phone, name, pass, team)
+        day: num of the day 'DD.MM'
+        feedback_data: feedback in the following format
                   {"overall": int,
                    "user1": string,
                    "user2": string,
@@ -167,12 +185,15 @@ def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
                    "event2_text": string,
                    "event3_text": string
                    }
-    :return state - success or not
+    Return:
+        state: success or not
+        
     """
+    
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
 
-    position = gsheets_get(token, id_, "Feedback", "A1")[0][0]
+    position = get(token, id_, "Feedback", "A1")[0][0]
 
     print(position)
 
@@ -180,10 +201,10 @@ def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
     values = [[user_obj[3], user_obj[2], user_obj[5], feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
               ['', '', '', '', feedback_data['user2'], feedback_data['event1_text'], feedback_data['event2_text'], feedback_data['event3_text']],
               ['', '', '', '', feedback_data['user3']]]
-    response = gsheets_post(token, id_, "Feedback", range_, values)
+    response = post(token, id_, "Feedback", range_, values)
     # print('{0} cells updated.'.format(write_response.get('updatedCells')))
 
-    response = gsheets_post(token, id_, "Feedback", "A1", [[int(position) + 3]])
+    response = post(token, id_, "Feedback", "A1", [[int(position) + 3]])
     # print('{0} cells updated.'.format(update_response.get('updatedCells')))
 
     return True
@@ -194,14 +215,17 @@ def generate_codes(users, hosts, admins):
     """ Generate registration codes to google sheets
     Each code is a 6-characters-number-letter code
 
-    :param users - number of codes for this type of users
-    :param hosts - number of codes for this type of users
-    :param admins - number of codes for this type of users
+    Args:
+        users: number of codes for this type of users
+        hosts: number of codes for this type of users
+        admins: number of codes for this type of users
+        
     """
-
+    
     codes = generate_registration_codes(users, 0)
     codes = generate_registration_codes(hosts, 1)
     codes = generate_registration_codes(admins, 2)
+    
     pass
 
 
@@ -209,15 +233,19 @@ def check_code(code: str):
     """ Check registration code in Google Sheets
     Get user type according this code
 
-    :param code - special code hash which will be responsible for
+    Args:
+        code: special code hash which will be responsible for
                     the user type and permission to register
 
 
-    :return type - type of user, int or None if registration rejected
+    Return:
+        type: type of user, int or None if registration rejected
+    
     """
+    
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    read_values = gsheets_get(token, id_, "Codes", "A5:C9")
+    read_values = get(token, id_, "Codes", "A5:C9")
 
     reg_allowed = False
     user_type = -1
@@ -225,7 +253,7 @@ def check_code(code: str):
         if code_line[0] == code and code_line[2] == '0':
             user_type = int(code_line[1])
 
-            update_response = gsheets_post(token, id_,
+            update_response = post(token, id_,
                                            "Codes",
                                            "C" + str(index),
                                            [[1]])
@@ -278,9 +306,9 @@ def get_projects(filter_obj):
 
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    position = gsheets_get(token, id_, "Projects", "A1")[0][0]
+    position = get(token, id_, "Projects", "A1")[0][0]
 
-    read_values = gsheets_get(token,
+    read_values = get(token,
                               id_,
                               "Projects",
                               "A4:E" + str(int(position)-1))
@@ -310,7 +338,7 @@ def save_users(users_list):
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
 
-    position = gsheets_get(token, id_, "Users", "A1")[0][0]
+    position = get(token, id_, "Users", "A1")[0][0]
     for i in range(len(users_list)):
         data = [[users_list[i][0],
                             users_list[i][1],
@@ -320,14 +348,14 @@ def save_users(users_list):
                             users_list[i][5],
                             users_list[i][6],
                             users_list[i][7]]]
-        write_response = gsheets_post(token,
+        write_response = post(token,
                                       id_,
                                       "Users",
                                       "A" + str(5+i) + ":I" + str(5+i),
                                       data)
         # print('{0} cells updated.'.format(write_response.get('updatedCells')))
 
-    response = gsheets_post(token,
+    response = post(token,
                             id_,
                             "Users",
                             "A1",
@@ -348,8 +376,8 @@ def get_users():
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
 
-    position = gsheets_get(token, id_, "Users", "A1")[0][0]
-    read_values = gsheets_get(token, id_, "Users", "A5:H" + position)
+    position = get(token, id_, "Users", "A1")[0][0]
+    read_values = get(token, id_, "Users", "A5:H" + position)
     # print(read_values)
 
     return read_values
@@ -374,32 +402,26 @@ def save_project(user_obj, project_data):
         state: Success or not - bool
 
     """
-    print('User obj:', user_obj)
-    print('Project data:', project_data)
 
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    position = gsheets_get(token, id_, "Projects", "A1")[0][0]
-
-    print(position)
+    position = get(token, id_, "Projects", "A1")[0][0]
 
     values = [[project_data['title'], project_data['type'], str(project_data['name']), project_data['desc'], project_data['anno']]]
-    write_response = gsheets_post(token,
+    write_response = post(token,
                                   id_,
                                   "Projects",
                                   "A" + position + ":E" + position,
                                   values)
     # print('{0} cells updated.'.format(write_response.get('updatedCells')))
-    print('writing done')
 
     # updating next writing position
-    update_response = gsheets_post(token,
+    update_response = post(token,
                                    id_,
                                    "Projects",
                                    "A1",
                                    [[int(position) + 1]])
     # print('{0} cells updated.'.format(update_response.get('updatedCells')))
-    print('updating done')
 
     return True  # TODO: check GSheetsAPI how to track success
 

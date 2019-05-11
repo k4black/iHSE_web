@@ -168,7 +168,6 @@ def cache(foo):
         Note:
             foo: Function to cache foo(env, query)
 
-
         Returns:
             foo response
 
