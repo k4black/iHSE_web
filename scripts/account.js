@@ -90,7 +90,7 @@ document.querySelector('.header__button').addEventListener('click', function () 
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
-        if (this.readyState === 4)
+        if (this.readyState === 4) {
             if (this.status === 200) {
 
                 document.referrer = 'http://ihse.tk/index.html';  // Refer to start page
