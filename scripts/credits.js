@@ -69,6 +69,7 @@ var options = {
     dataLabels: {
         enabled: false
     },
+
     stroke: {
         curve: 'straight'
     },
@@ -100,6 +101,11 @@ var options = {
     // labels: series.monthDataSeries1.dates,
     xaxis: {
         categories: days,
+    },
+    yaxis: {
+        ticks: {
+            fixedStepSize: 10
+        }
     },
 };
 

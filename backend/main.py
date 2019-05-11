@@ -17,8 +17,6 @@ from threading import Timer
 TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 720s TODO: Couple of hours
 CREDITS = 300  # Max credits # TODO: Get from table?
 
-print('init')
-
 
 """ ---===---==========================================---===--- """
 """                    uWSGI main input function                 """
@@ -84,10 +82,11 @@ def application(env, start_response):
 """ ---===---==========================================---===--- """
 
 
-def sync():
+def sync(cache_dict):
     """ Update cache and sync events, projects and etc
 
     Args:
+        cache_dict: Dict of cached requests
 
     Note:
         Run every TIMEOUT seconds
@@ -104,19 +103,22 @@ def sync():
     sql.load_events(events)
 
     # Update cache
-    # TODO: Sync itself
+    cache_dict = {}
+
+    # TODO: gdrive Sync itself
 
 
     print('sync: ' + str(time.time()))
 
-    start_sync()  # Update - to call again
+    start_sync(cache_dict)  # Update - to call again
 
 
-def start_sync():
+def start_sync(cache_dict):
     """ Start sync() in new thread
     This function will run every TIMEOUT seconds
 
     Args:
+        cache_dict: Dict of cached requests
 
     See:
         sync()
@@ -125,15 +127,15 @@ def start_sync():
 
     """
 
-    th = Timer(TIMEOUT, sync, [])  # Run foo() through TIMEOUT seconds
+    th = Timer(TIMEOUT, sync, [cache_dict])  # Run foo() through TIMEOUT seconds
     th.setDaemon(True)  # Can close without trouble
     th.start()
 
 
-start_sync()  # Start sync
-
-
 cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
+
+
+start_sync(cache_dict)  # Start sync
 
 
 def cache(foo):
@@ -178,7 +180,7 @@ def cache(foo):
             cached_status, cached_headers, cached_data = foo(env, query)
             cache_dict[env['REQUEST_URI']] = (cached_status, cached_headers, cached_data)
 
-        return cached_status, cached_data
+        return cached_status, cached_headers, cached_data
 
     return decorated_foo
 
@@ -598,6 +600,7 @@ def get_credits(env, query, cookie):
             [json_data])
 
 
+@cache
 def get_event(env, query):
     """ Event data HTTP request
     Get event description by event id
@@ -605,9 +608,9 @@ def get_event(env, query):
     Args:
         env: HTTP request environment - dict
         query: url query parameters - dict (may be empty)
-        cookie: http cookie parameters - dict (may be empty)
 
     Note:
+        Cached by TIMEOUT
 
     Returns:
         data: which will be transmitted
@@ -682,6 +685,7 @@ def get_feedback(env, query, cookie):
             [json_data])
 
 
+@cache
 def get_projects(env, query):
     """ Projects HTTP request
     Send list of projects in json format
@@ -689,6 +693,9 @@ def get_projects(env, query):
     Args:
         env: HTTP request environment - dict
         query: url query parameters - dict (may be empty)
+
+    Note:
+        Cached by TIMEOUT
 
     Returns:
         data: which will be transmitted
@@ -747,6 +754,7 @@ def get_projects(env, query):
             [json_data])
 
 
+@cache
 def get_day(env, query):
     """ Day schedule data HTTP request
     Get day num and return html
@@ -756,6 +764,7 @@ def get_day(env, query):
         query: url query parameters - dict (may be empty)
 
     Note:
+        Cached by TIMEOUT
         return day html by req from query string (if none return today)
 
     Returns:
