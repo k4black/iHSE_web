@@ -106,6 +106,7 @@ def sync(cache_dict):
     cache_dict = {}
 
     # TODO: gdrive Sync itself
+    gsheets.update()
 
 
     print('sync: ' + str(time.time()))

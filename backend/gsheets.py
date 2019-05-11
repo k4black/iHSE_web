@@ -46,6 +46,17 @@ def generate_registration_codes(num, type=0):
     return rez
 
 
+def update():
+    """Update cached version of Google Sheets
+    Download it from online table
+
+    """
+
+    # TODO: Update cache 
+
+    pass
+
+
 # TODO: Max Optimize gsheet api
 # TODO: Max Refactoring and comment
 # TODO: Check post by position - if 2 write in one time
