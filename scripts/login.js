@@ -58,6 +58,10 @@ document.querySelector('#btn').addEventListener('click', function () {
                 pass.value = "";
             }
 
+            if (this.status === 302) {  // Ok - redir
+
+            }
+
             if (this.status === 401) {  // Authorization error
                 alert("Wrong Phone/Password!");  // TODO: show Html error message
 

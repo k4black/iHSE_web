@@ -237,6 +237,10 @@ document.querySelector('#btn').addEventListener('click', function() {
                 document.referrer = "http://ihse.tk/index.html"
             }
 
+            if (this.status === 302) {  // Ok - redir
+
+            }
+
             if (this.status === 405) {  //  Method Not Allowed or already got it
                 alert("not!");  // TODO: show Html error message
             }

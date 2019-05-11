@@ -5,8 +5,6 @@
  */
 
 
-// TODO: Graph
-
 
 
 /** ===============  LOGIC and REQUESTS  =============== */
@@ -92,11 +90,15 @@ document.querySelector('.header__button').addEventListener('click', function () 
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
+        if (this.readyState === 4)
+            if (this.status === 200) {
 
-                alert('LOGOUT!');
-                document.referrer = 'http://ihse.tk/';  // Refer to start page
+                document.referrer = 'http://ihse.tk/index.html';  // Refer to start page
+            }
 
+            if (this.status === 302) {  // Ok - redir
+
+            }
         }
     };
 
@@ -129,7 +131,7 @@ document.querySelector('#btn').addEventListener('click', function () {
         if (this.readyState === 4) {  // When request is done
 
             if (this.status === 200) {  // Authorized
-                alert("ok!");  // TODO: Redirection
+                alert("ok!");
                 loadAccount();
 
                 code.value = "";
@@ -137,7 +139,7 @@ document.querySelector('#btn').addEventListener('click', function () {
             }
 
             if (this.status === 401) {  // Authorization error
-                alert("not!");  // TODO: show Html error message
+                alert("Wrong code!");  // TODO: show Html error message
 
                 code.value = "";
             }
@@ -231,7 +233,7 @@ xhttp.onreadystatechange = function () {
             var options = {
                 chart: {
                     height: '110%',
-                    width: data.length * 40,  // TODO: Set width according num of elemets
+                    width: data.length * 40,
                     type: 'line',
                     zoom: {
                         enabled: false

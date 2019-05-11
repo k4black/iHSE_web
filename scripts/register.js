@@ -67,6 +67,10 @@ document.querySelector('#btn').addEventListener('click', function () {
                 code.value = "";
             }
 
+            if (this.status === 302) {  // Ok - redir
+
+            }
+
             if (this.status === 403) {  // Authorization error
                 alert("Wrong registration code!");  // TODO: show Html error message
 

@@ -61,6 +61,10 @@ document.querySelector('#btn').addEventListener('click', function() {
 
             }
 
+            if (this.status === 302) {  // Ok - redir
+
+            }
+
             if (this.status === 405) {  //  Method Not Allowed or already got it
                 alert("Cannot create project!");  // TODO: show Html error message
 
