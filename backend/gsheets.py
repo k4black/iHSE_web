@@ -544,6 +544,8 @@ def get_credits(user_obj):
     read_values = get(token, id_, "Users", "A5:W" + position)
 
     for user_raw in read_values:  # Found user by id
+        print('    Checking: ', user_raw)
+
         if user_raw[0] == user_obj[0]:
             print('Get credits for user2: ', user_raw)
 
