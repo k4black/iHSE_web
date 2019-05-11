@@ -52,26 +52,29 @@ xhttp.send();
  */
 var today_date = new Date();
 var dd = String(today_date.getDate()).padStart(2, '0');
+var dd = String(today_date.getDate());
 var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
 
 
 var today = mm + '.' + dd;
-
+today = '15.06';
 
 startDay = 5;
+startMonth = 6;
 numOfDays = 14;
 
 topbar_html = "";
 
 for (var i = 0; i < numOfDays; ++i) {
-    if ( (startDay + i) == 15) { // TODO: Today
+    let day_text = (startDay + i) + '.' + ('' + startMonth).padStart(2, '0');
+    if ( day_text === today) {
         topbar_html += '<div class="day today selected">'
     } else {
         topbar_html += '<div class="day">'
     }
 
     topbar_html +=          '<div class="day__num">' + i + '</div>' +
-        '<div class="day__name">' + (startDay + i) + '.' + '06' + '</div>' +
+        '<div class="day__name">' + day_text + '</div>' +
         '</div>';
 }
 
@@ -210,7 +213,7 @@ document.querySelector('#btn').addEventListener('click', function() {
     events = document.querySelectorAll('.event');
     users = document.querySelectorAll('.user');
 
-    // Checking full fields 
+    // Checking full fields
     var flag = false;
     for (let i = 0; !flag && i < events.length; ++i) {
         flag = (events[i].lastElementChild.textContent === '');

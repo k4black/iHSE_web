@@ -206,13 +206,15 @@ window.addEventListener('load', function () {
  * https://apexcharts.com/docs/installation/
  */
 startDay = 5;
+startMonth = 6;
 numOfDays = 14;
 
 topbar_html = "";
 
 var days = [];
 for (var i = 0; i < numOfDays; ++i) {
-    days.push( (startDay + i) + "." + "06" );
+    let day_text = (startDay + i) + '.' + ('' + startMonth).padStart(2, '0');
+    days.push( day_text );
 }
 
 
