@@ -346,6 +346,7 @@ def save_users(users_list):
         none
 
     """
+
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
 
@@ -364,16 +365,12 @@ def save_users(users_list):
                                       "Users",
                                       "A" + str(5+i) + ":I" + str(5+i),
                                       data)
-        # print('{0} cells updated.'.format(write_response.get('updatedCells')))
 
     response = post(token,
                             id_,
                             "Users",
                             "A1",
                             [[int(position) + len(users_list)]])
-    # print('{0} cells updated.'.format(update_response.get('updatedCells')))
-
-    print('Users saved')
 
 
 def get_users():
@@ -458,6 +455,11 @@ def save_credits(user_obj, event_obj):
 def update_events():
     """ Update events with description in google sheets
     Read and parse it from days sheets and save in 'Events' sheet
+    And generate id
+
+    Note:
+        If exist such event with time, date and host - update other fields
+        If no event - generate with unique id
 
     Args:
 
@@ -469,7 +471,7 @@ def update_events():
     pass
 
 
-# TODO: Max get events
+# TODO: Max get events - optimize
 def get_events():
     """ Get events from google sheets
 
@@ -480,10 +482,21 @@ def get_events():
                                                  ]
     """
 
-    return [(0, 'type1', 'event 1', 20, 20), (1, 'type2', 'others one ', 100, 40), (2, 'type1', 'And more one', 10, 10)]
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+
+    position = get(token, id_, "Events", "A1")[0][0]
+    read_values = get(token, id_, "Events", "A5:J" + position)
+
+    events = []
+    for event_raw in read_values:
+        events.append( (event_raw[0], event_raw[7], event_raw[1], event_raw[8], event_raw[9]) )
+
+    return events
+    # return [(0, 'type1', 'event 1', 20, 20), (1, 'type2', 'others one ', 100, 40), (2, 'type1', 'And more one', 10, 10)]
 
 
-# TODO: Max get event
+# TODO: Max get event - optimize
 def get_event(event_id):
     """ Get event with description from google sheets
     Return full description
@@ -496,10 +509,21 @@ def get_event(event_id):
 
     """
 
-    return (32, "title", "time", "date", "location", "host", "descriptiom", "type", 300,  24)
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+
+    position = get(token, id_, "Events", "A1")[0][0]
+    read_values = get(token, id_, "Events", "A5:J" + position)
+
+    for event_raw in read_values:  # Found event by id
+        if event_raw[0] == event_id:
+            return event_raw
+
+    return None
+    # return (32, "title", "time", "date", "location", "host", "descriptiom", "type", 300,  24)
 
 
-# TODO: Max get credits chart
+# TODO: Max get credits chart - optimize
 def get_credits(user_obj):
     """ Get credits data from google sheets
 
@@ -511,5 +535,26 @@ def get_credits(user_obj):
 
     """
 
-    return {'total': 122, 'data': [30, 41, 35, 51, 49, 62, 69, 83, 36, 84, 90, 20, 21]}
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+
+    position = get(token, id_, "Users", "A1")[0][0]
+    read_values = get(token, id_, "Users", "A5:W" + position)
+
+    for user_raw in read_values:  # Found user by id
+        if user_raw[0] == user_obj[0]:
+            print('Get credits for user: ', user_raw)
+
+            data = {}
+            data['total'] = user_raw[6]
+
+            if user_raw[6] == 0:
+                data['data'] = []
+            else:
+                data['data'] = user_raw[10:len(user_raw)]
+
+            return data
+
+    return None
+    # return {'total': 122, 'data': [30, 41, 35, 51, 49, 62, 69, 83, 36, 84, 90, 20, 21]}
 
