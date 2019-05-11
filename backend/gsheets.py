@@ -552,10 +552,11 @@ def get_credits(user_obj):
             data = {}
             data['total'] = int(user_raw[6])
 
-            if user_raw[6] == 0:
+            # if user_raw[6] == 0:
+            if len(user_raw) <= 9:
                 data['data'] = []
             else:
-                data['data'] = [int(user_raw[i]) for i in range(len(user_raw), 10)]
+                data['data'] = [int(user_raw[i]) for i in range(10, len(user_raw))]
 
             return data
 
