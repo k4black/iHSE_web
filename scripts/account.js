@@ -5,6 +5,18 @@
  */
 
 
+(function(w) {
+    //private variable
+    var loaded = false;
+    w.onload = function() {
+        loaded = true;
+    };
+
+    w.checkLoaded = function() {
+        alert(loaded);
+    };
+})(window);
+
 
 
 /** ===============  LOGIC and REQUESTS  =============== */
@@ -47,7 +59,7 @@ function loadAccount() {
                     topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
 
-                if(document.readyState === 'complete') {
+                if(window.checkLoaded()) {
                     bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
                 } else {
                     window.addEventListener('load', function () {
@@ -300,7 +312,7 @@ xhttp.onreadystatechange = function () {
             };
 
             // Run and draw chart
-            if(document.readyState === 'complete') {
+            if(window.checkLoaded()) {
                 var chart = new ApexCharts(document.querySelector("#credits__chart"), options);
 
                 console.log(chart);

@@ -1,4 +1,18 @@
 
+(function(w) {
+    //private variable
+    var loaded = false;
+    w.onload = function() {
+        loaded = true;
+    };
+
+    w.checkLoaded = function() {
+        alert(loaded);
+    };
+})(window);
+
+
+
 
 
 var tmp = 0;
@@ -119,7 +133,7 @@ button.addEventListener('click', function () {
 
                 tmp = event.count / event.total;
 
-                if(document.readyState === 'complete') {
+                if(window.checkLoaded()) {
                     bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
                 } else {
                     window.addEventListener('load', function () {
