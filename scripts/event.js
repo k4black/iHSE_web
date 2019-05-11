@@ -7,7 +7,7 @@
     };
 
     w.checkLoaded = function() {
-        alert(loaded);
+        return loaded;
     };
 })(window);
 
