@@ -68,7 +68,7 @@ function loadAccount() {
             }
 
             else if (this.status === 401) {  // No account data
-                // TODO: Notification
+                alert('Please, login!');
             }
         }
     };

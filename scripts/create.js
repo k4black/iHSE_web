@@ -32,9 +32,10 @@ document.querySelector('#btn').addEventListener('click', function() {
     });
 
 
-    if (title.value == "" || type.value == "" || names == null || desc.value == "" || anno.value == "") // If some field are empty - do nothing
-        return; // TODO: Message
-
+    if (title.value == "" || type.value == "" || names == null || desc.value == "" || anno.value == "") { // If some field are empty - do nothing
+        alert('You have to fill all fields!');  // TODO: show Html error message
+        return;
+    }
 
     let data = JSON.stringify({"title": title.value,
                                "type": type.value,

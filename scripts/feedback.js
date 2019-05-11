@@ -64,7 +64,7 @@ numOfDays = 14;
 topbar_html = "";
 
 for (var i = 0; i < numOfDays; ++i) {
-    if ( (startDay + i) == 15) {
+    if ( (startDay + i) == 15) { // TODO: Today
         topbar_html += '<div class="day today selected">'
     } else {
         topbar_html += '<div class="day">'
@@ -209,6 +209,19 @@ document.querySelector('#btn').addEventListener('click', function() {
 
     events = document.querySelectorAll('.event');
     users = document.querySelectorAll('.user');
+
+    // Checking full fields 
+    var flag = false;
+    for (let i = 0; !flag && i < events.length; ++i) {
+        flag = (events[i].lastElementChild.textContent === '');
+    }
+    for (let i = 0; !flag && i < users.length; ++i) {
+        flag = (users[i].value === '');
+    }
+    if (flag){ // If some field are empty - do nothing
+        alert('You have to fill all fields!');  // TODO: show Html error message
+        return;
+    }
 
     var data = JSON.stringify({"overall": overallSlider.getValue(),
                                      "user1": users[0].value,

@@ -37,9 +37,10 @@ document.querySelector('#btn').addEventListener('click', function () {
     var pass = document.querySelector('#pass');
 
 
-    if (phone.value == "" || pass.value == "") // If some field are empty - do nothing
-        return; // TODO: Message
-
+    if (phone.value == "" || pass.value == "") { // If some field are empty - do nothing
+        alert('You have to fill all fields!');  // TODO: show Html error message
+        return;
+    }
 
     var xhttp = new XMLHttpRequest();
     

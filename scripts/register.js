@@ -44,9 +44,10 @@ document.querySelector('#btn').addEventListener('click', function () {
     var code = document.querySelector('#code');
 
 
-    if (name_.value == "" || surname.value == "" || pass.value == "" || code.value == "" || phone.value == "") // If some field are empty - do nothing
-        return;  // TODO: Message
-
+    if (name_.value == "" || surname.value == "" || pass.value == "" || code.value == "" || phone.value == ""){ // If some field are empty - do nothing
+        alert('You have to fill all fields!');  // TODO: show Html error message
+        return;
+    }
 
     var xhttp = new XMLHttpRequest();
 
