@@ -169,11 +169,15 @@ def load_users(users_list):
 
     # Add users in bd
     for user_obj in users_list:
+        if user_obj[7] is None:
+            avatar = ""
+        else:
+            avatar = user_obj[7]
 
         cursor.execute("""INSERT INTO users(id, user_type, phone, name, pass, team, credits, avatar)
                           SELECT ?, ?, ?, ?, ?, ?, ?, ?
                           WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
-                       (user_obj[0], user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[6], user_obj[7], user_obj[3], user_obj[4]))
+                       (user_obj[0], user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[6], avatar, user_obj[3], user_obj[4]))
         conn.commit()
 
 
