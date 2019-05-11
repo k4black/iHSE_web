@@ -197,7 +197,7 @@ def load_events(events_list):
 
     for event_obj in events_list:
         cursor.execute("""INSERT INTO events(id, type, title, credits, total)
-                          SELECT ?, ?, ?
+                          SELECT ?, ?, ?, ?, ?
                           WHERE NOT EXISTS(SELECT 1 FROM events WHERE title=?)""",
                        (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[2]))
         conn.commit()
