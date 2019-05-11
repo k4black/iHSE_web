@@ -546,16 +546,16 @@ def get_credits(user_obj):
     for user_raw in read_values:  # Found user by id
         print('    Checking: ', user_raw)
 
-        if user_raw[0] == user_obj[0]:
+        if int(user_raw[0]) == user_obj[0]:
             print('Get credits for user2: ', user_raw)
 
             data = {}
-            data['total'] = user_raw[6]
+            data['total'] = int(user_raw[6])
 
             if user_raw[6] == 0:
                 data['data'] = []
             else:
-                data['data'] = user_raw[10:len(user_raw)]
+                data['data'] = [int(user_raw[i]) for i in range(len(user_raw), 10)]
 
             return data
 
