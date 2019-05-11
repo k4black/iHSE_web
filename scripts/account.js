@@ -93,7 +93,7 @@ document.querySelector('.header__button').addEventListener('click', function () 
         if (this.readyState === 4) {
             if (this.status === 200) {
 
-                document.referrer = 'http://ihse.tk/index.html';  // Refer to start page
+                location = 'http://ihse.tk/index.html';  // Refer to start page
             }
 
             if (this.status === 302) {  // Ok - redir

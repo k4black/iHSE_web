@@ -853,14 +853,14 @@ def post_login(env, phone, passw):
         # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
         sessid = res[0].hex()
 
-        return ('302 Found',
+        return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
                     ('Access-Control-Allow-Origin', 'http://ihse.tk'),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                     ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=15768000;'),  # 1/2 year
-                    ('Location', 'http://ihse.tk/')
+                    # ('Location', 'http://ihse.tk/')
                  ],
                 [])
 
@@ -894,7 +894,7 @@ def post_logout(env, query, cookie):
 
     if sql.logout(sessid):
 
-        return ('302 Found',
+        return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
                     ('Access-Control-Allow-Origin', 'http://ihse.tk'),
@@ -902,7 +902,7 @@ def post_logout(env, query, cookie):
                     ('Access-Control-Allow-Credentials', 'true'),
                     # Clear cookie
                     ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
-                    ('Location', 'http://ihse.tk/login.html')
+                    # ('Location', 'http://ihse.tk/login.html')
                  ],
                 [])
     else:
@@ -983,13 +983,13 @@ def post_feedback(env, query, cookie):
 
     if gsheets.save_feedback(user_obj, day, feedback_obj):
 
-        return ('302 Found',
+        return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
                     ('Access-Control-Allow-Origin', 'http://ihse.tk'),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
-                    ('Location', 'http://ihse.tk/')
+                    # ('Location', 'http://ihse.tk/')
                  ],
                 [])
 
@@ -1147,14 +1147,14 @@ def post_project(env, query, cookie):
 
     if gsheets.save_project(user_obj, project_obj):   # If user exist
 
-        return ('302 Found',
+        return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
                     ('Access-Control-Allow-Origin', 'http://ihse.tk'),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                     # ('Location', 'http://ihse.tk/projects.html')
-                    ('Location', 'http://ihse.tk/')
+                    # ('Location', 'http://ihse.tk/')
                  ],
                 [])
 

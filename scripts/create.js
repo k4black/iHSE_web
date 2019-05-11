@@ -57,7 +57,7 @@ document.querySelector('#btn').addEventListener('click', function() {
             if (this.status === 200) {  // Got it
                 // alert("ok!");
 
-                document.referrer = 'http://ihse.tk/index.html'; // TODO: Redirection projects
+                location = 'http://ihse.tk/index.html'; // TODO: Redirection projects
 
             }
 
