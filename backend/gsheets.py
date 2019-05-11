@@ -490,7 +490,7 @@ def get_events():
 
     events = []
     for event_raw in read_values:
-        events.append( (event_raw[0], event_raw[7], event_raw[1], event_raw[8], event_raw[9]) )
+        events.append( (int(event_raw[0]), event_raw[7], event_raw[1], int(event_raw[8]), int(event_raw[9])) )
 
     return events
     # return [(0, 'type1', 'event 1', 20, 20), (1, 'type2', 'others one ', 100, 40), (2, 'type1', 'And more one', 10, 10)]
@@ -517,7 +517,7 @@ def get_event(event_id):
 
     for event_raw in read_values:  # Found event by id
         if event_raw[0] == event_id:
-            return event_raw
+            return event_raw  # TODO: Fields to int
 
     return None
     # return (32, "title", "time", "date", "location", "host", "descriptiom", "type", 300,  24)
