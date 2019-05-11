@@ -447,7 +447,7 @@ def get_events():
                                                  ]
     """
 
-    return [(0, 'type1', 'event 1', 20, 20), (1, 'type2', 'othe one ', 100, 40), (2, 'type1', 'And more one', 10, 10)]
+    return [(0, 'type1', 'event 1', 20, 20), (1, 'type2', 'others one ', 100, 40), (2, 'type1', 'And more one', 10, 10)]
 
 
 # TODO: Max get event

@@ -59,7 +59,7 @@ document.querySelector('#btn').addEventListener('click', function () {
             setLoaded();
 
             if (this.status === 200) {  // Authorized
-                alert("ok reg!");  // TODO: Redirection
+                document.referrer = 'http://ihse.tk/index.html';
 
                 name.value = "";
                 phone.value = "";

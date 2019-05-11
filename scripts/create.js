@@ -55,12 +55,14 @@ document.querySelector('#btn').addEventListener('click', function() {
             setLoaded();
 
             if (this.status === 200) {  // Got it
-                alert("ok!");  // TODO: Redirection
+                // alert("ok!");
+
+                document.referrer = 'http://ihse.tk/index.html'; // TODO: Redirection projects
 
             }
 
             if (this.status === 405) {  //  Method Not Allowed or already got it
-                alert("not!");  // TODO: show Html error message
+                alert("Cannot create project!");  // TODO: show Html error message
 
             }
         }
