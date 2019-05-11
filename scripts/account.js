@@ -47,7 +47,13 @@ function loadAccount() {
                     topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
 
-                bar.animate(user.credits / user.total);  // Number from 0.0 to 1.0
+                if(document.readyState === 'complete') {
+                    bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+                } else {
+                    window.addEventListener('load', function () {
+                        bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+                    })
+                }
                 
 
                 document.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
@@ -164,7 +170,14 @@ document.querySelector('#btn').addEventListener('click', function () {
  */
 // var ProgressBar = require('scripts/progressbar.js');
 var bar;
-window.addEventListener('load', function () {
+if(document.readyState === 'complete') {
+    createBar();
+} else {
+    window.addEventListener('load', function () {
+        createBar();
+    })
+}
+function createBar() {
     bar = new ProgressBar.Circle('.progress', {
         color: '#aaaaaa',
         // This has to be the same size as the maximum width to
@@ -194,7 +207,7 @@ window.addEventListener('load', function () {
     });
     bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
     bar.text.style.fontSize = '2rem';
-});
+}
 
 
 
@@ -220,6 +233,10 @@ for (var i = 0; i < numOfDays; ++i) {
 
 // Get chart data
 data = [1, 2, 3, 4, 5];
+
+function createChart() {
+
+}
 var xhttp = new XMLHttpRequest();
 
 xhttp.onreadystatechange = function () {
@@ -283,12 +300,19 @@ xhttp.onreadystatechange = function () {
             };
 
             // Run and draw chart
-            // window.addEventListener('load', function () {
+            if(document.readyState === 'complete') {
                 var chart = new ApexCharts(document.querySelector("#credits__chart"), options);
 
                 console.log(chart);
                 chart.render();
-            // });
+            } else {
+                window.addEventListener('load', function () {
+                    var chart = new ApexCharts(document.querySelector("#credits__chart"), options);
+
+                    console.log(chart);
+                    chart.render();
+                })
+            }
         }
     }
 };

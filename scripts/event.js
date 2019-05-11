@@ -119,7 +119,14 @@ button.addEventListener('click', function () {
 
                 tmp = event.count / event.total;
 
-                bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+                if(document.readyState === 'complete') {
+                    bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+                } else {
+                    window.addEventListener('load', function () {
+                        bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+                    })
+                }
+
 
                 if (event.count >= event.total) {
                     wrapper.querySelector('#btn').classList.add('inactive');
