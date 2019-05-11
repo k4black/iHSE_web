@@ -535,6 +535,8 @@ def get_credits(user_obj):
 
     """
 
+    print('Get credits for user1: ', user_obj)
+
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
 
@@ -543,7 +545,7 @@ def get_credits(user_obj):
 
     for user_raw in read_values:  # Found user by id
         if user_raw[0] == user_obj[0]:
-            print('Get credits for user: ', user_raw)
+            print('Get credits for user2: ', user_raw)
 
             data = {}
             data['total'] = user_raw[6]
