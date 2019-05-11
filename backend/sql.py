@@ -71,13 +71,6 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
                """)
 
 
-# # TODO: REMOVE Test
-# cursor.execute("""INSERT INTO events(id, type, title, credits, total)
-#                   SELECT ?, ?, ?, ?, ?
-#                   WHERE NOT EXISTS(SELECT 1 FROM events WHERE id=?)""", (42, 0, 'Title', 5, 30, 42))
-# conn.commit()
-
-
 """ ---===---==========================================---===--- """
 """           Auxiliary functions for sql interactions           """
 """ ---===---==========================================---===--- """
@@ -234,13 +227,20 @@ def logout(sess_id):
         sess_id: session id from bd
 
     Returns:
+        Success delete or not
 
     """
+
+    cursor.execute("SELECT * FROM sessions WHERE id=?", (sess_id, ))
+    sessions = cursor.fetchall()
+
+    if len(sessions) == 0:    # No such session
+        return False
 
     cursor.execute("DELETE FROM sessions WHERE id=?", (sess_id, ))
     conn.commit()
 
-    return True  # TODO True/False
+    return True
 
 
 def get_user(user_id):
@@ -317,14 +317,11 @@ def checkin_user(user_obj, event_obj):
         event_obj: (id, type, title, credits, count, total)
 
     Returns:
-        True/False: Success or not
 
     """
 
     cursor.execute("UPDATE users SET credits=? WHERE id=?", (user_obj[6] + event_obj[3], user_obj[0], ))
     conn.commit()
-
-    return True
 
 
 def register(name, passw, type, phone, team):
@@ -342,7 +339,6 @@ def register(name, passw, type, phone, team):
         user id is automatically generated
 
     Returns:
-        user id: - int (because it is for internal use only)
 
     """
 
@@ -370,7 +366,7 @@ def login(phone, passw, agent, ip, time='0'):
 
     Returns:
         sess_id: session id - string of hex
-                    b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
+                 b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
 
     """
 

@@ -629,7 +629,7 @@ def get_event(env, query):
     data['host'] = event[5]
     data['desc'] = event[6]
 
-    data['count'] = 12   # TODO: Count in sql bd
+    data['count'] = sql.get_event(query['id'])[5]
     data['total'] = event[9]
 
 
@@ -664,7 +664,6 @@ def get_feedback(env, query, cookie):
 
     tmp = gsheets.get_feedback(day)  # return (title, [event1, event2, event3] ) or None
 
-    # TODO: SQL
     data = {}
 
     data['title'] = day + ': ' + tmp[0]
@@ -698,47 +697,19 @@ def get_projects(env, query):
         Cached by TIMEOUT
 
     Returns:
-        data: which will be transmitted
+        projects: List of projects descriptions
+              [
+                  {
+                      "title": "Some title",
+                      "type": "TED",
+                      "subj": "Math",
+                      "name": "VAsya and Ilya",
+                      "desc": "Some project description"
+                  },
+                  ...
+              ]
 
     """
-
-    """
-    Json format:
-        [
-            {
-                "title": "Some title",
-                "type": "TED",
-                "subj": "Math",
-                "name": "VAsya and Ilya",
-                "desc": "Some project description"
-            }, 
-            ...
-        ]
-    """
-
-    # TODO: SQL
-
-    # Json projects data
-    # data = []
-    #
-    # project1 = {
-    #                "title": "Some title",
-    #                "type": "TED",
-    #                "subj": "Math",
-    #                "name": "VAsya and Ilya",
-    #                "desc": "Some project description"
-    #            }
-    #
-    # project2 = {
-    #                "title": "Some title",
-    #                "type": "TED",
-    #                "subj": "Math",
-    #                "name": "VAsya and Ilya",
-    #                "desc": "Some project description"
-    #            }
-    #
-    # data.append(project1)
-    # data.append(project2)
 
     data = gsheets.get_projects(None)
 
@@ -1034,7 +1005,7 @@ def post_credits(env, query, cookie):
 
 
     event_obj = sql.get_event(event_id)
-    if True or event_obj is not None:   # TODO: If writing ok
+    if event_obj is not None:
         gsheets.save_credits(user_obj, event_obj)
         sql.checkin_user(user_obj, event_obj)
 
@@ -1084,7 +1055,7 @@ def post_enroll(env, query, cookie):
         return user_obj
 
 
-    if True or sql.enroll_user(event_id, user_obj):   # TODO: If writing ok
+    if sql.enroll_user(event_id, user_obj):
 
         event = sql.get_event(event_id)
 
@@ -1164,38 +1135,38 @@ def post_project(env, query, cookie):
                 [])
 
 
-"""
-Resource - iHSE.tk/path/resource?param1=value1&param2=value2
-
-REQUEST_METHOD: GET
-PATH_INFO: /path/resource
-REQUEST_URI: /path/resource?param1=value1&param2=value2
-QUERY_STRING: param1=value1&param2=value2
-SERVER_PROTOCOL: HTTP/1.1
-SCRIPT_NAME:
-SERVER_NAME: ip-172-31-36-110
-SERVER_PORT: 50000
-REMOTE_ADDR: USER_IP
-HTTP_HOST: ihse.tk:50000
-HTTP_CONNECTION: keep-alive
-HTTP_PRAGMA: no-cache
-HTTP_CACHE_CONTROL: no-cache
-HTTP_ORIGIN: http: //ihse.tk
-HTTP_USER_AGENT: USER_AGENT
-HTTP_DNT: 1
-HTTP_ACCEPT: */*
-HTTP_REFERER: http: //ihse.tk/
-HTTP_ACCEPT_ENCODING: gzip, deflate
-HTTP_ACCEPT_LANGUAGE: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
-wsgi.input: <uwsgi._Input object at 0x7f0ef198c810>
-wsgi.file_wrapper: <built-in function uwsgi_sendfile>
-wsgi.version: (1, 0)
-wsgi.errors: <_io.TextIOWrapper name=2 mode='w' encoding='UTF-8'>
-wsgi.run_once: False
-wsgi.multithread: True
-wsgi.multiprocess: True
-wsgi.url_scheme: http
-uwsgi.version: b'2.0.15-debian'
-uwsgi.core: 1
-uwsgi.node: b'ip-172-31-36-110'
-"""
+# """
+# Resource - iHSE.tk/path/resource?param1=value1&param2=value2
+#
+# REQUEST_METHOD: GET
+# PATH_INFO: /path/resource
+# REQUEST_URI: /path/resource?param1=value1&param2=value2
+# QUERY_STRING: param1=value1&param2=value2
+# SERVER_PROTOCOL: HTTP/1.1
+# SCRIPT_NAME:
+# SERVER_NAME: ip-172-31-36-110
+# SERVER_PORT: 50000
+# REMOTE_ADDR: USER_IP
+# HTTP_HOST: ihse.tk:50000
+# HTTP_CONNECTION: keep-alive
+# HTTP_PRAGMA: no-cache
+# HTTP_CACHE_CONTROL: no-cache
+# HTTP_ORIGIN: http: //ihse.tk
+# HTTP_USER_AGENT: USER_AGENT
+# HTTP_DNT: 1
+# HTTP_ACCEPT: */*
+# HTTP_REFERER: http: //ihse.tk/
+# HTTP_ACCEPT_ENCODING: gzip, deflate
+# HTTP_ACCEPT_LANGUAGE: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+# wsgi.input: <uwsgi._Input object at 0x7f0ef198c810>
+# wsgi.file_wrapper: <built-in function uwsgi_sendfile>
+# wsgi.version: (1, 0)
+# wsgi.errors: <_io.TextIOWrapper name=2 mode='w' encoding='UTF-8'>
+# wsgi.run_once: False
+# wsgi.multithread: True
+# wsgi.multiprocess: True
+# wsgi.url_scheme: http
+# uwsgi.version: b'2.0.15-debian'
+# uwsgi.core: 1
+# uwsgi.node: b'ip-172-31-36-110'
+# """
