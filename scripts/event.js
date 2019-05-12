@@ -55,18 +55,29 @@ xhttp.onreadystatechange = function () {
             wrapper.querySelector('.host').firstElementChild.innerText = event.host;
 
             wrapper.querySelector('.desc').firstElementChild.innerText = event.desc;
-            wrapper.querySelector('.anno').firstElementChild.innerText = event.anno;
 
-            // TODO: Hide when there is no enrollment
-            wrapper.querySelector('.count').innerText = event.count + ' / ' + event.total;
-
-            if (window.checkLoaded()) {
-                bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+            if (event.anno == undefined) {
+                wrapper.querySelector('.anno').parentElement.innerHTML = "";
             }
             else {
-                window.addEventListener('load', function () {
+                wrapper.querySelector('.anno').firstElementChild.innerText = event.anno;
+            }
+
+            // TODO: Hide when there is no enrollment
+            if (event.total == undefined) {
+            }
+            else {
+                wrapper.querySelector('.count').innerText = event.count + ' / ' + event.total;
+
+                if (window.checkLoaded()) {
                     bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
-                });
+                }
+                else {
+                    window.addEventListener('load', function () {
+                        bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+                    });
+                }
+
             }
 
             if (event.count >= event.total) {
