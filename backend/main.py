@@ -82,7 +82,7 @@ def application(env, start_response):
 """ ---===---==========================================---===--- """
 
 
-def sync(cache_dict):
+def update_cache(cache_dict):
     """ Update cache and sync events, projects and etc
 
     Args:
@@ -110,6 +110,22 @@ def sync(cache_dict):
 
 
     print('sync: ' + str(time.time()))
+
+
+def sync(cache_dict):
+    """ Update cache and sync events, projects and etc
+
+    Args:
+        cache_dict: Dict of cached requests
+
+    Note:
+        Run every TIMEOUT seconds
+
+    Returns:
+
+    """
+
+    update_cache(cache_dict)  # Sync itself
 
     start_sync(cache_dict)  # Update - to call again
 
@@ -313,6 +329,7 @@ def get(env, query, cookie):
     if env['PATH_INFO'] == '/gsheets_update_212442':
         print('/gsheets_update_212442')
         gsheets.update()
+        return
 
 
     # Manage admin actions
