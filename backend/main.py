@@ -628,6 +628,7 @@ def get_event(env, query):
     data['loc'] = event[4]
     data['host'] = event[5]
     data['desc'] = event[6]
+    data['anno'] = event[10]
 
     data['count'] = sql.get_event(query['id'])[4]
     data['total'] = event[9]

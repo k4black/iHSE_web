@@ -47,24 +47,27 @@ xhttp.onreadystatechange = function () {
 
             document.querySelector('.title').innerText = event.title;
 
-            wrapper.querySelector('.time').firstElementChild.innerText = event.date;
             wrapper.querySelector('.time').lastElementChild.innerText = event.time;
+            wrapper.querySelector('.time').firstElementChild.innerText = event.date;
 
             wrapper.querySelector('.location').firstElementChild.innerText = event.loc;
 
             wrapper.querySelector('.host').firstElementChild.innerText = event.host;
 
             wrapper.querySelector('.desc').firstElementChild.innerText = event.desc;
+            wrapper.querySelector('.anno').firstElementChild.innerText = event.anno;
 
             // TODO: Hide when there is no enrollment
             wrapper.querySelector('.count').innerText = event.count + ' / ' + event.total;
 
-            tmp = event.count / event.total;
-
-            window.addEventListener('load', function () {
-
+            if (window.checkLoaded()) {
                 bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
-            });
+            }
+            else {
+                window.addEventListener('load', function () {
+                    bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+                });
+            }
 
             if (event.count >= event.total) {
                 wrapper.querySelector('#btn').classList.add('inactive');

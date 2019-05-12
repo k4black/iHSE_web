@@ -225,6 +225,7 @@ function createBar() {
 /**
  * Setup linechart - credits for days
  * https://apexcharts.com/docs/installation/
+ * todo: optimize
  */
 startDay = 5;
 startMonth = 6;

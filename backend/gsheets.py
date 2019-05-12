@@ -513,7 +513,7 @@ def get_event(event_id):
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
 
     position = get(token, id_, "Events", "A1")[0][0]
-    read_values = get(token, id_, "Events", "A5:J" + position)
+    read_values = get(token, id_, "Events", "A5:K" + position)
 
     for event_raw in read_values:  # Found event by id
         if event_raw[0] == event_id:

@@ -134,6 +134,10 @@ mobileNav.addEventListener('click', function () {
             window.location.href = "http://ihse.tk/projects.html";
             break;
 
+        case "http://ihse.tk/event.html":
+            window.location.href = "http://ihse.tk/";
+            break;
+
         default:
             window.location.href = document.referrer;
             break;
