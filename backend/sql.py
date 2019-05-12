@@ -197,9 +197,10 @@ def load_events(events_list):
         cursor.execute("""
                           INSERT INTO events(id, type, title, credits, total)
                           VALUES (?, ?, ?, ?, ?); 
-                          
+                        """, (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4],))
+        cursor.execute("""
                           UPDATE events SET event_type=?, title=?, credits=?, total=? WHERE id=?; 
-                        """, (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[0]))
+                        """, (event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[0]))
     conn.commit()
 
     return
