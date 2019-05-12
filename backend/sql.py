@@ -192,7 +192,7 @@ def load_events(events_list):
 
     """
 
-    # Safe update events - save count of people 
+    # Safe update events - save count of people
     for event_obj in events_list:
         # cursor.execute("UPDATE events SET event_type=?, title=?, credits=?, total=? WHERE id=?", (event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[0], ))
 

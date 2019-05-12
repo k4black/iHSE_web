@@ -95,8 +95,8 @@ def update_cache(cache_dict):
 
     """
 
-    # SQL sync - wal checkpoint
-    sql.checkpoint()
+    # TODO: gdrive Sync itself
+    gsheets.update()
 
     # Update events
     events = gsheets.get_events()
@@ -105,9 +105,9 @@ def update_cache(cache_dict):
     # Update cache
     cache_dict = {}
 
-    # TODO: gdrive Sync itself
-    gsheets.update()
 
+    # SQL sync - wal checkpoint
+    sql.checkpoint()
 
     print('sync: ' + str(time.time()))
 
@@ -328,7 +328,7 @@ def get(env, query, cookie):
     # Manage gsheets update cache
     if env['PATH_INFO'] == '/gsheets_update_212442':
         print('/gsheets_update_212442')
-        gsheets.update()
+        update_cache()
         return
 
 
