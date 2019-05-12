@@ -41,6 +41,11 @@
     align-items: left;
 }
 
+.description .anno p:first-child {
+    color: #494949;
+    font-weight: normal;
+}
+
 .description div p:first-child {
     color: #494949;
     font-weight: bold;

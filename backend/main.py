@@ -309,6 +309,12 @@ def get(env, query, cookie):
         return get_credits(env, query, cookie)
 
 
+    # Manage gsheets update cache
+    if env['PATH_INFO'] == '/gsheets_update_212442':
+        print('/gsheets_update_212442')
+        gsheets.update()
+
+
     # Manage admin actions
     if env['PATH_INFO'][:6] == '/admin':
         return admin_panel(env, query, cookie)
