@@ -58,6 +58,7 @@ xhttp.onreadystatechange = function () {
 
             if (event.anno == undefined) {
                 wrapper.querySelector('.anno').parentElement.innerHTML = "";
+                wrapper.querySelector('.anno').parentElement.style.height = 0;
             }
             else {
                 wrapper.querySelector('.anno').firstElementChild.innerText = event.anno;
