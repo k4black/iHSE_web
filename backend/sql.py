@@ -195,7 +195,7 @@ def load_events(events_list):
     # Safe update events - save count of people
     for event_obj in events_list:
         cursor.execute("""
-                          INSERT INTO events(id, type, title, credits, total)
+                          INSERT OR IGNORE INTO events(id, type, title, credits, total)
                           VALUES (?, ?, ?, ?, ?); 
                         """, (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4],))
         cursor.execute("""
