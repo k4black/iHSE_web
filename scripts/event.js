@@ -47,8 +47,8 @@ xhttp.onreadystatechange = function () {
 
             document.querySelector('.title').innerText = event.title;
 
-            wrapper.querySelector('.time').lastElementChild.innerText = event.time;
-            wrapper.querySelector('.time').firstElementChild.innerText = event.date;
+            wrapper.querySelector('.time').firstElementChild.innerText = event.time;
+            wrapper.querySelector('.time').lastElementChild.innerText = event.date;
 
             wrapper.querySelector('.location').firstElementChild.innerText = event.loc;
 
@@ -58,14 +58,14 @@ xhttp.onreadystatechange = function () {
 
             if (event.anno == undefined) {
                 wrapper.querySelector('.anno').parentElement.innerHTML = "";
-                wrapper.querySelector('.anno').parentElement.style.height = 0;
+                wrapper.querySelector('.anno').parentElement.style.display = 'none';
             }
             else {
                 wrapper.querySelector('.anno').firstElementChild.innerText = event.anno;
             }
 
             // TODO: Hide when there is no enrollment
-            if (event.total == undefined) {
+            if (event.total == undefined || event.total == "") {
             }
             else {
                 wrapper.querySelector('.count').innerText = event.count + ' / ' + event.total;

@@ -600,7 +600,7 @@ def get_credits(env, query, cookie):
             [json_data])
 
 
-@cache
+# @cache
 def get_event(env, query):
     """ Event data HTTP request
     Get event description by event id
