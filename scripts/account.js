@@ -60,8 +60,8 @@ function loadAccount() {
                     topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
 
-                console.log(event.count +" - "+ event.total);
-                bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+                console.log(user.credits +" - "+ user.total);
+                bar.animate( user.credits / user.total );  // Number from 0.0 to 1.0
 
 
                 document.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
