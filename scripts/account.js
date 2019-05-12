@@ -5,6 +5,7 @@
  */
 
 
+// TODO: chart when 2-3 credits only
 (function(w) {
     //private variable
     var loaded = false;
@@ -59,14 +60,9 @@ function loadAccount() {
                     topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
 
-                if(window.checkLoaded()) {
-                    bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
-                } else {
-                    window.addEventListener('load', function () {
-                        bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
-                    })
-                }
-                
+                console.log(event.count +" - "+ event.total);
+                bar.animate( event.count / event.total );  // Number from 0.0 to 1.0
+
 
                 document.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
 
@@ -182,7 +178,7 @@ document.querySelector('#btn').addEventListener('click', function () {
  */
 // var ProgressBar = require('scripts/progressbar.js');
 var bar;
-if(document.readyState === 'complete') {
+if(window.checkLoaded()) {
     createBar();
 } else {
     window.addEventListener('load', function () {
