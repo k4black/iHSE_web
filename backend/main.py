@@ -328,7 +328,7 @@ def get(env, query, cookie):
     # Manage gsheets update cache
     if env['PATH_INFO'] == '/gsheets_update_212442':
         print('/gsheets_update_212442')
-        update_cache()
+        update_cache(cache_dict)
         return
 
 
