@@ -46,11 +46,16 @@ def generate_registration_codes(num, type=0):
     return rez
 
 
+cache = {'some sheep': ['data']}
+
+
 def update():
     """Update cached version of Google Sheets
     Download it from online table
 
     """
+
+
 
     # TODO: Update cache
 
@@ -62,7 +67,8 @@ def update():
 
 def update(name : str):
 
-    
+    cache['Events'] = ['new data']
+
     pass
 
 
