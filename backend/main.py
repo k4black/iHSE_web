@@ -752,7 +752,7 @@ def get_projects(env, query):
             [json_data])
 
 
-@cache
+# @cache
 def get_day(env, query):
     """ Day schedule data HTTP request
     Get day num and return html
