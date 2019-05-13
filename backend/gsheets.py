@@ -54,7 +54,17 @@ def update():
 
     # TODO: Update cache
 
+    for i in ['', '', '']:
+        update(i)
+
     pass
+
+
+def update(name : str):
+
+    
+    pass
+
 
 
 # TODO: Max Optimize gsheet api
