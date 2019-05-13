@@ -3,7 +3,7 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-
+import json
 import random
 
 
@@ -134,44 +134,155 @@ def get_day(day: str) -> list:
         
     """
 
+    day = 'Template'
+
+    try:
+        spread_cache = open('/home/ubuntu/iHSE_web/backend/' + day + '.txt', 'x')
+        print('performing API request')
+        spread_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+        token_file = open('token.pickle', 'rb')
+        creds = pickle.load(token_file)
+        service = build('sheets', 'v4', credentials=creds)
+        spread_request = service.spreadsheets().get(spreadsheetId=spread_id,
+                                                    includeGridData=True,
+                                                    ranges=day)
+        spread = spread_request.execute()
+        spread_cache.write(json.dumps(spread))
+        spread_cache.close()
+        spread_cache = open('/home/ubuntu/iHSE_web/backend/' + day + '.txt', 'rt')
+    except FileExistsError:
+        print('Loading from disk')
+        spread_cache = open('/home/ubuntu/iHSE_web/backend/' + day + '.txt', 'rt')
+
+    spreadsheet = json.loads(spread_cache.read())
+    sheet_data = spreadsheet['sheets'][0]['data'][0]
+    timetable = []
+    nextstep = True
+    row = 2
+
+    while nextstep:
+        # print('current row:', row)
+        # if current event is one-line
+        if 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][0]:
+            timetable.append({})
+            timetable[-1]['time'] = \
+            sheet_data['rowData'][row]['values'][0]['effectiveValue'][
+                'stringValue']
+            # timetable[-1]['events'] = [{'title': sheet_data['rowData'][row]['values'][1]['effectiveValue']['stringValue']}]
+            timetable[-1]['events'] = []
+            inner_step = True
+            col = 1
+            while inner_step:
+                timetable[-1]['events'].append({})
+                timetable[-1]['events'][-1]['title'] = \
+                sheet_data['rowData'][row]['values'][col]['effectiveValue'][
+                    'stringValue']
+                col += 1
+                while 'effectiveValue' not in \
+                        sheet_data['rowData'][row]['values'][col]:
+                    col += 1
+                if sheet_data['rowData'][row]['values'][col]['effectiveValue'][
+                    'stringValue'] == '.':
+                    inner_step = False
+            row += 1
+        elif 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][
+            0] and 'effectiveValue' in sheet_data['rowData'][row + 4]['values'][
+            0]:
+            timetable.append({})
+            timetable[-1]['time'] = \
+            sheet_data['rowData'][row]['values'][0]['effectiveValue'][
+                'stringValue']
+            timetable[-1]['events'] = []
+            inner_step = True
+            col = 1
+            while inner_step:
+                timetable[-1]['events'].append({})
+                timetable[-1]['events'][-1]['title'] = \
+                sheet_data['rowData'][row]['values'][col]['effectiveValue'][
+                    'stringValue']
+                if 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][
+                    col]:
+                    timetable[-1]['events'][-1]['desc'] = \
+                    sheet_data['rowData'][row + 1]['values'][col][
+                        'effectiveValue']['stringValue']
+                else:
+                    timetable[-1]['events'][-1]['desc'] = ''
+                if 'effectiveValue' in sheet_data['rowData'][row + 2]['values'][
+                    col]:
+                    timetable[-1]['events'][-1]['host'] = \
+                    sheet_data['rowData'][row + 2]['values'][col][
+                        'effectiveValue']['stringValue']
+                else:
+                    timetable[-1]['events'][-1]['host'] = ''
+                if 'effectiveValue' in sheet_data['rowData'][row + 3]['values'][
+                    col]:
+                    timetable[-1]['events'][-1]['loc'] = \
+                    sheet_data['rowData'][row + 3]['values'][col][
+                        'effectiveValue']['stringValue']
+                else:
+                    timetable[-1]['events'][-1]['loc'] = ''
+                # TODO: id
+                # TODO: type
+                col += 1
+                while 'effectiveValue' not in \
+                        sheet_data['rowData'][row]['values'][col]:
+                    col += 1
+                if sheet_data['rowData'][row]['values'][col]['effectiveValue'][
+                    'stringValue'] == '.':
+                    inner_step = False
+            row += 4
+        elif 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][
+            0] and 'effectiveValue' not in \
+                sheet_data['rowData'][row + 4]['values'][0]:
+            # last event is always for-all one-line event
+            timetable.append({})
+            timetable[-1]['time'] = \
+            sheet_data['rowData'][row]['values'][0]['effectiveValue'][
+                'stringValue']
+            timetable[-1]['events'] = [{'title': sheet_data['rowData'][row][
+                'values'][1]['effectiveValue']['stringValue']}]
+            nextstep = False
+
+    return timetable
+
     # TODO: waiting for Serova to get real day, not template
     # If modifying these scopes, delete the file token.pickle.
     # SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
-    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # TODO: MAX J32 -just for sometime, may be other
-    values = get(token, id_, 'Template', 'A1:J32')
-
-    timetable = []  # resulting timetable
-    mask = []  # selector for correct selection of GSheets verbose data
-    titleplus = 0  # selector for correct differentiation of desc, loc, name
-    for line in values[2::]:
-        if line[0] != '':
-            timetable.append({})
-            timetable[-1]['time'] = line[0]
-            timetable[-1]['events'] = []
-            mask.clear()
-            titleplus = 0
-            for index, cell in enumerate(line[1::], start=1):
-                if cell != '' and cell != '.':
-                    mask.append(index)
-                    timetable[-1]['events'].append({'title': cell})
-        else:
-            # TODO: Add correct event id
-            if titleplus == 0:
-                for pos, index in enumerate(mask):
-                    timetable[-1]['events'][pos]['desc'] = line[index]
-            elif titleplus == 1:
-                for pos, index in enumerate(mask):
-                    timetable[-1]['events'][pos]['host'] = line[index]
-                    timetable[-1]['events'][pos]['id'] = 42  # TODO: See above
-            elif titleplus == 2:
-                for pos, index in enumerate(mask):
-                    timetable[-1]['events'][pos]['loc'] = line[index]
-            titleplus += 1
-
-    return timetable
+    # token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    # id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    # # TODO: MAX J32 -just for sometime, may be other
+    # values = get(token, id_, 'Template', 'A1:J32')
+    #
+    # timetable = []  # resulting timetable
+    # mask = []  # selector for correct selection of GSheets verbose data
+    # titleplus = 0  # selector for correct differentiation of desc, loc, name
+    # for line in values[2::]:
+    #     if line[0] != '':
+    #         timetable.append({})
+    #         timetable[-1]['time'] = line[0]
+    #         timetable[-1]['events'] = []
+    #         mask.clear()
+    #         titleplus = 0
+    #         for index, cell in enumerate(line[1::], start=1):
+    #             if cell != '' and cell != '.':
+    #                 mask.append(index)
+    #                 timetable[-1]['events'].append({'title': cell})
+    #     else:
+    #         # TODO: Add correct event id
+    #         if titleplus == 0:
+    #             for pos, index in enumerate(mask):
+    #                 timetable[-1]['events'][pos]['desc'] = line[index]
+    #         elif titleplus == 1:
+    #             for pos, index in enumerate(mask):
+    #                 timetable[-1]['events'][pos]['host'] = line[index]
+    #                 timetable[-1]['events'][pos]['id'] = 42  # TODO: See above
+    #         elif titleplus == 2:
+    #             for pos, index in enumerate(mask):
+    #                 timetable[-1]['events'][pos]['loc'] = line[index]
+    #         titleplus += 1
+    #
+    # return timetable
 
 
 def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
