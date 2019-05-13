@@ -140,7 +140,7 @@ def get_day(day: str) -> list:
         spread_cache = open('/home/ubuntu/iHSE_web/backend/' + day + '.txt', 'x')
         print('performing API request')
         spread_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-        token_file = open('token.pickle', 'rb')
+        token_file = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
         creds = pickle.load(token_file)
         service = build('sheets', 'v4', credentials=creds)
         spread_request = service.spreadsheets().get(spreadsheetId=spread_id,
