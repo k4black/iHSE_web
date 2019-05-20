@@ -46,15 +46,21 @@
     font-size: 18px;
     font-weight: bold;
     color: #03053b;
+
+    min-width: 100px;
 }
 
 .project__top_line span:last-child {
     font-size: 14px;
     color: #8a8a8a;
+
+    min-width: 50px;
+    text-align: right
 }
 
 .project img {
     height: 60px;
+    width: 60px;
 }
 
 .description div {

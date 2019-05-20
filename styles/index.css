@@ -69,8 +69,12 @@ footer div {
 
 .bar {
     width: 50px;
+    min-width: 50px;
+    height: fit-content;
+    min-height: 60px;
     margin-right: 15px;
     font-size: 23px;
+    line-height: 1.3em;
 }
 
 .bar div {
@@ -95,7 +99,7 @@ footer div {
 }
 
 .event {
-    border-radius: 5px;
+    border-radius: 10px;
 
     width: 100%;
 
@@ -107,6 +111,8 @@ footer div {
     flex-direction: column;
 
     margin-bottom: 10px;
+
+    align-items: self-start;
 }
 
 .event:last-child {
@@ -125,13 +131,15 @@ footer div {
     align-items: flex-end;
 
     margin-top: 5px;
+    width: 100%;
 }
 
 .event__last_line span:first-child {
     font-size: 16px;
     font-weight: lighter;
     color: #333333;
-    width: -webkit-fill-available;
+    width: fit-content;
+    min-width: 120px;
 
     /*display: table-cell;*/
     /*vertical-align: bottom;*/
@@ -142,10 +150,13 @@ footer div {
     font-size: 14px;
     color: #8a8a8a;
     text-align: right;
-    width: 100%;
+    width: fit-content;
+    min-width: 80px;
 }
 
 .event__title {
+    width: auto;
+    min-width: 150px;
     line-height: 1em;
     font-size: 20px;
     font-weight: bold;
@@ -156,6 +167,7 @@ footer div {
     text-overflow: ellipsis;
     max-height: 2em;
     line-height: 1em;
+    width: 100%;
 }
 
 

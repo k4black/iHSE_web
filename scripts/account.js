@@ -37,6 +37,7 @@ function loadAccount() {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields name and phone
 
+                loadingEnd(); // TODO: Check
                 // console.log(this.responseText);
 
                 let user = JSON.parse(this.responseText);

@@ -1,5 +1,5 @@
 /* Main site css rules. Main button, div, img and etc design */
-
+/* TODO: Over scroll panel - remove  */
 
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import url('https://fonts.google.com/sr?family=Myriad&token=AD');
@@ -220,6 +220,58 @@ form {
 
 
     opacity: 30%;
+}
+
+
+@keyframes bg {
+    0% {
+        background-color: #bbbbbb;
+    }
+    15% {
+        background-color: #bbbbbb;
+    }
+
+    35% {
+        background-color: #d5d5d5;
+    }
+    50% {
+        background-color: #d5d5d5;
+    }
+    65% {
+        background-color: #d5d5d5;
+    }
+
+    85% {
+        background-color: #bbbbbb;
+    }
+    100% {
+        background-color: #bbbbbb;
+    }
+}
+
+
+.data__loading .loading__resource p, .data__loading .loading__resource span, .data__loading .loading__resource img, .data__loading .loading__resource .text_div, .data__loading .loading__resource .img_div  {
+    border-radius: 15px;
+    animation-name: bg;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
+
+.data__loading .loading__resource img, .data__loading .loading__resource .img_div {
+    background: #8a8a8a;
+    border-radius: 50%;
+    overflow: hidden;
+    object-position: -100px -100px;
+}
+
+.data__loading .loading__resource p>*, .data__loading .loading__resource span>* {
+    visibility: hidden;
+}
+
+.data__loading .loading__resource * {
+    color: #00000000!important;
 }
 
 

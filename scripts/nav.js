@@ -20,6 +20,15 @@
 
 
 
+function loadingEnd() {
+    // Remove loading class
+    ls = document.querySelectorAll('.data__loading');
+    for (var i = 0; i < ls.length; i++)
+        ls[i].classList.remove('data__loading');
+}
+
+
+
 /**
  * Account open management
  * OnClick rty to open account.html

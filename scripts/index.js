@@ -26,6 +26,7 @@
 
 xhttp.onreadystatechange = function() {
     if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+        loadingEnd(); // TODO: Check
 
         var day_data = JSON.parse( this.responseText );
 
@@ -37,9 +38,7 @@ xhttp.onreadystatechange = function() {
         for (let time of day_data) {
 
             time_html = '<div class="time">' +
-                '<div class="bar">' +
-                '<div>' + time.time + '</div>' +
-                '</div>' +
+                '<div class="bar">' + time.time + '</div>' +
                 '<div class="events">';
 
             for (let event of time.events) {
