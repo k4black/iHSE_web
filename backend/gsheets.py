@@ -12,6 +12,9 @@ import random
 """ ---===---==========================================---===--- """
 
 
+
+
+
 def generate_registration_codes(num, type=0):
     """ Generate registration codes by number
     Each code is a 6-characters-number-letter code
@@ -81,6 +84,20 @@ def update(name : str):
 """ ---===---==========================================---===--- """
 """            Main functions for gsheets interaction            """
 """ ---===---==========================================---===--- """
+
+
+def sync_list(list_name: str):
+        spread_cache = open('/home/ubuntu/iHSE_web/backend/' + list_name + '.txt', 'w')
+        spread_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+        token_file = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
+        creds = pickle.load(token_file)
+        service = build('sheets', 'v4', credentials=creds)
+        spread_request = service.spreadsheets().get(spreadsheetId=spread_id,
+                                                    includeGridData=True,
+                                                    ranges=list_name)
+        spread = spread_request.execute()
+        spread_cache.write(json.dumps(spread))
+        spread_cache.close()
 
 
 def get(token_path: str, sheet_id: str, list_name: str, list_range: str) -> list:
@@ -568,14 +585,29 @@ def save_credits(user_obj, event_obj):
 
     Args:
         user_obj: User object - (id, type, phone, name, pass, team, credits, avatar)
-        event_obj: Event object - (id, type, title, credits)
+        event_obj: Event object - (id, type, title, credits, date)
 
     Returns:
         state: Success or not - bool
 
     """
-
-    pass
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    pos = str(int(get(token, id_, 'Users', 'A1')[0][0]) - 1)
+    curr_data = get(token, id_, 'Users', 'A4:W' + pos)
+    target_grow, target_gcol = 0, 0
+    user_id = str(user_obj[0])
+    for index, row in enumerate(curr_data, start=4):
+        if row[0] == user_id:
+            target_grow = index
+            break
+    for index, col in enumerate(curr_data[0]):
+        if col == event_obj[4]:
+            target_gcol = index
+    target_gcol = chr(ord('A') + target_gcol)
+    curr_val = int(get(token, id_, 'Users', target_gcol + str(target_grow))[0][0])
+    curr_val += event_obj[3]
+    post(token, id_, 'Users', target_gcol + str(target_grow), [[str(curr_val)]])
 
 
 # TODO: Max update events
