@@ -66,7 +66,8 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
                     "title"	TEXT,
                     "credits"	INTEGER,
                     "count" INTEGER DEFAULT (0),
-                    "total" INTEGER
+                    "total" INTEGER,
+                    "date" TEXT
                   );
                """)
 
@@ -186,7 +187,7 @@ def load_events(events_list):
     Clear users table and sessions table and insert all users in users table
 
     Args:
-        events_list: list of event objects - [ (id, event_type, title, credits, total), ...]
+        events_list: list of event objects - [ (id, type, title, credits, total, date), ...]
 
     Returns:
 
@@ -195,9 +196,9 @@ def load_events(events_list):
     # Safe update events - save count of people
     for event_obj in events_list:
         cursor.execute("""
-                          INSERT OR IGNORE INTO events(id, type, title, credits, total)
-                          VALUES (?, ?, ?, ?, ?); 
-                        """, (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4],))
+                          INSERT OR IGNORE INTO events(id, type, title, credits, total, date)
+                          VALUES (?, ?, ?, ?, ?, ?); 
+                        """, (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[5],))
         cursor.execute("""
                           UPDATE events SET type=?, title=?, credits=?, total=? WHERE id=?; 
                         """, (event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[0]))
@@ -289,7 +290,7 @@ def get_event(event_id):
         event_id: event id from bd
 
     Returns:
-        event_obj: (id, type, title, credits, count, total)
+        event_obj: (id, type, title, credits, count, total, date)
 
     """
 
@@ -332,7 +333,7 @@ def checkin_user(user_obj, event_obj):
 
     Args:
         user_obj: (id, user_type, phone, name, pass, team, credits)
-        event_obj: (id, type, title, credits, count, total)
+        event_obj: (id, type, title, credits, count, total, date)
 
     Returns:
 

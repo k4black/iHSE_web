@@ -637,7 +637,7 @@ def get_events():
     Args:
 
     Returns:
-        events: description of the events - list [ (id, event_type, title, credits, total), ....
+        events: description of the events - list [ (id, event_type, title, credits, total, date), ....
                                                  ]
     """
 
@@ -649,7 +649,7 @@ def get_events():
 
     events = []
     for event_raw in read_values:
-        events.append( (int(event_raw[0]), event_raw[7], event_raw[1], int(event_raw[8]), int(event_raw[9])) )
+        events.append( (int(event_raw[0]), event_raw[7], event_raw[1], int(event_raw[8]), int(event_raw[9]), event_raw[3] ) )
 
     return events
     # return [(0, 'type1', 'event 1', 20, 20), (1, 'type2', 'others one ', 100, 40), (2, 'type1', 'And more one', 10, 10)]
