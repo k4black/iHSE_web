@@ -121,7 +121,9 @@ def sync():
 
     """
 
+    print('sync_start')
     update_cache()  # Sync itself
+    print('sync_end')
 
     start_sync(TIMEOUT)  # Update - to call again
 

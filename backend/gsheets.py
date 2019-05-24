@@ -43,6 +43,7 @@ def update_cache(name: str):
     # if name[2] == '.':  # TODO: on release
     if name == 'Template':
         cached_data[name] = gsheets_get_day(name)
+        print(cached_data[name])
 
     elif name == 'Projects':
         cached_data[name] = gsheets_get_projects(None)  # TODO
