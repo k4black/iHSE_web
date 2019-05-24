@@ -38,7 +38,7 @@ def update_list(name: str):
     """
 
     # if name[2] == '.':
-    if name[2] == 'Template':
+    if name == 'Template':
         cached_data[name] = gget_day(name)
     elif name == 'Projects':
         cached_data[name] = get_projects()
