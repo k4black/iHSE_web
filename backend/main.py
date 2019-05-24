@@ -35,6 +35,7 @@ def application(env, start_response):
         data: which will be transmitted
 
     """
+    print(env['REQUEST_METHOD'])
 
     # Parse query string
     query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
