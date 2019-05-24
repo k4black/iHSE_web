@@ -41,13 +41,13 @@ def update_list(name: str):
     if name == 'Template':
         cached_data[name] = gget_day(name)
     elif name == 'Projects':
-        cached_data[name] = get_projects()
+        cached_data[name] = gget_projects(None)  # TODO
     # elif name == 'Feedback':
     #     cached_data[name] = get_feedback()  # TODO
     elif name == 'Events':
         cached_data[name] = gget_events()
     elif name == 'Users':
-        cached_data[name] = get_users()
+        cached_data[name] = gget_users()
 
 
 def backup_list(list_name: str):
@@ -302,7 +302,7 @@ def gget_day(day: str) -> list:
 def gget_projects(filter_obj) -> list:
     """Updating cached projects without applying any filters
 
-    project = ()
+    project = (title, type, name, desc, annotation)
 
     :param filter_obj:
     :return:
