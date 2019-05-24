@@ -449,6 +449,8 @@ def get_day(day: str) -> list:
 
     day = 'Template'  # TODO: comment on release
 
+    print('keys: ', cached_data.keys())
+
     return cached_data[day]
 
 
