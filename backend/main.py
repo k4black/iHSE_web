@@ -294,6 +294,7 @@ def get(env, query, cookie):
         data: which will be transmitted
 
     """
+    print(env['PATH_INFO'])
 
     if env['PATH_INFO'] == '/account':
         return get_account(env, query, cookie)
