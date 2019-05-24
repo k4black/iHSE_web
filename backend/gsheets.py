@@ -42,8 +42,8 @@ def update_list(name: str):
         cached_data[name] = gget_day(name)
     elif name == 'Projects':
         cached_data[name] = get_projects()
-    elif name == 'Feedback':
-        cached_data[name] = get_feedback()
+    # elif name == 'Feedback':
+    #     cached_data[name] = get_feedback()  # TODO
     elif name == 'Events':
         cached_data[name] = gget_events()
     elif name == 'Users':
