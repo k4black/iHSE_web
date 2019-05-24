@@ -125,6 +125,8 @@ def sync(cache_dict):
 
     """
 
+    print("sync")
+
     update_cache(cache_dict)  # Sync itself
 
     start_sync(cache_dict)  # Update - to call again
@@ -144,7 +146,7 @@ def start_sync(cache_dict):
 
     """
 
-    print("starting sync")
+    print("start_sync")
 
     th = Timer(TIMEOUT, sync, [cache_dict])  # Run foo() through TIMEOUT seconds
     th.setDaemon(True)  # Can close without trouble
@@ -154,6 +156,7 @@ def start_sync(cache_dict):
 cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
 
 
+sync()  # TODO: check
 start_sync(cache_dict)  # Start sync
 
 
