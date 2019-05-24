@@ -82,11 +82,11 @@ def application(env, start_response):
 """ ---===---==========================================---===--- """
 
 
-def update_cache(cache_dict):
-    """ Update cache and sync events, projects and etc
+cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
 
-    Args:
-        cache_dict: Dict of cached requests
+
+def update_cache():
+    """ Update cache and sync events, projects and etc
 
     Note:
         Run every TIMEOUT seconds
@@ -95,7 +95,6 @@ def update_cache(cache_dict):
 
     """
 
-    # TODO: GSheets Sync itself
     gsheets.update()
 
     # Update events
@@ -103,7 +102,7 @@ def update_cache(cache_dict):
     sql.load_events(events)
 
     # Update cache
-    cache_dict = {}
+    cache_dict.clear()
 
 
     # SQL sync - wal checkpoint
@@ -112,11 +111,8 @@ def update_cache(cache_dict):
     print('sync: ' + str(time.time()))
 
 
-def sync(cache_dict):
+def sync():
     """ Update cache and sync events, projects and etc
-
-    Args:
-        cache_dict: Dict of cached requests
 
     Note:
         Run every TIMEOUT seconds
@@ -125,19 +121,17 @@ def sync(cache_dict):
 
     """
 
-    print("sync")
+    update_cache()  # Sync itself
 
-    update_cache(cache_dict)  # Sync itself
-
-    start_sync(cache_dict)  # Update - to call again
+    start_sync(TIMEOUT)  # Update - to call again
 
 
-def start_sync(cache_dict):
+def start_sync(delay):
     """ Start sync() in new thread
     This function will run every TIMEOUT seconds
 
     Args:
-        cache_dict: Dict of cached requests
+        delay: delay time before start of sync
 
     See:
         sync()
@@ -146,17 +140,12 @@ def start_sync(cache_dict):
 
     """
 
-    print("start_sync")
-
-    th = Timer(TIMEOUT, sync, [cache_dict])  # Run foo() through TIMEOUT seconds
+    th = Timer(delay, sync)  # Run foo() through TIMEOUT seconds
     th.setDaemon(True)  # Can close without trouble
     th.start()
 
 
-cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
-
-sync(cache_dict)  # TODO: check
-start_sync(cache_dict)  # Start sync
+start_sync(0)  # Start sync
 
 
 def cache(foo):
@@ -332,7 +321,7 @@ def get(env, query, cookie):
     # Manage gsheets update cache
     if env['PATH_INFO'] == '/gsheets_update_212442':
         print('/gsheets_update_212442')
-        update_cache(cache_dict)
+        update_cache()
         return
 
 
@@ -611,6 +600,8 @@ def get_credits(env, query, cookie):
 
     # Json credits data
     data = gsheets.get_credits(user_obj)
+
+    print('Credits data ', data)
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')

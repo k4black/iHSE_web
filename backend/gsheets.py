@@ -17,9 +17,10 @@ cached_data = {}  # global variable for storing parsed Spreadsheet lists
 
 
 def update():
+    """Update all cached version of Spreadsheet from online
+
     """
-    Update all cached version of Spreadsheet from online
-    """
+
     # TODO: what about reg codes?
 
     # for i in ['05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06',
@@ -28,32 +29,39 @@ def update():
     #     update_list(i)
 
     for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users']:
-        update_list(i)
+        update_cache(i)
 
 
-def update_list(name: str):
+def update_cache(name: str):
     """Update cached version of exact Spreadsheet list from online
 
-    :param name: name of list in Spreadsheet
+    Args:
+        name: name of list in Spreadsheet
+
     """
 
     # if name[2] == '.':  # TODO: on release
     if name == 'Template':
-        cached_data[name] = gget_day(name)
+        cached_data[name] = gsheets_get_day(name)
+
     elif name == 'Projects':
-        cached_data[name] = gget_projects(None)  # TODO
+        cached_data[name] = gsheets_get_projects(None)  # TODO
+
     # elif name == 'Feedback':
     #     cached_data[name] = get_feedback()  # TODO
+
     elif name == 'Events':
-        cached_data[name] = gget_events()
+        cached_data[name] = gsheets_get_events()
+
     elif name == 'Users':
-        cached_data[name] = gget_users()
+        cached_data[name] = gsheets_get_users()
 
 
-def backup_list(list_name: str):
+def backup_cache(list_name: str):
     """Backing up GSheets lists as text files on disk
 
-    :param list_name: name of Spreadsheet list to backup
+    Args: 
+        list_name: name of Spreadsheet list to backup
     """
     spread_cache = open('/home/ubuntu/iHSE_web/backend/' + list_name + '.txt', 'w')
     spread_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
@@ -127,7 +135,7 @@ def post(token_path: str, sheet_id: str, list_name: str, list_range: str, values
 """ ---===---===========================================---===--- """
 
 
-def gget_day(day: str) -> list:
+def gsheets_get_day(day: str) -> list:
     """Get timetable from Spreadsheet and return parsed
 
     Args:
@@ -243,13 +251,15 @@ def gget_day(day: str) -> list:
     # TODO: waiting for Serova to get real day, not template
 
 
-def gget_projects(filter_obj) -> list:
+def gsheets_get_projects(filter_obj) -> list:
     """Updating cached projects without applying any filters
 
     project = (title, type, name, desc, annotation)
 
-    :param filter_obj:
-    :return: list of projects satisfying filter condition
+    Args: 
+         filter_obj:
+    Returns: 
+        : list of projects satisfying filter condition
     """
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
@@ -297,7 +307,7 @@ def get_feedback(day: str):  # TODO: rename
     return dayname, events
 
 
-def gget_events():
+def gsheets_get_events():
     """Get events from Spreadsheet
 
     Args:
@@ -327,7 +337,7 @@ def gget_events():
     return events
 
 
-def gget_users():
+def gsheets_get_users():
     """ Get list of users from Spreadsheet
 
     Returns:
@@ -385,8 +395,10 @@ def update_events():
 def get_day(day: str) -> list:
     """Return cached copy of needed day
 
-    :param day: name of the day requested
-    :return: parsed timetable for the needed day
+    Args: 
+         day: name of the day requested
+    Returns: 
+        : parsed timetable for the needed day
     """
 
     day = 'Template'  # TODO: comment on release
@@ -397,7 +409,8 @@ def get_day(day: str) -> list:
 def get_events() -> list:
     """Return cached copy of all events
 
-    :return: list of parsed events
+    Returns: 
+        : list of parsed events
     """
     return cached_data['Events']
 
@@ -425,6 +438,7 @@ def get_event(event_id: int):
                            event[3],
                            event[4])
             return total_event
+
     return None
 
 
@@ -448,6 +462,7 @@ def get_projects() -> list:
 
              (TODO later: return None if no one)
     """
+
     return cached_data['Projects']
 
 
@@ -495,8 +510,11 @@ def get_credits(user_obj):
 def get_users() -> list:
     """Return cached copy of all users
 
-    :return: list of all users
+    Returns: 
+        : list of all users
+
     """
+
     return cached_data['Users']
 
 
@@ -548,7 +566,8 @@ def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
 
     response = post(token, id_, "Feedback", "A1", [[int(position) + 3]])
     # print('{0} cells updated.'.format(update_response.get('updatedCells')))
-    update_list('Feedback')
+
+    update_cache('Feedback')
     return True
 
 
