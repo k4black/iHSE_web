@@ -156,7 +156,7 @@ def start_sync(cache_dict):
 cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
 
 
-sync()  # TODO: check
+sync(cache_dict)  # TODO: check
 start_sync(cache_dict)  # Start sync
 
 
