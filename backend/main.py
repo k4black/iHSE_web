@@ -144,6 +144,8 @@ def start_sync(cache_dict):
 
     """
 
+    print("starting sync")
+
     th = Timer(TIMEOUT, sync, [cache_dict])  # Run foo() through TIMEOUT seconds
     th.setDaemon(True)  # Can close without trouble
     th.start()
