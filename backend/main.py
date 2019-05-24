@@ -149,6 +149,7 @@ def start_sync(delay):
 
 
 start_sync(0)  # Start sync
+print('There')
 
 
 def cache(foo):
