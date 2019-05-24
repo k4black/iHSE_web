@@ -772,6 +772,8 @@ def get_day(env, query):
 
     data = gsheets.get_day(day)  # getting pseudo-json here
 
+    print('get_day', data)
+
     json_data = json.dumps(data)  # creating real json here
     json_data = json_data.encode('utf-8')
 
