@@ -39,6 +39,7 @@ def update_cache(name: str):
         name: name of list in Spreadsheet
 
     """
+    print('Update cache ', name)
 
     # if name[2] == '.':  # TODO: on release
     if name == 'Template':
