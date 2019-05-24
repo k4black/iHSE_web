@@ -155,7 +155,6 @@ def start_sync(cache_dict):
 
 cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
 
-
 sync(cache_dict)  # TODO: check
 start_sync(cache_dict)  # Start sync
 
@@ -743,7 +742,7 @@ def get_projects(env, query):
 
     """
 
-    data = gsheets.get_projects(None)
+    data = gsheets.get_projects()
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
