@@ -144,7 +144,7 @@ def start_sync(delay):
     """
 
     th = Timer(delay, sync)  # Run foo() through TIMEOUT seconds
-    th.setDaemon(True)  # Can close without trouble
+    # th.setDaemon(True)  # Can close without trouble
     th.start()
 
 
