@@ -31,6 +31,8 @@ def update():
     for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users']:
         update_cache(i)
 
+    print(cached_data)
+
 
 def update_cache(name: str):
     """Update cached version of exact Spreadsheet list from online
@@ -463,7 +465,7 @@ def get_projects() -> list:
 
              (TODO later: return None if no one)
     """
-
+    print(cached_data)
     return cached_data['Projects']
 
 
