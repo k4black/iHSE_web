@@ -95,7 +95,7 @@ def update_cache(cache_dict):
 
     """
 
-    # TODO: gdrive Sync itself
+    # TODO: GSheets Sync itself
     gsheets.update()
 
     # Update events
