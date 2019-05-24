@@ -22,9 +22,12 @@ def update():
     """
     # TODO: Update cache, what about reg codes?
 
-    for i in ['05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06',
-              '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06',
-              'Events', 'Feedback', 'Projects', 'Users']:
+    # for i in ['05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06',
+    #           '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06',
+    #           'Events', 'Feedback', 'Projects', 'Users']:
+    #     update_list(i)
+
+    for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users']:
         update_list(i)
 
 
@@ -34,7 +37,8 @@ def update_list(name: str):
     :param name: name of list in Spreadsheet
     """
 
-    if name[2] == '.':
+    # if name[2] == '.':
+    if name[2] == 'Template':
         cached_data[name] = gget_day(name)
     elif name == 'Projects':
         cached_data[name] = get_projects()
@@ -144,7 +148,7 @@ def gget_day(day: str) -> list:
         'oblig': {'blue': 0.7176471, 'green': 0.7176471, 'red': 0.7176471}
     }
 
-    day = 'Template'
+    day = 'Template'  # TODO comment on release
 
     # try:
     #     spread_cache = open('/home/ubuntu/iHSE_web/backend/' + day + '.txt', 'x')
@@ -442,6 +446,9 @@ def get_day(day: str) -> list:
     :param day: name of the day requested
     :return: parsed timetable for the needed day
     """
+
+    day = 'Template'  # TODO: comment on release
+
     return cached_data[day]
 
 
