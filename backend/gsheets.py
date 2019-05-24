@@ -20,7 +20,7 @@ def update():
     """
     Update all cached version of Spreadsheet from online
     """
-    # TODO: Update cache, what about reg codes?
+    # TODO: what about reg codes?
 
     # for i in ['05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06',
     #           '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06',
@@ -37,7 +37,7 @@ def update_list(name: str):
     :param name: name of list in Spreadsheet
     """
 
-    # if name[2] == '.':
+    # if name[2] == '.':  # TODO: on release
     if name == 'Template':
         cached_data[name] = gget_day(name)
     elif name == 'Projects':
@@ -68,8 +68,6 @@ def backup_list(list_name: str):
     spread_cache.close()
 
 
-# TODO: Max Optimize gsheets api
-# TODO: Max Refactoring and comment
 # TODO: Check post by position - if 2 write in one time
 
 
@@ -149,24 +147,6 @@ def gget_day(day: str) -> list:
     }
 
     day = 'Template'  # TODO comment on release
-
-    # try:
-    #     spread_cache = open('/home/ubuntu/iHSE_web/backend/' + day + '.txt', 'x')
-    #     print('performing API request')
-    #     spread_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    #     token_file = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
-    #     creds = pickle.load(token_file)
-    #     service = build('sheets', 'v4', credentials=creds)
-    #     spread_request = service.spreadsheets().get(spreadsheetId=spread_id,
-    #                                                 includeGridData=True,
-    #                                                 ranges=day)
-    #     spread = spread_request.execute()
-    #     spread_cache.write(json.dumps(spread))
-    #     spread_cache.close()
-    #     spread_cache = open('/home/ubuntu/iHSE_web/backend/' + day + '.txt', 'rt')
-    # except FileExistsError:
-    #     print('Loading from disk')
-    #     spread_cache = open('/home/ubuntu/iHSE_web/backend/' + day + '.txt', 'rt')
 
     spread_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     token_file = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
@@ -250,8 +230,8 @@ def gget_day(day: str) -> list:
                     inner_step = False
             row += 4
         # if event is last (and it is automatically one-line
-        elif 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][
-            0] and 'effectiveValue' not in sheet_data['rowData'][row + 4]['values'][0]:
+        elif 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][0] and \
+                'effectiveValue' not in sheet_data['rowData'][row + 4]['values'][0]:
             # last event is always for-all one-line event
             timetable.append({})
             timetable[-1]['time'] = sheet_data['rowData'][row]['values'][0]['effectiveValue']['stringValue']
@@ -261,42 +241,6 @@ def gget_day(day: str) -> list:
     return timetable
 
     # TODO: waiting for Serova to get real day, not template
-    # If modifying these scopes, delete the file token.pickle.
-    # SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-
-    # token = '/home/ubuntu/iHSE_web/backend/token.pickle'
-    # id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # values = get(token, id_, 'Template', 'A1:J32')
-    #
-    # timetable = []  # resulting timetable
-    # mask = []  # selector for correct selection of GSheets verbose data
-    # titleplus = 0  # selector for correct differentiation of desc, loc, name
-    # for line in values[2::]:
-    #     if line[0] != '':
-    #         timetable.append({})
-    #         timetable[-1]['time'] = line[0]
-    #         timetable[-1]['events'] = []
-    #         mask.clear()
-    #         titleplus = 0
-    #         for index, cell in enumerate(line[1::], start=1):
-    #             if cell != '' and cell != '.':
-    #                 mask.append(index)
-    #                 timetable[-1]['events'].append({'title': cell})
-    #     else:
-    #         # TODO: Add correct event id
-    #         if titleplus == 0:
-    #             for pos, index in enumerate(mask):
-    #                 timetable[-1]['events'][pos]['desc'] = line[index]
-    #         elif titleplus == 1:
-    #             for pos, index in enumerate(mask):
-    #                 timetable[-1]['events'][pos]['host'] = line[index]
-    #                 timetable[-1]['events'][pos]['id'] = 42  # TODO: See above
-    #         elif titleplus == 2:
-    #             for pos, index in enumerate(mask):
-    #                 timetable[-1]['events'][pos]['loc'] = line[index]
-    #         titleplus += 1
-    #
-    # return timetable
 
 
 def gget_projects(filter_obj) -> list:
@@ -305,7 +249,7 @@ def gget_projects(filter_obj) -> list:
     project = (title, type, name, desc, annotation)
 
     :param filter_obj:
-    :return:
+    :return: list of projects satisfying filter condition
     """
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
@@ -324,7 +268,7 @@ def gget_projects(filter_obj) -> list:
     return projects
 
 
-def get_feedback(day: str):
+def get_feedback(day: str):  # TODO: rename
     """Get description of day for feedback in Spreadsheet
     Create new user if it does not exist  # TODO what?
     Save in table id, name, phone type and team  # TODO what?
@@ -333,7 +277,7 @@ def get_feedback(day: str):
         day: num of the day - 'DD.MM'
 
     Returns:
-        (title, [event1, event2, event3])  #  TODO later: or None if already done
+        (title, [event1, event2, event3])  #  TODO later: return None if already done
 
     """
 
@@ -353,7 +297,6 @@ def get_feedback(day: str):
     return dayname, events
 
 
-# TODO: Max get events - optimize
 def gget_events():
     """Get events from Spreadsheet
 
@@ -388,7 +331,7 @@ def gget_users():
     """ Get list of users from Spreadsheet
 
     Returns:
-        state: Read users # TODO: Comment
+        state: Read users # TODO: clarify user representation (SQL?)
 
     """
 
@@ -396,7 +339,6 @@ def gget_users():
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     position = str(int(get(token, id_, "Users", "A1")[0][0]) - 1)
     read_values = get(token, id_, "Users", "A5:H" + position)
-    # TODO: parse?
     users = []
     for row in read_values:
         users.append({})
@@ -449,8 +391,6 @@ def get_day(day: str) -> list:
 
     day = 'Template'  # TODO: comment on release
 
-    print('keys: ', cached_data.keys())
-
     return cached_data[day]
 
 
@@ -471,15 +411,6 @@ def get_event(event_id: int):
     Returns:
         event: description of the event - (id, title, time, date, location, host, description, type, credits, total), ....
     """
-
-    # token = '/home/ubuntu/iHSE_web/backend/token.pickle'
-    # id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # position = get(token, id_, "Events", "A1")[0][0]
-    # read_values = get(token, id_, "Events", "A5:K" + position)
-    #
-    # for event_raw in read_values:  # Found event by id
-    #     if event_raw[0] == event_id:
-    #         return event_raw
 
     for event in cached_data['Events']:
         if event[0] == event_id:
@@ -503,7 +434,7 @@ def get_projects() -> list:
     Save in table id, name, phone type and team
 
     Args:
-        filter_obj: filter what we should return - (Name, type, name)   # TODO later
+        filter_obj: filter what we should return - (title, type, name)   # TODO later
 
     Returns:
         List of projects obj:
@@ -515,14 +446,14 @@ def get_projects() -> list:
                  "anno": string
                  }, .........  ]
 
-             (TODO later: or None if no one)
+             (TODO later: return None if no one)
     """
     return cached_data['Projects']
 
 
 # TODO: Max get credits chart - optimize
 def get_credits(user_obj):
-    """ Get credits data from google sheets
+    """Get credits data from google sheets
 
     Args:
         user_obj: User object - (id, type, phone, name, pass, team, credits, avatar)
@@ -567,6 +498,11 @@ def get_users() -> list:
     :return: list of all users
     """
     return cached_data['Users']
+
+
+""" ---===---==========================================---===--- """
+"""         High-level functions for posting needed data         """
+""" ---===---==========================================---===--- """
 
 
 def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
@@ -685,7 +621,6 @@ def save_project(user_obj, project_data):
                                   "Projects",
                                   "A" + position + ":E" + position,
                                   values)
-    # print('{0} cells updated.'.format(write_response.get('updatedCells')))
 
     # updating next writing position
     update_response = post(token,
@@ -693,7 +628,6 @@ def save_project(user_obj, project_data):
                                    "Projects",
                                    "A1",
                                    [[int(position) + 1]])
-    # print('{0} cells updated.'.format(update_response.get('updatedCells')))
 
     return True  # TODO: check GSheetsAPI how to track success
 
