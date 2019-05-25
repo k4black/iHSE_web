@@ -117,7 +117,9 @@ if (sidebar != null) {
  * Logout button
  * Send http POST request to clear session id
  */
-document.querySelector('.mobile__item__logout').addEventListener('click', function () {
+var logout = document.querySelector('.mobile__item__logout');
+if (logout != null)
+logout.addEventListener('click', function () {
 
     var xhttp = new XMLHttpRequest();
 
