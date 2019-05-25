@@ -17,7 +17,7 @@ test_data = {}
 """ ---===---============================================---===--- """
 
 
-def update(gcache):
+def update():
     """Update all cached version of Spreadsheet from online
 
     """
@@ -32,7 +32,7 @@ def update(gcache):
     #           'Events', 'Feedback', 'Projects', 'Users']:
     #     update_list(i)
 
-    cached_data = gcache
+    # cached_data = gcache
 
     for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users']:
         update_cache(i)

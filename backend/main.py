@@ -88,7 +88,7 @@ def application(env, start_response):
 cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
 
 
-def update_cache(cache, gcache):
+def update_cache():
     """ Update cache and sync events, projects and etc
 
     Note:
@@ -98,17 +98,18 @@ def update_cache(cache, gcache):
 
     """
 
-    gsheets.update(gcache)
+    gsheets.update()
     print('t1', gsheets.test_data)
 
-    cache_dict[3] = '3333'
+
 
     # Update events
     events = gsheets.get_events()
     sql.load_events(events)
 
     # Update cache
-    cache.clear()
+    cache_dict.clear()
+    cache_dict[3] = '3333'
 
 
     # SQL sync - wal checkpoint
@@ -117,7 +118,7 @@ def update_cache(cache, gcache):
     print('sync: ' + str(time.time()))
 
 
-def sync(cache, gcache):
+def sync():
     """ Update cache and sync events, projects and etc
 
     Note:
@@ -128,13 +129,13 @@ def sync(cache, gcache):
     """
 
     print('sync_start')
-    update_cache(cache, gcache)  # Sync itself
+    update_cache()  # Sync itself
     print('sync_end')
 
-    start_sync(TIMEOUT, cache, gcache)  # Update - to call again
+    start_sync(TIMEOUT)  # Update - to call again
 
 
-def start_sync(delay, cache, gcache):
+def start_sync(delay):
     """ Start sync() in new thread
     This function will run every TIMEOUT seconds
 
@@ -148,12 +149,12 @@ def start_sync(delay, cache, gcache):
 
     """
 
-    th = Timer(delay, sync, [cache, gcache])  # Run foo() through TIMEOUT seconds
+    th = Timer(delay, sync)  # Run foo() through TIMEOUT seconds
     th.setDaemon(True)  # Can close without trouble
     th.start()
 
 
-start_sync(0, cache_dict, gsheets.cached_data)  # Start sync
+start_sync(0)  # Start sync
 print('There')
 
 
