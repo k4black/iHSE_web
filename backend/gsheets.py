@@ -296,7 +296,7 @@ def gsheets_get_feedback() -> dict:
     col = 3
     feedback = {}
 
-    while col < len(values[2]-1):
+    while col < len(values[2])-1:
         if values[1][col] != '':
             feedback[values[1][col]] = (values[0][col], [values[2][col+2], values[2][col+3], values[2][col+4]])
         col += 1
