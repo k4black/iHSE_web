@@ -22,6 +22,7 @@ def update(gcache):
 
     """
 
+    global cached_data
     test_data['Events'] = "TEST"
 
     # TODO: what about reg codes?
@@ -31,11 +32,13 @@ def update(gcache):
     #           'Events', 'Feedback', 'Projects', 'Users']:
     #     update_list(i)
 
+    cached_data = gcache
+
     for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users']:
-        update_cache(gcache, i)
+        update_cache(i)
 
 
-def update_cache(cached_data, name: str):
+def update_cache(name: str):
     """Update cached version of exact Spreadsheet list from online
 
     Args:
@@ -43,7 +46,7 @@ def update_cache(cached_data, name: str):
 
     """
 
-    global test_data
+    global cached_data
 
     # if name[2] == '.':  # TODO: on release
     if name == 'Template':
