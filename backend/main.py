@@ -36,9 +36,6 @@ def application(env, start_response):
 
     """
 
-    print('t2', gsheets.test_data)
-    print(env['REQUEST_METHOD'])
-
     # Parse query string
     query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
 
@@ -99,9 +96,6 @@ def update_cache():
     """
 
     gsheets.update()
-    print('t1', gsheets.test_data)
-
-
 
     # Update events
     events = gsheets.get_events()
@@ -109,7 +103,6 @@ def update_cache():
 
     # Update cache
     cache_dict.clear()
-    cache_dict[3] = '3333'
 
 
     # SQL sync - wal checkpoint
@@ -155,7 +148,6 @@ def start_sync(delay):
 
 
 start_sync(0)  # Start sync
-print('There')
 
 
 def cache(foo):
