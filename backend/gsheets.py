@@ -8,6 +8,7 @@ import random
 
 
 cached_data = {}  # global variable for storing parsed Spreadsheet lists
+test_data = {}
 
 
 """ ---===---============================================---===--- """
@@ -17,7 +18,10 @@ cached_data = {}  # global variable for storing parsed Spreadsheet lists
 
 
 def update():
-    """Update all cached version of Spreadsheet from online"""
+    """Update all cached version of Spreadsheet from online
+
+    """
+    test_data[2] = "2222222"
 
     # TODO: what about reg codes?
 
