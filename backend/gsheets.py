@@ -21,7 +21,7 @@ def update():
     """Update all cached version of Spreadsheet from online
 
     """
-    test_data['Projects'] = "2222222"
+
     test_data['Events'] = "TEST"
 
     # TODO: what about reg codes?
@@ -33,8 +33,6 @@ def update():
 
     for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users']:
         update_cache(i)
-
-    print(cached_data)
 
 
 def update_cache(name: str):
@@ -52,6 +50,7 @@ def update_cache(name: str):
 
     elif name == 'Projects':
         cached_data[name] = gsheets_get_projects(None)  # TODO
+        test_data[name] = 'TESTING'
 
     # elif name == 'Feedback':
     #     cached_data[name] = get_feedback()  # TODO
