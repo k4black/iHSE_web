@@ -101,6 +101,8 @@ def update_cache():
     gsheets.update()
     print('t1', gsheets.test_data)
 
+    cache_dict[3] = '3333'
+
     # Update events
     events = gsheets.get_events()
     sql.load_events(events)
@@ -299,6 +301,7 @@ def get(env, query, cookie):
         data: which will be transmitted
 
     """
+    print('CHAHAHSH', cache_dict)
     print(env['PATH_INFO'])
 
     if env['PATH_INFO'] == '/account':
