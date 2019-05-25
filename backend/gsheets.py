@@ -17,11 +17,13 @@ test_data = {}
 """ ---===---============================================---===--- """
 
 
-def update():
+def update(gcache):
     """Update all cached version of Spreadsheet from online
 
     """
-    test_data[2] = "2222222"
+
+    global cached_data
+    test_data['Events'] = "TEST"
 
     # TODO: what about reg codes?
 
@@ -30,10 +32,10 @@ def update():
     #           'Events', 'Feedback', 'Projects', 'Users']:
     #     update_list(i)
 
+    cached_data = gcache
+
     for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users']:
         update_cache(i)
-
-    print(cached_data)
 
 
 def update_cache(name: str):
@@ -43,7 +45,8 @@ def update_cache(name: str):
         name: name of list in Spreadsheet
 
     """
-    print('Update cache ', name)
+
+    global cached_data
 
     # if name[2] == '.':  # TODO: on release
     if name == 'Template':
@@ -51,6 +54,7 @@ def update_cache(name: str):
 
     elif name == 'Projects':
         cached_data[name] = gsheets_get_projects(None)  # TODO
+        test_data[name] = 'TESTING'
 
     # elif name == 'Feedback':
     #     cached_data[name] = get_feedback()  # TODO
@@ -463,6 +467,8 @@ def get_projects() -> list:
                  "anno": string
                  }, .........  ]
     """
+
+    print(test_data)
     return cached_data['Projects']
 
 
