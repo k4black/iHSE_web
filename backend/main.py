@@ -35,6 +35,8 @@ def application(env, start_response):
         data: which will be transmitted
 
     """
+
+    print('t2', gsheets.test_data)
     print(env['REQUEST_METHOD'])
 
     # Parse query string
@@ -97,6 +99,7 @@ def update_cache():
     """
 
     gsheets.update()
+    print('t1', gsheets.test_data)
 
     # Update events
     events = gsheets.get_events()
@@ -420,7 +423,7 @@ def admin_panel(env, query, cookie):
 
     if env['PATH_INFO'] == '/admin_update':
 
-        gsheets.update_events()
+        gsheets.parse_events()
 
         return ('200 OK',
                 [('Access-Control-Allow-Origin', '*')],
