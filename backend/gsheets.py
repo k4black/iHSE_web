@@ -17,7 +17,7 @@ test_data = {}
 """ ---===---============================================---===--- """
 
 
-def update():
+def update(gcache):
     """Update all cached version of Spreadsheet from online
 
     """
@@ -32,18 +32,17 @@ def update():
     #     update_list(i)
 
     for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users']:
-        update_cache(i)
+        update_cache(gcache, i)
 
 
-def update_cache(name: str):
+def update_cache(cached_data, name: str):
     """Update cached version of exact Spreadsheet list from online
 
     Args:
         name: name of list in Spreadsheet
 
     """
-    print('Update cache ', name)
-    global cached_data
+
     global test_data
 
     # if name[2] == '.':  # TODO: on release
