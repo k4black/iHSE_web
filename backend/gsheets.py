@@ -179,34 +179,23 @@ def gsheets_get_day(day: str) -> list:
         # if current event is one-line and not last
         if 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][0]:
             timetable.append({})
-            timetable[-1]['time'] = \
-            sheet_data['rowData'][row]['values'][0]['effectiveValue'][
-                'stringValue']
-            # timetable[-1]['events'] = [{'title': sheet_data['rowData'][row]['values'][1]['effectiveValue']['stringValue']}]
+            timetable[-1]['time'] = sheet_data['rowData'][row]['values'][0]['effectiveValue']['stringValue']
             timetable[-1]['events'] = []
             inner_step = True
             col = 1
             while inner_step:
                 timetable[-1]['events'].append({})
-                timetable[-1]['events'][-1]['title'] = \
-                sheet_data['rowData'][row]['values'][col]['effectiveValue'][
-                    'stringValue']
+                timetable[-1]['events'][-1]['title'] = sheet_data['rowData'][row]['values'][col]['effectiveValue']['stringValue']
                 col += 1
-                while 'effectiveValue' not in \
-                        sheet_data['rowData'][row]['values'][col]:
+                while 'effectiveValue' not in sheet_data['rowData'][row]['values'][col]:
                     col += 1
-                if sheet_data['rowData'][row]['values'][col]['effectiveValue'][
-                    'stringValue'] == '.':
+                if sheet_data['rowData'][row]['values'][col]['effectiveValue']['stringValue'] == '.':
                     inner_step = False
             row += 1
         # if current event is multiline and not last
-        elif 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][
-            0] and 'effectiveValue' in sheet_data['rowData'][row + 4]['values'][
-            0]:
+        elif 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][0] and 'effectiveValue' in sheet_data['rowData'][row + 4]['values'][0]:
             timetable.append({})
-            timetable[-1]['time'] = \
-            sheet_data['rowData'][row]['values'][0]['effectiveValue'][
-                'stringValue']
+            timetable[-1]['time'] = sheet_data['rowData'][row]['values'][0]['effectiveValue']['stringValue']
             timetable[-1]['events'] = []
             inner_step = True
             col = 1
@@ -253,8 +242,6 @@ def gsheets_get_day(day: str) -> list:
 
     return timetable
 
-    # TODO: waiting for Serova to get real day, not template
-
 
 def gsheets_get_projects(filter_obj) -> list:
     """Updating cached projects without applying any filters
@@ -292,7 +279,7 @@ def get_feedback(day: str):  # TODO: rename
         day: num of the day - 'DD.MM'
 
     Returns:
-        (title, [event1, event2, event3])  #  TODO later: return None if already done
+        (title, [event1, event2, event3])  # TODO later: return None if already done
 
     """
 
@@ -318,8 +305,7 @@ def gsheets_get_events():
     Args:
 
     Returns:
-        events: description of the events - list [ (id, type, title, credits, total, date, loc, host, desc, time), ...
-                                                 ]
+        events: description of the events - list [ (id, type, title, credits, total, date, loc, host, desc, time), ... ]
     """
 
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
@@ -343,17 +329,18 @@ def gsheets_get_events():
 
 
 def gsheets_get_users():
-    """ Get list of users from Spreadsheet
+    """Get list of users from Spreadsheet
 
     Returns:
         state: Read users # TODO: clarify user representation (SQL?)
-
     """
+
+    iHSE_length = 14
 
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     position = str(int(get(token, id_, "Users", "A1")[0][0]) - 1)
-    read_values = get(token, id_, "Users", "A5:H" + position)
+    read_values = get(token, id_, "Users", "A5:W" + position)
     users = []
     for row in read_values:
         users.append({})
@@ -361,10 +348,21 @@ def gsheets_get_users():
         users[-1]['type'] = row[1]
         users[-1]['phone'] = row[2]
         users[-1]['name'] = row[3]
+        users[-1]['pass'] = row[4]
         users[-1]['team'] = row[5]
         users[-1]['credits'] = row[6]
         users[-1]['avatar'] = row[7]
-        # TODO: parse credits?
+        users[-1]['credits_list'] = []
+        if len(row) == 8:
+            pres_creds_len = 0
+        else:
+            pres_creds_len = len(row) - 9
+        tmp = 9
+        for i in range(pres_creds_len):
+            users[-1]['credits_list'].append(int(row[tmp]))
+            tmp += 1
+        for i in range(iHSE_length - pres_creds_len):
+            users[-1]['credits_list'].append(None)
     return read_values
 
 
@@ -464,17 +462,13 @@ def get_projects() -> list:
                  "desc": string,
                  "anno": string
                  }, .........  ]
-
-             (TODO later: return None if no one)
     """
-    print(cached_data)
 
     print(test_data)
     return cached_data['Projects']
 
 
-# TODO: Max get credits chart - optimize
-def get_credits(user_obj):
+def get_credits(user_obj) -> list:
     """Get credits data from google sheets
 
     Args:
@@ -485,44 +479,29 @@ def get_credits(user_obj):
 
     """
 
-    print('Get credits for user1: ', user_obj)
-
-    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
-    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-
-    position = get(token, id_, "Users", "A1")[0][0]
-    read_values = get(token, id_, "Users", "A5:W" + position)
-
-    for user_raw in read_values:  # Found user by id
-        print('    Checking: ', user_raw)
-
-        if int(user_raw[0]) == user_obj[0]:
-            print('Get credits for user2: ', user_raw)
-
-            data = {}
-            data['total'] = int(user_raw[6])
-
-            # if user_raw[6] == 0:
-            if len(user_raw) <= 9:
-                data['data'] = []
-            else:
-                data['data'] = [int(user_raw[i]) for i in range(9, len(user_raw))]
-
-            return data
-
-    return None
-    # return {'total': 122, 'data': [30, 41, 35, 51, 49, 62, 69, 83, 36, 84, 90, 20, 21]}
+    for user in cached_data['Users']:
+        if user['id'] == user_obj[0]:
+            return user['credits_list']
 
 
 def get_users() -> list:
     """Return cached copy of all users
 
-    Returns: 
-        : list of all users
-
+    Returns:
+        : list of all users, user represented as LIST according to Spreadsheet
     """
 
-    return cached_data['Users']
+    users_list = []
+    for user in cached_data['Users']:
+        users_list.append((user['id'],
+                           user['type'],
+                           user['phone'],
+                           user['name'],
+                           user['pass'],
+                           user['team'],
+                           user['credits'],
+                           user['avatar']))
+    return users_list
 
 
 """ ---===---==========================================---===--- """
@@ -594,24 +573,16 @@ def save_users(users_list):
     position = get(token, id_, "Users", "A1")[0][0]
     for i in range(len(users_list)):
         data = [[users_list[i][0],
-                            users_list[i][1],
-                            users_list[i][2],
-                            users_list[i][3],
-                            users_list[i][4],
-                            users_list[i][5],
-                            users_list[i][6],
-                            users_list[i][7]]]
-        write_response = post(token,
-                                      id_,
-                                      "Users",
-                                      "A" + str(5+i) + ":I" + str(5+i),
-                                      data)
+                 users_list[i][1],
+                 users_list[i][2],
+                 users_list[i][3],
+                 users_list[i][4],
+                 users_list[i][5],
+                 users_list[i][6],
+                 users_list[i][7]]]
+        write_response = post(token, id_, "Users", "A" + str(5+i) + ":I" + str(5+i), data)
 
-    response = post(token,
-                            id_,
-                            "Users",
-                            "A1",
-                            [[int(position) + len(users_list)]])
+    response = post(token, id_, "Users", "A1", [[int(position) + len(users_list)]])
 
 
 
@@ -642,18 +613,8 @@ def save_project(user_obj, project_data):
     position = get(token, id_, "Projects", "A1")[0][0]
 
     values = [[project_data['title'], project_data['type'], str(project_data['name']), project_data['desc'], project_data['anno']]]
-    write_response = post(token,
-                                  id_,
-                                  "Projects",
-                                  "A" + position + ":E" + position,
-                                  values)
-
-    # updating next writing position
-    update_response = post(token,
-                                   id_,
-                                   "Projects",
-                                   "A1",
-                                   [[int(position) + 1]])
+    write_response = post(token, id_, "Projects", "A" + position + ":E" + position, values)
+    update_response = post(token, id_, "Projects", "A1", [[int(position) + 1]])
 
     return True  # TODO: check GSheetsAPI how to track success
 
@@ -714,13 +675,13 @@ def generate_codes(users, hosts, admins):
     pass
 
 
-def generate_registration_codes(num, type=0):
+def generate_registration_codes(num, type_=0):
     """ Generate registration codes by number
     Each code is a 6-characters-number-letter code
 
     Args:
         num: Number of codes
-        type: Type of user [0, 1, 2, 3]
+        type_: Type of user [0, 1, 2, 3]
 
     Returns:
         Codes: 6-characters-number-letter code - list [string, ...]
@@ -741,7 +702,7 @@ def generate_registration_codes(num, type=0):
                symbols[i // size] + \
                symbols[i % size] + \
                symbols[i * i % size] + \
-               symbols[(type % (size // 5) + 1) * random.randint(0, size // 5)]
+               symbols[(type_ % (size // 5) + 1) * random.randint(0, size // 5)]
 
         rez.append(code)
 
@@ -772,10 +733,7 @@ def check_code(code: str):
         if code_line[0] == code and code_line[2] == '0':
             user_type = int(code_line[1])
 
-            update_response = post(token, id_,
-                                   "Codes",
-                                   "C" + str(index),
-                                   [[1]])
+            update_response = post(token, id_, "Codes", "C" + str(index), [[1]])
             reg_allowed = True
             break
 
