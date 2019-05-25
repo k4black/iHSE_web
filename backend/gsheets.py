@@ -43,6 +43,8 @@ def update_cache(name: str):
 
     """
     print('Update cache ', name)
+    global cached_data
+    global test_data
 
     # if name[2] == '.':  # TODO: on release
     if name == 'Template':
