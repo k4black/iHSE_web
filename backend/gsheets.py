@@ -467,6 +467,7 @@ def get_projects() -> list:
                  "anno": string
                  }, .........  ]
     """
+    global cached_data
 
     print(test_data)
     return cached_data['Projects']
