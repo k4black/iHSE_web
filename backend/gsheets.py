@@ -294,20 +294,18 @@ def gsheets_get_feedback() -> dict:
     values = get(token, id_, 'Feedback', 'A3:M5')  # TODO: update M for all days
 
     col = 3
+    day_number = 0
     feedback = {}
 
-    while col < len(values[2])-1:
+    while col < len(values[1])-1:
         if values[1][col] != '':
-            feedback[values[1][col]] = (values[0][col], [values[2][col+2], values[2][col+3], values[2][col+4]])
+            title = values[0][col]
+            pos = 3 + 5 * day_number
+            events = [values[2][pos+2], values[2][pos+3], values[2][pos+4]]
+            feedback[values[1][col]] = (title, events)
+            day_number += 1
         col += 1
 
-    # for day in days_list:
-    #     for index, value in enumerate(values[1]):
-    #         if value == day:
-    #             col = index
-    #             break
-    # events = [values[2][col+2], values[2][col+3], values[2][col+4]]
-    # dayname = values[0][col]
     return feedback
 
 
