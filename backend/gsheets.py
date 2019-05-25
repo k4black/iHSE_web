@@ -22,6 +22,7 @@ def update():
 
     """
     test_data['Projects'] = "2222222"
+    test_data['Events'] = "TEST"
 
     # TODO: what about reg codes?
 
