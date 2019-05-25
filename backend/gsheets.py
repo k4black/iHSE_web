@@ -21,7 +21,7 @@ def update():
     """Update all cached version of Spreadsheet from online
 
     """
-    test_data[2] = "2222222"
+    test_data['Projects'] = "2222222"
 
     # TODO: what about reg codes?
 
@@ -468,6 +468,8 @@ def get_projects() -> list:
              (TODO later: return None if no one)
     """
     print(cached_data)
+
+    print(test_data)
     return cached_data['Projects']
 
 
