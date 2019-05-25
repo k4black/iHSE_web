@@ -8,7 +8,7 @@ import random
 
 
 cached_data = {}  # global variable for storing parsed Spreadsheet lists
-test_data = {0 : "000"}
+test_data = {}
 
 
 """ ---===---============================================---===--- """
