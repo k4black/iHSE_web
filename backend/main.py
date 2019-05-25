@@ -131,7 +131,7 @@ def sync(cache, gcache):
     update_cache(cache, gcache)  # Sync itself
     print('sync_end')
 
-    start_sync(TIMEOUT)  # Update - to call again
+    start_sync(TIMEOUT, cache, gcache)  # Update - to call again
 
 
 def start_sync(delay, cache, gcache):
@@ -149,7 +149,7 @@ def start_sync(delay, cache, gcache):
     """
 
     th = Timer(delay, sync, [cache, gcache])  # Run foo() through TIMEOUT seconds
-    # th.setDaemon(True)  # Can close without trouble
+    th.setDaemon(True)  # Can close without trouble
     th.start()
 
 
