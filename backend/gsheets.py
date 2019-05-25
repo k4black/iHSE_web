@@ -10,6 +10,10 @@ import random
 cached_data = {}  # global variable for storing parsed Spreadsheet lists
 test_data = {}
 
+# days_list = ['05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06',
+#              '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06']
+days_list = ['05.06', '06.06']
+# TODO: modify when Feedback List will be done by Serova
 
 """ ---===---============================================---===--- """
 """               Functions for updating cached data               """
@@ -57,8 +61,8 @@ def update_cache(name: str):
         cached_data[name] = gsheets_get_projects(None)  # TODO
         test_data[name] = 'TESTING'
 
-    # elif name == 'Feedback':
-    #     cached_data[name] = get_feedback()  # TODO
+    elif name == 'Feedback':
+        cached_data[name] = gsheets_get_feedback()
 
     elif name == 'Events':
         cached_data[name] = gsheets_get_events()
@@ -275,33 +279,36 @@ def gsheets_get_projects(filter_obj) -> list:
     return projects
 
 
-def get_feedback(day: str):  # TODO: rename
+def gsheets_get_feedback() -> dict:
     """Get description of day for feedback in Spreadsheet
     Create new user if it does not exist  # TODO what?
     Save in table id, name, phone type and team  # TODO what?
 
-    Args:
-        day: num of the day - 'DD.MM'
-
     Returns:
-        (title, [event1, event2, event3])  # TODO later: return None if already done
+        {'DD.MM': (title, [event1, event2, event3]), ...}  # TODO later: return None if already done
 
     """
 
-    day = '04.06'
-
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # position = str(int(get(token, id_, "Feedback", "A1")[0][0])-1)
     values = get(token, id_, 'Feedback', 'A3:M5')  # TODO: update M for all days
-    col = 0
-    for index, value in enumerate(values[1]):
-        if value == day:
-            col = index
-            break
-    events = [values[2][col+2], values[2][col+3], values[2][col+4]]
-    dayname = values[0][col]
-    return dayname, events
+
+    col = 3
+    feedback = {}
+
+    while col < len(values[2]-1):
+        if values[1][col] != '':
+            feedback[values[1][col]] = (values[0][col], [values[2][col+2], values[2][col+3], values[2][col+4]])
+        col += 1
+
+    # for day in days_list:
+    #     for index, value in enumerate(values[1]):
+    #         if value == day:
+    #             col = index
+    #             break
+    # events = [values[2][col+2], values[2][col+3], values[2][col+4]]
+    # dayname = values[0][col]
+    return feedback
 
 
 def gsheets_get_events():
@@ -337,7 +344,7 @@ def gsheets_get_users():
     """Get list of users from Spreadsheet
 
     Returns:
-        state: Read users # TODO: clarify user representation (SQL?)
+        state: Read users
     """
 
     iHSE_length = 14
@@ -349,13 +356,13 @@ def gsheets_get_users():
     users = []
     for row in read_values:
         users.append({})
-        users[-1]['id'] = row[0]
-        users[-1]['type'] = row[1]
+        users[-1]['id'] = int(row[0])
+        users[-1]['type'] = int(row[1])
         users[-1]['phone'] = row[2]
         users[-1]['name'] = row[3]
         users[-1]['pass'] = row[4]
-        users[-1]['team'] = row[5]
-        users[-1]['credits'] = row[6]
+        users[-1]['team'] = int(row[5])
+        users[-1]['credits'] = int(row[6])
         users[-1]['avatar'] = row[7]
         users[-1]['credits_list'] = []
         if len(row) == 8:
@@ -368,7 +375,7 @@ def gsheets_get_users():
             tmp += 1
         for i in range(iHSE_length - pres_creds_len):
             users[-1]['credits_list'].append(None)
-    return read_values
+    return users
 
 
 # TODO: Max update events
@@ -509,6 +516,20 @@ def get_users() -> list:
                            user['avatar']))
     return users_list
 
+
+def get_feedback(day: str):
+    """Get description of day for feedback in Spreadsheet
+    Create new user if it does not exist  # TODO what?
+    Save in table id, name, phone type and team  # TODO what?
+
+    Args:
+        day: num of the day - 'DD.MM'
+
+    Returns:
+        (title, [event1, event2, event3])  # TODO later: return None if already done
+
+    """
+    return cached_data['Feedback'][day]
 
 """ ---===---==========================================---===--- """
 """         High-level functions for posting needed data         """
