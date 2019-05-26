@@ -407,6 +407,7 @@ def admin_panel(env, query, cookie):
 
     if env['PATH_INFO'] == '/admin_load':
 
+        gsheets.update_cache('Users')
         users_list = gsheets.get_users()
         sql.load_users(users_list)
 

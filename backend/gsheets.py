@@ -383,18 +383,19 @@ def gsheets_get_users():
         users[-1]['pass'] = row[4]
         users[-1]['team'] = int(row[5])
         users[-1]['credits'] = int(row[6])
-        users[-1]['avatar'] = row[7]
-        users[-1]['credits_list'] = []
-        if len(row) == 8:
-            pres_creds_len = 0
-        else:
-            pres_creds_len = len(row) - 9
-        tmp = 9
-        for i in range(pres_creds_len):
-            users[-1]['credits_list'].append(int(row[tmp]))
-            tmp += 1
-        for i in range(iHSE_length - pres_creds_len):
-            users[-1]['credits_list'].append(None)
+        if len(row) > 7:
+            users[-1]['avatar'] = row[7]
+            users[-1]['credits_list'] = []
+            if len(row) == 8:
+                pres_creds_len = 0
+            else:
+                pres_creds_len = len(row) - 9
+            tmp = 9
+            for i in range(pres_creds_len):
+                users[-1]['credits_list'].append(int(row[tmp]))
+                tmp += 1
+            for i in range(iHSE_length - pres_creds_len):
+                users[-1]['credits_list'].append(None)
     return users
 
 
