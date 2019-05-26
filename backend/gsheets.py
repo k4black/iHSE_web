@@ -714,14 +714,13 @@ def generate_codes(users, hosts, admins):
 
     """
 
-    # codes = [generate_registration_codes(users, 0),
-    #          generate_registration_codes(hosts, 1),
-    #          generate_registration_codes(admins, 2)]
-
     codes = []
-    codes.extend(generate_registration_codes(users, 0))
-    codes.extend(generate_registration_codes(hosts, 1))
-    codes.extend(generate_registration_codes(admins, 2))
+    for code in generate_registration_codes(users, 0):
+        codes.append([code, 0, 0])
+    for code in generate_registration_codes(hosts, 1):
+        codes.append([code, 1, 0])
+    for code in generate_registration_codes(admins, 2):
+        codes.append([code, 2, 0])
 
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
@@ -731,9 +730,6 @@ def generate_codes(users, hosts, admins):
     post(token, id_, 'Codes', 'A1', [[int(pos_finish) + 1]])
 
     cached_data['Codes'] = gsheets_get_codes()
-
-    return codes
-
 
 
 
