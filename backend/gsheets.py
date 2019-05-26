@@ -396,6 +396,8 @@ def gsheets_get_users():
                 tmp += 1
             for i in range(iHSE_length - pres_creds_len):
                 users[-1]['credits_list'].append(None)
+        else:
+            users[-1]['avatar'] = ''
     return users
 
 
