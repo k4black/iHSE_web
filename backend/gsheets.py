@@ -800,7 +800,7 @@ def check_code(code: str):
 
     user_type = -1
     reg_allowed = False
-    for index, code_row in cached_data['Codes']:
+    for index, code_row in enumerate(cached_data['Codes']):
         if code_row[0] == code and code_row[2] == 0:
             reg_allowed = True
             user_type = code_row[1]
