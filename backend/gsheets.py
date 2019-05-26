@@ -41,6 +41,12 @@ def update():
     for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users', 'Codes']:
         update_cache(i)
 
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    pos = int(get(token, id_, "Codes", "A1")[0][0])
+    if pos > 5:
+        cached_data['Codes'] = gsheets_get_codes()
+
 
 def update_cache(name: str):
     """Update cached version of exact Spreadsheet list from online
@@ -69,12 +75,6 @@ def update_cache(name: str):
 
     elif name == 'Users':
         cached_data[name] = gsheets_get_users()
-
-    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
-    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    pos = int(get(token, id_, "Codes", "A1")[0][0])
-    if pos > 5:
-        cached_data[name] = gsheets_get_codes()
 
 
 def backup_cache(list_name: str):
@@ -353,7 +353,7 @@ def gsheets_get_codes() -> list:
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     position = str(int(get(token, id_, "Codes", "A1")[0][0]) - 1)
     values = get(token, id_, "Codes", "A5:C" + position)
-    print(values)
+    # print(values)
     codes = []
     for row in values:
         codes.append((row[0], int(row[1]), int(row[2])))
