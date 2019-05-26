@@ -702,7 +702,6 @@ def save_credits(user_obj, event_obj):
 """ ---===---===========================================---===--- """
 
 
-# TODO: Max generate reg codes
 def generate_codes(users, hosts, admins):
     """ Generate registration codes to google sheets
     Each code is a 6-characters-number-letter code
@@ -780,19 +779,35 @@ def check_code(code: str):
         type: type of user, int or None if registration rejected
 
     """
-    # TODO: maybe it has to happen on cache too?
-    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
-    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    read_values = get(token, id_, "Codes", "A5:C9")
+    # token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    # id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    # read_values = get(token, id_, "Codes", "A5:C9")
+    #
+    # reg_allowed = False
+    # user_type = -1
+    # for index, code_line in enumerate(read_values, start=5):
+    #     if code_line[0] == code and code_line[2] == '0':
+    #         user_type = int(code_line[1])
+    #
+    #         update_response = post(token, id_, "Codes", "C" + str(index), [[1]])
+    #         reg_allowed = True
+    #         break
+    #
+    # if reg_allowed:
+    #     return user_type
+    # else:
+    #     return None
 
-    reg_allowed = False
     user_type = -1
-    for index, code_line in enumerate(read_values, start=5):
-        if code_line[0] == code and code_line[2] == '0':
-            user_type = int(code_line[1])
-
-            update_response = post(token, id_, "Codes", "C" + str(index), [[1]])
+    reg_allowed = False
+    for index, code_row in cached_data['Codes']:
+        if code_row[0] == code and code_row[2] == 0:
             reg_allowed = True
+            user_type = code_row[1]
+            token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+            id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+            post(token, id_, 'Codes', 'C' + str(5 + index), [['1']])
+            cached_data['Codes'] = gsheets_get_codes()
             break
 
     if reg_allowed:
