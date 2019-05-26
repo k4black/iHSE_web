@@ -38,7 +38,7 @@ def update():
 
     # cached_data = gcache
 
-    for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users']:
+    for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users', 'Codes']:
         update_cache(i)
 
 
@@ -69,6 +69,12 @@ def update_cache(name: str):
 
     elif name == 'Users':
         cached_data[name] = gsheets_get_users()
+
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    pos = int(get(token, id_, "Codes", "A1")[0][0])
+    if pos > 5:
+        cached_data[name] = gsheets_get_codes()
 
 
 def backup_cache(list_name: str):
@@ -336,6 +342,22 @@ def gsheets_get_events():
                        event_raw[6],
                        event_raw[2]))
     return events
+
+
+def gsheets_get_codes() -> list:
+    """Get list of registration codes from Spreadsheet
+
+    :return list of registration codes with their type and status
+    """
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    position = str(int(get(token, id_, "Codes", "A1")[0][0]) - 1)
+    values = get(token, id_, "Codes", "A5:C" + position)
+    print(values)
+    codes = []
+    for row in values:
+        codes.append((row[0], int(row[1]), int(row[2])))
+    return codes
 
 
 def gsheets_get_users():
@@ -686,17 +708,33 @@ def generate_codes(users, hosts, admins):
     Each code is a 6-characters-number-letter code
 
     Args:
-        users: number of codes for this type of users
-        hosts: number of codes for this type of users
-        admins: number of codes for this type of users
+        users: number of codes for users (type 0)
+        hosts: number of codes for hosts (type 1)
+        admins: number of codes for admins (type 2)
 
     """
 
-    codes = generate_registration_codes(users, 0)
-    codes = generate_registration_codes(hosts, 1)
-    codes = generate_registration_codes(admins, 2)
+    # codes = [generate_registration_codes(users, 0),
+    #          generate_registration_codes(hosts, 1),
+    #          generate_registration_codes(admins, 2)]
 
-    pass
+    codes = []
+    codes.extend(generate_registration_codes(users, 0))
+    codes.extend(generate_registration_codes(hosts, 1))
+    codes.extend(generate_registration_codes(admins, 2))
+
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    pos_start = get(token, id_, 'Codes', 'A1')[0][0]
+    pos_finish = str(int(pos_start) + len(codes) - 1)
+    post(token, id_, 'Codes', 'A' + pos_start + ':C' + pos_finish, codes)
+    post(token, id_, 'Codes', 'A1', [[int(pos_finish) + 1]])
+
+    cached_data['Codes'] = gsheets_get_codes()
+
+    return codes
+
+
 
 
 def generate_registration_codes(num, type_=0):
