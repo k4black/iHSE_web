@@ -616,7 +616,7 @@ def save_users(users_list):
 
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    position = get(token, id_, "Users", "A1")[0][0]
+    pos = int(get(token, id_, "Users", "A1")[0][0])
     for i in range(len(users_list)):
         data = [[users_list[i][0],
                  users_list[i][1],
@@ -626,9 +626,9 @@ def save_users(users_list):
                  users_list[i][5],
                  users_list[i][6],
                  users_list[i][7]]]
-        write_response = post(token, id_, "Users", "A" + str(5+i) + ":I" + str(5+i), data)
+        write_response = post(token, id_, "Users", "A" + str(pos+i) + ":I" + str(pos+i), data)
 
-    response = post(token, id_, "Users", "A1", [[int(position) + len(users_list)]])
+    response = post(token, id_, "Users", "A1", [[pos + len(users_list)]])
 
 
 
