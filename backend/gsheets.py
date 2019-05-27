@@ -462,7 +462,7 @@ def update_events():
                                        event['desc'],
                                        event['type']])
 
-    print('new_events:', new_events)
+    # print('new_events:', new_events)
 
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
@@ -473,13 +473,13 @@ def update_events():
     else:
         prev_events = []
 
-    print('prev_events:', prev_events)
+    # print('prev_events:', prev_events)
 
     for new_event in new_events:
         for prev_event in prev_events:
             if prev_event[1] == new_event[1]:
                 new_event[0] = int(prev_event[0])
-            break
+                break
         if new_event[0] == '':
             new_event[0] = id_continue
             id_continue += 1
