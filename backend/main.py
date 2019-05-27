@@ -99,9 +99,11 @@ def update_cache():
     Returns:
 
     """
+    global TODAY
 
     # Update today
     TODAY = datetime.today().strftime('%d.%m')
+    print('Today ', TODAY)
 
     # Update gsheets cache
     gsheets.update()
