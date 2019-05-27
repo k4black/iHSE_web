@@ -29,15 +29,13 @@ def update():
     global cached_data
     test_data['Events'] = "TEST"
 
-    # TODO: what about reg codes?
-
     # for i in ['05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06',
     #           '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06',
     #           'Events', 'Feedback', 'Projects', 'Users']:
     #     update_list(i)
 
     # cached_data = gcache
-
+    # TODO: modify on release
     for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users', 'Codes']:
         update_cache(i)
 
@@ -71,7 +69,7 @@ def update_cache(name: str):
         cached_data[name] = gsheets_get_feedback()
 
     elif name == 'Events':
-        cached_data[name] = gsheets_get_events()
+        cached_data[name] = update_events()
 
     elif name == 'Users':
         cached_data[name] = gsheets_get_users()
@@ -189,6 +187,7 @@ def gsheets_get_day(day: str) -> list:
     timetable = []
     nextstep = True
     row = 2
+    id_zero = 0
 
     while nextstep:
         # if current event is one-line and not last
@@ -239,7 +238,10 @@ def gsheets_get_day(day: str) -> list:
                     if eventtypes[type_] == back:
                         timetable[-1]['events'][-1]['type'] = type_
                         break
-                # TODO: id
+                # TODO: check list below
+                if timetable[-1]['events'][-1]['type'] in ['lecture', 'master', 'oblig']:
+                    timetable[-1]['events'][-1]['id'] = id_zero
+                    id_zero += 1
                 col += 1
                 while 'effectiveValue' not in sheet_data['rowData'][row]['values'][col]:
                     col += 1
@@ -315,33 +317,33 @@ def gsheets_get_feedback() -> dict:
     return feedback
 
 
-def gsheets_get_events():
-    """Get events from Spreadsheet
-
-    Args:
-
-    Returns:
-        events: description of the events - list [ (id, type, title, credits, total, date, loc, host, desc, time), ... ]
-    """
-
-    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
-    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    position = str(int(get(token, id_, "Events", "A1")[0][0]) - 1)
-    read_values = get(token, id_, "Events", "A5:J" + position)
-
-    events = []
-    for event_raw in read_values:
-        events.append((int(event_raw[0]),
-                       event_raw[7],
-                       event_raw[1],
-                       int(event_raw[8]),
-                       int(event_raw[9]),
-                       event_raw[3],
-                       event_raw[4],
-                       event_raw[5],
-                       event_raw[6],
-                       event_raw[2]))
-    return events
+# def gsheets_get_events():
+#     """Get events from Spreadsheet
+#
+#     Args:
+#
+#     Returns:
+#         events: description of the events - list [ (id, type, title, credits, total, date, loc, host, desc, time), ... ]
+#     """
+#
+#     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+#     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+#     position = str(int(get(token, id_, "Events", "A1")[0][0]) - 1)
+#     read_values = get(token, id_, "Events", "A5:J" + position)
+#
+#     events = []
+#     for event_raw in read_values:
+#         events.append((int(event_raw[0]),
+#                        event_raw[7],
+#                        event_raw[1],
+#                        int(event_raw[8]),
+#                        int(event_raw[9]),
+#                        event_raw[3],
+#                        event_raw[4],
+#                        event_raw[5],
+#                        event_raw[6],
+#                        event_raw[2]))
+#     return events
 
 
 def gsheets_get_codes() -> list:
@@ -358,6 +360,36 @@ def gsheets_get_codes() -> list:
     for row in values:
         codes.append((row[0], int(row[1]), int(row[2])))
     return codes
+
+
+# def gsheets_get_events():
+#     """Get list of events currently present in Spreadsheet"""
+#
+#     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+#     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+#     pos = str(int(get(token, id_, "Events", "A1")[0][0]) - 1)
+#     values = get(token, id_, 'Events', 'A5:K' + pos)
+#     events = []
+#     for row in values:
+#         events.append({})
+#         events[-1]['id'] = int(row[0])
+#         events[-1]['title'] = row[1]
+#         events[-1]['time'] = row[2]
+#         events[-1]['date'] = row[3]
+#         events[-1]['loc'] = row[4]
+#         events[-1]['host'] = row[5]
+#         events[-1]['desc'] = row[6]
+#         events[-1]['type'] = int(row[7])
+#         if len(row) > 8:
+#             events[-1]['credits'] = int(row[8])
+#             events[-1]['total'] = int(row[9])
+#             events[-1]['anno'] = row[10]
+#         else:
+#             events[-1]['credits'] = 0
+#             events[-1]['total'] = 0
+#             events[-1]['anno'] = ''
+#
+#     return events
 
 
 def gsheets_get_users():
@@ -403,26 +435,42 @@ def gsheets_get_users():
 
 # TODO: Max update events
 def update_events():
-    """Update events with description in Spreadsheet and then their local copy
-    Read and parse it from days sheets and save in 'Events' sheet
-    And generate id
-    # TODO: modify for not only initial parsing
-    Note:
-        If exist such event with time, date and host - update other fields
-        If no event - generate with unique id
-
-    Args:
-
-    Returns:
-        None
-
-    """
-
-    days = ['Template']
-
-    for day in days:
-        pass
-    pass
+    """Setup ids for all events in memory and save them to Spreadsheet"""
+    events_list = []
+    days_names = ['Template']  # TODO: update on release
+    for day in days_names:
+        for time_container in cached_data[day]:
+            for event in time_container['events']:
+                if 'id' in event.keys():
+                    events_list.append((event['id'],
+                                        event['title'],
+                                        time_container['time'],
+                                        day,
+                                        event['loc'],
+                                        event['host'],
+                                        event['desc'],
+                                        event['type']))
+    qty = len(events_list)
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    post(token, id_, 'Events', 'A5:H' + str(5 + qty - 1), events_list)
+    values = get(token, id_, 'Events', 'A5:K' + str(5 + qty - 1))
+    events_full = []
+    for row in values:
+        events_full.append([])
+        events_full[-1].extend((row[0],
+                                row[1],
+                                row[2],
+                                row[3],
+                                row[4],
+                                row[5],
+                                row[6],
+                                row[7]))
+        if len(row) > 8:
+            events_full[-1].extend((row[8],
+                                    row[9],
+                                    row[10]))
+    return events_full
 
 
 """ ---===---==========================================---===--- """
@@ -450,33 +498,23 @@ def get_events() -> list:
     Returns: 
         : list of parsed events
     """
+
     return cached_data['Events']
 
 
 def get_event(event_id: int):
-    """Get event with full description from Spreadsheet
+    """Get event with full description
 
     Args:
         event_id: Event id
 
     Returns:
-        event: description of the event - (id, title, time, date, location, host, description, type, credits, total), ....
+        event: description of the event - (id, title, time, date, location, host, description, type, credits, total)
     """
-
+    # TODO: credits, total, anno
     for event in cached_data['Events']:
         if event[0] == event_id:
-            total_event = (event[0],
-                           event[2],
-                           event[9],
-                           event[5],
-                           event[6],
-                           event[7],
-                           event[8],
-                           event[1],
-                           event[3],
-                           event[4])
-            return total_event
-
+            return event
     return None
 
 
