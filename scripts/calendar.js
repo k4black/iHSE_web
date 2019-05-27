@@ -18,7 +18,7 @@ var dd = String(today_date.getDate()).padStart(2, '0');
 var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
 
 
-if (today.getDate() < 5 || today.getMonth() + 1 < 6)
+if (today_date.getDate() < 5 || today_date.getMonth() + 1 < 6)
     today = '05.06';
 else
     today = dd + '.' + mm;
