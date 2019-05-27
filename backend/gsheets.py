@@ -69,7 +69,7 @@ def update_cache(name: str):
         cached_data[name] = gsheets_get_feedback()
 
     elif name == 'Events':
-        cached_data[name] = update_events()
+        cached_data[name] = gsheets_update_events()
 
     elif name == 'Users':
         cached_data[name] = gsheets_get_users()
@@ -445,8 +445,9 @@ def gsheets_get_users():
 
 
 # TODO: Max update events
-def update_events():
-    """Setup ids for all events in memory and save them to Spreadsheet"""
+def gsheets_update_events():
+    """Combine events from timetable and Spreadsheet and
+    set actual data both to cache and to Spreadsheet"""
     new_events = []
     days_names = ['Template']  # TODO: update on release
     for day in days_names:
@@ -570,7 +571,8 @@ def get_event(event_id: int):
     Returns:
         event: description of the event - (id, title, time, date, location, host, description, type, credits, total)
     """
-    # TODO: credits, total, anno
+    event_id = int(event_id)
+
     for event in cached_data['Events']:
         if event[0] == event_id:
             return event
