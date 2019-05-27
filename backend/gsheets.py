@@ -467,7 +467,7 @@ def update_events():
     id_continue = int(get(token, id_, 'Events', 'C1')[0][0])
     pos = str(int(get(token, id_, 'Events', 'A1')[0][0]) - 1)
     if int(pos) > 4:
-        prev_events = get(token, id_, 'Events', 'A5:J' + pos)
+        prev_events = get(token, id_, 'Events', 'A5:K' + pos)
     else:
         prev_events = []
 
