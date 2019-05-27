@@ -158,6 +158,8 @@ def gsheets_get_day(day: str) -> list:
 
     Args:
         day: name of Spreadsheet list containing needed day, in format DD.MM
+
+
         
     Return:
         timetable: timetable of the corresponding day in pseudo-json
@@ -165,8 +167,8 @@ def gsheets_get_day(day: str) -> list:
 
     eventtypes = {
         'regular': {'blue': 1, 'green': 1, 'red': 1},
-        'lecture': {'blue': 0.56078434, 'green': 0.7490196, 'red': 0.98039216},
-        'master': {'blue': 0.60784316, 'green': 0.8392157, 'red': 0.7607843},
+        'lecture': {'blue': 0.60784316, 'green': 0.8392157, 'red': 0.7607843},
+        'master': {'blue': 0.56078434, 'green': 0.7490196, 'red': 0.98039216},
         'science': {'blue': 0.9098039, 'green': 0.5254902, 'red': 0.2901961},
         'enter': {'green': 1, 'red': 1},
         'oblig': {'blue': 0.7176471, 'green': 0.7176471, 'red': 0.7176471}
