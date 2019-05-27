@@ -462,6 +462,8 @@ def update_events():
                                        event['desc'],
                                        event['type']])
 
+    print('new_events:', new_events)
+
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     id_continue = int(get(token, id_, 'Events', 'C1')[0][0])
