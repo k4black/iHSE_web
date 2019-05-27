@@ -572,6 +572,7 @@ def get_event(event_id: int):
         event: description of the event - (id, title, time, date, location, host, description, type, credits, total)
     """
 
+    print('id:', event_id)
     print('Events:', cached_data['Events'])
 
     for event in cached_data['Events']:
