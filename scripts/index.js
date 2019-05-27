@@ -91,7 +91,11 @@ var today = new Date();
 var dd = String(today.getDate()).padStart(2, '0');
 var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 
-today = mm + '.' + dd;
+if (today.getDate() < 5 || today.getMonth() + 1 < 6)
+    today = '05.06';
+else
+    today = dd + '.' + mm;
+
 
 xhttp.open("GET", "http://ihse.tk:50000/day?day=" + today, true);
 xhttp.send();

@@ -14,12 +14,14 @@
 
 var today_date = new Date();
 var dd = String(today_date.getDate()).padStart(2, '0');
-var dd = String(today_date.getDate());
+// var dd = String(today_date.getDate());
 var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
 
 
-var today = mm + '.' + dd;
-today = '15.06';
+if (today_date.getDate() < 5 || today_date.getMonth() + 1 < 6)
+    today = '05.06';
+else
+    today = dd + '.' + mm;
 
 
 startDay = 5;
