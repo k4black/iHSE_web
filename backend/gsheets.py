@@ -480,6 +480,7 @@ def update_events():
             id_continue += 1
     qty = len(new_events)
     post(token, id_, 'Events', 'C1', [[id_continue]])
+    post(token, id_, 'Events', 'A1', [[5 + qty]])
     post(token, id_, 'Events', 'A5:H' + str(5 + qty - 1), new_events)
 
     for day in days_names:
