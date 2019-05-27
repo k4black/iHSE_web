@@ -478,11 +478,11 @@ def update_events():
                 if len(prev_event) > 8 and prev_event[8] != '':
                     new_event.append(int(prev_event[8]))
                 else:
-                    new_event.append(0)
+                    new_event.append('')
                 if len(prev_event) > 9 and prev_event[9] != '':
                     new_event.append(prev_event[9])
                 else:
-                    new_event.append(0)
+                    new_event.append('')
                 if len(prev_event) > 10:
                     new_event.append(prev_event[10])
                 else:
