@@ -572,10 +572,11 @@ def get_event(event_id: int):
         event: description of the event - (id, title, time, date, location, host, description, type, credits, total)
     """
 
-    print('id:', event_id)
+    print('id:', event_id, type(event_id))
     print('Events:', cached_data['Events'])
 
     for event in cached_data['Events']:
+        print('ev_id:', event[0], type(event[0]))
         if event[0] == event_id:
             print('returning ', event[1])
             return event
