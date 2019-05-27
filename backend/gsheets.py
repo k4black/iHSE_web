@@ -172,12 +172,22 @@ def gsheets_get_day(day: str) -> list:
     timetable = []
     nextstep = True
     row = 2
-    # id_zero = 0
 
     while nextstep:
-        print('row:', row)
+        # if event is last (and it is automatically one-line)
+        if row == len(sheet_data['rowData']) - 1 or 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][0] and 'effectiveValue' not in sheet_data['rowData'][row + 4]['values'][0]:
+            # last event is always for-all one-line event
+            timetable.append({})
+            timetable[-1]['time'] = sheet_data['rowData'][row]['values'][0]['effectiveValue']['stringValue']
+            timetable[-1]['events'] = [{'title': sheet_data['rowData'][row]['values'][1]['effectiveValue']['stringValue']}]
+            back = sheet_data['rowData'][row]['values'][0]['effectiveFormat']['backgroundColor']
+            for type_ in eventtypes.keys():
+                if eventtypes[type_] == back:
+                    timetable[-1]['events'][-1]['type'] = type_
+                    break
+            nextstep = False
         # if current event is one-line and not last
-        if 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][0]:
+        elif row == len(sheet_data['rowData']) - 1 or 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][0]:
             timetable.append({})
             timetable[-1]['time'] = sheet_data['rowData'][row]['values'][0]['effectiveValue']['stringValue']
             timetable[-1]['events'] = []
@@ -229,28 +239,12 @@ def gsheets_get_day(day: str) -> list:
                     if eventtypes[type_] == back:
                         timetable[-1]['events'][-1]['type'] = type_
                         break
-                # if timetable[-1]['events'][-1]['type'] in ['lecture', 'master', 'oblig']:
-                #     timetable[-1]['events'][-1]['id'] = id_zero
-                #     id_zero += 1
                 col += 1
                 while 'effectiveValue' not in sheet_data['rowData'][row]['values'][col]:
                     col += 1
                 if sheet_data['rowData'][row]['values'][col]['effectiveValue']['stringValue'] == '.':
                     inner_step = False
             row += 4
-        # if event is last (and it is automatically one-line)
-        elif 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][0] and \
-                'effectiveValue' not in sheet_data['rowData'][row + 4]['values'][0]:
-            # last event is always for-all one-line event
-            timetable.append({})
-            timetable[-1]['time'] = sheet_data['rowData'][row]['values'][0]['effectiveValue']['stringValue']
-            timetable[-1]['events'] = [{'title': sheet_data['rowData'][row]['values'][1]['effectiveValue']['stringValue']}]
-            back = sheet_data['rowData'][row]['values'][0]['effectiveFormat']['backgroundColor']
-            for type_ in eventtypes.keys():
-                if eventtypes[type_] == back:
-                    timetable[-1]['events'][-1]['type'] = type_
-                    break
-            nextstep = False
 
     return timetable
 
