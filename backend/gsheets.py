@@ -577,6 +577,7 @@ def get_event(event_id: int):
 
     for event in cached_data['Events']:
         if event[0] == event_id:
+            print('returning ', event[1])
             return event
     return None
 

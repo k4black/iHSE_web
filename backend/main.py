@@ -642,6 +642,8 @@ def get_event(env, query):
 
     event = gsheets.get_event(query['id'])
 
+    print('got:', event)
+
     # Json event data
     data = {}
 
