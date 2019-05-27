@@ -42,22 +42,10 @@ xhttp.onreadystatechange = function() {
                 '<div class="events">';
 
             for (let event of time.events) {
-                if (event.id === undefined)
-                    event_html =    '<div class="event">' +
-                        '<p class="event__title">' + event.title + '</p>' +
+                // TODO: Add color
 
-                        (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
-
-                        ( (event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
-                            '<div class="event__last_line">' +
-                            '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                            '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
-                            '</div>') +
-                        '</div>';
-
-                else
-                    event_html =  '<div class="event" data-id="' + event.id + '">' +
-                        '<a href="event.html?id=' + event.id + '">' +
+                if (event.id == undefined) {
+                    event_html = '<div class="event">' +
                         '<p class="event__title">' + event.title + '</p>' +
 
                         (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
@@ -68,7 +56,21 @@ xhttp.onreadystatechange = function() {
                             '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
                             '</div>') +
                         '</div>';
+                }
+                else {
+                    event_html = '<div class="event" data-id="' + event.id + '">' +
+                        '<a href="event.html?id=' + event.id + '">' +
+                        '<p class="event__title">' + event.title + '</p>' +
 
+                        (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+
+                        ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
+                            '<div class="event__last_line">' +
+                            '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
+                            '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
+                            '</div>') +
+                        '</a>'+ '</div>';
+                }
                 time_html += event_html;
 
             }
