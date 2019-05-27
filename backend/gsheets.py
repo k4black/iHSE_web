@@ -175,6 +175,7 @@ def gsheets_get_day(day: str) -> list:
     # id_zero = 0
 
     while nextstep:
+        print('row:', row)
         # if current event is one-line and not last
         if 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][0]:
             timetable.append({})
