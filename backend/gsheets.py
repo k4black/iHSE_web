@@ -23,7 +23,7 @@ def update():
 
     toupdate_list = []
     toupdate_list.extend(days_list)
-    toupdate_list.extend(['Events, Feedback, Projects, Users, Codes'])
+    toupdate_list.extend(['Events', 'Feedback', 'Projects', 'Users', 'Codes'])
     for i in toupdate_list:
         update_cache(i)
 
