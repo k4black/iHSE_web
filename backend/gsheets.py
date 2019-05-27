@@ -472,6 +472,9 @@ def update_events():
         prev_events = get(token, id_, 'Events', 'A5:H' + pos)
     else:
         prev_events = []
+
+    print('prev_events:', prev_events)
+
     for new_event in new_events:
         for prev_event in prev_events:
             if prev_event[1] == new_event[1]:
