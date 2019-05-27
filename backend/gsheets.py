@@ -462,8 +462,6 @@ def update_events():
                                        event['desc'],
                                        event['type']])
 
-    # print('new_events:', new_events)
-
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     id_continue = int(get(token, id_, 'Events', 'C1')[0][0])
@@ -473,12 +471,22 @@ def update_events():
     else:
         prev_events = []
 
-    # print('prev_events:', prev_events)
-
     for new_event in new_events:
         for prev_event in prev_events:
             if prev_event[1] == new_event[1]:
                 new_event[0] = int(prev_event[0])
+                if len(prev_event) > 8 and prev_event[8] != '':
+                    new_event.append(int(prev_event[8]))
+                else:
+                    new_event.append(0)
+                if len(prev_event) > 9 and prev_event[9] != '':
+                    new_event.append(prev_event[9])
+                else:
+                    new_event.append(0)
+                if len(prev_event) > 10:
+                    new_event.append(prev_event[10])
+                else:
+                    new_event.append('')
                 break
         if new_event[0] == '':
             new_event[0] = id_continue
@@ -486,12 +494,12 @@ def update_events():
     qty = len(new_events)
     post(token, id_, 'Events', 'C1', [[id_continue]])
     post(token, id_, 'Events', 'A1', [[5 + qty]])
-    post(token, id_, 'Events', 'A5:H' + str(5 + qty - 1), new_events)
+    post(token, id_, 'Events', 'A5:K' + str(5 + qty - 1), new_events)
     diff = len(new_events) - len(prev_events)
     if diff < 0:
         diff *= -1
-        empty_list = [['' for i in range(8)] for j in range(diff)]
-        post(token, id_, 'Events', 'A' + str(5 + qty) + ':H' + str(5 + qty + diff - 1), empty_list)
+        empty_list = [['' for i in range(11)] for j in range(diff)]
+        post(token, id_, 'Events', 'A' + str(5 + qty) + ':K' + str(5 + qty + diff - 1), empty_list)
 
     for day in days_names:
         for time_container in cached_data[day]:
