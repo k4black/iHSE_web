@@ -189,7 +189,7 @@ def gsheets_get_day(day: str) -> list:
     timetable = []
     nextstep = True
     row = 2
-    id_zero = 0
+    # id_zero = 0
 
     while nextstep:
         # if current event is one-line and not last
@@ -240,10 +240,9 @@ def gsheets_get_day(day: str) -> list:
                     if eventtypes[type_] == back:
                         timetable[-1]['events'][-1]['type'] = type_
                         break
-                # TODO: check list below
-                if timetable[-1]['events'][-1]['type'] in ['lecture', 'master', 'oblig']:
-                    timetable[-1]['events'][-1]['id'] = id_zero
-                    id_zero += 1
+                # if timetable[-1]['events'][-1]['type'] in ['lecture', 'master', 'oblig']:
+                #     timetable[-1]['events'][-1]['id'] = id_zero
+                #     id_zero += 1
                 col += 1
                 while 'effectiveValue' not in sheet_data['rowData'][row]['values'][col]:
                     col += 1
@@ -438,41 +437,67 @@ def gsheets_get_users():
 # TODO: Max update events
 def update_events():
     """Setup ids for all events in memory and save them to Spreadsheet"""
-    events_list = []
+    new_events = []
     days_names = ['Template']  # TODO: update on release
     for day in days_names:
         for time_container in cached_data[day]:
             for event in time_container['events']:
-                if 'id' in event.keys():
-                    events_list.append((event['id'],
-                                        event['title'],
-                                        time_container['time'],
-                                        day,
-                                        event['loc'],
-                                        event['host'],
-                                        event['desc'],
-                                        event['type']))
-    qty = len(events_list)
+                if event['type'] in ['lecture', 'master', 'oblig']:
+                    new_events.append(['',
+                                       event['title'],
+                                       time_container['time'],
+                                       day,
+                                       event['loc'],
+                                       event['host'],
+                                       event['desc'],
+                                       event['type']])
+
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    post(token, id_, 'Events', 'A5:H' + str(5 + qty - 1), events_list)
-    values = get(token, id_, 'Events', 'A5:K' + str(5 + qty - 1))
-    events_full = []
-    for row in values:
-        events_full.append([])
-        events_full[-1].extend((row[0],
-                                row[1],
-                                row[2],
-                                row[3],
-                                row[4],
-                                row[5],
-                                row[6],
-                                row[7]))
-        if len(row) > 8:
-            events_full[-1].extend((row[8],
-                                    row[9],
-                                    row[10]))
-    return events_full
+    id_continue = int(get(token, id_, 'Events', 'C1')[0][0])
+    pos = str(int(get(token, id_, 'Events', 'A1')[0][0]) - 1)
+    if int(pos) > 4:
+        prev_events = get(token, id_, 'Events', 'A5:H' + pos)
+    else:
+        prev_events = []
+    for new_event in new_events:
+        for prev_event in prev_events:
+            if prev_event[1] == new_event[1]:
+                new_event[0] = int(prev_event[0])
+            break
+        if new_event[0] == '':
+            new_event[0] = id_continue
+            id_continue += 1
+    qty = len(new_events)
+    post(token, id_, 'Events', 'C1', [[id_continue]])
+    post(token, id_, 'Events', 'A5:H' + str(5 + qty - 1), new_events)
+
+    for day in days_names:
+        for time_container in cached_data[day]:
+            for event in time_container['events']:
+                for new_event in new_events:
+                    if new_event[1] == event['title']:
+                        event['id'] = new_event[0]
+                        break
+
+    # values = get(token, id_, 'Events', 'A5:K' + str(5 + qty - 1))
+    # events_full = []
+    # for row in values:
+    #     events_full.append([])
+    #     events_full[-1].extend((row[0],
+    #                             row[1],
+    #                             row[2],
+    #                             row[3],
+    #                             row[4],
+    #                             row[5],
+    #                             row[6],
+    #                             row[7]))
+    #     if len(row) > 8:
+    #         events_full[-1].extend((row[8],
+    #                                 row[9],
+    #                                 row[10]))
+
+    return new_events
 
 
 """ ---===---==========================================---===--- """
