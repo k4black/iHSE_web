@@ -487,6 +487,11 @@ def update_events():
     post(token, id_, 'Events', 'C1', [[id_continue]])
     post(token, id_, 'Events', 'A1', [[5 + qty]])
     post(token, id_, 'Events', 'A5:H' + str(5 + qty - 1), new_events)
+    diff = len(new_events) - len(prev_events)
+    if diff < 0:
+        diff *= -1
+        empty_list = [['' for i in range(8)] for j in range(diff)]
+        post(token, id_, 'Events', 'A' + str(5 + qty) + ':H' + str(5 + qty + diff - 1), empty_list)
 
     for day in days_names:
         for time_container in cached_data[day]:
