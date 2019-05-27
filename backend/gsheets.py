@@ -491,6 +491,9 @@ def update_events():
         if new_event[0] == '':
             new_event[0] = id_continue
             id_continue += 1
+            new_event.append('')
+            new_event.append('')
+            new_event.append('')
     qty = len(new_events)
     post(token, id_, 'Events', 'C1', [[id_continue]])
     post(token, id_, 'Events', 'A1', [[5 + qty]])
