@@ -9,7 +9,7 @@ import random
 
 cached_data = {}  # global variable for storing parsed Spreadsheet lists
 
-days_list = ['05.06', 'Template']
+days_list = ['05.06', '06.06', 'Template']
 # TODO: modify when Feedback and Timetable List will be done by Serova
 
 """ ---===---============================================---===--- """
@@ -48,7 +48,7 @@ def update_cache(name: str):
         cached_data[name] = gsheets_get_day(name)
 
     elif name == 'Projects':
-        cached_data[name] = gsheets_get_projects(None)  # TODO
+        cached_data[name] = gsheets_get_projects(None)
 
     elif name == 'Feedback':
         cached_data[name] = gsheets_get_feedback()
@@ -557,8 +557,6 @@ def get_feedback(day: str):
 
 
 def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
-    # TODO: save to day, not to default position
-    # TODO: check GSheetsAPI how to track success
     """ Save feedback of user in google sheets
     Create new user if it does not exist
     Save in table name, phone and team
@@ -582,25 +580,68 @@ def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
         state: success or not
         
     """
+
+    tmp_daylist = ['05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06',
+                   '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06']
     
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
 
-    position = get(token, id_, "Feedback", "A1")[0][0]
+    position = str(int(get(token, id_, 'Feedback', 'A1')[0][0]) - 1)
+    users_list = get(token, id_, 'Feedback', 'A6:A' + position)
+    # mandatory transformation of users_list from [[v]...[v]] to [v...v]
+    tmp_list = []
+    for row in users_list:
+        tmp_list.append([row[0]])
+    users_list = tmp_list
+    # calculating line to put feedback
+    index_ = -1
+    for index, username in enumerate(users_list, start=6):
+        if username == user_obj[3]:
+            index_ = index
+            break
+    if index_ == -1:
+        index_ = str(int(position) + 1)
+    else:
+        index_ = str(index_)
 
-    print(position)
+    # calculating special multiplier to get column to put feedback
+    col_mul = -1
+    for index, dayname in enumerate(tmp_daylist):
+        if dayname == day:
+            col_mul = index
+            break
+    if col_mul == -1:
+        return False
 
-    range_ = "A" + position + ":H" + str(int(position) + 2)
+
+    def nextcell(cell: str) -> str:
+        # print(cell)
+        if cell[-1] == 'Z':
+            cell = cell + 'A'
+        else:
+            # print(cell[0:-1])
+            cell = cell[0:-1] + chr(ord(cell[-1]) + 1)
+        return cell
+
+    # calculating columns to put feedback using special multiplier
+    col = 'D'
+    for i in range(col_mul):
+        col = nextcell(col)
+    endcol = col
+    for i in range(4):
+        endcol = nextcell(endcol)
+
+    range_ = col + index_ + ':' + endcol + str(int(index_) + 2)
     values = [[user_obj[3], user_obj[2], user_obj[5], feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
               ['', '', '', '', feedback_data['user2'], feedback_data['event1_text'], feedback_data['event2_text'], feedback_data['event3_text']],
               ['', '', '', '', feedback_data['user3']]]
-    response = post(token, id_, "Feedback", range_, values)
-    # print('{0} cells updated.'.format(write_response.get('updatedCells')))
 
-    response = post(token, id_, "Feedback", "A1", [[int(position) + 3]])
-    # print('{0} cells updated.'.format(update_response.get('updatedCells')))
+    post(token, id_, "Feedback", range_, values)
+    if index_ == str(int(position) + 1):
+        post(token, id_, "Feedback", "A1", [[int(position) + 4]])
 
-    update_cache('Feedback')
+    # update_cache('Feedback')  # TODO: uncomment when Feedback modified
     return True
 
 
@@ -630,6 +671,7 @@ def save_users(users_list):
         write_response = post(token, id_, "Users", "A" + str(pos+i) + ":I" + str(pos+i), data)
 
     response = post(token, id_, "Users", "A1", [[pos + len(users_list)]])
+    update_cache('Users')
 
 
 
@@ -662,8 +704,8 @@ def save_project(user_obj, project_data):
     values = [[project_data['title'], project_data['type'], str(project_data['name']), project_data['desc'], project_data['anno']]]
     write_response = post(token, id_, "Projects", "A" + position + ":E" + position, values)
     update_response = post(token, id_, "Projects", "A1", [[int(position) + 1]])
-
-    return True  # TODO: check GSheetsAPI how to track success
+    update_cache('Projects')
+    return True
 
 
 # TODO: Max save credits
@@ -696,6 +738,7 @@ def save_credits(user_obj, event_obj):
     curr_val = int(get(token, id_, 'Users', target_gcol + str(target_grow))[0][0])
     curr_val += event_obj[3]
     post(token, id_, 'Users', target_gcol + str(target_grow), [[str(curr_val)]])
+    update_cache('Users')
 
 
 """ ---===---===========================================---===--- """
