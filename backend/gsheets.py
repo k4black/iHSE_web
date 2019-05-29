@@ -217,7 +217,10 @@ def gsheets_get_day(day: str) -> list:
             while inner_step:
                 timetable[-1]['events'].append({})
                 # title
-                timetable[-1]['events'][-1]['title'] = sheet_data['rowData'][row]['values'][col]['effectiveValue']['stringValue']
+                if 'effectiveValue' in sheet_data['rowData'][row]['values'][col]:
+                    timetable[-1]['events'][-1]['title'] = sheet_data['rowData'][row]['values'][col]['effectiveValue']['stringValue']
+                else:
+                    timetable[-1]['events'][-1]['title'] = ''
                 # description
                 if 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][col]:
                     timetable[-1]['events'][-1]['desc'] = sheet_data['rowData'][row + 1]['values'][col]['effectiveValue']['stringValue']
