@@ -473,7 +473,7 @@ def admin_panel(env, query, cookie):
 
     if env['PATH_INFO'] == '/admin_codes':
 
-        gsheets.generate_codes(20, 10, 2)
+        gsheets.generate_codes(150, 25, 5)
 
         return ('200 OK',
                 [('Access-Control-Allow-Origin', '*')],

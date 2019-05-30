@@ -6,7 +6,7 @@
 
     <meta name="theme-color" content="#006cae">
 
-    <title>Create</title>
+    <title>Создать проект | iHSE</title>
     <link rel="shortcut icon" href="favicon_32x32.png" type="image/x-icon">
 
     <link rel="stylesheet" href="styles/main.css">
@@ -27,7 +27,7 @@
         </nav>
 
 
-        <div class="title">Create</div>
+        <div class="title">Создать проект</div>
     </div>
 
 </header>
@@ -37,21 +37,21 @@
 <div class="wrapper">
 
     <div id="ajax_form" class="form">
-        <div class="create__title">Create project</div>
+        <div class="create__title">Создать проект</div>
 
-        <div class="create__icon"></div>
+<!--        <div class="create__icon"></div>-->
 
         <div class="form__input">
-            <label for="title" class="create__label">Title</label>
+            <label for="title" class="create__label">Заголовок</label>
             <input id="title" type="text" name="title" maxlength="35"/>
         </div>
 
         <div class="form__input active">
-            <label for="type" class="create__label">Type</label>
+            <label for="type" class="create__label">Тип</label>
             <select id="type" name="type">
                 <option value="TED">TED</option>
-                <option value="Science">Science</option>
-                <option value="Some">Some type</option>
+                <option value="Science">Презентация</option>
+                <option value="Some">Другое</option>
             </select>
         </div>
 
@@ -59,7 +59,7 @@
         </datalist>
 
         <div class="form__input">
-            <label for="name" class="create__label">Names</label>
+            <label for="name" class="create__label">Авторы</label>
             <input id="name" type="text" name="name" list="users_list" maxlength=""/>
             <div class="input__icon">
                 <i style="display: none" class="mobile__item__icon large material-icons">-</i>
@@ -68,16 +68,16 @@
         </div>
 
         <div class="form__input create__input create__input__div">
-            <label for="desc" class="create__label">Description</label>
+            <label for="desc" class="create__label">Описание</label>
             <div id="desc" contenteditable></div>
         </div>
 
         <div class="form__input create__input create__input__div">
-            <label for="anno" class="create__label">Annotation</label>
+            <label for="anno" class="create__label">Аннотация</label>
             <div id="anno" contenteditable></div>
         </div>
 
-        <button id="btn" class="create__button">create</button>
+        <button id="btn" class="create__button">Создать</button>
         <button id="btn2" class="create__button" style="display: none"><img class="loading" style="margin: 0" src="images/loading.gif"></button>
 
     </div>
