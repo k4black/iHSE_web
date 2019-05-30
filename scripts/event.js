@@ -41,7 +41,7 @@ var xhttp = new XMLHttpRequest();
 xhttp.onreadystatechange = function () {
     if (this.readyState === 4) {
         if (this.status === 200) { // If ok set up fields
-
+            loadingEnd(); // TODO: Check
 
             var event = JSON.parse( this.responseText );
 
