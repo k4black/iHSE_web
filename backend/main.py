@@ -320,6 +320,7 @@ def get(env, query, cookie):
         user_obj = get_user_by_response(cookie)
         if user_obj[2] is None:  # No User
             return user_obj  # (id, type, phone, name, pass, team, credits, avatar)
+        print('day for', user_obj)
         if user_obj[1] == 0:
             return ('401 Unauthorized',
                     [('Access-Control-Allow-Origin', '*')],
