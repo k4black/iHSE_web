@@ -64,6 +64,8 @@
     font-weight: lighter;
     font-size: 14px;
     color: #b4b4b4;
+    width: fit-content;
+    min-width: 50px;
 
 }
 
@@ -85,6 +87,10 @@
 
 
 
+
+.data__loading button {
+    pointer-events: none;
+}
 
 @media (min-width : 769px) {
 
