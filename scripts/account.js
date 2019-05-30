@@ -57,7 +57,7 @@ function loadAccount() {
                 // }
 
                 //setup avatar
-                if (user.avatar != null)
+                if (user.avatar != null && user.avatar != undefined && user.avatar != '')
                     topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
 
