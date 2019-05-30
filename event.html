@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 </head>
-<body>
+<body class="data__loading">
 
 
 <header class="header">
@@ -39,14 +39,14 @@
 <div class="wrapper">
 
 
-    <div class="description">
+    <div class="description loading__resource">
         <i class="mobile__item__icon large material-icons">label_important</i>
         <div class="desc">
             <p>Some description of the event in several lines lines lines lines lines.</p>
         </div>
     </div>
 
-    <div class="description">
+    <div class="description loading__resource">
         <i class="mobile__item__icon large material-icons">access_time</i>
         <div class="time">
             <p>4 april 2110</p>
@@ -54,21 +54,21 @@
         </div>
     </div>
 
-    <div class="description">
+    <div class="description loading__resource">
         <i class="mobile__item__icon large material-icons">place</i>
         <div class="location">
             <p>Some location</p>
         </div>
     </div>
 
-    <div class="description">
+    <div class="description loading__resource">
         <i class="mobile__item__icon large material-icons">person</i>
         <div class="host">
             <p>Host of the event</p>
         </div>
     </div>
 
-    <div class="description">
+    <div class="description loading__resource">
         <i class="mobile__item__icon large material-icons">bookmark</i>
         <div class="anno">
             <p>Some description of the event in several lines lines lines lines lines.</p>
@@ -76,13 +76,14 @@
     </div>
 
 
-    <p class="count">14/44</p>
-    <div id="container"></div>
+    <div class="enroll_section loading__resource" style="visibility: visible">
+        <p class="count">14/44</p>
+        <div id="container"></div>
 
 
-    <button id="btn" class="enroll__button">Enroll</button>
-    <button id="btn2" class="enroll__button" style="display: none"><img class="loading" style="margin: 0" src="images/loading.gif"></button>
-
+        <button id="btn" class="enroll__button">Enroll</button>
+        <button id="btn2" class="enroll__button" style="display: none"><img class="loading" style="margin: 0" src="images/loading.gif"></button>
+    </div>
 
 
 

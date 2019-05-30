@@ -81,9 +81,17 @@ xhttp.onreadystatechange = function () {
 
             }
 
-            if (event.count >= event.total) {
-                wrapper.querySelector('#btn').classList.add('inactive');
+            if (event.total == '') {
+                document.querySelector('.enroll_section').style.visibility = 'hidden';
             }
+            else {
+                if (event.count >= event.total) {
+                    wrapper.querySelector('#btn').classList.add('inactive');
+                }
+            }
+
+
+
         }
     }
 };
