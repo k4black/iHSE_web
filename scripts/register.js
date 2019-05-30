@@ -45,7 +45,7 @@ document.querySelector('#btn').addEventListener('click', function () {
 
 
     if (name_.value == "" || surname.value == "" || pass.value == "" || code.value == "" || phone.value == ""){ // If some field are empty - do nothing
-        alert('You have to fill all fields!');  // TODO: show Html error message
+        alert('Вы должны заполнить все поля!');  // TODO: show Html error message
         return;
     }
 
@@ -73,14 +73,14 @@ document.querySelector('#btn').addEventListener('click', function () {
             }
 
             if (this.status === 403) {  // Authorization error
-                alert("Wrong registration code!");  // TODO: show Html error message
+                alert("Неверный код регистрации!");  // TODO: show Html error message
 
                 pass.value = "";
                 code.value = "";
             }
 
             if (this.status === 401) {  // Authorization error
-                alert("Wrong Login/Password!");  // TODO: show Html error message
+                alert("Неверный Логин/Пароль!");  // TODO: show Html error message
 
                 pass.value = "";
             }
