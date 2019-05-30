@@ -153,6 +153,8 @@ def gsheets_get_day(day: str) -> list:
         timetable: timetable of the corresponding day in pseudo-json
     """
 
+    day = 'Template'
+
     eventtypes = {
         'regular': {'blue': 1, 'green': 1, 'red': 1},
         'lecture': {'blue': 0.60784316, 'green': 0.8392157, 'red': 0.7607843},
