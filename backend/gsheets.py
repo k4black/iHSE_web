@@ -27,11 +27,11 @@ def update():
     for i in toupdate_list:
         update_cache(i)
 
-    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
-    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    pos = int(get(token, id_, "Codes", "A1")[0][0])
-    if pos > 5:
-        cached_data['Codes'] = gsheets_get_codes()
+    # token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    # id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    # pos = int(get(token, id_, "Codes", "A1")[0][0])
+    # if pos > 5:
+    #     cached_data['Codes'] = gsheets_get_codes()
 
 
 def update_cache(name: str):
@@ -58,6 +58,9 @@ def update_cache(name: str):
 
     elif name == 'Users':
         cached_data[name] = gsheets_get_users()
+
+    elif name == 'Codes':
+        cached_data[name] = gsheets_get_codes()
 
 
 def backup_cache(list_name: str):
@@ -617,15 +620,32 @@ def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
     if col_mul == -1:
         return False
 
-
-    def nextcell(cell: str) -> str:
-        # print(cell)
-        if cell[-1] == 'Z':
-            cell = cell + 'A'
-        else:
-            # print(cell[0:-1])
-            cell = cell[0:-1] + chr(ord(cell[-1]) + 1)
-        return cell
+    def new_nextcell(cell: str) -> str:
+        symlist = [ord(symbol) for symbol in cell]
+        symlist[-1] += 1
+        checknext = True
+        index = len(symlist) - 1
+        while checknext:
+            print(symlist)
+            diff = symlist[index] - ord('Z')
+            if diff == 1:
+                if index == 0:
+                    symlist[index] = ord('A')
+                    symlist.insert(0, ord('A'))
+                    if symlist[index] < ord('Z'):
+                        checknext = False
+                else:
+                    symlist[index] = ord('A')
+                    index -= 1
+                    symlist[index] += 1
+                    if symlist[index] < ord('Z'):
+                        checknext = False
+            else:
+                checknext = False
+        retstr = ''
+        for ord_ in symlist:
+            retstr += chr(ord_)
+        return retstr
 
     # calculating columns to put feedback using special multiplier
     col = 'D'
