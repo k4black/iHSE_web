@@ -340,33 +340,36 @@ def gsheets_get_users():
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     position = str(int(get(token, id_, "Users", "A1")[0][0]) - 1)
-    read_values = get(token, id_, "Users", "A5:W" + position)
-    users = []
-    for row in read_values:
-        users.append({})
-        users[-1]['id'] = int(row[0])
-        users[-1]['type'] = int(row[1])
-        users[-1]['phone'] = row[2]
-        users[-1]['name'] = row[3]
-        users[-1]['pass'] = row[4]
-        users[-1]['team'] = int(row[5])
-        users[-1]['credits'] = int(row[6])
-        if len(row) > 7:
-            users[-1]['avatar'] = row[7]
-            users[-1]['credits_list'] = []
-            if len(row) == 8:
-                pres_creds_len = 0
+    if position != '4':
+        read_values = get(token, id_, "Users", "A5:W" + position)
+        users = []
+        for row in read_values:
+            users.append({})
+            users[-1]['id'] = int(row[0])
+            users[-1]['type'] = int(row[1])
+            users[-1]['phone'] = row[2]
+            users[-1]['name'] = row[3]
+            users[-1]['pass'] = row[4]
+            users[-1]['team'] = int(row[5])
+            users[-1]['credits'] = int(row[6])
+            if len(row) > 7:
+                users[-1]['avatar'] = row[7]
+                users[-1]['credits_list'] = []
+                if len(row) == 8:
+                    pres_creds_len = 0
+                else:
+                    pres_creds_len = len(row) - 9
+                tmp = 9
+                for i in range(pres_creds_len):
+                    users[-1]['credits_list'].append(int(row[tmp]))
+                    tmp += 1
+                for i in range(iHSE_length - pres_creds_len):
+                    users[-1]['credits_list'].append(None)
             else:
-                pres_creds_len = len(row) - 9
-            tmp = 9
-            for i in range(pres_creds_len):
-                users[-1]['credits_list'].append(int(row[tmp]))
-                tmp += 1
-            for i in range(iHSE_length - pres_creds_len):
-                users[-1]['credits_list'].append(None)
-        else:
-            users[-1]['avatar'] = ''
-    return users
+                users[-1]['avatar'] = ''
+        return users
+    else:
+        return []
 
 
 def gsheets_update_events():
