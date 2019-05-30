@@ -9,7 +9,7 @@ import random
 
 cached_data = {}  # global variable for storing parsed Spreadsheet lists
 
-days_list = ['05.06', '06.06', 'Template']
+days_list = ['Template']
 # TODO: modify when Feedback and Timetable List will be done by Serova
 
 """ ---===---============================================---===--- """
@@ -27,11 +27,11 @@ def update():
     for i in toupdate_list:
         update_cache(i)
 
-    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
-    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    pos = int(get(token, id_, "Codes", "A1")[0][0])
-    if pos > 5:
-        cached_data['Codes'] = gsheets_get_codes()
+    # token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    # id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    # pos = int(get(token, id_, "Codes", "A1")[0][0])
+    # if pos > 5:
+    #     cached_data['Codes'] = gsheets_get_codes()
 
 
 def update_cache(name: str):
@@ -58,6 +58,9 @@ def update_cache(name: str):
 
     elif name == 'Users':
         cached_data[name] = gsheets_get_users()
+
+    elif name == 'Codes':
+        cached_data[name] = gsheets_get_codes()
 
 
 def backup_cache(list_name: str):
@@ -337,33 +340,36 @@ def gsheets_get_users():
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     position = str(int(get(token, id_, "Users", "A1")[0][0]) - 1)
-    read_values = get(token, id_, "Users", "A5:W" + position)
-    users = []
-    for row in read_values:
-        users.append({})
-        users[-1]['id'] = int(row[0])
-        users[-1]['type'] = int(row[1])
-        users[-1]['phone'] = row[2]
-        users[-1]['name'] = row[3]
-        users[-1]['pass'] = row[4]
-        users[-1]['team'] = int(row[5])
-        users[-1]['credits'] = int(row[6])
-        if len(row) > 7:
-            users[-1]['avatar'] = row[7]
-            users[-1]['credits_list'] = []
-            if len(row) == 8:
-                pres_creds_len = 0
+    if position != '4':
+        read_values = get(token, id_, "Users", "A5:W" + position)
+        users = []
+        for row in read_values:
+            users.append({})
+            users[-1]['id'] = int(row[0])
+            users[-1]['type'] = int(row[1])
+            users[-1]['phone'] = row[2]
+            users[-1]['name'] = row[3]
+            users[-1]['pass'] = row[4]
+            users[-1]['team'] = int(row[5])
+            users[-1]['credits'] = int(row[6])
+            if len(row) > 7:
+                users[-1]['avatar'] = row[7]
+                users[-1]['credits_list'] = []
+                if len(row) == 8:
+                    pres_creds_len = 0
+                else:
+                    pres_creds_len = len(row) - 9
+                tmp = 9
+                for i in range(pres_creds_len):
+                    users[-1]['credits_list'].append(int(row[tmp]))
+                    tmp += 1
+                for i in range(iHSE_length - pres_creds_len):
+                    users[-1]['credits_list'].append(None)
             else:
-                pres_creds_len = len(row) - 9
-            tmp = 9
-            for i in range(pres_creds_len):
-                users[-1]['credits_list'].append(int(row[tmp]))
-                tmp += 1
-            for i in range(iHSE_length - pres_creds_len):
-                users[-1]['credits_list'].append(None)
-        else:
-            users[-1]['avatar'] = ''
-    return users
+                users[-1]['avatar'] = ''
+        return users
+    else:
+        return []
 
 
 def gsheets_update_events():
@@ -617,15 +623,32 @@ def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
     if col_mul == -1:
         return False
 
-
-    def nextcell(cell: str) -> str:
-        # print(cell)
-        if cell[-1] == 'Z':
-            cell = cell + 'A'
-        else:
-            # print(cell[0:-1])
-            cell = cell[0:-1] + chr(ord(cell[-1]) + 1)
-        return cell
+    def new_nextcell(cell: str) -> str:
+        symlist = [ord(symbol) for symbol in cell]
+        symlist[-1] += 1
+        checknext = True
+        index = len(symlist) - 1
+        while checknext:
+            print(symlist)
+            diff = symlist[index] - ord('Z')
+            if diff == 1:
+                if index == 0:
+                    symlist[index] = ord('A')
+                    symlist.insert(0, ord('A'))
+                    if symlist[index] < ord('Z'):
+                        checknext = False
+                else:
+                    symlist[index] = ord('A')
+                    index -= 1
+                    symlist[index] += 1
+                    if symlist[index] < ord('Z'):
+                        checknext = False
+            else:
+                checknext = False
+        retstr = ''
+        for ord_ in symlist:
+            retstr += chr(ord_)
+        return retstr
 
     # calculating columns to put feedback using special multiplier
     col = 'D'
