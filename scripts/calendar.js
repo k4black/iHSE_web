@@ -152,7 +152,6 @@ for (let i = 0; i < days.length; i++) {
 
     days[i].addEventListener('click', function() {
 
-        alert(this.querySelector('.day__name').innerText);
 
         document.querySelector('.selected').classList.remove('selected');
         this.classList.add('selected');

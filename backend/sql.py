@@ -32,7 +32,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
                     "pass"	INTEGER,
                     "team"	INTEGER,
                     "credits"	INTEGER DEFAULT (0),
-                    "avatar" TEXT  DEFAULT ("")
+                    "avatar" TEXT  DEFAULT ('')
                   );
                """)
 
