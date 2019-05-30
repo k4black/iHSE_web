@@ -13,9 +13,14 @@ from backend import gsheets
 # Threading for sync
 from threading import Timer
 
+from datetime import datetime
+
+TODAY = datetime.today().strftime('%d.%m')
+
 # Timeout of updating objects (from gsheets)
 TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 720s TODO: Couple of hours
 CREDITS = 300  # Max credits # TODO: Get from table?
+
 
 
 """ ---===---==========================================---===--- """
@@ -35,9 +40,6 @@ def application(env, start_response):
         data: which will be transmitted
 
     """
-
-    print('t2', gsheets.test_data)
-    print(env['REQUEST_METHOD'])
 
     # Parse query string
     query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
@@ -97,11 +99,14 @@ def update_cache():
     Returns:
 
     """
+    global TODAY
 
+    # Update today
+    TODAY = datetime.today().strftime('%d.%m')
+    print('Today ', TODAY)
+
+    # Update gsheets cache
     gsheets.update()
-    print('t1', gsheets.test_data)
-
-
 
     # Update events
     events = gsheets.get_events()
@@ -109,7 +114,6 @@ def update_cache():
 
     # Update cache
     cache_dict.clear()
-    cache_dict[3] = '3333'
 
 
     # SQL sync - wal checkpoint
@@ -155,7 +159,6 @@ def start_sync(delay):
 
 
 start_sync(0)  # Start sync
-print('There')
 
 
 def cache(foo):
@@ -449,6 +452,7 @@ def admin_panel(env, query, cookie):
 
     if env['PATH_INFO'] == '/admin_load':
 
+        gsheets.update_cache('Users')
         users_list = gsheets.get_users()
         sql.load_users(users_list)
 

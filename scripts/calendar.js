@@ -14,12 +14,14 @@
 
 var today_date = new Date();
 var dd = String(today_date.getDate()).padStart(2, '0');
-var dd = String(today_date.getDate());
+// var dd = String(today_date.getDate());
 var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
 
 
-var today = mm + '.' + dd;
-today = '15.06';
+if (today_date.getDate() < 5 || today_date.getMonth() + 1 < 6)
+    today = '05.06';
+else
+    today = dd + '.' + mm;
 
 
 startDay = 5;
@@ -29,7 +31,7 @@ numOfDays = 14;
 topbar_html = "";
 
 for (var i = 0; i < numOfDays; ++i) {
-    let day_text = (startDay + i) + '.' + ('' + startMonth).padStart(2, '0');
+    let day_text = ('' + (startDay + i)).padStart(2, '0') + '.' + ('' + startMonth).padStart(2, '0');
     if ( day_text === today) {  // TODO: Today
         topbar_html += '<div class="day today selected">'
     } else {
@@ -75,22 +77,10 @@ function getDay(dayNum) {
                     '<div class="events">';
 
                 for (let event of time.events) {
-                    if (event.id === undefined)
-                        event_html =    '<div class="event">' +
-                            '<p class="event__title">' + event.title + '</p>' +
+                    // TODO: Add color
 
-                            (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
-
-                            ( (event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
-                                '<div class="event__last_line">' +
-                                '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                                '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
-                                '</div>') +
-                            '</div>';
-
-                    else
-                        event_html =  '<div class="event" data-id="' + event.id + '">' +
-                            '<a href="event.html?id=' + event.id + '">' +
+                    if (event.id == undefined) {
+                        event_html = '<div class="event">' +
                             '<p class="event__title">' + event.title + '</p>' +
 
                             (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
@@ -101,7 +91,21 @@ function getDay(dayNum) {
                                 '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
                                 '</div>') +
                             '</div>';
+                    }
+                    else {
+                        event_html = '<div class="event" data-id="' + event.id + '">' +
+                            '<a href="event.html?id=' + event.id + '">' +
+                            '<p class="event__title">' + event.title + '</p>' +
 
+                            (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+
+                            ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
+                                '<div class="event__last_line">' +
+                                '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
+                                '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
+                                '</div>') +
+                            '</a>'+ '</div>';
+                    }
                     time_html += event_html;
 
                 }

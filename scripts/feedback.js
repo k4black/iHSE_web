@@ -66,7 +66,7 @@ numOfDays = 14;
 topbar_html = "";
 
 for (var i = 0; i < numOfDays; ++i) {
-    let day_text = (startDay + i) + '.' + ('' + startMonth).padStart(2, '0');
+    let day_text = ('' + (startDay + i)).padStart(2, '0') + '.' + ('' + startMonth).padStart(2, '0');
     if ( day_text === today) {
         topbar_html += '<div class="day today selected">'
     } else {

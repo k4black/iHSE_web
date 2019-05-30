@@ -8,8 +8,9 @@ import random
 
 
 cached_data = {}  # global variable for storing parsed Spreadsheet lists
-test_data = {}
 
+days_list = ['05.06', '06.06', 'Template']
+# TODO: modify when Feedback and Timetable List will be done by Serova
 
 """ ---===---============================================---===--- """
 """               Functions for updating cached data               """
@@ -18,24 +19,19 @@ test_data = {}
 
 
 def update():
-    """Update all cached version of Spreadsheet from online
+    """Update all cached version of Spreadsheet from online"""
 
-    """
-
-    global cached_data
-    test_data['Events'] = "TEST"
-
-    # TODO: what about reg codes?
-
-    # for i in ['05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06',
-    #           '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06',
-    #           'Events', 'Feedback', 'Projects', 'Users']:
-    #     update_list(i)
-
-    # cached_data = gcache
-
-    for i in ['Template', 'Events', 'Feedback', 'Projects', 'Users']:
+    toupdate_list = []
+    toupdate_list.extend(days_list)
+    toupdate_list.extend(['Events', 'Feedback', 'Projects', 'Users', 'Codes'])
+    for i in toupdate_list:
         update_cache(i)
+
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    pos = int(get(token, id_, "Codes", "A1")[0][0])
+    if pos > 5:
+        cached_data['Codes'] = gsheets_get_codes()
 
 
 def update_cache(name: str):
@@ -47,21 +43,18 @@ def update_cache(name: str):
     """
 
     global cached_data
-    global test_data
 
-    # if name[2] == '.':  # TODO: on release
-    if name == 'Template':
+    if name == 'Template' or name[2] == '.':
         cached_data[name] = gsheets_get_day(name)
 
     elif name == 'Projects':
-        cached_data[name] = gsheets_get_projects(None)  # TODO
-        test_data[name] = 'TESTING'
+        cached_data[name] = gsheets_get_projects(None)
 
-    # elif name == 'Feedback':
-    #     cached_data[name] = get_feedback()  # TODO
+    elif name == 'Feedback':
+        cached_data[name] = gsheets_get_feedback()
 
     elif name == 'Events':
-        cached_data[name] = gsheets_get_events()
+        cached_data[name] = gsheets_update_events()
 
     elif name == 'Users':
         cached_data[name] = gsheets_get_users()
@@ -150,6 +143,8 @@ def gsheets_get_day(day: str) -> list:
 
     Args:
         day: name of Spreadsheet list containing needed day, in format DD.MM
+
+
         
     Return:
         timetable: timetable of the corresponding day in pseudo-json
@@ -157,14 +152,12 @@ def gsheets_get_day(day: str) -> list:
 
     eventtypes = {
         'regular': {'blue': 1, 'green': 1, 'red': 1},
-        'lecture': {'blue': 0.56078434, 'green': 0.7490196, 'red': 0.98039216},
-        'master': {'blue': 0.60784316, 'green': 0.8392157, 'red': 0.7607843},
+        'lecture': {'blue': 0.60784316, 'green': 0.8392157, 'red': 0.7607843},
+        'master': {'blue': 0.56078434, 'green': 0.7490196, 'red': 0.98039216},
         'science': {'blue': 0.9098039, 'green': 0.5254902, 'red': 0.2901961},
         'enter': {'green': 1, 'red': 1},
         'oblig': {'blue': 0.7176471, 'green': 0.7176471, 'red': 0.7176471}
     }
-
-    day = 'Template'  # TODO comment on release
 
     spread_id = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     token_file = open('/home/ubuntu/iHSE_web/backend/token.pickle', 'rb')
@@ -181,8 +174,20 @@ def gsheets_get_day(day: str) -> list:
     row = 2
 
     while nextstep:
+        # if event is last (and it is automatically one-line)
+        if row == len(sheet_data['rowData']) - 1 or 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][0] and 'effectiveValue' not in sheet_data['rowData'][row + 4]['values'][0]:
+            # last event is always for-all one-line event
+            timetable.append({})
+            timetable[-1]['time'] = sheet_data['rowData'][row]['values'][0]['effectiveValue']['stringValue']
+            timetable[-1]['events'] = [{'title': sheet_data['rowData'][row]['values'][1]['effectiveValue']['stringValue']}]
+            back = sheet_data['rowData'][row]['values'][0]['effectiveFormat']['backgroundColor']
+            for type_ in eventtypes.keys():
+                if eventtypes[type_] == back:
+                    timetable[-1]['events'][-1]['type'] = type_
+                    break
+            nextstep = False
         # if current event is one-line and not last
-        if 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][0]:
+        elif row == len(sheet_data['rowData']) - 1 or 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][0]:
             timetable.append({})
             timetable[-1]['time'] = sheet_data['rowData'][row]['values'][0]['effectiveValue']['stringValue']
             timetable[-1]['events'] = []
@@ -191,6 +196,11 @@ def gsheets_get_day(day: str) -> list:
             while inner_step:
                 timetable[-1]['events'].append({})
                 timetable[-1]['events'][-1]['title'] = sheet_data['rowData'][row]['values'][col]['effectiveValue']['stringValue']
+                back = sheet_data['rowData'][row]['values'][col]['effectiveFormat']['backgroundColor']
+                for type_ in eventtypes.keys():
+                    if eventtypes[type_] == back:
+                        timetable[-1]['events'][-1]['type'] = type_
+                        break
                 col += 1
                 while 'effectiveValue' not in sheet_data['rowData'][row]['values'][col]:
                     col += 1
@@ -207,7 +217,10 @@ def gsheets_get_day(day: str) -> list:
             while inner_step:
                 timetable[-1]['events'].append({})
                 # title
-                timetable[-1]['events'][-1]['title'] = sheet_data['rowData'][row]['values'][col]['effectiveValue']['stringValue']
+                if 'effectiveValue' in sheet_data['rowData'][row]['values'][col]:
+                    timetable[-1]['events'][-1]['title'] = sheet_data['rowData'][row]['values'][col]['effectiveValue']['stringValue']
+                else:
+                    timetable[-1]['events'][-1]['title'] = ''
                 # description
                 if 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][col]:
                     timetable[-1]['events'][-1]['desc'] = sheet_data['rowData'][row + 1]['values'][col]['effectiveValue']['stringValue']
@@ -229,21 +242,12 @@ def gsheets_get_day(day: str) -> list:
                     if eventtypes[type_] == back:
                         timetable[-1]['events'][-1]['type'] = type_
                         break
-                # TODO: id
                 col += 1
                 while 'effectiveValue' not in sheet_data['rowData'][row]['values'][col]:
                     col += 1
                 if sheet_data['rowData'][row]['values'][col]['effectiveValue']['stringValue'] == '.':
                     inner_step = False
             row += 4
-        # if event is last (and it is automatically one-line
-        elif 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][0] and \
-                'effectiveValue' not in sheet_data['rowData'][row + 4]['values'][0]:
-            # last event is always for-all one-line event
-            timetable.append({})
-            timetable[-1]['time'] = sheet_data['rowData'][row]['values'][0]['effectiveValue']['stringValue']
-            timetable[-1]['events'] = [{'title': sheet_data['rowData'][row]['values'][1]['effectiveValue']['stringValue']}]
-            nextstep = False
 
     return timetable
 
@@ -275,69 +279,57 @@ def gsheets_get_projects(filter_obj) -> list:
     return projects
 
 
-def get_feedback(day: str):  # TODO: rename
+def gsheets_get_feedback() -> dict:
     """Get description of day for feedback in Spreadsheet
     Create new user if it does not exist  # TODO what?
     Save in table id, name, phone type and team  # TODO what?
 
-    Args:
-        day: num of the day - 'DD.MM'
-
     Returns:
-        (title, [event1, event2, event3])  # TODO later: return None if already done
+        {'DD.MM': (title, [event1, event2, event3]), ...}  # TODO later: return None if already done
 
     """
 
-    day = '04.06'
-
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    # position = str(int(get(token, id_, "Feedback", "A1")[0][0])-1)
     values = get(token, id_, 'Feedback', 'A3:M5')  # TODO: update M for all days
-    col = 0
-    for index, value in enumerate(values[1]):
-        if value == day:
-            col = index
-            break
-    events = [values[2][col+2], values[2][col+3], values[2][col+4]]
-    dayname = values[0][col]
-    return dayname, events
+
+    col = 3
+    day_number = 0
+    feedback = {}
+
+    while col < len(values[1])-1:
+        if values[1][col] != '':
+            title = values[0][col]
+            pos = 3 + 5 * day_number
+            events = [values[2][pos+2], values[2][pos+3], values[2][pos+4]]
+            feedback[values[1][col]] = (title, events)
+            day_number += 1
+        col += 1
+
+    return feedback
 
 
-def gsheets_get_events():
-    """Get events from Spreadsheet
+def gsheets_get_codes() -> list:
+    """Get list of registration codes from Spreadsheet
 
-    Args:
-
-    Returns:
-        events: description of the events - list [ (id, type, title, credits, total, date, loc, host, desc, time), ... ]
+    :return list of registration codes with their type and status
     """
-
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    position = str(int(get(token, id_, "Events", "A1")[0][0]) - 1)
-    read_values = get(token, id_, "Events", "A5:J" + position)
-
-    events = []
-    for event_raw in read_values:
-        events.append((int(event_raw[0]),
-                       event_raw[7],
-                       event_raw[1],
-                       int(event_raw[8]),
-                       int(event_raw[9]),
-                       event_raw[3],
-                       event_raw[4],
-                       event_raw[5],
-                       event_raw[6],
-                       event_raw[2]))
-    return events
+    position = str(int(get(token, id_, "Codes", "A1")[0][0]) - 1)
+    values = get(token, id_, "Codes", "A5:C" + position)
+    # print(values)
+    codes = []
+    for row in values:
+        codes.append((row[0], int(row[1]), int(row[2])))
+    return codes
 
 
 def gsheets_get_users():
     """Get list of users from Spreadsheet
 
     Returns:
-        state: Read users # TODO: clarify user representation (SQL?)
+        state: Read users
     """
 
     iHSE_length = 14
@@ -349,50 +341,99 @@ def gsheets_get_users():
     users = []
     for row in read_values:
         users.append({})
-        users[-1]['id'] = row[0]
-        users[-1]['type'] = row[1]
+        users[-1]['id'] = int(row[0])
+        users[-1]['type'] = int(row[1])
         users[-1]['phone'] = row[2]
         users[-1]['name'] = row[3]
         users[-1]['pass'] = row[4]
-        users[-1]['team'] = row[5]
-        users[-1]['credits'] = row[6]
-        users[-1]['avatar'] = row[7]
-        users[-1]['credits_list'] = []
-        if len(row) == 8:
-            pres_creds_len = 0
+        users[-1]['team'] = int(row[5])
+        users[-1]['credits'] = int(row[6])
+        if len(row) > 7:
+            users[-1]['avatar'] = row[7]
+            users[-1]['credits_list'] = []
+            if len(row) == 8:
+                pres_creds_len = 0
+            else:
+                pres_creds_len = len(row) - 9
+            tmp = 9
+            for i in range(pres_creds_len):
+                users[-1]['credits_list'].append(int(row[tmp]))
+                tmp += 1
+            for i in range(iHSE_length - pres_creds_len):
+                users[-1]['credits_list'].append(None)
         else:
-            pres_creds_len = len(row) - 9
-        tmp = 9
-        for i in range(pres_creds_len):
-            users[-1]['credits_list'].append(int(row[tmp]))
-            tmp += 1
-        for i in range(iHSE_length - pres_creds_len):
-            users[-1]['credits_list'].append(None)
-    return read_values
+            users[-1]['avatar'] = ''
+    return users
 
 
-# TODO: Max update events
-def update_events():
-    """Update events with description in Spreadsheet and then their local copy
-    Read and parse it from days sheets and save in 'Events' sheet
-    And generate id
-    # TODO: modify for not only initial parsing
-    Note:
-        If exist such event with time, date and host - update other fields
-        If no event - generate with unique id
+def gsheets_update_events():
+    """Combine events from timetable and Spreadsheet and
+    set actual data both to cache and to Spreadsheet"""
+    new_events = []
+    for day in days_list:
+        for time_container in cached_data[day]:
+            for event in time_container['events']:
+                if event['type'] in ['lecture', 'master', 'oblig']:
+                    new_events.append(['',
+                                       event['title'],
+                                       time_container['time'],
+                                       day,
+                                       event['loc'],
+                                       event['host'],
+                                       event['desc'],
+                                       event['type']])
 
-    Args:
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    id_continue = int(get(token, id_, 'Events', 'C1')[0][0])
+    pos = str(int(get(token, id_, 'Events', 'A1')[0][0]) - 1)
+    if int(pos) > 4:
+        prev_events = get(token, id_, 'Events', 'A5:K' + pos)
+    else:
+        prev_events = []
 
-    Returns:
-        None
+    for new_event in new_events:
+        for prev_event in prev_events:
+            if prev_event[1] == new_event[1]:
+                new_event[0] = int(prev_event[0])
+                if len(prev_event) > 8 and prev_event[8] != '':
+                    new_event.append(int(prev_event[8]))
+                else:
+                    new_event.append('')
+                if len(prev_event) > 9 and prev_event[9] != '':
+                    new_event.append(prev_event[9])
+                else:
+                    new_event.append('')
+                if len(prev_event) > 10:
+                    new_event.append(prev_event[10])
+                else:
+                    new_event.append('')
+                break
+        if new_event[0] == '':
+            new_event[0] = id_continue
+            id_continue += 1
+            new_event.append('')
+            new_event.append('')
+            new_event.append('')
+    qty = len(new_events)
+    post(token, id_, 'Events', 'C1', [[id_continue]])
+    post(token, id_, 'Events', 'A1', [[5 + qty]])
+    post(token, id_, 'Events', 'A5:K' + str(5 + qty - 1), new_events)
+    diff = len(new_events) - len(prev_events)
+    if diff < 0:
+        diff *= -1
+        empty_list = [['' for i in range(11)] for j in range(diff)]
+        post(token, id_, 'Events', 'A' + str(5 + qty) + ':K' + str(5 + qty + diff - 1), empty_list)
 
-    """
+    for day in days_list:
+        for time_container in cached_data[day]:
+            for event in time_container['events']:
+                for new_event in new_events:
+                    if new_event[1] == event['title']:
+                        event['id'] = new_event[0]
+                        break
 
-    days = ['Template']
-
-    for day in days:
-        pass
-    pass
+    return new_events
 
 
 """ ---===---==========================================---===--- """
@@ -409,8 +450,6 @@ def get_day(day: str) -> list:
         : parsed timetable for the needed day
     """
 
-    day = 'Template'  # TODO: comment on release
-
     return cached_data[day]
 
 
@@ -420,33 +459,24 @@ def get_events() -> list:
     Returns: 
         : list of parsed events
     """
+
     return cached_data['Events']
 
 
 def get_event(event_id: int):
-    """Get event with full description from Spreadsheet
+    """Get event with full description
 
     Args:
         event_id: Event id
 
     Returns:
-        event: description of the event - (id, title, time, date, location, host, description, type, credits, total), ....
+        event: description of the event - (id, title, time, date, location, host, description, type, credits, total)
     """
+    event_id = int(event_id)
 
     for event in cached_data['Events']:
         if event[0] == event_id:
-            total_event = (event[0],
-                           event[2],
-                           event[9],
-                           event[5],
-                           event[6],
-                           event[7],
-                           event[8],
-                           event[1],
-                           event[3],
-                           event[4])
-            return total_event
-
+            return event
     return None
 
 
@@ -470,7 +500,6 @@ def get_projects() -> list:
     """
     global cached_data
 
-    print(test_data)
     return cached_data['Projects']
 
 
@@ -510,14 +539,27 @@ def get_users() -> list:
     return users_list
 
 
+def get_feedback(day: str):
+    """Get description of day for feedback in Spreadsheet
+    Create new user if it does not exist  # TODO what?
+    Save in table id, name, phone type and team  # TODO what?
+
+    Args:
+        day: num of the day - 'DD.MM'
+
+    Returns:
+        (title, [event1, event2, event3])  # TODO later: return None if already done
+
+    """
+    return cached_data['Feedback'][day]
+
+
 """ ---===---==========================================---===--- """
 """         High-level functions for posting needed data         """
 """ ---===---==========================================---===--- """
 
 
 def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
-    # TODO: save to day, not to default position
-    # TODO: check GSheetsAPI how to track success
     """ Save feedback of user in google sheets
     Create new user if it does not exist
     Save in table name, phone and team
@@ -541,25 +583,68 @@ def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
         state: success or not
         
     """
+
+    tmp_daylist = ['05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06',
+                   '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06']
     
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
 
-    position = get(token, id_, "Feedback", "A1")[0][0]
+    position = str(int(get(token, id_, 'Feedback', 'A1')[0][0]) - 1)
+    users_list = get(token, id_, 'Feedback', 'A6:A' + position)
+    # mandatory transformation of users_list from [[v]...[v]] to [v...v]
+    tmp_list = []
+    for row in users_list:
+        tmp_list.append([row[0]])
+    users_list = tmp_list
+    # calculating line to put feedback
+    index_ = -1
+    for index, username in enumerate(users_list, start=6):
+        if username == user_obj[3]:
+            index_ = index
+            break
+    if index_ == -1:
+        index_ = str(int(position) + 1)
+    else:
+        index_ = str(index_)
 
-    print(position)
+    # calculating special multiplier to get column to put feedback
+    col_mul = -1
+    for index, dayname in enumerate(tmp_daylist):
+        if dayname == day:
+            col_mul = index
+            break
+    if col_mul == -1:
+        return False
 
-    range_ = "A" + position + ":H" + str(int(position) + 2)
+
+    def nextcell(cell: str) -> str:
+        # print(cell)
+        if cell[-1] == 'Z':
+            cell = cell + 'A'
+        else:
+            # print(cell[0:-1])
+            cell = cell[0:-1] + chr(ord(cell[-1]) + 1)
+        return cell
+
+    # calculating columns to put feedback using special multiplier
+    col = 'D'
+    for i in range(col_mul):
+        col = nextcell(col)
+    endcol = col
+    for i in range(4):
+        endcol = nextcell(endcol)
+
+    range_ = col + index_ + ':' + endcol + str(int(index_) + 2)
     values = [[user_obj[3], user_obj[2], user_obj[5], feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
               ['', '', '', '', feedback_data['user2'], feedback_data['event1_text'], feedback_data['event2_text'], feedback_data['event3_text']],
               ['', '', '', '', feedback_data['user3']]]
-    response = post(token, id_, "Feedback", range_, values)
-    # print('{0} cells updated.'.format(write_response.get('updatedCells')))
 
-    response = post(token, id_, "Feedback", "A1", [[int(position) + 3]])
-    # print('{0} cells updated.'.format(update_response.get('updatedCells')))
+    post(token, id_, "Feedback", range_, values)
+    if index_ == str(int(position) + 1):
+        post(token, id_, "Feedback", "A1", [[int(position) + 4]])
 
-    update_cache('Feedback')
+    # update_cache('Feedback')  # TODO: uncomment when Feedback modified
     return True
 
 
@@ -576,7 +661,7 @@ def save_users(users_list):
 
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    position = get(token, id_, "Users", "A1")[0][0]
+    pos = int(get(token, id_, "Users", "A1")[0][0])
     for i in range(len(users_list)):
         data = [[users_list[i][0],
                  users_list[i][1],
@@ -586,9 +671,10 @@ def save_users(users_list):
                  users_list[i][5],
                  users_list[i][6],
                  users_list[i][7]]]
-        write_response = post(token, id_, "Users", "A" + str(5+i) + ":I" + str(5+i), data)
+        write_response = post(token, id_, "Users", "A" + str(pos+i) + ":I" + str(pos+i), data)
 
-    response = post(token, id_, "Users", "A1", [[int(position) + len(users_list)]])
+    response = post(token, id_, "Users", "A1", [[pos + len(users_list)]])
+    update_cache('Users')
 
 
 
@@ -621,8 +707,8 @@ def save_project(user_obj, project_data):
     values = [[project_data['title'], project_data['type'], str(project_data['name']), project_data['desc'], project_data['anno']]]
     write_response = post(token, id_, "Projects", "A" + position + ":E" + position, values)
     update_response = post(token, id_, "Projects", "A1", [[int(position) + 1]])
-
-    return True  # TODO: check GSheetsAPI how to track success
+    update_cache('Projects')
+    return True
 
 
 # TODO: Max save credits
@@ -655,6 +741,7 @@ def save_credits(user_obj, event_obj):
     curr_val = int(get(token, id_, 'Users', target_gcol + str(target_grow))[0][0])
     curr_val += event_obj[3]
     post(token, id_, 'Users', target_gcol + str(target_grow), [[str(curr_val)]])
+    update_cache('Users')
 
 
 """ ---===---===========================================---===--- """
@@ -662,23 +749,34 @@ def save_credits(user_obj, event_obj):
 """ ---===---===========================================---===--- """
 
 
-# TODO: Max generate reg codes
 def generate_codes(users, hosts, admins):
     """ Generate registration codes to google sheets
     Each code is a 6-characters-number-letter code
 
     Args:
-        users: number of codes for this type of users
-        hosts: number of codes for this type of users
-        admins: number of codes for this type of users
+        users: number of codes for users (type 0)
+        hosts: number of codes for hosts (type 1)
+        admins: number of codes for admins (type 2)
 
     """
 
-    codes = generate_registration_codes(users, 0)
-    codes = generate_registration_codes(hosts, 1)
-    codes = generate_registration_codes(admins, 2)
+    codes = []
+    for code in generate_registration_codes(users, 0):
+        codes.append([code, 0, 0])
+    for code in generate_registration_codes(hosts, 1):
+        codes.append([code, 1, 0])
+    for code in generate_registration_codes(admins, 2):
+        codes.append([code, 2, 0])
 
-    pass
+    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+    pos_start = get(token, id_, 'Codes', 'A1')[0][0]
+    pos_finish = str(int(pos_start) + len(codes) - 1)
+    post(token, id_, 'Codes', 'A' + pos_start + ':C' + pos_finish, codes)
+    post(token, id_, 'Codes', 'A1', [[int(pos_finish) + 1]])
+
+    cached_data['Codes'] = gsheets_get_codes()
+
 
 
 def generate_registration_codes(num, type_=0):
@@ -728,19 +826,17 @@ def check_code(code: str):
         type: type of user, int or None if registration rejected
 
     """
-    # TODO: maybe it has to happen on cache too?
-    token = '/home/ubuntu/iHSE_web/backend/token.pickle'
-    id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
-    read_values = get(token, id_, "Codes", "A5:C9")
 
-    reg_allowed = False
     user_type = -1
-    for index, code_line in enumerate(read_values, start=5):
-        if code_line[0] == code and code_line[2] == '0':
-            user_type = int(code_line[1])
-
-            update_response = post(token, id_, "Codes", "C" + str(index), [[1]])
+    reg_allowed = False
+    for index, code_row in enumerate(cached_data['Codes']):
+        if code_row[0] == code and code_row[2] == 0:
             reg_allowed = True
+            user_type = code_row[1]
+            token = '/home/ubuntu/iHSE_web/backend/token.pickle'
+            id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
+            post(token, id_, 'Codes', 'C' + str(5 + index), [['1']])
+            cached_data['Codes'] = gsheets_get_codes()
             break
 
     if reg_allowed:
