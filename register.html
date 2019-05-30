@@ -6,7 +6,7 @@
 
     <meta name="theme-color" content="#006cae">
 
-    <title>Register</title>
+    <title>Регистрация | iHSE</title>
     <link rel="shortcut icon" href="favicon_32x32.png" type="image/x-icon">
 
     <link rel="stylesheet" href="styles/main.css">
@@ -27,7 +27,7 @@
             </button>
         </nav>
 
-        <div class="title">Register</div>
+        <div class="title">Регистрация</div>
     </div>
 
 </header>
@@ -36,28 +36,28 @@
 <div class="wrapper">
 
     <div id="ajax_form" class="form">
-        <div class="register__title">Register</div>
+        <div class="register__title">Регистрация</div>
 
-        <div class="register__icon"></div>
+<!--        <div class="register__icon"></div>-->
 
         <div class="form__input">
-            <label for="name" class="register__label">Name</label>
+            <label for="name" class="register__label">Имя</label>
             <input id="name" type="text" name="name" maxlength="35"/>
         </div>
 
         <div class="form__input">
-            <label for="surname" class="register__label">Surname</label>
+            <label for="surname" class="register__label">Фамилия</label>
             <input id="surname" type="text" name="surname" maxlength="35"/>
         </div>
 
         <div class="form__input">
-            <label for="phone" class="register__label">Phone</label>
+            <label for="phone" class="register__label">Номер телефона</label>
             <!--<input id="phone" type="text" name="name" maxlength="20"/>-->
             <input id="phone" type="tel" name="phone" placeholder="+X (XXX) XXX-XXXX" pattern="\+\d \(\d{3}\) \d{3}\-\d{4}" class="masked" title="10-digit number" maxlength="14" data-placeholder="(XXX) XXX-XXXX">
         </div>
 
         <div class="form__input">
-            <label for="pass" class="register__label">Password</label>
+            <label for="pass" class="register__label">Пароль</label>
             <input id="pass" type="password" name="pass" maxlength="20"/>
             <div class="input__icon">
                 <i style="display: none" class="mobile__item__icon large material-icons">visibility</i>
@@ -66,25 +66,24 @@
         </div>
 
         <div class="form__input">
-            <label for="code" class="register__label">Code</label>
+            <label for="code" class="register__label">Код регистрации</label>
             <input id="code" type="text" name="code" maxlength="6"/>
             <!-- TODO: Code template -->
             <!--<input id="code" type="text" name="code" placeholder="XXXXXX" pattern="\w\w\w\w\w\w" class="masked" title="6-digit-letter number" maxlength="6" data-charset="______">-->
         </div>
 
-        <button id="btn" class="register__button">register</button>
+        <button id="btn" class="register__button">Зарегистрироваться</button>
         <button id="btn2" class="register__button" style="display: none"><img class="loading" style="margin: 0" src="images/loading.gif"></button>
 
     </div>
 
 
     <footer class="footer register__callback" style="z-index: 0;">
-        <span>Не получается? </span>
+        <span>Не получается?</span>
         <a href="#">Свяжитесь с нами</a>
     </footer>
 
 </div>
-
 
 
 <!-- For phone field -->
