@@ -90,14 +90,12 @@ xhttp.onreadystatechange = function () {
                 }
             }
 
-
-
         }
     }
 };
 
 xhttp.open("GET", "http://ihse.tk:50000/event?id=" + eventId, true);
-// xhttp.withCredentials = true; // To send Cookie;
+xhttp.withCredentials = true; // To send Cookie;
 xhttp.send();
 
 

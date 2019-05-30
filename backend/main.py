@@ -350,7 +350,7 @@ def get(env, query, cookie):
                     [('Access-Control-Allow-Origin', '*')],
                     None)
 
-        return get_event(env, query)
+        return get_event(env, query, cookie)
 
     if env['PATH_INFO'] == '/projects':
         # TODO: Remove on release - admin
@@ -670,7 +670,7 @@ def get_credits(env, query, cookie):
 
 
 # @cache
-def get_event(env, query):
+def get_event(env, query, cookie):
     """ Event data HTTP request
     Get event description by event id
 
@@ -711,7 +711,10 @@ def get_event(env, query):
 
     return ('200 OK',
             [
-                ('Access-Control-Allow-Origin', '*'),
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
                 ('Content-Length', str(len(json_data)))
              ],
@@ -750,7 +753,7 @@ def get_feedback(env, query, cookie):
 
     return ('200 OK',
             [
-                ('Access-Control-Allow-Origin', '*'),
+                ('Access-Control-Allow-Origin', ''),
                 ('Content-type', 'application/json'),
                 ('Content-Length', str(len(json_data)))
              ],
