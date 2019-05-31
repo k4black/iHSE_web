@@ -80,8 +80,9 @@ document.querySelector('#btn').addEventListener('click', function () {
             }
 
             if (this.status === 401) {  // Authorization error
-                alert("Неверный Логин/Пароль!");  // TODO: show Html error message
+                // alert("Неверный Логин/Пароль!");  // TODO: show Html error message
 
+                location = 'http://ihse.tk/login.html';
                 pass.value = "";
             }
         }

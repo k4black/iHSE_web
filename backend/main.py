@@ -824,7 +824,7 @@ def get_day(env, query):
 
     data = gsheets.get_day(day)  # getting pseudo-json here
 
-    print('get_day', data)
+    #print('get_day', data)
 
     json_data = json.dumps(data)  # creating real json here
     json_data = json_data.encode('utf-8')
@@ -930,6 +930,9 @@ def post_login(env, phone, passw):
 
     """
 
+    print(phone)
+    phone = phone[0] + "7" + phone[2:]
+
     # Get session obj or None
     res = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
 
@@ -1016,6 +1019,7 @@ def post_register(env, name, phone, passw, code):
     Returns:
 
     """
+    phone = phone[0] + "7" + phone[2:]
 
     # Check registration code
     user_type = gsheets.check_code(code)
