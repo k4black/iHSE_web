@@ -1024,6 +1024,13 @@ def post_register(env, name, phone, passw, code):
     # Check registration code
     user_type = gsheets.check_code(code)
 
+    user = sql.get_user_by_phone()
+    if user is not None:
+        return ('409 Conflict',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
+
+
     if user_type is not None:
 
         sql.register(name, passw, user_type, phone, 0)  # Create new user

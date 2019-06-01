@@ -79,6 +79,15 @@ document.querySelector('#btn').addEventListener('click', function () {
                 code.value = "";
             }
 
+            if (this.status === 409) {  // Authorization error
+                alert("Пользователь уже существует!");  // TODO: show Html error message
+
+                location = 'http://ihse.tk/login.html';
+                
+                pass.value = "";
+                code.value = "";
+            }
+
             if (this.status === 401) {  // Authorization error
                 // alert("Неверный Логин/Пароль!");  // TODO: show Html error message
 

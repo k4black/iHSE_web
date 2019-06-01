@@ -283,6 +283,27 @@ def get_user(user_id):
         return users[0]
 
 
+def get_user_by_phone(phone):
+    """ Get user obj by phone
+
+    Args:
+        phone: phone - str
+
+    Returns:
+        user_obj: (id, user_type, phone, name, pass, team, credits)
+                     or None if there is no such user
+
+    """
+
+    cursor.execute("SELECT * FROM users WHERE phone=?", (phone, ))
+    users = cursor.fetchall()
+
+    if len(users) == 0:    # No such user
+        return None
+    else:
+        return users[0]
+
+
 def get_event(event_id):
     """ Get event obj by id
 
