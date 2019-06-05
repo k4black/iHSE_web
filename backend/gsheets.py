@@ -41,6 +41,7 @@ def update_cache(name: str):
         name: name of list in Spreadsheet
 
     """
+    print('Updating: ', name)
 
     global cached_data
 
