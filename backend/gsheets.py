@@ -730,7 +730,7 @@ def save_project(user_obj, project_data):
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     position = get(token, id_, "Projects", "A1")[0][0]
 
-    values = [[project_data['title'], project_data['type'], str(project_data['name']), project_data['desc'], project_data['anno']]]
+    values = [[project_data['title'], project_data['type'], ', '.join(project_data['name']), project_data['desc'], project_data['anno']]]
     write_response = post(token, id_, "Projects", "A" + position + ":E" + position, values)
     update_response = post(token, id_, "Projects", "A1", [[int(position) + 1]])
     update_cache('Projects')
