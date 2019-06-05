@@ -9,7 +9,7 @@ import random
 
 cached_data = {}  # global variable for storing parsed Spreadsheet lists
 
-days_list = ['Template', '05.06']
+days_list = ['Template', '05.06', '06.06', '07.06']
 # TODO: modify when Feedback and Timetable List will be done by Serova
 
 """ ---===---============================================---===--- """
@@ -380,7 +380,6 @@ def gsheets_update_events():
         for time_container in cached_data[day]:
             for event in time_container['events']:
                 if event['type'] in ['lecture', 'master', 'oblig']:
-                    print('title:', event['title'])
                     new_events.append(['',
                                        event['title'],
                                        time_container['time'],
