@@ -9,7 +9,7 @@ import random
 
 cached_data = {}  # global variable for storing parsed Spreadsheet lists
 
-days_list = ['Template', '05.06', '06.06']
+days_list = ['Template', '05.06']
 # TODO: modify when Feedback and Timetable List will be done by Serova
 
 """ ---===---============================================---===--- """
