@@ -52,21 +52,22 @@ xhttp.send();
  */
 var today_date = new Date();
 var dd = String(today_date.getDate()).padStart(2, '0');
-var dd = String(today_date.getDate());
+
 var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
 
 
 var today = mm + '.' + dd;
-today = '15.06';
 
 startDay = 5;
 startMonth = 6;
 numOfDays = 14;
+text_days = ['05.06', '06.06', '037.06', '08.06', '09.06', '10.06', '11.06', '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06']
+
 
 topbar_html = "";
 
-for (var i = 0; i < numOfDays; ++i) {
-    let day_text = ('' + (startDay + i)).padStart(2, '0') + '.' + ('' + startMonth).padStart(2, '0');
+for (var i = 0; i < text_days.length; ++i) {
+    let day_text = text_days[i];
     if ( day_text === today) {
         topbar_html += '<div class="day today selected">'
     } else {

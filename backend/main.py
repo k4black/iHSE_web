@@ -859,42 +859,15 @@ def post(env, query, cookie):
         return post_register(env, query['name'], query['phone'], query['pass'], query['code'])
 
     if env['PATH_INFO'] == '/feedback':
-        # TODO: Remove on release - admin
-        user_obj = get_user_by_response(cookie)
-        if user_obj[2] is None:  # No User
-            return user_obj  # (id, type, phone, name, pass, team, credits, avatar)
-        if user_obj[1] == 0:
-            return ('401 Unauthorized',
-                    [('Access-Control-Allow-Origin', '*')],
-                    None)
-
         return post_feedback(env, query, cookie)
 
     if env['PATH_INFO'] == '/project':
-        # TODO: Remove on release - admin
-        user_obj = get_user_by_response(cookie)
-        if user_obj[2] is None:  # No User
-            return user_obj  # (id, type, phone, name, pass, team, credits, avatar)
-        if user_obj[1] == 0:
-            return ('401 Unauthorized',
-                    [('Access-Control-Allow-Origin', '*')],
-                    None)
-
         return post_project(env, query, cookie)
 
     if env['PATH_INFO'] == '/logout':
         return post_logout(env, query, cookie)
 
     if env['PATH_INFO'] == '/credits':
-        # TODO: Remove on release - admin
-        user_obj = get_user_by_response(cookie)
-        if user_obj[2] is None:  # No User
-            return user_obj  # (id, type, phone, name, pass, team, credits, avatar)
-        if user_obj[1] == 0:
-            return ('401 Unauthorized',
-                    [('Access-Control-Allow-Origin', '*')],
-                    None)
-
         return post_credits(env, query, cookie)
 
     if env['PATH_INFO'] == '/enroll':
