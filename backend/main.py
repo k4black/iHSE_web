@@ -316,28 +316,9 @@ def get(env, query, cookie):
         return get_names(env, query, cookie)
 
     if env['PATH_INFO'] == '/day':
-        # # TODO: Remove on release - admin
-        # user_obj = get_user_by_response(cookie)
-        # if user_obj[2] is None:  # No User
-        #     return user_obj  # (id, type, phone, name, pass, team, credits, avatar)
-        # print('day for', user_obj)
-        # if user_obj[1] == 0:
-        #     return ('401 Unauthorized',
-        #             [('Access-Control-Allow-Origin', '*')],
-        #             None)
-
         return get_day(env, query)
 
     if env['PATH_INFO'] == '/feedback':
-        # TODO: Remove on release - admin
-        user_obj = get_user_by_response(cookie)
-        if user_obj[2] is None:  # No User
-            return user_obj  # (id, type, phone, name, pass, team, credits, avatar)
-        if user_obj[1] == 0:
-            return ('401 Unauthorized',
-                    [('Access-Control-Allow-Origin', '*')],
-                    None)
-
         return get_feedback(env, query, cookie)
 
     if env['PATH_INFO'] == '/event':
@@ -353,15 +334,6 @@ def get(env, query, cookie):
         return get_event(env, query, cookie)
 
     if env['PATH_INFO'] == '/projects':
-        # TODO: Remove on release - admin
-        user_obj = get_user_by_response(cookie)
-        if user_obj[2] is None:  # No User
-            return user_obj  # (id, type, phone, name, pass, team, credits, avatar)
-        if user_obj[1] == 0:
-            return ('401 Unauthorized',
-                    [('Access-Control-Allow-Origin', '*')],
-                    None)
-
         return get_projects(env, query)
 
     if env['PATH_INFO'] == '/credits':

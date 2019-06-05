@@ -61,7 +61,7 @@ var today = mm + '.' + dd;
 startDay = 5;
 startMonth = 6;
 numOfDays = 14;
-text_days = ['05.06', '06.06', '037.06', '08.06', '09.06', '10.06', '11.06', '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06']
+text_days = ['05.06', '08.06', '11.06', '14.06', '17.06', '18.06'];
 
 
 topbar_html = "";
@@ -126,8 +126,6 @@ var days = document.querySelectorAll('.day');
 for (let i = 0; i < days.length; i++) {
 
     days[i].addEventListener('click', function() {
-
-        alert(this.querySelector('.day__name').innerText);
 
         document.querySelector('.selected').classList.remove('selected');
         this.classList.add('selected');

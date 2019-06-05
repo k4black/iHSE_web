@@ -35,7 +35,7 @@ def update():
 
 
 def update_cache(name: str):
-    """Update cached version of exact Spreadsheet list from online
+    """Update cached version  of exact Spreadsheet list from online
 
     Args:
         name: name of list in Spreadsheet
