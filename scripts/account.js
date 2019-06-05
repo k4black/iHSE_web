@@ -57,7 +57,7 @@ function loadAccount() {
                 // }
 
                 //setup avatar
-                if (user.avatar != null)
+                if (user.avatar != null && user.avatar != undefined && user.avatar != '')
                     topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
 
@@ -83,7 +83,7 @@ function loadAccount() {
             }
 
             else if (this.status === 401) {  // No account data
-                alert('Please, login!');
+                alert('Требуется авторизация!');
             }
         }
     };
