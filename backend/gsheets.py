@@ -9,7 +9,7 @@ import random
 
 cached_data = {}  # global variable for storing parsed Spreadsheet lists
 
-days_list = ['Template']
+days_list = ['Template', '05.06', '06.06']
 # TODO: modify when Feedback and Timetable List will be done by Serova
 
 """ ---===---============================================---===--- """
@@ -456,7 +456,7 @@ def get_day(day: str) -> list:
         : parsed timetable for the needed day
     """
 
-    day = 'Template'
+    # day = 'Template'
 
     return cached_data[day]
 
@@ -655,10 +655,10 @@ def save_feedback(user_obj: tuple, day: str, feedback_data: dict) -> bool:
     # calculating columns to put feedback using special multiplier
     col = 'D'
     for i in range(col_mul):
-        col = nextcell(col)
+        col = new_nextcell(col)
     endcol = col
     for i in range(4):
-        endcol = nextcell(endcol)
+        endcol = new_nextcell(endcol)
 
     range_ = col + index_ + ':' + endcol + str(int(index_) + 2)
     values = [[user_obj[3], user_obj[2], user_obj[5], feedback_data['overall'], feedback_data['user1'], feedback_data['event1'], feedback_data['event2'], feedback_data['event3']],
