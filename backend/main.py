@@ -4,7 +4,7 @@ import json
 import time
 
 
-import backend
+# import backend
 # Sqlite import
 from backend import sql
 # GSheetsAPI imports
