@@ -76,7 +76,7 @@ if (sidebar != null) {
                 }
 
                 // Show sidebar items
-                var hidden = sidebar.querySelectorAll('.header__item__hidden');
+                var hidden = document.querySelectorAll('.header__item__hidden');
                 for (var i = 0; i < hidden.length; ++i) {
                     hidden[i].classList.remove('header__item__hidden');
                     console.log('Show hidden items');
