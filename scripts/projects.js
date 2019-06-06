@@ -38,7 +38,11 @@ xhttp.onreadystatechange = function() {
                         continue;
 
                     var tmp_name = i.split(' ').filter(word => word != '');
-                    console.log(tmp_name);
+                    //console.log(tmp_name);
+
+                    if (tmp_name == [])
+                        continue;
+
                     if (rez != '') {
                         rez += ', '
                     }
