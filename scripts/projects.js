@@ -34,6 +34,9 @@ xhttp.onreadystatechange = function() {
                 var names = project.name.split(',');
                 var rez = '';
                 for (var i of names) {
+                    if (i == [])
+                        continue;
+
                     var tmp_name = i.split(' ').filter(word => word != '');
                     console.log(tmp_name);
                     if (rez != '') {
