@@ -25,6 +25,8 @@ document.querySelector('#btn').addEventListener('click', function() {
 
     var title = form.querySelector('#title');
     var type = form.querySelector('#type');
+    var dirs = form.querySelector('#dirs');
+    var deff = form.querySelector('#deff');
     var desc = form.querySelector('#desc');
     var anno = form.querySelector('#anno');
     var names = Array.from(form.querySelectorAll('#name')).map(function(name) {
@@ -32,16 +34,17 @@ document.querySelector('#btn').addEventListener('click', function() {
     });
 
 
-    if (title.value == "" || type.value == "" || names == null || desc.value == "" || anno.value == "") { // If some field are empty - do nothing
+    if (title.value == "" || type.value == "" || dirs.value == "" || deff.value == "" || names == null || desc.value == "") { // If some field are empty - do nothing
         alert('You have to fill all fields!');  // TODO: show Html error message
         return;
     }
 
     let data = JSON.stringify({"title": title.value,
                                "type": type.value,
+                               "deff": deff.value,
+                               "dirs": dirs.value,
                                "name": names,
-                               "desc": desc.textContent,
-                               "anno": anno.textContent
+                               "desc": desc.textContent
                               });
 
 
