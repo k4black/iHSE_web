@@ -270,16 +270,17 @@ def gsheets_get_projects(filter_obj) -> list:
     token = '/home/ubuntu/iHSE_web/backend/token.pickle'
     id_ = '1pRvEClStcVUe9TG3hRgBTJ-43zqbESOPDZvgdhRgPlI'
     position = str(int(get(token, id_, "Projects", "A1")[0][0]) - 1)
-    read_values = get(token, id_, "Projects", "A4:E" + position)
+    read_values = get(token, id_, "Projects", "A4:F" + position)
 
     projects = []
     for project in read_values:
         projects.append({})
         projects[-1]['title'] = project[0]
-        projects[-1]['type'] = project[1]
-        projects[-1]['name'] = project[2]
-        projects[-1]['desc'] = project[3]
-        projects[-1]['anno'] = project[4]
+        projects[-1]['type'] = project[2]
+        projects[-1]['name'] = project[1]
+        projects[-1]['dirs'] = project[3]
+        projects[-1]['deff'] = project[4]
+        projects[-1]['desc'] = project[5]
 
     return projects
 
@@ -503,9 +504,10 @@ def get_projects() -> list:
               [ {
                  "title": string,
                  "name": string,
+                 "deff": string,
+                 "dirs": string
                  "type": string,
-                 "desc": string,
-                 "anno": string
+                 "desc": string
                  }, .........  ]
     """
     global cached_data
