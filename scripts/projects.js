@@ -33,7 +33,7 @@ xhttp.onreadystatechange = function() {
             for (var project of projects_data) {
 
                 project_html = '<div class="project">'+
-                                   '<img src="images/avatar.png">' +
+                                   '<img src="images/rocket.jpeg">' +
                                    '<div class="description">' +
 
                                        '<div class="project__top_line">' +
