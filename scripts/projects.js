@@ -31,6 +31,17 @@ xhttp.onreadystatechange = function() {
             var project_html;
 
             for (var project of projects_data) {
+                var names = project.name.split(',');
+                var rez = '';
+                for (var i of names) {
+                    var tmp_name = i.split(' ').filter(word => word != '');
+                    console.log(tmp_name);
+                    if (rez != '') {
+                        rez += ', '
+                    }
+                    rez += tmp_name[0] + ' ' + tmp_name[1][0] + '.';
+                }
+
 
                 project_html = '<div class="project">'+
                                    '<img src="images/rocket.jpeg">' +
@@ -41,7 +52,7 @@ xhttp.onreadystatechange = function() {
                                            '<span style="text-align: right">' + project.type + '</span>' +
                                        '</div>' +
 
-                                       '<p class="project__names">' + project.name + '</p>' +
+                                       '<p class="project__names">' + names + '</p>' +
 
                                        '<p class="project__desc">' + project.desc + '</p>' +
 
