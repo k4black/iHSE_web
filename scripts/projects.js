@@ -47,8 +47,8 @@ xhttp.onreadystatechange = function() {
                         rez += ', '
                     }
 
-                    console.log(tmp_name[0] + ' ' + tmp_name[1]);
                     rez += tmp_name[0] + ' ' + tmp_name[1][0] + '.';
+
                 }
 
 
@@ -61,7 +61,7 @@ xhttp.onreadystatechange = function() {
                                            '<span style="text-align: right">' + project.type + '</span>' +
                                        '</div>' +
 
-                                       '<p class="project__names">' + names + '</p>' +
+                                       '<p class="project__names">' + rez + '</p>' +
 
                                        '<p class="project__desc">' + project.desc + '</p>' +
 
