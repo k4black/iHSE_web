@@ -40,12 +40,14 @@ xhttp.onreadystatechange = function() {
                     var tmp_name = i.split(' ').filter(word => word != '');
                     //console.log(tmp_name);
 
-                    if (tmp_name == [])
+                    if (tmp_name == [] || tmp_name.length <= 0)
                         continue;
 
                     if (rez != '') {
                         rez += ', '
                     }
+
+                    console.log(tmp_name[0] + ' ' + tmp_name[1]);
                     rez += tmp_name[0] + ' ' + tmp_name[1][0] + '.';
                 }
 
