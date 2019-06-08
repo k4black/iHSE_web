@@ -383,7 +383,7 @@ def gsheets_update_events():
     for day in days_list:
         for time_container in cached_data[day]:
             for event in time_container['events']:
-                if event['type'] in ['lecture', 'master', 'oblig']:
+                if 'type' in event.keys() and event['type'] in ['lecture', 'master', 'oblig']:
                     new_events.append(['',
                                        event['title'],
                                        time_container['time'],
