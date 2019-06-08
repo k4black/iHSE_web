@@ -364,6 +364,7 @@ def gsheets_get_users():
                     pres_creds_len = len(row) - 9
                 tmp = 9
                 for i in range(pres_creds_len):
+                    print(row[tmp])
                     users[-1]['credits_list'].append(int(row[tmp]))
                     tmp += 1
                 for i in range(iHSE_length - pres_creds_len):
