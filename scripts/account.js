@@ -255,8 +255,9 @@ xhttp.onreadystatechange = function () {
         if (this.status === 200) {  // Authorized
 
             let credits = JSON.parse(this.responseText);
-            var data = credits.data;
-            console.log(data);
+            // var data = credits.data;
+            var data = credits;
+            // console.log(data);
 
             // Chart options
             var options = {
