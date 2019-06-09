@@ -338,18 +338,18 @@ xhttp.send();
 
 
 
-/**
- * Add code field animations
- * Hint Rise up when there is some text or cursor inside it
- */
-var code = document.querySelector('#code');
-code.addEventListener('focus', function () {
-    code.closest('div').querySelector("label").classList.add('active');
-});
-
-code.addEventListener('blur', function () {
-    if (code.value != "")
-        return;
-
-    code.closest('div').querySelector("label").classList.remove('active');
-});
+// /**
+//  * Add code field animations
+//  * Hint Rise up when there is some text or cursor inside it
+//  */
+// var code = document.querySelector('#code');
+// code.addEventListener('focus', function () {
+//     code.closest('div').querySelector("label").classList.add('active');
+// });
+//
+// code.addEventListener('blur', function () {
+//     if (code.value != "")
+//         return;
+//
+//     code.closest('div').querySelector("label").classList.remove('active');
+// });
