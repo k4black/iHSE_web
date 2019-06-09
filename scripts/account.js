@@ -128,43 +128,43 @@ document.querySelector('.header__button').addEventListener('click', function () 
 
 
 
-/**
- * Add button event - 'code input'
- * Send http POST request to sing up lecture
- */
-document.querySelector('#btn').addEventListener('click', function () {
-
-    let code = document.querySelector('#code');
-
-    if (code.value === "")  // If some field are empty - do nothing
-        return;
-
-
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {  // When request is done
-
-            if (this.status === 200) {  // Authorized
-                alert("ok!");
-                loadAccount();
-
-                code.value = "";
-
-            }
-
-            if (this.status === 401) {  // Authorization error
-                alert("Wrong code!");  // TODO: show Html error message
-
-                code.value = "";
-            }
-        }
-    };
-
-    xhttp.open("POST", "http://ihse.tk:50000/credits?code=" + code.value, true);
-    xhttp.withCredentials = true;  // To receive cookie
-    xhttp.send();
-});
+// /**
+//  * Add button event - 'code input'
+//  * Send http POST request to sing up lecture
+//  */
+// document.querySelector('#btn').addEventListener('click', function () {
+//
+//     let code = document.querySelector('#code');
+//
+//     if (code.value === "")  // If some field are empty - do nothing
+//         return;
+//
+//
+//     var xhttp = new XMLHttpRequest();
+//
+//     xhttp.onreadystatechange = function () {
+//         if (this.readyState === 4) {  // When request is done
+//
+//             if (this.status === 200) {  // Authorized
+//                 alert("ok!");
+//                 loadAccount();
+//
+//                 code.value = "";
+//
+//             }
+//
+//             if (this.status === 401) {  // Authorization error
+//                 alert("Wrong code!");  // TODO: show Html error message
+//
+//                 code.value = "";
+//             }
+//         }
+//     };
+//
+//     xhttp.open("POST", "http://ihse.tk:50000/credits?code=" + code.value, true);
+//     xhttp.withCredentials = true;  // To receive cookie
+//     xhttp.send();
+// });
 
 
 
