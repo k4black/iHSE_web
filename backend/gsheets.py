@@ -181,7 +181,7 @@ def gsheets_get_day(day: str) -> list:
 
     while nextstep:
         # if event is last (and it is automatically one-line)
-        if row == len(sheet_data['rowData']) - 1 or 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][0] and 'effectiveValue' not in sheet_data['rowData'][row + 4]['values'][0]:
+        if row == len(sheet_data['rowData']) - 1 or 'values' not in sheet_data['rowData'][row + 4] or 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][0] and 'effectiveValue' not in sheet_data['rowData'][row + 4]['values'][0]:
             # last event is always for-all one-line event
             timetable.append({})
             timetable[-1]['time'] = sheet_data['rowData'][row]['values'][0]['effectiveValue']['stringValue']
