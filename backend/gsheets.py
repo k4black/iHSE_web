@@ -180,6 +180,7 @@ def gsheets_get_day(day: str) -> list:
     row = 2
 
     while nextstep:
+        print(sheet_data['rowData'][row + 1])
         # if event is last (and it is automatically one-line)
         if row == len(sheet_data['rowData']) - 1 or sheet_data['rowData'][row + 1] == '' or 'effectiveValue' not in sheet_data['rowData'][row + 1]['values'][0] and 'effectiveValue' not in sheet_data['rowData'][row + 4]['values'][0]:
             # last event is always for-all one-line event
