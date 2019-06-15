@@ -184,15 +184,19 @@ def gsheets_get_day(day: str) -> list:
         # print(sheet_data['rowData'][row + 1]['values'])
         # if event is last (and it is automatically one-line)
 
-        val_one = False
-        eval_one = False
-        val_four = False
-        eval_four = False
+        val_one = True
+        eval_one = True
+        val_four = True
+        eval_four = True
         if len(sheet_data['rowData']) - 1 - 1 == row:
+            val_one = True
+            eval_one = True
             val_one = 'values' in sheet_data['rowData'][row + 1]
             if val_one:
                 eval_one = 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][0]
         if len(sheet_data['rowData']) - 1 - 4 == row:
+            val_four = True
+            eval_four = True
             val_four = 'values' in sheet_data['rowData'][row + 4]
             if val_four:
                 eval_four = 'effectiveValue' in sheet_data['rowData'][row + 4]['values'][0]
