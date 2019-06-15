@@ -203,6 +203,7 @@ def gsheets_get_day(day: str) -> list:
             while inner_step:
                 timetable[-1]['events'].append({})
                 timetable[-1]['events'][-1]['title'] = sheet_data['rowData'][row]['values'][col]['effectiveValue']['stringValue']
+                print(timetable[-1]['events'][-1]['title'])
                 back = sheet_data['rowData'][row]['values'][col]['effectiveFormat']['backgroundColor']
                 for type_ in eventtypes.keys():
                     if eventtypes[type_] == back:
@@ -228,6 +229,7 @@ def gsheets_get_day(day: str) -> list:
                     timetable[-1]['events'][-1]['title'] = sheet_data['rowData'][row]['values'][col]['effectiveValue']['stringValue']
                 else:
                     timetable[-1]['events'][-1]['title'] = ''
+                print(timetable[-1]['events'][-1]['title'])
                 # description
                 if 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][col]:
                     timetable[-1]['events'][-1]['desc'] = sheet_data['rowData'][row + 1]['values'][col]['effectiveValue']['stringValue']
