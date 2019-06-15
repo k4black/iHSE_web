@@ -11,7 +11,7 @@ cached_data = {}  # global variable for storing parsed Spreadsheet lists
 
 days_list = ['Template', '05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06']
 days_list = ['Template', '05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06', '13.06', '15.06', '16.06', '17.06', '18.06']
-#days_list = ['Template', '05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06']
+days_list = ['15.06', '16.06', '17.06', '18.06']
 # TODO: modify when Feedback and Timetable List will be done by Serova
 
 """ ---===---============================================---===--- """
@@ -175,6 +175,7 @@ def gsheets_get_day(day: str) -> list:
     spread = spread_request.execute()
     # spreadsheet = json.loads(spread_cache.read())
     sheet_data = spread['sheets'][0]['data'][0]
+    print('len:', len(sheet_data['rowData']))
     timetable = []
     nextstep = True
     row = 2
