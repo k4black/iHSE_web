@@ -10,8 +10,8 @@ import random
 cached_data = {}  # global variable for storing parsed Spreadsheet lists
 
 days_list = ['Template', '05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06']
-days_list = ['Template', '05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06', '13.06', '15.06', '16.06', '17.06', '18.06']
-# days_list = ['15.06', '16.06', '17.06', '18.06']
+# days_list = ['Template', '05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06', '13.06', '15.06', '16.06', '17.06', '18.06']
+days_list = ['15.06', '16.06', '17.06', '18.06']
 # TODO: modify when Feedback and Timetable List will be done by Serova
 
 """ ---===---============================================---===--- """
@@ -197,6 +197,11 @@ def gsheets_get_day(day: str) -> list:
             if val_four:
                 eval_four = 'effectiveValue' in sheet_data['rowData'][row + 4]['values'][0]
 
+        print(val_one)
+        print(eval_one)
+        print(val_four)
+        print(eval_four)
+
         # if row == len(sheet_data['rowData']) - 1 or \
         #         ('effectiveValue' not in sheet_data['rowData'][row + 1]['values'][0]) and \
         #         ('effectiveValue' not in sheet_data['rowData'][row + 4]['values'][0]):
@@ -214,7 +219,8 @@ def gsheets_get_day(day: str) -> list:
                     break
             nextstep = False
         # if current event is one-line and not last
-        elif row == len(sheet_data['rowData']) - 1 or 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][0]:
+        # elif row == len(sheet_data['rowData']) - 1 or 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][0]:
+        elif 'effectiveValue' in sheet_data['rowData'][row + 1]['values'][0]:
             timetable.append({})
             timetable[-1]['time'] = sheet_data['rowData'][row]['values'][0]['effectiveValue']['stringValue']
             timetable[-1]['events'] = []
