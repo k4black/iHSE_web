@@ -5,6 +5,72 @@
  */
 
 
+//  https://github.com/ratiw/vuetable-2-tutorial/wiki/lesson-13
+//  https://github.com/ratiw/vuetable-2-tutorial
+
+Vue.use(Vuetable);
+new Vue({
+  el: '#app',
+  components:{
+   'vuetable-pagination': Vuetable.VuetablePagination
+  },
+  data: {
+    fields: ['name', 'email','birthdate','nickname','gender','__slot:actions'],
+    filterText: ''
+  },
+  computed:{
+  /*httpOptions(){
+    return {headers: {'Authorization': "my-token"}} //table props -> :http-options="httpOptions"
+  },*/
+ },
+ methods: {
+    onPaginationData (paginationData) {
+    this.$refs.paginationTop.setPaginationData(paginationData);      // <----
+    this.$refs.paginationInfoTop.setPaginationData(paginationData);  // <----
+
+    this.$refs.pagination.setPaginationData(paginationData);
+    this.$refs.paginationInfo.setPaginationData(paginationData);
+  },
+    onChangePage (page) {
+      this.$refs.vuetable.changePage(page)
+    },
+    editRow(rowData){
+      alert("You clicked edit on"+ JSON.stringify(rowData))
+    },
+    deleteRow(rowData){
+      alert("You clicked delete on"+ JSON.stringify(rowData))
+    },
+
+    doFilter () {
+        console.log('doFilter:', this.filterText);
+        alert("You doFilter"+ JSON.stringify(this.filterText))
+      },
+     resetFilter () {
+        this.filterText = '';
+        console.log('resetFilter');
+        alert("resetFilter")
+      }
+  }
+});
+
+  //
+  // export default {
+  //   data () {
+  //     return {
+  //       filterText: ''
+  //     }
+  //   },
+  //   methods: {
+  //     doFilter () {
+  //       console.log('doFilter:', this.filterText)
+  //     },
+  //     resetFilter () {
+  //       this.filterText = ''
+  //       console.log('resetFilter')
+  //     }
+  //   }
+  // }
+
 
 /** ===============  LOGIC and REQUESTS  =============== */
 

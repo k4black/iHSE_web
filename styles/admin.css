@@ -1,0 +1,87 @@
+.wrapper {
+    max-width: 90vw;
+    margin: 80px auto 0 auto;
+}
+
+
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+
+
+button:hover {
+    background: #006cae;
+}
+
+button.danger_button {
+    z-index: 10;
+    background: #00000000;
+
+    box-shadow: 0 0 0 1px #DB2828 inset!important;
+    color: #DB2828!important;
+}
+
+button.danger_button:hover  {
+    z-index: 10;
+    background: #00000010;
+
+    box-shadow: 0 0 0 1px #DB2828 inset!important;
+    color: #DB2828!important;
+}
+
+
+table {
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: #8a8a8a;
+}
+
+tr {
+    border-bottom:1pt solid black;
+}
+
+tr:hover {
+    background: #00000005;
+}
+
+
+
+.btn-nav a{
+    font-size: 14px;
+    color: #0d0d2f;
+}
+
+.btn-nav .disabled a{
+    color: #2c3e50;
+}
+
+
+#app .form {
+    min-height: auto;
+    max-width: 100%;
+}
+
+#app .form button {
+    width: 100px;
+    margin: 0 10px;
+    display: inline;
+}
+
+
+#app .search_field_panel  label {
+    position: static;
+    width: auto;
+}
+
+
+#app .search_field_panel  input {
+    position: static;
+    width: auto;
+}

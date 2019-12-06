@@ -18,7 +18,7 @@ from datetime import datetime
 TODAY = datetime.today().strftime('%d.%m')
 
 # Timeout of updating objects (from gsheets)
-TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 720s TODO: Couple of hours
+TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s TODO: Couple of hours
 CREDITS = 300  # Max credits # TODO: Get from table?
 
 
