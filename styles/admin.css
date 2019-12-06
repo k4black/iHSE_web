@@ -10,7 +10,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  /*margin-top: 60px;*/
 }
 
 
@@ -35,53 +35,138 @@ button.danger_button:hover  {
 }
 
 
-table {
+#app table {
     border-collapse: collapse;
+    margin: 15px auto;
+    width: 85vw;
+
+    border-radius: 15px;
+
+    margin-bottom: 70px;
 }
 
-thead {
-    background-color: #8a8a8a;
-}
 
 tr {
-    border-bottom:1pt solid black;
+    border:1pt solid #cccccc;
+
 }
 
 tr:hover {
     background: #00000005;
 }
 
-
-
-.btn-nav a{
-    font-size: 14px;
-    color: #0d0d2f;
+tr button {
+    display: inline;
+    width: fit-content;
+    height: 30px;
+    margin: 5px auto;
 }
 
-.btn-nav .disabled a{
-    color: #2c3e50;
+td {
+    border-left: 1pt solid #e2e2e2;
+    border-right: 1pt solid #e2e2e2;
 }
 
 
-#app .form {
-    min-height: auto;
-    max-width: 100%;
+
+thead {
+    background-color: #a7a7a7;
 }
 
-#app .form button {
-    width: 100px;
-    margin: 0 10px;
+thead tr {
+    height: 50px !important;
+}
+
+thead th {
+    border-left: 1pt solid #898989;
+    border-right: 1pt solid #898989;
+}
+
+thead tr:hover {
+    background: #00000000;
+}
+
+
+
+.top_table_panel {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/*  Nav fields  */
+
+.vuetable-pagination {
+    display: flex;
+    align-items: center;
+}
+
+.vuetable-pagination-info {
     display: inline;
 }
 
+.pagination {
+    display: flex;
+    align-items: center;
+    margin: 0 0 0 15px;
+}
+
+.pagination a {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    padding: 15px;
+
+    font-size: 16px;
+    color: #0d0d2f;
+    text-align: center;
+
+    border-collapse: collapse;
+    border: solid 1px #bbbbbb;
+}
+
+.pagination a:hover {
+    background-color: #00000005;
+}
+.pagination a.active {
+    background-color: #00000015;
+}
+
+
+.pagination a.btn-nav {
+    color: #2c3e50;
+    display: none;
+}
+
+
+/*  Search field */
+
+#app .search_field_panel {
+    height: auto;
+    width: fit-content;
+}
+
+#app .search_field_panel button {
+    display: inline;
+    width: fit-content;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 30px;
+    margin: 5px auto;
+}
 
 #app .search_field_panel  label {
     position: static;
     width: auto;
 }
 
-
 #app .search_field_panel  input {
+    border: solid 1px #d7d7d7;
+    border-radius: 5px;
     position: static;
     width: auto;
 }
+
+
+
