@@ -12,10 +12,15 @@
     <link rel="stylesheet" href="styles/admin.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <!--   vuetable-2 dependencies    -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.16.1/axios.min.js"></script>
-    <script src="https://unpkg.com/vuetable-2@1.6.0"></script>
+    <!--   bootstrap-table dependencies    -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.js"></script>
+
+    <script src="extensions/editable/bootstrap-table-editable.js"></script>
 
 </head>
 <body>
@@ -37,55 +42,30 @@
 
 <div class="wrapper">
 
+<div class="overlay" id="popup">
+        <div class="popup_body" >
+                <a href="javascript: void(0);" class="close" onclick="$('#popup').fadeOut(350);"></a>
 
-    <div id="app">
-        <div class="ui container">
-            <div class="top_table_panel">
-                <!--      Serach filter       -->
-                <div class="search_field_panel">
-                  <label for="search_field">Search for:</label>
-                  <input id="search_field" type="text" v-model="filterText" class="three wide column" @keyup.enter="doFilter" placeholder="name, nickname, or email">
-                  <button class="ui primary button" @click="doFilter">Go</button>
-                  <button class="ui button" @click="resetFilter">Reset</button>
-                </div>
+<!-- сюда вставляем то, что вам нужно -->
 
-                <!--      Top page nav       -->
-                <div class="vuetable-pagination ui basic segment grid">
-                    <vuetable-pagination-info ref="paginationInfoTop"
-                    ></vuetable-pagination-info>
-                    <vuetable-pagination ref="paginationTop"
-                        @vuetable-pagination:change-page="onChangePage"
-                    ></vuetable-pagination>
-                </div>
-            </div>
-
-            <!--      Main table       -->
-            <vuetable ref="vuetable"
-            api-url="https://vuetable.ratiw.net/api/users"
-            :fields="fields"
-            :per-page="15"
-
-            pagination-path=""
-            @vuetable:pagination-data="onPaginationData"
-            >
-                <template slot="actions" scope="props">
-                    <div class="table-button-container">
-                        <button class="button" @click="editRow(props.rowData)"><i class="fa fa-edit"></i> Edit</button>
-                        <button class="danger_button" @click="deleteRow(props.rowData)"><i class="fa fa-remove"></i> Delete</button>
-                    </div>
-                </template>
-            </vuetable>
-
-            <!--      Botton page nav       -->
-<!--            <div class="vuetable-pagination ui basic segment grid">-->
-<!--                <vuetable-pagination-info ref="paginationInfo"-->
-<!--                ></vuetable-pagination-info>-->
-<!--                <vuetable-pagination ref="pagination"-->
-<!--                    @vuetable-pagination:change-page="onChangePage"-->
-<!--                ></vuetable-pagination>-->
-<!--            </div>-->
         </div>
-    </div>
+</div>
+
+
+
+
+<button id="addNewRow" class="btn btn-primary btn-sm">Add New Row</button>
+
+    <table id="table"  class="table " data-sort-name="PR_x0020_Spec"  data-sort-order="desc" data-virtual-scroll="true" data-search="true" data-show-refresh="true">
+    <!--    <thead>-->
+    <!--        <tr>-->
+    <!--            <th data-field="id" data-sortable="true" class="th-sm">Item123 ID</th>-->
+    <!--            <th data-field="name" data-sortable="true" class="th-sm">Item123 Name</th>-->
+    <!--            <th data-field="price">Item123 Price</th>-->
+    <!--            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents" data-width="200">Actions123</th>-->
+    <!--        </tr>-->
+    <!--    </thead>-->
+    </table>
 
 
 
