@@ -42,12 +42,14 @@
 
 <div class="wrapper">
 
+<!--<div class="overlay" id="popup" onclick="$('#popup').fadeOut(350);">-->
 <div class="overlay" id="popup">
         <div class="popup_body" >
-                <a href="javascript: void(0);" class="close" onclick="$('#popup').fadeOut(350);"></a>
+                <a href="javascript: void(0);" class="close" onclick="$popup.fadeOut(350);">Close</a>
 
+                <div class="fields"></div>
 <!-- сюда вставляем то, что вам нужно -->
-
+                <button onclick="$popup.fadeOut(350);update_row($popup.attr('row_index'), $popup.attr('row_id'))">Save</button>
         </div>
 </div>
 
@@ -56,16 +58,16 @@
 
 <button id="addNewRow" class="btn btn-primary btn-sm">Add New Row</button>
 
-    <table id="table"  class="table " data-sort-name="PR_x0020_Spec"  data-sort-order="desc" data-virtual-scroll="true" data-search="true" data-show-refresh="true">
-    <!--    <thead>-->
-    <!--        <tr>-->
-    <!--            <th data-field="id" data-sortable="true" class="th-sm">Item123 ID</th>-->
-    <!--            <th data-field="name" data-sortable="true" class="th-sm">Item123 Name</th>-->
-    <!--            <th data-field="price">Item123 Price</th>-->
-    <!--            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents" data-width="200">Actions123</th>-->
-    <!--        </tr>-->
-    <!--    </thead>-->
-    </table>
+<table id="table"  class="table " data-sort-name="PR_x0020_Spec"  data-sort-order="desc" data-virtual-scroll="true" data-search="true" data-show-refresh="true">
+<!--    <thead>-->
+<!--        <tr>-->
+<!--            <th data-field="id" data-sortable="true" class="th-sm">Item123 ID</th>-->
+<!--            <th data-field="name" data-sortable="true" class="th-sm">Item123 Name</th>-->
+<!--            <th data-field="price">Item123 Price</th>-->
+<!--            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents" data-width="200">Actions123</th>-->
+<!--        </tr>-->
+<!--    </thead>-->
+</table>
 
 
 
