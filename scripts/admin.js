@@ -164,18 +164,6 @@ columns.push({
 
 
 
-function operateFormatter(value, row, index) {
-    return [
-        '<button class="edit" href="javascript:void(0)" title="Edit">',
-        '<i class="fa fa-wrench"></i> ',
-        'Edit',
-        '</button>',
-        '<button class="remove danger_button" href="javascript:void(0)" title="Remove">',
-        '<i class="fa fa-trash"></i> ',
-        'Remove',
-        '</button>'
-    ].join('')
-}
 
 function update_row(index, id) {
     tmp_row = {
@@ -237,6 +225,20 @@ function edit_row(row) {
 
 
 
+
+function operateFormatter(value, row, index) {
+    return [
+        '<button class="edit" href="javascript:void(0)" title="Edit">',
+        '<i class="fa fa-wrench"></i> ',
+        'Edit',
+        '</button>',
+        '<button class="remove danger_button" href="javascript:void(0)" title="Remove">',
+        '<i class="fa fa-trash"></i> ',
+        'Remove',
+        '</button>'
+    ].join('')
+}
+
 // Add buttons Edin and Remove
 window.operateEvents = {
     'click .edit': function (e, value, row, index) {
@@ -247,8 +249,6 @@ window.operateEvents = {
         $popup.attr('row_edit', true);
 
         edit_row(row);
-
-
 
         console.log($popup.attr('row_index'));
         console.log($popup.attr('row_id'));
