@@ -152,6 +152,21 @@ def get_users():
     return users_list
 
 
+def remove_user(user_id):
+    """ Delete user by id
+
+    Args:
+        user_id: user id from bd
+
+    Returns:
+        # Success delete or not
+
+    """
+
+    cursor.execute("DELETE FROM users WHERE id=?", (user_id, ))
+    conn.commit()
+
+
 def load_users(users_list):
     """ Load all users to sql table
     Clear users table and sessions table and insert all users in users table
@@ -180,6 +195,37 @@ def load_users(users_list):
                           WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
                        (user_obj[0], user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[6], avatar, user_obj[3], user_obj[4]))
         conn.commit()
+
+
+def get_events():
+    """ Get all events from sql table
+
+    Args:
+
+    Returns:
+        event objects: list of event objects - [ (id, type, title, credits, total, date), ...]
+
+    """
+
+    cursor.execute("SELECT * FROM events")
+    events_list = cursor.fetchall()
+
+    return events_list
+
+
+def remove_event(event_id):
+    """ Delete user by id
+
+    Args:
+        event_id: event id from bd
+
+    Returns:
+        # Success delete or not
+
+    """
+
+    cursor.execute("DELETE FROM events WHERE id=?", (event_id, ))
+    conn.commit()
 
 
 def load_events(events_list):
@@ -216,6 +262,22 @@ def load_events(events_list):
                           WHERE NOT EXISTS(SELECT 1 FROM events WHERE title=?)""",
                        (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[2]))
         conn.commit()
+
+
+def get_sessions():
+    """ Get all sessions from sql table
+
+    Args:
+
+    Returns:
+        session objects: list of sess objects - [ (id, user_id, user_type, user_agent, last_ip, time), ...]
+
+    """
+
+    cursor.execute("SELECT * FROM sessions")
+    sessions_list = cursor.fetchall()
+
+    return sessions_list
 
 
 def get_session(sess_id):
@@ -283,6 +345,20 @@ def get_user(user_id):
         return users[0]
 
 
+def post_user(user_obj):
+    """ Insert or update user
+
+    Args:
+        user_obj: user obj (id, user_type, phone, name, pass, team, credits)
+
+    Returns:
+
+    """
+
+    cursor.execute("REPLACE INTO users (id, user_type, phone, name, pass, team, credits)", user_obj)
+    conn.commit()
+
+
 def get_user_by_phone(phone):
     """ Get user obj by phone
 
@@ -322,6 +398,20 @@ def get_event(event_id):
         return None
     else:
         return events[0]
+
+
+def post_event(event_obj):
+    """ Insert or update event
+
+    Args:
+        event_obj: event obj (id, type, title, credits, count, total, date)
+
+    Returns:
+
+    """
+
+    cursor.execute("REPLACE INTO events (id, type, title, credits, count, total, date)", event_obj)
+    conn.commit()
 
 
 def enroll_user(event_id, user_obj):
@@ -432,6 +522,31 @@ def login(phone, passw, agent, ip, time='0'):
     result = cursor.fetchone()
 
     return result
+
+
+def post_session(sess_obj):
+    """ Insert or update session
+
+    Args:
+        sess_obj: sess obj (id, user_id, user_type, user_agent, last_ip, time)
+
+    Returns:
+
+    """
+
+    cursor.execute("REPLACE INTO sessions (id, user_id, user_type, user_agent, last_ip, time)", sess_obj)
+    conn.commit()
+
+
+def remove_session(sess_id):
+    """ Remove session by id
+
+    See:
+        logout
+
+    """
+
+    logout(sess_id)
 
 
 

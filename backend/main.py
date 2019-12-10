@@ -413,9 +413,118 @@ def admin_panel(env, query, cookie):
     if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
         return user_obj
 
+    if env['PATH_INFO'] == '/admin_get_table':
+        table_name = query['table']
+        if table_name == 'users':
+            data = []
+            for user in sql.get_users():
+                data.append({
+                    'id': user[0],
+                    'type': user[1],
+                    'phone': user[2],
+                    'name': user[3],
+                    'pass': user[4],
+                    'team': user[5],
+                    'credits': user[6],
+                    'avatar': user[7]
+                })
+        elif table_name == 'sessions':
+            data = []
+            for sess in sql.get_sessions():
+                data.append({
+                    'id': sess[0],
+                    'user_id': sess[1],
+                    'user_type': sess[2],
+                    'user_agent': sess[3],
+                    'last_ip': sess[4],
+                    'time': sess[5],
+                })
+        # elif table_name == 'feedback':
+        #     data = []
+        #     for feedback in sql.get_feedback():
+        #         data.append({
+        #             'user_id': feedback[0],
+        #             'days': feedback[1],
+        #             'time': feedback[2]
+        #         })
+        elif table_name == 'events':
+            data = []
+            for event in sql.get_events():
+                data.append({
+                    'id': event[0],
+                    'type': event[1],
+                    'title': event[2],
+                    'credits': event[3],
+                    'count': event[4],
+                    'total': event[5],
+                    'date': event[6]
+                })
+        else:
+            return ('400 Bad Request',
+                    [('Access-Control-Allow-Origin', '*')],
+                    [])
+
+        # Send req data tables
+        json_data = json.dumps(data)
+        json_data = json_data.encode('utf-8')
+
+        return ('200 OK',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                    ('Content-type', 'application/json'),
+                    ('Content-Length', str(len(json_data)))
+                ],
+                [json_data])
+
+    if env['PATH_INFO'] == '/admin_send_data':  # Uddate or add row to some table
+        table_name = query['table']
+        # Get json from response
+        obj = get_json_by_response(env)
+
+        if table_name == 'users':
+            data = (obj['id'], obj['type'], obj['phone'], obj['name'], obj['pass'], obj['team'], obj['credits'], obj['avatar'])
+            sql.post_user(data)
+
+        elif table_name == 'sessions':
+            data = (obj['id'], obj['user_id'], obj['user_type'], obj['user_agent'], obj['last_ip'], obj['time'])
+            sql.post_session(data)
+
+        # elif table_name == 'feedback':
+        #     data = (ibj['user_id'], obj['days'], obj['time'])
+        #     sql.post_feedback(data)
+
+        elif table_name == 'events':
+            data = (obj['id'], obj['type'], obj['title'], obj['credits'], obj['count'], obj['total'], obj['date'])
+            sql.post_event(data)
+
+        return ('200 OK',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
+
+    if env['PATH_INFO'] == '/admin_remove_data':  # Remove some row in some table
+        table_name = query['table']
+        obj_id = query['id']
+
+        if table_name == 'users':
+            sql.remove_user(obj_id)
+
+        elif table_name == 'sessions':
+            sql.remove_session(obj_id)
+
+        # elif table_name == 'feedback':
+        #     sql.remove_feedback(obj_id)
+
+        elif table_name == 'events':
+            sql.remove_event(obj_id)
+
+        return ('200 OK',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
     if env['PATH_INFO'] == '/admin_save':
-
         users_list = sql.get_users()
         gsheets.save_users(users_list)
 
@@ -424,7 +533,6 @@ def admin_panel(env, query, cookie):
                 [])
 
     if env['PATH_INFO'] == '/admin_load':
-
         gsheets.update_cache('Users')
         users_list = gsheets.get_users()
         sql.load_users(users_list)

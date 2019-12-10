@@ -91,7 +91,6 @@ function loadAccount() {
     xhttp.open("GET", "http://ihse.tk:50000/account", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
-
 }
 
 

@@ -13,6 +13,8 @@ console.log($popup_inputs);
 var $button = document.getElementsByName("refresh");
 
 
+current_table = 'users';
+
 
 
 var data = [
@@ -141,32 +143,110 @@ columns.push({
     width: '200'
 });
 
-// var columns = [{
-//         title: 'ID',
-//         field: 'id',
-//         sortable: 'true'
-//         }, {
-//         title: 'Item Name',
-//         field: 'name',
-//         sortable: 'true'
-//       }, {
-//         title: 'Item Price',
-//         field: 'price'
-//       }, {
-//         title: 'Actions',
-//         field: 'operate',
-//         formatter: 'operateFormatter',
-//         events: 'operateEvents',
-//         width: '200'
-//       }
-// ];
 
 
 
+/**
+ * Add or update row
+ * Send http POST request to create/update row
+ */
+function post_row(table_name, row) {
+    var xhttp = new XMLHttpRequest();
+
+    // xhttp.onreadystatechange = function() {
+    //     if (this.readyState === 4) {
+    //         if (this.status === 200) {
+    //             // TODO ?
+    //         }
+    //     }
+    // };
+
+    xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+table_name, true);
+    //xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Content-Type', 'text/plain');
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send(row);
+}
+
+/**
+ * Delete row by id
+ * Send http POST request to delete row
+ */
+function remove_row(table_name, row_id) {
+    var xhttp = new XMLHttpRequest();
+
+    // xhttp.onreadystatechange = function() {
+    //     if (this.readyState === 4) {
+    //         if (this.status === 200) {
+    //             // TODO ?
+    //         }
+    //     }
+    // };
+
+    xhttp.open("POST", "http://ihse.tk:50000/admin_remove_data?" + "table="+table_name + "&id=" + row_id, true);
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}
+
+
+
+
+/**
+ * Get table information from server
+ * Send http GET request and get table data (or send error if cookie does not exist)
+ */
+// window.addEventListener('load', pull_table);
+function pull_table(table_name) {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+
+                data = JSON.parse(this.responseText);
+                fields = data[0].keys();
+
+                columns = [];  // TODO: columns name map
+                for (let i = 0; i < fields.length; ++i) {
+                    columns.push({
+                        title: fields[i],
+                        field: fields[i],
+                        sortable: 'true'
+                    });
+                }
+
+                columns.push({
+                    title: 'Actions',
+                    field: 'operate',
+                    formatter: 'operateFormatter',
+                    events: 'operateEvents',
+                    width: '200'
+                });
+
+                // console.log('Got data for "' + table_name + '" with columns: ' + fields + ' and data: ' + data);
+
+                // TODO: Check Show table update
+                $table.bootstrapTable('destroy');
+                $table.bootstrapTable({
+                    data: data,
+                    columns: columns
+                });
+            }
+
+            else if (this.status === 401) {  // No account data
+                alert('Требуется авторизация!');
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + table_name, true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
 
 
 function update_row(index, id) {
-    tmp_row = {
+    tmp_row = {  // TODO: remove
         "id": id * id,
         "name": "test1000",
         "price": "111$0"
@@ -179,11 +259,14 @@ function update_row(index, id) {
         tmp_row[fields[i]] = $popup_inputs.querySelector('input[name=' + fields[i] + ']').value;
     }
 
+
     $table.bootstrapTable('updateRow', {index: index, row: tmp_row});
+    post_row(current_table, tmp_row);
+    pull_table(current_table);  // TODO: Check update
 }
 
 function create_row() {
-    tmp_row = {
+    tmp_row = {  // TODO: remove
         "id": id * id,
         "name": "test1000",
         "price": "111$0"
@@ -197,6 +280,8 @@ function create_row() {
     }
 
     $table.bootstrapTable('append', tmp_row);
+    post_row(current_table, tmp_row);
+    pull_table(current_table);  // TODO: Check update
 }
 
 function edit_row(row) {
@@ -239,6 +324,7 @@ function operateFormatter(value, row, index) {
     ].join('')
 }
 
+
 // Add buttons Edin and Remove
 window.operateEvents = {
     'click .edit': function (e, value, row, index) {
@@ -262,7 +348,9 @@ window.operateEvents = {
             $table.bootstrapTable('remove', {
                 field: 'id',
                 values: [row.id]
-                })
+                });
+            remove_row(current_table, row.id);
+            pull_table(current_table);  // TODO: Check update
         } else {
             // pass
         }
@@ -276,6 +364,7 @@ $(function () {
         data: data,
         columns: columns
     });
+    pull_table(current_table);
 
     $popup_inputs = $popup_inputs[0];
     console.log($popup_inputs);
@@ -297,9 +386,9 @@ $(function () {
             "price": "$20"
         }];
 
-        $table.bootstrapTable('load',  data);
+        // $table.bootstrapTable('load',  data);
         // $table.bootstrapTable('refresh')
-
+        pull_table(current_table);  // TODO: Check update
     });
 
     $('#addNewRow')[0].onclick = (function () {
