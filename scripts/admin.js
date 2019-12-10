@@ -204,7 +204,8 @@ function pull_table(table_name) {
             if (this.status === 200) { // If ok set up fields name and phone
 
                 data = JSON.parse(this.responseText);
-                fields = data[0].keys();
+                // fields = data[0].keys();
+                fields = Object.keys(data[0]);
 
                 columns = [];  // TODO: columns name map
                 for (let i = 0; i < fields.length; ++i) {
