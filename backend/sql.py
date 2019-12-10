@@ -150,6 +150,8 @@ def get_users():
     test_cursor = test_conn.cursor()
     test_cursor.execute('select * from users;')
     users_list = test_cursor.fetchall()
+    test_cursor.close()
+    test_conn.close()
     # cursor.execute("SELECT * FROM users")
     # users_list = cursor.fetchall()
 
@@ -357,7 +359,9 @@ def post_user(user_obj):
     Returns:
 
     """
-
+    # test_conn = psycopg2.connect('dbname=ubuntu user=ubuntu password=ubuntu')
+    # test_cursor = test_conn.cursor()
+    # test_cursor.execute('select * from users;')
     cursor.execute("REPLACE INTO users (id, user_type, phone, name, pass, team, credits)", user_obj)
     conn.commit()
 
