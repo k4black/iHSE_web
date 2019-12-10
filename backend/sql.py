@@ -1,6 +1,7 @@
 import sqlite3
 import time
 import string
+import psycopg2
 
 
 """ ---===---==========================================---===--- """
@@ -89,10 +90,10 @@ def safety_injections(param):
 
     """
 
-    if type(param) == 'int':
+    if type(param) == int:
         return param
 
-    if type(param) == 'str':
+    if type(param) == str:
         param.replace('"', '')
         param.replace('\'', '')
         param.replace(',', '')
@@ -100,7 +101,7 @@ def safety_injections(param):
     return param
 
 
-# TODO: Safety sql (if bd busy)
+# TODO: Safety sql (if db is busy)
 def safety_request(sql):
     """ Try to run sql code event if db is busy
 
@@ -119,7 +120,7 @@ def safety_request(sql):
             with conn:
                 conn.execute(sql)
                 conn.commit()
-        except:
+        except sqlite3.Warning:  # TODO?
             time.sleep(1)
             pass
 
@@ -145,9 +146,12 @@ def get_users():
         user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar), ...]
 
     """
-
-    cursor.execute("SELECT * FROM users")
-    users_list = cursor.fetchall()
+    test_conn = psycopg2.connect('dbname=ubuntu user=ubuntu password=ubuntu')
+    test_cursor = test_conn.cursor()
+    test_cursor.execute('select * from users;')
+    users_list = test_cursor.fetchall()
+    # cursor.execute("SELECT * FROM users")
+    # users_list = cursor.fetchall()
 
     return users_list
 
@@ -252,16 +256,15 @@ def load_events(events_list):
 
     return
 
-
-    cursor.execute("DELETE FROM events")
-    conn.commit()
-
-    for event_obj in events_list:
-        cursor.execute("""INSERT INTO events(id, type, title, credits, total)
-                          SELECT ?, ?, ?, ?, ?
-                          WHERE NOT EXISTS(SELECT 1 FROM events WHERE title=?)""",
-                       (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[2]))
-        conn.commit()
+    # cursor.execute("DELETE FROM events")
+    # conn.commit()
+    #
+    # for event_obj in events_list:
+    #     cursor.execute("""INSERT INTO events(id, type, title, credits, total)
+    #                       SELECT ?, ?, ?, ?, ?
+    #                       WHERE NOT EXISTS(SELECT 1 FROM events WHERE title=?)""",
+    #                    (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[2]))
+    #     conn.commit()
 
 
 def get_sessions():

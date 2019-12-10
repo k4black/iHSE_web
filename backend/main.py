@@ -481,7 +481,7 @@ def admin_panel(env, query, cookie):
                 ],
                 [json_data])
 
-    if env['PATH_INFO'] == '/admin_send_data':  # Uddate or add row to some table
+    if env['PATH_INFO'] == '/admin_send_data':  # Update or add row to some table
         table_name = query['table']
         # Get json from response
         obj = get_json_by_response(env)
