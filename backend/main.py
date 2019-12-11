@@ -66,7 +66,7 @@ def application(env, start_response):
 
     # Manage admin actions
     if env['PATH_INFO'][:6] == '/admin':
-        return admin_panel(env, query, cookie)
+        status, headers, data = admin_panel(env, query, cookie)
 
 
     if env['REQUEST_METHOD'] == 'GET':
@@ -83,7 +83,6 @@ def application(env, start_response):
                        ('Access-Control-Allow-Headers', '*'),
                        ('Allow', 'GET, POST, HEAD, OPTIONS')  # TODO: Add content application/json
                    ]
-
 
     start_response(status, headers)
     return data
@@ -420,6 +419,8 @@ def admin_panel(env, query, cookie):
 
     if env['PATH_INFO'] == '/admin_get_table':
         table_name = query['table']
+        print(f'Got get_table {table_name}')
+
         if table_name == 'users':
             data = []
             for user in sql.get_users():
