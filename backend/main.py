@@ -64,6 +64,11 @@ def application(env, start_response):
     data = []
 
 
+    # Manage admin actions
+    if env['PATH_INFO'][:6] == '/admin':
+        return admin_panel(env, query, cookie)
+
+
     if env['REQUEST_METHOD'] == 'GET':
         status, headers, data = get(env, query, cookie)
 
@@ -348,10 +353,6 @@ def get(env, query, cookie):
         update_cache()
         return
 
-
-    # Manage admin actions
-    if env['PATH_INFO'][:6] == '/admin':
-        return admin_panel(env, query, cookie)
 
 
 
