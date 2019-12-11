@@ -415,6 +415,8 @@ def admin_panel(env, query, cookie):
     if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
         return user_obj
 
+    print(f'Admin want to {env["PATH_INFO"]}')
+
     if env['PATH_INFO'] == '/admin_get_table':
         table_name = query['table']
         if table_name == 'users':
