@@ -146,7 +146,7 @@ def get_users():
         user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar), ...]
 
     """
-    test_conn = psycopg2.connect('dbname=ubuntu user=ubuntu password=ubuntu')
+    test_conn = psycopg2.connect('dbname=root user=root password=root')
     test_cursor = test_conn.cursor()
     test_cursor.execute('select * from users;')
     users_list = test_cursor.fetchall()
@@ -572,3 +572,4 @@ def remove_session(sess_id):
 # print(a[0])
 # print(a[0].hex() )
 # print( sql.login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
+
