@@ -359,11 +359,13 @@ def post_user(user_obj):
     Returns:
 
     """
-    # test_conn = psycopg2.connect('dbname=ubuntu user=ubuntu password=ubuntu')
-    # test_cursor = test_conn.cursor()
-    # test_cursor.execute('select * from users;')
-    cursor.execute("REPLACE INTO users (id, user_type, phone, name, pass, team, credits)", user_obj)
-    conn.commit()
+    test_conn = psycopg2.connect('dbname=root user=root password=root')
+    test_cursor = test_conn.cursor()
+    test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
+    test_cursor.close()
+    test_conn.close()
+    # cursor.execute("REPLACE INTO users (id, user_type, phone, name, pass, team, credits)", user_obj)
+    # conn.commit()
 
 
 def get_user_by_phone(phone):
