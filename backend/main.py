@@ -509,6 +509,7 @@ def admin_panel(env, query, cookie):
     if env['PATH_INFO'] == '/admin_remove_data':  # Remove some row in some table
         table_name = query['table']
         obj_id = query['id']
+        print(f'Remove id:{obj_id} from {table_name}')
 
         if table_name == 'users':
             sql.remove_user(obj_id)
