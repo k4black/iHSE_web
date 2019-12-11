@@ -69,13 +69,13 @@ def application(env, start_response):
         status, headers, data = admin_panel(env, query, cookie)
 
 
-    if env['REQUEST_METHOD'] == 'GET':
+    elif env['REQUEST_METHOD'] == 'GET':
         status, headers, data = get(env, query, cookie)
 
-    if env['REQUEST_METHOD'] == 'POST':
+    elif env['REQUEST_METHOD'] == 'POST':
         status, headers, data = post(env, query, cookie)
 
-    if env['REQUEST_METHOD'] == 'OPTIONS':
+    elif env['REQUEST_METHOD'] == 'OPTIONS':
         status = '200 OK'
         headers = [
                        ('Access-Control-Allow-Origin', '*'),
