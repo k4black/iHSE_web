@@ -201,10 +201,10 @@ def gsheets_get_day(day: str) -> list:
             if val_four:
                 eval_four = 'effectiveValue' in sheet_data['rowData'][row + 4]['values'][0]
 
-        print(val_one)
-        print(eval_one)
-        print(val_four)
-        print(eval_four)
+        # print(val_one)
+        # print(eval_one)
+        # print(val_four)
+        # print(eval_four)
 
         # if row == len(sheet_data['rowData']) - 1 or \
         #         ('effectiveValue' not in sheet_data['rowData'][row + 1]['values'][0]) and \
