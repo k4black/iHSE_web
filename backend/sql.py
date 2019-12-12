@@ -8,7 +8,8 @@ import psycopg2
 """                    SQLite database creation                  """
 """ ---===---==========================================---===--- """
 
-
+test_conn = psycopg2.connect('dbname=root user=root password=root')
+test_cursor = test_conn.cursor()
 conn = sqlite3.connect("/home/ubuntu/db/main.sqlite", check_same_thread=False)
 conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
 conn.execute("PRAGMA wal_autocheckpoint=100")
@@ -36,6 +37,18 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
                     "avatar" TEXT  DEFAULT ('')
                   );
                """)
+test_cursor.execute('''
+                    create table if not exists users (
+                        id serial not null primary key unique,
+                        user_type int,
+                        phone text,
+                        name text,
+                        pass int,
+                        team int,
+                        credits int default 0,
+                        avatar text default ''
+                    ); 
+                    ''')
 
 # Sessions
 cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
@@ -146,12 +159,8 @@ def get_users():
         user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar), ...]
 
     """
-    test_conn = psycopg2.connect('dbname=root user=root password=root')
-    test_cursor = test_conn.cursor()
     test_cursor.execute('select * from users;')
     users_list = test_cursor.fetchall()
-    test_cursor.close()
-    test_conn.close()
     # cursor.execute("SELECT * FROM users")
     # users_list = cursor.fetchall()
 
@@ -358,11 +367,16 @@ def edit_user(user_obj):
 
     Returns:
     """
-    test_conn = psycopg2.connect('dbname=root user=root password=root')
-    test_cursor = test_conn.cursor()
-    test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
-    test_cursor.close()
-    test_conn.close()
+    # test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
+    test_cursor.execute(f'''update users set
+                                user_type = user_type_,
+                                phone = phone_,
+                                name = name_,
+                                pass = pass_,
+                                team = team_,
+                                credits = credits_
+                            where id = id_;
+                        ''')
 
 
 def insert_user(user_obj):
@@ -373,8 +387,12 @@ def insert_user(user_obj):
 
     Returns:
     """
-    cursor.execute("REPLACE INTO users (user_type, phone, name, pass, team, credits)", user_obj[1:])
-    conn.commit()
+    # test_conn = psycopg2.connect('dbname=root user=root password=root')
+    # test_cursor = test_conn.cursor()
+    # test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
+    test_cursor.execute(f'insert into users (user_type, phone, name, pass, team, credits) values ({user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]}); ')
+    # cursor.execute("REPLACE INTO users (user_type, phone, name, pass, team, credits)", user_obj[1:])
+    # conn.commit()
 
 
 def get_user_by_phone(phone):
