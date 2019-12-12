@@ -391,13 +391,13 @@ def edit_user(user_obj):
     """
     # test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
     test_cursor.execute(f'''update users set
-                                user_type = user_type_,
-                                phone = phone_,
-                                name = name_,
-                                pass = pass_,
-                                team = team_,
-                                credits = credits_
-                            where id = id_;
+                                user_type = {user_obj[1]},
+                                phone = {user_obj[2]},
+                                name = {user_obj[3]},
+                                pass = {user_obj[4]},
+                                team = {user_obj[5]},
+                                credits = {user_obj[6]}
+                            where id = {user_obj[0]};
                         ''')
     # test_conn.commit()
 
