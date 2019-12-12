@@ -10,7 +10,8 @@ var $table = $('#table');
 var $popup = $('#popup');
 var $popup_inputs = $('#popup .fields');
 console.log($popup_inputs);
-var $button = document.getElementsByName("refresh");
+var $refresh_btn = document.getElementsByName("refresh");
+var $clear_btn = document.getElementById("clear_table");
 
 
 current_table = 'users';
@@ -169,6 +170,7 @@ function post_row(table_name, row) {
     xhttp.send(data);
 }
 
+
 /**
  * Delete row by id
  * Send http POST request to delete row
@@ -245,6 +247,39 @@ function pull_table(table_name) {
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
+
+
+/**
+ * Clear table on server
+ * Send http POST request to clear table data (or send error if cookie does not exist)
+ */
+// window.addEventListener('load', pull_table);
+function clear_table(table_name) {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+                // TODO: Check Show table update
+                $table.bootstrapTable('destroy');
+                $table.bootstrapTable({
+                    data: [],
+                    columns: columns
+                });
+            }
+
+            else if (this.status === 401) {  // No account data
+                alert('Требуется авторизация!');
+            }
+        }
+    };
+
+    xhttp.open("POST", "http://ihse.tk:50000/admin_clear_table?" + "table=" + table_name, true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+
 
 
 function update_row(index, id) {
@@ -325,12 +360,12 @@ function edit_row(row) {
 function operateFormatter(value, row, index) {
     return [
         '<button class="edit" href="javascript:void(0)" title="Edit">',
-        '<i class="fa fa-wrench"></i> ',
-        'Edit',
+            '<i class="fa fa-wrench"></i> ',
+            'Edit',
         '</button>',
         '<button class="remove danger_button" href="javascript:void(0)" title="Remove">',
-        '<i class="fa fa-trash"></i> ',
-        'Remove',
+            '<i class="fa fa-trash"></i> ',
+            'Remove',
         '</button>'
     ].join('')
 }
@@ -380,26 +415,19 @@ $(function () {
     $popup_inputs = $popup_inputs[0];
     console.log($popup_inputs);
 
-    $button = $button.item(0);
-
-    $button.onclick = (function () {
+    $refresh_btn = $refresh_btn.item(0);
+    $refresh_btn.onclick = (function () {
         console.log('refresh');
+        pull_table(current_table);
+    });
 
-        data = [
-        {
-            "id": 19,
-            "name": "test19",
-            "price": "$19"
-        },
-        {
-            "id": 20,
-            "name": "test20",
-            "price": "$20"
-        }];
-
-        // $table.bootstrapTable('load',  data);
-        // $table.bootstrapTable('refresh')
-        pull_table(current_table);  // TODO: Check update
+    $clear_btn.onclick = (function () {
+        console.log('clear table');
+        if (confirm("Are you sure? You wand to clear: \n" + current_table)) {
+            clear_table(current_table);
+        } else {
+            // pass
+        }
     });
 
     $('#addNewRow')[0].onclick = (function () {

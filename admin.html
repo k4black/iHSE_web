@@ -56,9 +56,24 @@
 
 
 
-<button id="addNewRow" class="btn btn-primary btn-sm">Add New Row</button>
 
-<table id="table"  class="table " data-sort-name="PR_x0020_Spec"  data-sort-order="desc" data-virtual-scroll="true" data-search="true" data-show-refresh="true">
+<div id="toolbar">
+    <button id="addNewRow" class="btn btn-primary btn-sm">
+        <i class="fa fa-plus"></i> Add New Row
+    </button>
+    <button id="clear_table" class="btn danger_button">
+        <i class="fa fa-times"></i> Clear table
+    </button>
+</div>
+<table id="table"  class="table"
+       data-sort-name="PR_x0020_Spec"
+       data-show-columns="true"
+       data-buttons-align="left"
+       data-sort-order="desc"
+       data-virtual-scroll="true"
+       data-search="true"
+       data-show-refresh="true"
+       data-toolbar="#toolbar">
 <!--    <thead>-->
 <!--        <tr>-->
 <!--            <th data-field="id" data-sortable="true" class="th-sm">Item123 ID</th>-->

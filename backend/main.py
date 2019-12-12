@@ -121,7 +121,6 @@ def update_cache():
     # Update cache
     cache_dict.clear()
 
-
     # SQL sync - wal checkpoint
     sql.checkpoint()
 
@@ -489,6 +488,37 @@ def admin_panel(env, query, cookie):
                     ('Content-Length', str(len(json_data)))
                 ],
                 [json_data])
+
+    if env['PATH_INFO'] == '/admin_clear_table':
+        table_name = query['table']
+        print(f'Clearing {table_name}')
+
+        if table_name == 'users':
+            sql.clear_users()
+        elif table_name == 'sessions':
+            sql.clear_sessions()
+        # elif table_name == 'feedback':
+        #     sql.clear_feedback()
+        elif table_name == 'events':
+            sql.clear_events()
+        else:
+            return ('400 Bad Request',
+                    [
+                        # Because in js there is xhttp.withCredentials = true;
+                        ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                        # To receive cookie
+                        ('Access-Control-Allow-Credentials', 'true')
+                     ],
+                    [])
+
+        return ('200 OK',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true')
+                ],
+                [])
 
     if env['PATH_INFO'] == '/admin_send_data':  # Update or add row to some table
         table_name = query['table']

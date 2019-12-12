@@ -144,7 +144,6 @@ def get_users():
 
     Returns:
         user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar), ...]
-
     """
     test_conn = psycopg2.connect('dbname=root user=root password=root')
     test_cursor = test_conn.cursor()
@@ -156,6 +155,17 @@ def get_users():
     # users_list = cursor.fetchall()
 
     return users_list
+
+
+def clear_users():
+    """ Clear all users from sql table
+
+    Args:
+    Returns:
+    """
+
+    cursor.execute("DELETE FROM users")
+    conn.commit()
 
 
 def remove_user(user_id):
@@ -285,6 +295,17 @@ def get_sessions():
     return sessions_list
 
 
+def clear_sessions():
+    """ Clear all sessions from sql table
+
+    Args:
+    Returns:
+    """
+
+    cursor.execute("DELETE FROM sessions")
+    conn.commit()
+
+
 def get_session(sess_id):
     """ Get session obj by id
 
@@ -398,6 +419,17 @@ def get_user_by_phone(phone):
         return users[0]
 
 
+def clear_events():
+    """ Clear all events from sql table
+
+    Args:
+    Returns:
+    """
+
+    cursor.execute("DELETE FROM events")
+    conn.commit()
+
+
 def get_event(event_id):
     """ Get event obj by id
 
@@ -406,7 +438,6 @@ def get_event(event_id):
 
     Returns:
         event_obj: (id, type, title, credits, count, total, date)
-
     """
 
     cursor.execute("SELECT * FROM events WHERE id=?", (event_id, ))
@@ -453,7 +484,6 @@ def enroll_user(event_id, user_obj):
 
     Returns:
         True/False: Success or not
-
     """
 
     cursor.execute("SELECT * FROM events WHERE id=?", (event_id, ))
@@ -477,7 +507,6 @@ def checkin_user(user_obj, event_obj):
         event_obj: (id, type, title, credits, count, total, date)
 
     Returns:
-
     """
 
     cursor.execute("UPDATE users SET credits=? WHERE id=?", (user_obj[6] + event_obj[3], user_obj[0], ))
@@ -499,7 +528,6 @@ def register(name, passw, type, phone, team):
         user id is automatically generated
 
     Returns:
-
     """
 
     # Register new user if there is no user with name and pass
@@ -527,7 +555,6 @@ def login(phone, passw, agent, ip, time='0'):
     Returns:
         sess_id: session id - string of hex
                  b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
-
     """
 
     # Check user with name and pass exist and got it
@@ -585,7 +612,6 @@ def remove_session(sess_id):
 
     See:
         logout
-
     """
 
     logout(sess_id)
