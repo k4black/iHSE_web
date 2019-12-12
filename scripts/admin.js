@@ -300,10 +300,19 @@ function edit_row(row) {
 
         let current_inputs_html = '<label for=' + columns[i]['title'] + '>' + columns[i]['title'] + '</label>';
         if (Object.keys(row).length === 0) {
-            current_inputs_html += '<input name=' + columns[i]['title'] + ' value="" type="text">';
+            if (columns[i]['title'] === 'id') {
+                current_inputs_html += '<input name=' + columns[i]['title'] + ' value="" type="text" disabled>';
+            } else {
+                current_inputs_html += '<input name=' + columns[i]['title'] + ' value="" type="text">';
+            }
         } else {
-            current_inputs_html += '<input name=' + columns[i]['title'] + ' value="' + row[columns[i]['field']] + '" type="text">';
+            if (columns[i]['title'] === 'id') {
+                current_inputs_html += '<input name=' + columns[i]['title'] + ' value="' + row[columns[i]['field']] + '" type="text" disabled>';
+            } else {
+                current_inputs_html += '<input name=' + columns[i]['title'] + ' value="' + row[columns[i]['field']] + '" type="text">';
+            }
         }
+
         inputs_html += '<div style="display: block">' + current_inputs_html + '</div>';
     }
 

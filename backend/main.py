@@ -497,21 +497,41 @@ def admin_panel(env, query, cookie):
         print(f'Update row (raw)  {env["wsgi.input"]} len:{env.get("CONTENT_LENGTH", 0)}')
         obj = get_json_by_response(env)
 
-        if table_name == 'users':
-            data = (obj['id'], obj['type'], obj['phone'], obj['name'], obj['pass'], obj['team'], obj['credits'], obj['avatar'])
-            sql.post_user(data)
+        if 'id' not in obj.keys() or obj['id'] == '':
+            if table_name == 'users':
+                data = (None, obj['type'], obj['phone'], obj['name'], obj['pass'], obj['team'], obj['credits'],
+                        obj['avatar'])
+                sql.insert_user(data)
 
-        elif table_name == 'sessions':
-            data = (obj['id'], obj['user_id'], obj['user_type'], obj['user_agent'], obj['last_ip'], obj['time'])
-            sql.post_session(data)
+            elif table_name == 'sessions':
+                data = (None, obj['user_id'], obj['user_type'], obj['user_agent'], obj['last_ip'], obj['time'])
+                sql.insert_session(data)
 
-        # elif table_name == 'feedback':
-        #     data = (ibj['user_id'], obj['days'], obj['time'])
-        #     sql.post_feedback(data)
+                # elif table_name == 'feedback':
+                #     data = (obj['user_id'], obj['days'], obj['time'])
+                #     sql.insert_feedback(data)
 
-        elif table_name == 'events':
-            data = (obj['id'], obj['type'], obj['title'], obj['credits'], obj['count'], obj['total'], obj['date'])
-            sql.post_event(data)
+            elif table_name == 'events':
+                data = (None, obj['type'], obj['title'], obj['credits'], obj['count'], obj['total'], obj['date'])
+                sql.insert_event(data)
+
+        else:
+            if table_name == 'users':
+                data = (obj['id'], obj['type'], obj['phone'], obj['name'], obj['pass'], obj['team'], obj['credits'], obj['avatar'])
+                sql.edit_user(data)
+
+            elif table_name == 'sessions':
+                data = (obj['id'], obj['user_id'], obj['user_type'], obj['user_agent'], obj['last_ip'], obj['time'])
+                sql.edit_session(data)
+
+            # elif table_name == 'feedback':
+            #     data = (ibj['user_id'], obj['days'], obj['time'])
+            #     sql.edit_feedback(data)
+
+            elif table_name == 'events':
+                data = (obj['id'], obj['type'], obj['title'], obj['credits'], obj['count'], obj['total'], obj['date'])
+                sql.edit_event(data)
+
 
         return ('200 OK',
                 [

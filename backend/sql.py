@@ -350,22 +350,31 @@ def get_user(user_id):
         return users[0]
 
 
-def post_user(user_obj):
-    """ Insert or update user
+def edit_user(user_obj):
+    """ Update user
 
     Args:
         user_obj: user obj (id, user_type, phone, name, pass, team, credits)
 
     Returns:
-
     """
     test_conn = psycopg2.connect('dbname=root user=root password=root')
     test_cursor = test_conn.cursor()
     test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
     test_cursor.close()
     test_conn.close()
-    # cursor.execute("REPLACE INTO users (id, user_type, phone, name, pass, team, credits)", user_obj)
-    # conn.commit()
+
+
+def insert_user(user_obj):
+    """ Insert user
+
+    Args:
+        user_obj: user obj (None, user_type, phone, name, pass, team, credits)
+
+    Returns:
+    """
+    cursor.execute("REPLACE INTO users (user_type, phone, name, pass, team, credits)", user_obj[1:])
+    conn.commit()
 
 
 def get_user_by_phone(phone):
@@ -409,14 +418,26 @@ def get_event(event_id):
         return events[0]
 
 
-def post_event(event_obj):
-    """ Insert or update event
+def edit_event(event_obj):
+    """ Update event
 
     Args:
         event_obj: event obj (id, type, title, credits, count, total, date)
 
     Returns:
+    """
 
+    cursor.execute("REPLACE INTO events (id, type, title, credits, count, total, date)", event_obj)
+    conn.commit()
+
+
+def insert_event(event_obj):
+    """ Insert event
+
+    Args:
+        event_obj: event obj (None, type, title, credits, count, total, date)
+
+    Returns:
     """
 
     cursor.execute("REPLACE INTO events (id, type, title, credits, count, total, date)", event_obj)
@@ -533,14 +554,26 @@ def login(phone, passw, agent, ip, time='0'):
     return result
 
 
-def post_session(sess_obj):
-    """ Insert or update session
+def edit_session(sess_obj):
+    """ Update session
 
     Args:
         sess_obj: sess obj (id, user_id, user_type, user_agent, last_ip, time)
 
     Returns:
+    """
 
+    cursor.execute("REPLACE INTO sessions (id, user_id, user_type, user_agent, last_ip, time)", sess_obj)
+    conn.commit()
+
+
+def insert_session(sess_obj):
+    """ Insert session
+
+    Args:
+        sess_obj: sess obj (None, user_id, user_type, user_agent, last_ip, time)
+
+    Returns:
     """
 
     cursor.execute("REPLACE INTO sessions (id, user_id, user_type, user_agent, last_ip, time)", sess_obj)
