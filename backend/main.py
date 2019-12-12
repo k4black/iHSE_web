@@ -289,7 +289,7 @@ def get_json_by_response(env):
     # in the file like wsgi.input environment variable.
     request_body = env['wsgi.input'].read(request_body_size)
     request_body = request_body.decode("utf-8")
-
+    print(f'Log: decoding json from {request_body}')
     return json.loads(request_body)
 
 
