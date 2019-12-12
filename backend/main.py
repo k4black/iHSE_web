@@ -467,7 +467,12 @@ def admin_panel(env, query, cookie):
                 })
         else:
             return ('400 Bad Request',
-                    [('Access-Control-Allow-Origin', '*')],
+                    [
+                        # Because in js there is xhttp.withCredentials = true;
+                        ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                        # To receive cookie
+                        ('Access-Control-Allow-Credentials', 'true')
+                     ],
                     [])
 
         # Send req data tables
@@ -509,7 +514,12 @@ def admin_panel(env, query, cookie):
             sql.post_event(data)
 
         return ('200 OK',
-                [('Access-Control-Allow-Origin', '*')],
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true')
+                ],
                 [])
 
     if env['PATH_INFO'] == '/admin_remove_data':  # Remove some row in some table
@@ -530,7 +540,12 @@ def admin_panel(env, query, cookie):
             sql.remove_event(obj_id)
 
         return ('200 OK',
-                [('Access-Control-Allow-Origin', '*')],
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true')
+                ],
                 [])
 
     if env['PATH_INFO'] == '/admin_save':
