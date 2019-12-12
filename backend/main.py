@@ -488,6 +488,7 @@ def admin_panel(env, query, cookie):
     if env['PATH_INFO'] == '/admin_send_data':  # Update or add row to some table
         table_name = query['table']
         # Get json from response
+        print('Update row (raw) ', env['wsgi.input'])
         obj = get_json_by_response(env)
 
         if table_name == 'users':
