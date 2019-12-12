@@ -160,7 +160,7 @@ function post_row(table_name, row) {
     //         }
     //     }
     // };
-
+    console.log('Edited row', row);
     xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+table_name, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
