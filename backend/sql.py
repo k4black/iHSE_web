@@ -1,6 +1,7 @@
 import sqlite3
 import time
 import string
+import psycopg2
 
 
 """ ---===---==========================================---===--- """
@@ -89,10 +90,10 @@ def safety_injections(param):
 
     """
 
-    if type(param) == 'int':
+    if type(param) == int:
         return param
 
-    if type(param) == 'str':
+    if type(param) == str:
         param.replace('"', '')
         param.replace('\'', '')
         param.replace(',', '')
@@ -100,7 +101,7 @@ def safety_injections(param):
     return param
 
 
-# TODO: Safety sql (if bd busy)
+# TODO: Safety sql (if db is busy)
 def safety_request(sql):
     """ Try to run sql code event if db is busy
 
@@ -119,7 +120,7 @@ def safety_request(sql):
             with conn:
                 conn.execute(sql)
                 conn.commit()
-        except:
+        except sqlite3.Warning:  # TODO?
             time.sleep(1)
             pass
 
@@ -145,9 +146,14 @@ def get_users():
         user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar), ...]
 
     """
-
-    cursor.execute("SELECT * FROM users")
-    users_list = cursor.fetchall()
+    test_conn = psycopg2.connect('dbname=root user=root password=root')
+    test_cursor = test_conn.cursor()
+    test_cursor.execute('select * from users;')
+    users_list = test_cursor.fetchall()
+    test_cursor.close()
+    test_conn.close()
+    # cursor.execute("SELECT * FROM users")
+    # users_list = cursor.fetchall()
 
     return users_list
 
@@ -252,16 +258,15 @@ def load_events(events_list):
 
     return
 
-
-    cursor.execute("DELETE FROM events")
-    conn.commit()
-
-    for event_obj in events_list:
-        cursor.execute("""INSERT INTO events(id, type, title, credits, total)
-                          SELECT ?, ?, ?, ?, ?
-                          WHERE NOT EXISTS(SELECT 1 FROM events WHERE title=?)""",
-                       (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[2]))
-        conn.commit()
+    # cursor.execute("DELETE FROM events")
+    # conn.commit()
+    #
+    # for event_obj in events_list:
+    #     cursor.execute("""INSERT INTO events(id, type, title, credits, total)
+    #                       SELECT ?, ?, ?, ?, ?
+    #                       WHERE NOT EXISTS(SELECT 1 FROM events WHERE title=?)""",
+    #                    (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[2]))
+    #     conn.commit()
 
 
 def get_sessions():
@@ -354,9 +359,13 @@ def post_user(user_obj):
     Returns:
 
     """
-
-    cursor.execute("REPLACE INTO users (id, user_type, phone, name, pass, team, credits)", user_obj)
-    conn.commit()
+    test_conn = psycopg2.connect('dbname=root user=root password=root')
+    test_cursor = test_conn.cursor()
+    test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
+    test_cursor.close()
+    test_conn.close()
+    # cursor.execute("REPLACE INTO users (id, user_type, phone, name, pass, team, credits)", user_obj)
+    # conn.commit()
 
 
 def get_user_by_phone(phone):
@@ -569,3 +578,4 @@ def remove_session(sess_id):
 # print(a[0])
 # print(a[0].hex() )
 # print( sql.login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
+

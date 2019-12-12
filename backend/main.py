@@ -64,13 +64,18 @@ def application(env, start_response):
     data = []
 
 
-    if env['REQUEST_METHOD'] == 'GET':
+    # Manage admin actions
+    if env['PATH_INFO'][:6] == '/admin':
+        status, headers, data = admin_panel(env, query, cookie)
+
+
+    elif env['REQUEST_METHOD'] == 'GET':
         status, headers, data = get(env, query, cookie)
 
-    if env['REQUEST_METHOD'] == 'POST':
+    elif env['REQUEST_METHOD'] == 'POST':
         status, headers, data = post(env, query, cookie)
 
-    if env['REQUEST_METHOD'] == 'OPTIONS':
+    elif env['REQUEST_METHOD'] == 'OPTIONS':
         status = '200 OK'
         headers = [
                        ('Access-Control-Allow-Origin', '*'),
@@ -78,7 +83,6 @@ def application(env, start_response):
                        ('Access-Control-Allow-Headers', '*'),
                        ('Allow', 'GET, POST, HEAD, OPTIONS')  # TODO: Add content application/json
                    ]
-
 
     start_response(status, headers)
     return data
@@ -349,10 +353,6 @@ def get(env, query, cookie):
         return
 
 
-    # Manage admin actions
-    if env['PATH_INFO'][:6] == '/admin':
-        return admin_panel(env, query, cookie)
-
 
 
 
@@ -415,8 +415,12 @@ def admin_panel(env, query, cookie):
     if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
         return user_obj
 
+    print(f'Admin want to {env["PATH_INFO"]}')
+
     if env['PATH_INFO'] == '/admin_get_table':
         table_name = query['table']
+        print(f'Got get_table {table_name}')
+
         if table_name == 'users':
             data = []
             for user in sql.get_users():
@@ -481,7 +485,7 @@ def admin_panel(env, query, cookie):
                 ],
                 [json_data])
 
-    if env['PATH_INFO'] == '/admin_send_data':  # Uddate or add row to some table
+    if env['PATH_INFO'] == '/admin_send_data':  # Update or add row to some table
         table_name = query['table']
         # Get json from response
         obj = get_json_by_response(env)
@@ -509,6 +513,7 @@ def admin_panel(env, query, cookie):
     if env['PATH_INFO'] == '/admin_remove_data':  # Remove some row in some table
         table_name = query['table']
         obj_id = query['id']
+        print(f'Remove id:{obj_id} from {table_name}')
 
         if table_name == 'users':
             sql.remove_user(obj_id)
