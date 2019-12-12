@@ -489,7 +489,7 @@ def admin_panel(env, query, cookie):
         table_name = query['table']
         # Get json from response
         print('Update row (env) ', env)
-        print('Update row (raw) ', env['wsgi.input'])
+        print(f'Update row (raw)  {env["wsgi.input"]} len:{env.get("CONTENT_LENGTH", 0)}')
         obj = get_json_by_response(env)
 
         if table_name == 'users':
