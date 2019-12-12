@@ -172,9 +172,10 @@ def clear_users():
     Args:
     Returns:
     """
-
-    cursor.execute("DELETE FROM users")
-    conn.commit()
+    test_cursor.execute('delete from users;')
+    test_conn.commit()
+    # cursor.execute("DELETE FROM users")
+    # conn.commit()
 
 
 def remove_user(user_id):
@@ -398,6 +399,7 @@ def edit_user(user_obj):
                                 credits = credits_
                             where id = id_;
                         ''')
+    test_conn.commit()
 
 
 def insert_user(user_obj):
@@ -413,6 +415,7 @@ def insert_user(user_obj):
     # test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
     test_cursor.execute(f'insert into users (user_type, phone, name, pass, team, credits) values ({user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]}); ')
     # cursor.execute("REPLACE INTO users (user_type, phone, name, pass, team, credits)", user_obj[1:])
+    test_conn.commit()
     # conn.commit()
 
 
