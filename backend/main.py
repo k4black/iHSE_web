@@ -409,10 +409,10 @@ def admin_panel(env, query, cookie):
     print("Admin try: ", cookie)
 
     # Safety get user_obj
-    user_obj = get_user_by_response(cookie)
-
-    print("Admin try: ", user_obj)
-
+    # user_obj = get_user_by_response(cookie)
+    #
+    # print("Admin try: ", user_obj)
+    #
     # if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
     #     return user_obj
     # TODO: ADMIN!
