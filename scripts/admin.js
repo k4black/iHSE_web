@@ -438,6 +438,32 @@ $(function () {
         $popup.fadeIn(350);
     });
 
+    
+    $('#tab_users')[0].onclick = function () {
+        current_table = 'users';
+        pull_table(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_users').addClass('active_tab');
+    };
+    $('#tab_events')[0].onclick = function () {
+        current_table = 'events';
+        pull_table(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_events').addClass('active_tab');
+    };
+    $('#tab_feedback')[0].onclick = function () {
+        current_table = 'feedback';
+        pull_table(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_feedback').addClass('active_tab');
+    };
+    $('#tab_sessions')[0].onclick = function () {
+        current_table = 'sessions';
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_sessions').addClass('active_tab');
+        pull_table(current_table);
+    };
+
   });
 
 

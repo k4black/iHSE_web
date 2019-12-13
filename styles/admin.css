@@ -65,11 +65,41 @@
 
 
 
+div.tabs {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
 
 
+    height: 70px;
+    width: calc(100% + 30px);
+    border-bottom: solid 1px #151552;
+    background-color: #efefef;
+    margin-bottom: 25px;
+}
+
+div.tabs button {
+    height: 100%;
+    background-color: #cacaca;
+    color: #0d0d2f;
+    position: relative;
+    border-radius: 10px!important;
+    border-bottom-left-radius: 0!important;
+    border-bottom-right-radius: 0!important;
+    font-size: 18px;
+}
 
 
+div.tabs button.active_tab {
+    background-color: #FFFFFF;
+    position: relative;
+    top: 1px;
+    z-index: 1;
+}
 
+div.tabs button[disabled] {
+    color: #8a8a8a;
+}
 
 
 
@@ -79,6 +109,7 @@
 .wrapper {
     max-width: 90vw;
     margin: 80px auto 0 auto;
+    padding-top: 0;
 }
 
 
@@ -89,6 +120,7 @@
   text-align: center;
   color: #2c3e50;
   /*margin-top: 60px;*/
+
 }
 
 
@@ -177,4 +209,9 @@ button {
 
 button:not(.danger_button) {
     padding-right: 10px;
+}
+
+
+button.update {
+    margin-top: 100px;
 }
