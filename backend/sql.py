@@ -664,7 +664,7 @@ def login(phone, passw, agent, ip, time='0'):
 
     # Get session corresponding to user_id and user_agent
     test_cursor.execute(f'select * from sessions where user_id = {user[0]} and user_agent = \'{agent}\';')
-    result = test_cursor.fetcnone()
+    result = test_cursor.fetchone()
     # cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
     # result = cursor.fetchone()
 
