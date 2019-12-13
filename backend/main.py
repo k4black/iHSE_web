@@ -1076,7 +1076,7 @@ def post_login(env, phone, passw):
 
         # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
         # sessid = res[0].hex()
-        sessid = bytes.hex(res)
+        sessid = bytes.hex(res[0])
 
         return ('200 OK',
                 [
