@@ -228,10 +228,12 @@ def get_user_by_response(cookie):
     """
 
     # Get session id or ''
-    sessid = bytes.fromhex(cookie.get('sessid', ''))  # Get session id from cookie
-    print(f'Getting user by response id:{sessid}')
+    print(f"Getting user by response sessid raw:{cookie.get('sessid', '')}")
+    # sessid = bytes.fromhex(cookie.get('sessid', ''))  # Get session id from cookie
+    # print(f'Getting user by response sessid:{sessid}')
+    sessid = cookie.get('sessid', '')
 
-    if sessid == b'':  # No cookie
+    if sessid == '':  # No cookie
 
         return ('401 Unauthorized',
                 [('Access-Control-Allow-Origin', '*')],
@@ -409,10 +411,10 @@ def admin_panel(env, query, cookie):
     print("Admin try: ", cookie)
 
     # Safety get user_obj
-    user_obj = get_user_by_response(cookie)
-
-    print("Admin try: ", user_obj)
-
+    # user_obj = get_user_by_response(cookie)
+    #
+    # print("Admin try: ", user_obj)
+    #
     # if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
     #     return user_obj
     # TODO: ADMIN!
@@ -1076,6 +1078,9 @@ def post_login(env, phone, passw):
 
         # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
         sessid = res[0].hex()
+        # sessid = bytes.hex(res[0])
+        # sessid = bytes(res[0])
+        print(f'login with got:{sessid}')
 
         return ('200 OK',
                 [
