@@ -659,6 +659,8 @@ def get_user(env, query, cookie):
     if user_obj[2] is None:  # No User
         return user_obj
 
+    print(f'Got user :{user_obj}')
+
 
     # Json account data
     data = {}
