@@ -1120,6 +1120,7 @@ def post_logout(env, query, cookie):
 
     # Get session id or ''
     sessid = bytes.fromhex( cookie.get('sessid', '') )
+    sessid = cookie.get('sessid', '')
 
     if sql.logout(sessid):
 
