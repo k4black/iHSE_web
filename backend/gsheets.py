@@ -44,7 +44,6 @@ def update_cache(name: str):
 
     """
     print('Updating: ', name)
-    return   # TODO: remove 
 
     global cached_data
 
