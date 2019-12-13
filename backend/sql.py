@@ -362,14 +362,14 @@ def get_session(sess_id):
     """ Get session obj by id
 
     Args:
-        sess_id: session id from bd
+        sess_id: session id from db
 
     Returns:
         session obj: (id, user_id, user_type, user_agent, last_ip, time)
                      or None if there is no such session
 
     """
-    test_cursor.execute(f'select * from sessions where id = {sess_id[0]};')
+    test_cursor.execute(f'select * from sessions where id = \'{sess_id[0]}\';')
     sessions = test_cursor.fetchall()
     # cursor.execute("SELECT * FROM sessions WHERE id=?", (sess_id, ))
     # sessions = cursor.fetchall()
