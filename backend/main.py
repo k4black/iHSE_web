@@ -442,7 +442,7 @@ def admin_panel(env, query, cookie):
             data = []
             for sess in sql.get_sessions():
                 data.append({
-                    'id': sess[0],
+                    'id': (sess[0]).hex(),
                     'user_id': sess[1],
                     'user_type': sess[2],
                     'user_agent': sess[3],
