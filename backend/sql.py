@@ -398,7 +398,7 @@ def logout(sess_id):
     if len(sessions) == 0:    # No such session
         return False
 
-    test_cursor.execute(f'delete from sessions where id = {sess_id};')
+    test_cursor.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
     test_conn.commit()
     # cursor.execute("DELETE FROM sessions WHERE id=?", (sess_id, ))
     # conn.commit()
