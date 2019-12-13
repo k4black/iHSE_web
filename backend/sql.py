@@ -86,7 +86,7 @@ test_cursor.execute("""
                     create table if not exists feedback (
                         user_id int not null primary key,
                         days text,
-                        time text default time text default 'datetime(''now'', ''localtime'')'
+                        time text default 'datetime(''now'', ''localtime'')'
                     );
                     """)
 
@@ -113,6 +113,7 @@ test_cursor.execute('''
                         date text
                     );
                     ''')
+test_conn.commit()
 
 
 """ ---===---==========================================---===--- """
@@ -211,7 +212,7 @@ def remove_user(user_id):
     """ Delete user by id
 
     Args:
-        user_id: user id from bd
+        user_id: user id from db
 
     Returns:
         # Success delete or not
@@ -362,7 +363,7 @@ def get_session(sess_id):
                      or None if there is no such session
 
     """
-    test_cursor.execute(f'select * from sessions where id = {sess_id};')
+    test_cursor.execute(f'select * from sessions where id = {sess_id[0]};')
     sessions = test_cursor.fetchall()
     # cursor.execute("SELECT * FROM sessions WHERE id=?", (sess_id, ))
     # sessions = cursor.fetchall()
@@ -635,8 +636,10 @@ def login(phone, passw, agent, ip, time='0'):
     """
     # TODO: change to PostgreSQL
     # Check user with name and pass exist and got it
-    cursor.execute("SELECT * FROM users WHERE phone=? AND pass=?", (phone, passw))
-    users = cursor.fetchall()
+    test_cursor.execute(f'select * from users where phone = {phone} and pass = {passw};')
+    users = test_cursor.fetchall()
+    # cursor.execute("SELECT * FROM users WHERE phone=? AND pass=?", (phone, passw))
+    # users = cursor.fetchall()
 
     if len(users) == 0:    # No such user
         return None
@@ -644,16 +647,25 @@ def login(phone, passw, agent, ip, time='0'):
     user = users[0]
 
     # Create new session if there is no session with user_id and user_agent
-    cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
-                      SELECT ?, ?, ?, ?, ?
-                      WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_id=? AND user_agent=?)""",
-                   (user[0], user[1], agent, ip, time, user[0], agent))
-    conn.commit()
+    test_cursor.execute(f"""
+                        insert into sessions (user_id, user_type, user_agent, last_ip, time)
+                            values ({user[0]}, {user[1]}, \'{agent}\', \'{ip}\', \'{time}\')
+                            where not exists(select 1 from sessions where user_id = {user[0]} and user_agent = \'{agent}\')
+                        ;
+                        """)
+    test_conn.commit()
+    # cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
+    #                   SELECT ?, ?, ?, ?, ?
+    #                   WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_id=? AND user_agent=?)""",
+    #                (user[0], user[1], agent, ip, time, user[0], agent))
+    # conn.commit()
 
 
     # Get session corresponding to user_id and user_agent
-    cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
-    result = cursor.fetchone()
+    test_cursor.execute(f'select * from sessions where user_id = {user[0]} and user_agent = \'{agent}\';')
+    result = test_cursor.fetcnone()
+    # cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
+    # result = cursor.fetchone()
 
     return result
 
