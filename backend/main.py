@@ -3,6 +3,7 @@ from http.cookies import SimpleCookie
 import json
 import time
 import sys
+import string
 sys.path.append('/home/ubuntu/iHSE_web')
 
 
@@ -1062,6 +1063,7 @@ def post_login(env, phone, passw):
 
     print(phone)
     phone = phone[0] + "7" + phone[2:]
+    phone = ''.join(i for i in phone if i.isdigit())
 
     # Get session obj or None
     res = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
@@ -1149,7 +1151,9 @@ def post_register(env, name, phone, passw, code):
     Returns:
 
     """
+    print(phone)
     phone = phone[0] + "7" + phone[2:]
+    phone = ''.join(i for i in phone if i.isdigit())
 
     # Check registration code
     user_type = gsheets.check_code(code)
