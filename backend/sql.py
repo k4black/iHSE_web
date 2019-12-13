@@ -86,7 +86,7 @@ test_cursor.execute("""
                     create table if not exists feedback (
                         user_id int not null primary key,
                         days text,
-                        time text default time text default 'datetime(''now'', ''localtime'')'
+                        time text default 'datetime(''now'', ''localtime'')'
                     );
                     """)
 
@@ -113,6 +113,7 @@ test_cursor.execute('''
                         date text
                     );
                     ''')
+test_conn.commit()
 
 
 """ ---===---==========================================---===--- """
@@ -211,7 +212,7 @@ def remove_user(user_id):
     """ Delete user by id
 
     Args:
-        user_id: user id from bd
+        user_id: user id from db
 
     Returns:
         # Success delete or not
