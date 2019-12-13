@@ -445,7 +445,7 @@ def admin_panel(env, query, cookie):
                     'id': (sess[0]).hex(),
                     'user_id': sess[1],
                     'user_type': sess[2],
-                    'user_agent': sess[3],
+                    'user_agent': sess[3][:40],
                     'last_ip': sess[4],
                     'time': sess[5],
                 })
