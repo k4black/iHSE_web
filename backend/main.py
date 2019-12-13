@@ -1075,8 +1075,10 @@ def post_login(env, phone, passw):
     if res is not None:
 
         # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
-        # sessid = res[0].hex()
-        sessid = bytes.hex(res[0])
+        sessid = res[0].hex()
+        # sessid = bytes.hex(res[0])
+        # sessid = bytes(res[0])
+        print(f'login with got:{sessid}')
 
         return ('200 OK',
                 [
