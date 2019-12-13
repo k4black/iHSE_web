@@ -470,7 +470,7 @@ def get_user_by_phone(phone):
                      or None if there is no such user
 
     """
-    test_cursor.execute(f'select * from users where phone = {phone};')
+    test_cursor.execute(f'select * from users where phone = \'{phone}\';')
     users = test_cursor.fetchall()
     # cursor.execute("SELECT * FROM users WHERE phone=?", (phone, ))
     # users = cursor.fetchall()
