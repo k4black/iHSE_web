@@ -636,7 +636,7 @@ def login(phone, passw, agent, ip, time='0'):
     """
     # TODO: change to PostgreSQL
     # Check user with name and pass exist and got it
-    test_cursor.execute(f'select * from users where phone = {phone} and pass = {passw};')
+    test_cursor.execute(f'select * from users where phone = \'{phone}\' and pass = {passw};')
     users = test_cursor.fetchall()
     # cursor.execute("SELECT * FROM users WHERE phone=? AND pass=?", (phone, passw))
     # users = cursor.fetchall()
