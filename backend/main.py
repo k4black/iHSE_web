@@ -229,10 +229,11 @@ def get_user_by_response(cookie):
 
     # Get session id or ''
     print(f"Getting user by response sessid raw:{cookie.get('sessid', '')}")
-    sessid = bytes.fromhex(cookie.get('sessid', ''))  # Get session id from cookie
-    print(f'Getting user by response sessid:{sessid}')
+    # sessid = bytes.fromhex(cookie.get('sessid', ''))  # Get session id from cookie
+    # print(f'Getting user by response sessid:{sessid}')
+    sessid = cookie.get('sessid', '')
 
-    if sessid == b'':  # No cookie
+    if sessid == '':  # No cookie
 
         return ('401 Unauthorized',
                 [('Access-Control-Allow-Origin', '*')],
