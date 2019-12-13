@@ -61,9 +61,15 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
                     FOREIGN KEY("user_id") REFERENCES "users"("id")
                   );
                """)
+test_cursor.execute("""CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
+RETURNS bytea AS $$
+SELECT decode(string_agg(lpad(to_hex(width_bucket(random(), 0, 1, 256)-1),2,'0') ,''), 'hex')
+FROM generate_series(1, $1);
+$$
+LANGUAGE 'sql';""")
 test_cursor.execute('''
                     create table if not exists sessions (
-                        id serial not null primary key unique,
+                        id bytea not null primary key unique default random_bytea(128),
                         user_id int,
                         user_type int,
                         user_agent text,
