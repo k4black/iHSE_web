@@ -69,7 +69,7 @@ $$
 LANGUAGE 'sql';""")
 test_cursor.execute('''
                     create table if not exists sessions (
-                        id bytea not null primary key unique default random_bytea(128),
+                        id bytea not null primary key unique default random_bytea(16),
                         user_id int,
                         user_type int,
                         user_agent text,
