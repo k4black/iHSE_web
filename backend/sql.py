@@ -390,7 +390,7 @@ def logout(sess_id):
         Success delete or not
 
     """
-    test_cursor.execute(f'select * from sessions where id = {sess_id};')
+    test_cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
     sessions = test_cursor.fetchall()
     # cursor.execute("SELECT * FROM sessions WHERE id=?", (sess_id, ))
     # sessions = cursor.fetchall()
@@ -398,7 +398,7 @@ def logout(sess_id):
     if len(sessions) == 0:    # No such session
         return False
 
-    test_cursor.execute(f'delete from sessions where id = {sess_id};')
+    test_cursor.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
     test_conn.commit()
     # cursor.execute("DELETE FROM sessions WHERE id=?", (sess_id, ))
     # conn.commit()
@@ -614,12 +614,17 @@ def register(name, passw, type, phone, team):
     Returns:
     """
     # TODO: change to PostgreSQL
-    # Register new user if there is no user with name and pass
-    cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
-                      SELECT ?, ?, ?, ?, ?
-                      WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
-                   (type, phone, name, passw, team, name, passw))
-    conn.commit()
+    test_cursor.execute(f'select * from users where name = \'{name}\' and pass = {passw};')
+    existing_users = test_cursor.fetchall()
+    if len(existing_users) == 0:
+        test_cursor.execute(f'insert into users (user_type, phone, name, pass, team) values ({type}, \'{phone}\', \'{name}\', {passw}, {team});')
+        test_conn.commit()
+        # Register new user if there is no user with name and pass
+        # cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
+        #                   SELECT ?, ?, ?, ?, ?
+        #                   WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
+        #                (type, phone, name, passw, team, name, passw))
+        # conn.commit()
 
 
 def login(phone, passw, agent, ip, time='0'):
@@ -640,7 +645,6 @@ def login(phone, passw, agent, ip, time='0'):
         sess_id: session id - string of hex
                  b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
     """
-    # TODO: change to PostgreSQL
     # Check user with name and pass exist and got it
     test_cursor.execute(f'select * from users where phone = \'{phone}\' and pass = {passw};')
     users = test_cursor.fetchall()
