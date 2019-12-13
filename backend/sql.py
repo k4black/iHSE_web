@@ -390,7 +390,7 @@ def logout(sess_id):
         Success delete or not
 
     """
-    test_cursor.execute(f'select * from sessions where id = {sess_id};')
+    test_cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
     sessions = test_cursor.fetchall()
     # cursor.execute("SELECT * FROM sessions WHERE id=?", (sess_id, ))
     # sessions = cursor.fetchall()
