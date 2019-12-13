@@ -647,13 +647,14 @@ def login(phone, passw, agent, ip, time='0'):
     user = users[0]
 
     # Create new session if there is no session with user_id and user_agent
-    test_cursor.execute(f"""
-                        insert into sessions (user_id, user_type, user_agent, last_ip, time)
-                            values ({user[0]}, {user[1]}, \'{agent}\', \'{ip}\', \'{time}\')
-                            where not exists(select 1 from sessions where user_id = {user[0]} and user_agent = \'{agent}\')
-                        ;
-                        """)
-    test_conn.commit()
+    test_cursor.execute(f'select * from sessions where user_id = {user[0]} and user_agent = \'{agent}\';')
+    existing_sessions = test_cursor.fetchall()
+    if len(existing_sessions) == 0:
+        test_cursor.execute(f"""
+                            insert into sessions (user_id, user_type, user_agent, last_ip, time)
+                                values ({user[0]}, {user[1]}, \'{agent}\', \'{ip}\', \'{time}\');             ;
+                            """)
+        test_conn.commit()
     # cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
     #                   SELECT ?, ?, ?, ?, ?
     #                   WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_id=? AND user_agent=?)""",
