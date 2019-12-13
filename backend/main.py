@@ -229,6 +229,7 @@ def get_user_by_response(cookie):
 
     # Get session id or ''
     sessid = bytes.fromhex(cookie.get('sessid', ''))  # Get session id from cookie
+    print(f'Getting user by response id:{sessid}')
 
     if sessid == b'':  # No cookie
 
