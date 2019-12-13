@@ -413,8 +413,9 @@ def admin_panel(env, query, cookie):
 
     print("Admin try: ", user_obj)
 
-    if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
-        return user_obj
+    # if user_obj[2] is None or user_obj[1] < 1:  # No User or no Permissions
+    #     return user_obj
+    # TODO: ADMIN!
 
     print(f'Admin want to {env["PATH_INFO"]}')
 
