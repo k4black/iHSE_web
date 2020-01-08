@@ -73,6 +73,9 @@
     position: relative;
 }
 
+.event {
+    position: relative;
+}
 
 
 
@@ -116,6 +119,13 @@
 
 
 
+
+.wrapper:not(.admin) .admin_element  {
+    display: none;
+}
+
+
+
 .border_wrapper {
     position: relative;
     height: fit-content;
@@ -152,9 +162,6 @@
     background-color: #0085d6;
 }
 
-.wrapper:not(.admin) .add_time_button  {
-    display: none;
-}
 
 
 
@@ -178,14 +185,15 @@
     background-color: #0085d699;
 }
 
-.wrapper:not(.admin) .add_event_button  {
-    display: none;
-}
 
 
 
 
 .remove_event {
+    position: absolute;
+    right: -3px;
+    top: -6px;
+
     width: 25px;
     height: 25px;
     border-radius: 50%;
@@ -198,9 +206,11 @@
 }
 
 
-
-
 .edit_event {
+    position: absolute;
+    right: 25px;
+    top: -6px;
+
     width: 25px;
     height: 25px;
     border-radius: 50%;
