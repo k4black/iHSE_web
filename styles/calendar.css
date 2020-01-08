@@ -112,7 +112,7 @@
 
 
 
-.border_wrapper {
+.border_line {
     width: 100%;
     height: auto;
 
@@ -131,10 +131,11 @@
 
     height: 25px;
     width: 25px;
+    margin: 0;
     border-radius: 50%;
 
     position: absolute;
-    top: 50%;
+    top: calc(50% - 25px/2);
     left: 50%;
 }
 
