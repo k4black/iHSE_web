@@ -80,10 +80,8 @@ function getDay(dayNum) {
                     // TODO: Add color
 
 
-                    event_html = '<div class="event" data-id="' + event.id + '">';
-
                     if (event.type === 'regular') {
-                        event_html +=
+                        event_html = '<div class="event" data-id="' + event.id + '">' +
                             '<p class="event__title">' + event.title + '</p>' +
 
                             (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
@@ -92,10 +90,11 @@ function getDay(dayNum) {
                                 '<div class="event__last_line">' +
                                 '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
                                 '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
-                                '</div>');
+                                '</div>') +
+                            '</div>';
                     }
                     else {
-                        event_html +=
+                        event_html = '<div class="event" data-id="' + event.id + '" active-event>' +
                             '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
                             '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
 
@@ -109,12 +108,9 @@ function getDay(dayNum) {
                                     '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
                                     '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
                                     '</div>') +
-                            '</a>';
+                            '</a>' + '</div>';
                     }
-
-                    event_html += '</div>';
-
-
+                    
                     time_html += event_html;
                 }
 

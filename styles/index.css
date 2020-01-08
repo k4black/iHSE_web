@@ -172,6 +172,6 @@ footer div {
 
 
 
-.event[data-id] {
+.event[active-event] {
     background-color: #c4dcf5;
 }
