@@ -79,7 +79,7 @@ function getDay(dayNum) {
                 for (let event of time.events) {
                     // TODO: Add color
 
-                    if (event.id == undefined) {
+                    if (event.id === undefined) {
                         event_html = '<div class="event">' +
                             '<p class="event__title">' + event.title + '</p>' +
 
@@ -94,18 +94,23 @@ function getDay(dayNum) {
                     }
                     else {
                         event_html = '<div class="event" data-id="' + event.id + '">' +
+                            + '<button class="remove_event"><i class="fa fa-times"></i></button>' +
+                            + '<button class="edit_event"><i class="fa fa-wrench"></i></button>' +
+                            
                             '<a href="event.html?id=' + event.id + '">' +
-                            '<p class="event__title">' + event.title + '</p>' +
+                                '<p class="event__title">' + event.title + '</p>' +
 
-                            (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+                                (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
 
-                            ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
-                                '<div class="event__last_line">' +
-                                '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                                '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
-                                '</div>') +
+                                ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
+                                    '<div class="event__last_line">' +
+                                    '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
+                                    '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
+                                    '</div>') +
                             '</a>'+ '</div>';
                     }
+
+
                     time_html += event_html;
                 }
 

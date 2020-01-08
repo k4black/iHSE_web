@@ -161,22 +161,54 @@
 
 .add_event_button {
     color: white;
+    font-size: 20px;
     background-color: #0085d650;
 
     border-radius: 10px;
     width: 100%;
+    height: auto;
     padding: 10px 10px;
     /* background-color: orange; */
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
     align-items: self-start;
 }
 
 .add_event_button:hover {
-    background-color: #0085d6;
+    background-color: #0085d699;
 }
 
 .wrapper:not(.admin) .add_event_button  {
     display: none;
 }
+
+
+
+
+.remove_event {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    color: black;
+    background-color: #ff1e1c;
+}
+
+.remove_event:hover {
+    background-color: #e10003;
+}
+
+
+
+
+.edit_event {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    color: black;
+    background-color: #0085d650;
+}
+
+.edit_event:hover {
+    background-color: #0085d699;
+}
+
