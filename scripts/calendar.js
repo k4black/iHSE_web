@@ -111,7 +111,7 @@ function getDay(dayNum) {
                 }
 
                 time_html += '</div>' + '</div>' +
-                    '<hr class="border_line">' + '<button class="add_time_button">+</button>' + '</hr>';
+                    '<div class="border_line">' + '<button class="add_time_button">+</button>' + '</div>';
 
                 day_html += time_html;
             }
