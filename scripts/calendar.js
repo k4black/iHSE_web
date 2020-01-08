@@ -79,8 +79,11 @@ function getDay(dayNum) {
                 for (let event of time.events) {
                     // TODO: Add color
 
-                    if (event.id === undefined) {
-                        event_html = '<div class="event">' +
+
+                    event_html = '<div class="event" data-id="' + event.id + '">';
+
+                    if (event.type === 'regular') {
+                        event_html +=
                             '<p class="event__title">' + event.title + '</p>' +
 
                             (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
@@ -89,11 +92,10 @@ function getDay(dayNum) {
                                 '<div class="event__last_line">' +
                                 '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
                                 '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
-                                '</div>') +
-                            '</div>';
+                                '</div>');
                     }
                     else {
-                        event_html = '<div class="event" data-id="' + event.id + '">' +
+                        event_html +=
                             '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
                             '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
 
@@ -107,8 +109,10 @@ function getDay(dayNum) {
                                     '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
                                     '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
                                     '</div>') +
-                            '</a>'+ '</div>';
+                            '</a>';
                     }
+
+                    event_html += '</div>';
 
 
                     time_html += event_html;
