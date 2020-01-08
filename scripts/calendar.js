@@ -72,7 +72,7 @@ function getDay(dayNum) {
 
             for (let time of day_data) {
 
-                time_html = '<div class="time">' + '<button class="add_event_button">+</button>' +
+                time_html = '<div class="time">' +
                     '<div class="bar">' + time.time + '</div>' +
                     '<div class="events">';
 
@@ -107,8 +107,9 @@ function getDay(dayNum) {
                             '</a>'+ '</div>';
                     }
                     time_html += event_html;
-
                 }
+
+                time_html += '<button class="add_event_button">+</button>';
 
                 time_html += '</div>' + '</div>' +
                     '<div class="border_wrapper">' + '<hr class="border_line">' + '<button class="add_time_button">+</button>' + '</div>';
