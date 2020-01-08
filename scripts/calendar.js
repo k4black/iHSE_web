@@ -110,7 +110,8 @@ function getDay(dayNum) {
 
                 }
 
-                time_html += '</div>' + '</div>' + '<hr class="border_line">';
+                time_html += '</div>' + '</div>' +
+                    '<div class="border_wrapper">' + '<hr class="border_line">' + '<button class="add_time_button">+</button>' + '</div>';
 
                 day_html += time_html;
             }
@@ -163,3 +164,11 @@ for (let i = 0; i < days.length; i++) {
     });
 
 }
+
+
+/** ===============  ADMIN EDITING  =============== */
+
+
+
+
+

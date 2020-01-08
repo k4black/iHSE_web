@@ -107,4 +107,39 @@
 
 
     }
+
+}
+
+
+
+.border_wrapper {
+    width: 100%;
+    height: auto;
+
+    position: relative;
+}
+
+
+
+:not(.admin) .add_time_button {
+    display: none;
+}
+
+.add_time_button {
+    color: white;
+    background-color: #0085d650;
+
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+
+.add_time_button:hover {
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
