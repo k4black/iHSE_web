@@ -94,9 +94,9 @@ function getDay(dayNum) {
                     }
                     else {
                         event_html = '<div class="event" data-id="' + event.id + '">' +
-                            + '<button class="remove_event"><i class="fa fa-times"></i></button>' +
-                            + '<button class="edit_event"><i class="fa fa-wrench"></i></button>' +
-                            
+                            '<button class="remove_event"><i class="fa fa-times"></i></button>' +
+                            '<button class="edit_event"><i class="fa fa-wrench"></i></button>' +
+
                             '<a href="event.html?id=' + event.id + '">' +
                                 '<p class="event__title">' + event.title + '</p>' +
 
