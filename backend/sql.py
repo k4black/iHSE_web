@@ -8,25 +8,27 @@ import psycopg2
 """                    SQLite database creation                  """
 """ ---===---==========================================---===--- """
 
-test_conn = psycopg2.connect('dbname=root user=root password=root')
-test_cursor = test_conn.cursor()
-conn = sqlite3.connect("/home/ubuntu/db/main.sqlite", check_same_thread=False)
-conn.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
-conn.execute("PRAGMA wal_autocheckpoint=100")
-conn.execute("PRAGMA busy_timeout=1000")
-conn.execute("PRAGMA synchronous=1")
-
+conn = psycopg2.connect('dbname=root user=root password=root')
 cursor = conn.cursor()
 
 
+conn_sqlite = sqlite3.connect("/home/ubuntu/db/main.sqlite", check_same_thread=False)
+conn_sqlite.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
+conn_sqlite.execute("PRAGMA wal_autocheckpoint=100")
+conn_sqlite.execute("PRAGMA busy_timeout=1000")
+conn_sqlite.execute("PRAGMA synchronous=1")
+
+cursor_sqlite = conn_sqlite.cursor()
+
+
 def checkpoint():
-    conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # WAL
-    conn.execute("VACUUM;")  # Repack database file
+    conn_sqlite.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # WAL
+    conn_sqlite.execute("VACUUM;")  # Repack database file
 
 checkpoint()
 
 # Users
-cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
+cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "users" (
                     "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
                     "user_type"	INTEGER,
                     "phone"	TEXT,
@@ -37,7 +39,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "users" (
                     "avatar" TEXT  DEFAULT ('')
                   );
                """)
-test_cursor.execute('''
+cursor.execute('''
                     create table if not exists users (
                         id serial not null primary key unique,
                         user_type int,
@@ -51,7 +53,7 @@ test_cursor.execute('''
                     ''')
 
 # Sessions
-cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
+cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
                     "id"	BLOB NOT NULL PRIMARY KEY UNIQUE DEFAULT (randomblob(16)),
                     "user_id"	INTEGER,
                     "user_type"	INTEGER,
@@ -61,13 +63,13 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
                     FOREIGN KEY("user_id") REFERENCES "users"("id")
                   );
                """)
-test_cursor.execute("""CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
-RETURNS bytea AS $$
-SELECT decode(string_agg(lpad(to_hex(width_bucket(random(), 0, 1, 256)-1),2,'0') ,''), 'hex')
-FROM generate_series(1, $1);
-$$
-LANGUAGE 'sql';""")
-test_cursor.execute('''
+cursor.execute("""CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
+                  RETURNS bytea AS $$
+                  SELECT decode(string_agg(lpad(to_hex(width_bucket(random(), 0, 1, 256)-1),2,'0') ,''), 'hex')
+                  FROM generate_series(1, $1);
+                  $$
+                  LANGUAGE 'sql';""")
+cursor.execute('''
                     create table if not exists sessions (
                         id bytea not null primary key unique default random_bytea(16),
                         user_id int,
@@ -81,14 +83,14 @@ test_cursor.execute('''
 
 
 # Feedback: voted or not
-cursor.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
+cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
                     "user_id"	INTEGER NOT NULL PRIMARY KEY,
                     "days"	TEXT,
                     "time"	TEXT DEFAULT(datetime('now','localtime')),
                     FOREIGN KEY("user_id") REFERENCES "users"("id")
                   );
                """)
-test_cursor.execute("""
+cursor.execute("""
                     create table if not exists feedback (
                         user_id int not null primary key,
                         days text,
@@ -98,7 +100,7 @@ test_cursor.execute("""
 
 
 # Events
-cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
+cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "events" (
                     "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
                     "type"	INTEGER,
                     "title"	TEXT,
@@ -108,7 +110,7 @@ cursor.execute("""CREATE TABLE IF NOT EXISTS  "events" (
                     "date" TEXT
                   );
                """)
-test_cursor.execute('''
+cursor.execute('''
                     create table if not exists events (
                         id serial not null primary key unique,
                         type int,
@@ -119,7 +121,7 @@ test_cursor.execute('''
                         date text
                     );
                     ''')
-test_conn.commit()
+conn.commit()
 
 
 """ ---===---==========================================---===--- """
@@ -146,11 +148,13 @@ def safety_injections(param):
         param.replace('"', '')
         param.replace('\'', '')
         param.replace(',', '')
+        param.replace(';', '')
 
     return param
 
 
 # TODO: Safety sql (if db is busy)
+# TODO: delete  after migration
 def safety_request(sql):
     """ Try to run sql code event if db is busy
 
@@ -166,9 +170,9 @@ def safety_request(sql):
 
     for x in range(0, timeout):
         try:
-            with conn:
-                conn.execute(sql)
-                conn.commit()
+            with conn_sqlite:
+                conn_sqlite.execute(sql)
+                conn_sqlite.commit()
         except sqlite3.Warning:  # TODO?
             time.sleep(1)
             pass
@@ -176,9 +180,9 @@ def safety_request(sql):
         finally:
             break
     else:
-        with conn:
-            conn.execute(sql)
-            conn.commit()
+        with conn_sqlite:
+            conn_sqlite.execute(sql)
+            conn_sqlite.commit()
 
 
 """ ---===---==========================================---===--- """
@@ -194,8 +198,8 @@ def get_users():
     Returns:
         user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar), ...]
     """
-    test_cursor.execute('select * from users;')
-    users_list = test_cursor.fetchall()
+    cursor.execute('select * from users;')
+    users_list = cursor.fetchall()
     # cursor.execute("SELECT * FROM users")
     # users_list = cursor.fetchall()
 
@@ -208,8 +212,8 @@ def clear_users():
     Args:
     Returns:
     """
-    test_cursor.execute('delete from users;')
-    test_conn.commit()
+    cursor.execute('delete from users;')
+    conn.commit()
     # cursor.execute("DELETE FROM users")
     # conn.commit()
 
@@ -224,8 +228,8 @@ def remove_user(user_id):
         # Success delete or not
 
     """
-    test_cursor.execute(f'delete from users where id = {user_id};')
-    test_conn.commit()
+    cursor.execute(f'delete from users where id = {user_id};')
+    conn.commit()
     # cursor.execute("DELETE FROM users WHERE id=?", (user_id, ))
     # conn.commit()
 
@@ -244,8 +248,8 @@ def load_users(users_list):
 
     # Clear user and sessions tables
     # cursor.execute("DELETE FROM sessions")
-    cursor.execute("DELETE FROM users")
-    conn.commit()
+    cursor_sqlite.execute("DELETE FROM users")
+    conn_sqlite.commit()
 
     # Add users in bd
     for user_obj in users_list:
@@ -254,11 +258,11 @@ def load_users(users_list):
         else:
             avatar = user_obj[7]
 
-        cursor.execute("""INSERT INTO users(id, user_type, phone, name, pass, team, credits, avatar)
+        cursor_sqlite.execute("""INSERT INTO users(id, user_type, phone, name, pass, team, credits, avatar)
                           SELECT ?, ?, ?, ?, ?, ?, ?, ?
                           WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
-                       (user_obj[0], user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[6], avatar, user_obj[3], user_obj[4]))
-        conn.commit()
+                              (user_obj[0], user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[6], avatar, user_obj[3], user_obj[4]))
+        conn_sqlite.commit()
 
 
 def get_events():
@@ -270,8 +274,8 @@ def get_events():
         event objects: list of event objects - [ (id, type, title, credits, total, date), ...]
 
     """
-    test_cursor.execute('select * from events;')
-    events_list = test_cursor.fetchall()
+    cursor.execute('select * from events;')
+    events_list = cursor.fetchall()
     # cursor.execute("SELECT * FROM events")
     # events_list = cursor.fetchall()
 
@@ -288,8 +292,8 @@ def remove_event(event_id):
         # Success delete or not
 
     """
-    test_cursor.execute(f'delete from events where id = {event_id};')
-    test_conn.commit()
+    cursor.execute(f'delete from events where id = {event_id};')
+    conn.commit()
     # cursor.execute("DELETE FROM events WHERE id=?", (event_id, ))
     # conn.commit()
 
@@ -308,14 +312,14 @@ def load_events(events_list):
 
     # Safe update events - save count of people
     for event_obj in events_list:
-        cursor.execute("""
+        cursor_sqlite.execute("""
                           INSERT OR IGNORE INTO events(id, type, title, credits, total, date)
                           VALUES (?, ?, ?, ?, ?, ?); 
                         """, (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[5],))
-        cursor.execute("""
+        cursor_sqlite.execute("""
                           UPDATE events SET type=?, title=?, credits=?, total=? WHERE id=?; 
                         """, (event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[0]))
-    conn.commit()
+    conn_sqlite.commit()
 
     return
 
@@ -339,8 +343,8 @@ def get_sessions():
         session objects: list of sess objects - [ (id, user_id, user_type, user_agent, last_ip, time), ...]
 
     """
-    test_cursor.execute('select * from sessions;')
-    sessions_list = test_cursor.fetchall()
+    cursor.execute('select * from sessions;')
+    sessions_list = cursor.fetchall()
     # cursor.execute("SELECT * FROM sessions")
     # sessions_list = cursor.fetchall()
     return sessions_list
@@ -352,8 +356,8 @@ def clear_sessions():
     Args:
     Returns:
     """
-    test_cursor.execute('delete from sessions;')
-    test_conn.commit()
+    cursor.execute('delete from sessions;')
+    conn.commit()
     # cursor.execute("DELETE FROM sessions")
     # conn.commit()
 
@@ -369,8 +373,8 @@ def get_session(sess_id):
                      or None if there is no such session
 
     """
-    test_cursor.execute(f"select * from sessions where id = bytea \'\\x{sess_id}\';")
-    sessions = test_cursor.fetchall()
+    cursor.execute(f"select * from sessions where id = bytea \'\\x{sess_id}\';")
+    sessions = cursor.fetchall()
     # cursor.execute("SELECT * FROM sessions WHERE id=?", (sess_id, ))
     # sessions = cursor.fetchall()
 
@@ -390,16 +394,16 @@ def logout(sess_id):
         Success delete or not
 
     """
-    test_cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
-    sessions = test_cursor.fetchall()
+    cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
+    sessions = cursor.fetchall()
     # cursor.execute("SELECT * FROM sessions WHERE id=?", (sess_id, ))
     # sessions = cursor.fetchall()
 
     if len(sessions) == 0:    # No such session
         return False
 
-    test_cursor.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
-    test_conn.commit()
+    cursor.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
+    conn.commit()
     # cursor.execute("DELETE FROM sessions WHERE id=?", (sess_id, ))
     # conn.commit()
     return True
@@ -416,8 +420,8 @@ def get_user(user_id):
                      or None if there is no such user
 
     """
-    test_cursor.execute(f'select * from users where id = {user_id};')
-    users = test_cursor.fetchall()
+    cursor.execute(f'select * from users where id = {user_id};')
+    users = cursor.fetchall()
     # cursor.execute("SELECT * FROM users WHERE id=?", (user_id, ))
     # users = cursor.fetchall()
 
@@ -436,7 +440,7 @@ def edit_user(user_obj):
     Returns:
     """
     # test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
-    test_cursor.execute(f'''update users set
+    cursor.execute(f'''update users set
                                 user_type = {user_obj[1]},
                                 phone = \'{user_obj[2]}\',
                                 name = \'{user_obj[3]}\',
@@ -445,7 +449,7 @@ def edit_user(user_obj):
                                 credits = {user_obj[6]}
                             where id = {user_obj[0]};
                         ''')
-    test_conn.commit()
+    conn.commit()
 
 
 def insert_user(user_obj):
@@ -459,9 +463,9 @@ def insert_user(user_obj):
     # test_conn = psycopg2.connect('dbname=root user=root password=root')
     # test_cursor = test_conn.cursor()
     # test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
-    test_cursor.execute(f'insert into users (user_type, phone, name, pass, team, credits) values ({user_obj[1]}, \'{user_obj[2]}\', \'{user_obj[3]}\', {user_obj[4]}, {user_obj[5]}, {user_obj[6]}); ')
+    cursor.execute(f'insert into users (user_type, phone, name, pass, team, credits) values ({user_obj[1]}, \'{user_obj[2]}\', \'{user_obj[3]}\', {user_obj[4]}, {user_obj[5]}, {user_obj[6]}); ')
     # cursor.execute("REPLACE INTO users (user_type, phone, name, pass, team, credits)", user_obj[1:])
-    test_conn.commit()
+    conn.commit()
     # conn.commit()
 
 
@@ -476,8 +480,8 @@ def get_user_by_phone(phone):
                      or None if there is no such user
 
     """
-    test_cursor.execute(f'select * from users where phone = \'{phone}\';')
-    users = test_cursor.fetchall()
+    cursor.execute(f'select * from users where phone = \'{phone}\';')
+    users = cursor.fetchall()
     # cursor.execute("SELECT * FROM users WHERE phone=?", (phone, ))
     # users = cursor.fetchall()
 
@@ -493,8 +497,8 @@ def clear_events():
     Args:
     Returns:
     """
-    test_cursor.execute('delete from events;')
-    test_conn.commit()
+    cursor.execute('delete from events;')
+    conn.commit()
     # cursor.execute("DELETE FROM events")
     # conn.commit()
 
@@ -508,8 +512,8 @@ def get_event(event_id):
     Returns:
         event_obj: (id, type, title, credits, count, total, date)
     """
-    test_cursor.execute(f'select * from events where id = {event_id};')
-    events = test_cursor.fetchall()
+    cursor.execute(f'select * from events where id = {event_id};')
+    events = cursor.fetchall()
     # cursor.execute("SELECT * FROM events WHERE id=?", (event_id, ))
     # events = cursor.fetchall()
 
@@ -527,7 +531,7 @@ def edit_event(event_obj):
 
     Returns:
     """
-    test_cursor.execute(f'''update events set
+    cursor.execute(f'''update events set
                                 type = {event_obj[1]},
                                 title = \'{event_obj[2]}\',
                                 credits = {event_obj[3]},
@@ -536,7 +540,7 @@ def edit_event(event_obj):
                                 date = \'{event_obj[6]}\'
                             where id = {event_obj[0]};
                         ''')
-    test_conn.commit()
+    conn.commit()
     # cursor.execute("REPLACE INTO events (id, type, title, credits, count, total, date)", event_obj)
     # conn.commit()
 
@@ -549,8 +553,8 @@ def insert_event(event_obj):
 
     Returns:
     """
-    test_cursor.execute(f'insert into events (type, title, credits, count, total, date) values ({event_obj[1]}, \'{event_obj[2]}\', {event_obj[3]}, {event_obj[4]}, {event_obj[5]}, \'{event_obj[6]}\');')
-    test_conn.commit()
+    cursor.execute(f'insert into events (type, title, credits, count, total, date) values ({event_obj[1]}, \'{event_obj[2]}\', {event_obj[3]}, {event_obj[4]}, {event_obj[5]}, \'{event_obj[6]}\');')
+    conn.commit()
     # cursor.execute("REPLACE INTO events (id, type, title, credits, count, total, date)", event_obj)
     # conn.commit()
 
@@ -566,16 +570,16 @@ def enroll_user(event_id, user_obj):
         True/False: Success or not
     """
 
-    test_cursor.execute(f'select * from events where id = {event_id};')
-    events = test_cursor.fetchall()
+    cursor.execute(f'select * from events where id = {event_id};')
+    events = cursor.fetchall()
     # cursor.execute("SELECT * FROM events WHERE id=?", (event_id, ))
     # events = cursor.fetchall()
 
     if len(events) == 0 or events[0][4] >= events[0][5]:  # No such event or too many people
         return False
 
-    test_cursor.execute(f'update events set count = {events[0][4] + 1} where id = {event_id};')
-    test_conn.commit()
+    cursor.execute(f'update events set count = {events[0][4] + 1} where id = {event_id};')
+    conn.commit()
     # cursor.execute("UPDATE events SET count=? WHERE id=?", (events[0][4] + 1, event_id, ))
     # conn.commit()
     return True
@@ -591,8 +595,8 @@ def checkin_user(user_obj, event_obj):
 
     Returns:
     """
-    test_cursor.execute(f'update users set credits = {event_obj[3] + user_obj[6]} where id = {user_obj[0]};')
-    test_conn.commit()
+    cursor.execute(f'update users set credits = {event_obj[3] + user_obj[6]} where id = {user_obj[0]};')
+    conn.commit()
     # cursor.execute("UPDATE users SET credits=? WHERE id=?", (user_obj[6] + event_obj[3], user_obj[0], ))
     # conn.commit()
 
@@ -614,11 +618,11 @@ def register(name, passw, type, phone, team):
     Returns:
     """
     # TODO: change to PostgreSQL
-    test_cursor.execute(f'select * from users where name = \'{name}\' and pass = {passw};')
-    existing_users = test_cursor.fetchall()
+    cursor.execute(f'select * from users where name = \'{name}\' and pass = {passw};')
+    existing_users = cursor.fetchall()
     if len(existing_users) == 0:
-        test_cursor.execute(f'insert into users (user_type, phone, name, pass, team) values ({type}, \'{phone}\', \'{name}\', {passw}, {team});')
-        test_conn.commit()
+        cursor.execute(f'insert into users (user_type, phone, name, pass, team) values ({type}, \'{phone}\', \'{name}\', {passw}, {team});')
+        conn.commit()
         # Register new user if there is no user with name and pass
         # cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
         #                   SELECT ?, ?, ?, ?, ?
@@ -627,6 +631,7 @@ def register(name, passw, type, phone, team):
         # conn.commit()
 
 
+# TODO: Update time in sessions
 def login(phone, passw, agent, ip, time='0'):
     """ Login user
     Create new session if it does not exist and return sess id
@@ -646,8 +651,8 @@ def login(phone, passw, agent, ip, time='0'):
                  b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
     """
     # Check user with name and pass exist and got it
-    test_cursor.execute(f'select * from users where phone = \'{phone}\' and pass = {passw};')
-    users = test_cursor.fetchall()
+    cursor.execute(f'select * from users where phone = \'{phone}\' and pass = {passw};')
+    users = cursor.fetchall()
     # cursor.execute("SELECT * FROM users WHERE phone=? AND pass=?", (phone, passw))
     # users = cursor.fetchall()
 
@@ -657,14 +662,14 @@ def login(phone, passw, agent, ip, time='0'):
     user = users[0]
 
     # Create new session if there is no session with user_id and user_agent
-    test_cursor.execute(f'select * from sessions where user_id = {user[0]} and user_agent = \'{agent}\';')
-    existing_sessions = test_cursor.fetchall()
+    cursor.execute(f'select * from sessions where user_id = {user[0]} and user_agent = \'{agent}\';')
+    existing_sessions = cursor.fetchall()
     if len(existing_sessions) == 0:
-        test_cursor.execute(f"""
+        cursor.execute(f"""
                             insert into sessions (user_id, user_type, user_agent, last_ip, time)
                                 values ({user[0]}, {user[1]}, \'{agent}\', \'{ip}\', \'{time}\');             ;
                             """)
-        test_conn.commit()
+        conn.commit()
     # cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
     #                   SELECT ?, ?, ?, ?, ?
     #                   WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_id=? AND user_agent=?)""",
@@ -673,8 +678,8 @@ def login(phone, passw, agent, ip, time='0'):
 
 
     # Get session corresponding to user_id and user_agent
-    test_cursor.execute(f'select * from sessions where user_id = {user[0]} and user_agent = \'{agent}\';')
-    result = test_cursor.fetchone()
+    cursor.execute(f'select * from sessions where user_id = {user[0]} and user_agent = \'{agent}\';')
+    result = cursor.fetchone()
     # cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
     # result = cursor.fetchone()
 
@@ -690,7 +695,7 @@ def edit_session(sess_obj):
 
     Returns:
     """
-    test_cursor.execute(f'''update sessions set
+    cursor.execute(f'''update sessions set
                                 user_id = {sess_obj[1]},
                                 user_type = {sess_obj[2]},
                                 user_agent = \'{sess_obj[3]}\',
@@ -698,7 +703,7 @@ def edit_session(sess_obj):
                                 time = \'{sess_obj[5]}\'
                             where id = {sess_obj[0]};
                         ''')
-    test_conn.commit()
+    conn.commit()
     # cursor.execute("REPLACE INTO sessions (id, user_id, user_type, user_agent, last_ip, time)", sess_obj)
     # conn.commit()
 
@@ -711,8 +716,8 @@ def insert_session(sess_obj):
 
     Returns:
     """
-    test_cursor.execute(f'insert into sessions (user_id, user_type, user_agent, last_ip, time) values ({sess_obj[1]}, {sess_obj[2]}, \'{sess_obj[3]}\', \'{sess_obj[4]}\', \'{sess_obj[5]}\');')
-    test_conn.commit()
+    cursor.execute(f'insert into sessions (user_id, user_type, user_agent, last_ip, time) values ({sess_obj[1]}, {sess_obj[2]}, \'{sess_obj[3]}\', \'{sess_obj[4]}\', \'{sess_obj[5]}\');')
+    conn.commit()
     # cursor.execute("REPLACE INTO sessions (id, user_id, user_type, user_agent, last_ip, time)", sess_obj)
     # conn.commit()
 
