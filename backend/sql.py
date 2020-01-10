@@ -25,6 +25,7 @@ def checkpoint():
     conn_sqlite.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # WAL
     conn_sqlite.execute("VACUUM;")  # Repack database file
 
+
 checkpoint()
 
 # Users
@@ -69,8 +70,7 @@ cursor.execute("""CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
                   FROM generate_series(1, $1);
                   $$
                   LANGUAGE 'sql';""")
-cursor.execute('''
-                    create table if not exists sessions (
+cursor.execute('''create table if not exists sessions (
                         id bytea not null primary key unique default random_bytea(16),
                         user_id int,
                         user_type int,
@@ -121,6 +121,28 @@ cursor.execute('''
                         date text
                     );
                     ''')
+#  TODO: Migration
+# cursor.execute('''
+#                     create table if not exists events (
+#                         id serial not null primary key unique,
+#                         type int,
+#                         title text,
+#                         description text,
+#                         host text,
+#                         place text,
+#                         time, text,
+#                         date text
+#                     );
+#                     ''')
+# cursor.execute('''
+#                     create table if not exists classes (
+#                         id serial not null primary key unique,
+#                         credits int,
+#                         count int default 0,
+#                         total int
+#                         foreign key (id) references events(id)
+#                     );
+#                     ''')
 conn.commit()
 
 

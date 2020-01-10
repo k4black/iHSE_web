@@ -139,6 +139,47 @@
 
 <div class="wrapper data__loading admin">
 
+    <!--<div class="overlay" id="popup" onclick="$('#popup').fadeOut(350);">-->
+    <div class="overlay admin_element" id="popup">
+        <div class="popup_body" >
+            <a class="close" onclick="document.getElementById('popup').style.display = 'none'">Close</a>
+
+            <div style="display: block">
+                <label for="id">id</label>
+                <input id="id" value="" type="text" disabled>
+            </div>
+
+            <div>
+                <label for="title">title</label>
+                <input id="title" value="" type="text">
+            </div>
+
+            <div>
+                <label for="time1">time [from:to]</label>
+                <input id="time1" value="" type="text">
+                <input id="time2" value="" type="text">
+            </div>
+
+            <div>
+                <label for="desc">description</label>
+                <input id="desc" value="" type="text">
+            </div>
+
+            <div>
+                <label for="names">host</label>
+                <input id="names" value="" type="text">
+            </div>
+
+            <div>
+                <label for="location">location</label>
+                <input id="location" value="" type="text">
+            </div>
+
+
+            <button onclick="document.getElementById('popup').style.display = 'none';saveEvent()">Save</button>
+        </div>
+    </div>
+
 
 <!--    <img class="loading" alt="Loading" src="images/loading.gif">-->
 

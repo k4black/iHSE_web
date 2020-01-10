@@ -124,6 +124,9 @@ function getDay(dayNum) {
 
 
             document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
+
+
+            setupAdminButtons();
         }
     };
 
@@ -175,6 +178,90 @@ for (let i = 0; i < days.length; i++) {
 /** ===============  ADMIN EDITING  =============== */
 
 
+function setupAdminButtons() {
+    console.log('setupAdminButtons');
+    let popup = document.getElementById('popup');
 
 
+    let removeButtons = document.getElementsByClassName("remove_event");
+    console.log('removeButtons ' + removeButtons.length);
+
+    for (let i = 0; i < removeButtons.length; ++i) {
+        removeButtons[i].addEventListener('click', function () {
+            // alert('clicked remove');
+            console.log('Remove Event ' + removeButtons[i].parentElement.getAttribute('data-id'));
+        });
+    }
+
+
+    let editButtons = document.getElementsByClassName("edit_event");
+    console.log('removeButtons ' + removeButtons.length);
+
+    for (let i = 0; i < editButtons.length; ++i) {
+        editButtons[i].addEventListener('click', function () {
+            // alert('clicked remove');
+            console.log('Edit Event ' + editButtons[i].parentElement.getAttribute('data-id'));
+            let id = editButtons[i].parentElement.getAttribute('data-id');
+
+            let title = editButtons[i].parentElement.getElementsByClassName('event__title')[0].textContent;
+            let desc = editButtons[i].parentElement.getElementsByClassName('event__desc');
+            desc = desc.length === 0 ? "" : desc[0].textContent;
+            let names = editButtons[i].parentElement.getElementsByClassName('event__names');
+            names = names.length === 0 ? "" : names[0].textContent;
+            let loc = editButtons[i].parentElement.getElementsByClassName('event__loc');
+            loc = loc.length === 0 ? "" : loc[0].textContent;
+
+            let times = editButtons[i].parentElement.parentElement.parentElement.getElementsByClassName('bar')[0].textContent.split('\n');
+
+            console.log(id + title + desc + names + loc);
+
+            openEditEvent(id, title, times[0], times[1] === undefined ? "" : times[1], desc, names, loc);
+        });
+    }
+
+
+    let createButtons = document.getElementsByClassName("add_event_button");
+    console.log('createEventButtons ' + removeButtons.length);
+
+    for (let i = 0; i < createButtons.length; ++i) {
+        createButtons[i].addEventListener('click', function () {
+            // alert('clicked remove');
+            let times = createButtons[i].parentElement.previousElementSibling.textContent.split('\n');
+            console.log('Create Event [' + times[0] + "," + times[1] + "]");
+
+            openCreateEvent(times[0], times[1] === undefined ? "" : times[1]);
+        });
+    }
+}
+
+
+function openEditEvent(id, title, time1, time2, desc, names, location) {
+    document.getElementById('id').value = id;
+    document.getElementById('title').value = title;
+    document.getElementById('time1').value = time1;
+    document.getElementById('time2').value = time2;
+    document.getElementById('desc').value = desc;
+    document.getElementById('names').value = names;
+    document.getElementById('location').value = location;
+
+    popup.style.display = 'block';
+}
+
+function openCreateEvent(time1, time2) {
+    console.log('create event');
+    openEditEvent('', '', time1, time2, '', '', '');
+}
+
+function saveEvent() {
+    console.log('Save event');
+
+    let id = document.getElementById('id').value;
+    let title = document.getElementById('title').value;
+    let time = document.getElementById('time1').value + '\n' + document.getElementById('time2').value;
+    let desc = document.getElementById('desc').value;
+    let names = document.getElementById('names').value;
+    let location = document.getElementById('location').value;
+
+    alert('Save event: ' + id + ' ' + title + ' ' + time + ' ' + desc + ' ' + names + ' ' + location);
+}
 
