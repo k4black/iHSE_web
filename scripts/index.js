@@ -35,50 +35,37 @@ xhttp.onreadystatechange = function() {
         var time_html;
         var event_html;
 
-        for (let time of day_data) {
+            for (let time of day_data) {
 
-            time_html = '<div class="time">' +
-                '<div class="bar">' + time.time + '</div>' +
-                '<div class="events">';
+                time_html = '<div class="time">' +
+                                '<div class="bar">' + time.time + '</div>' +
+                                    '<div class="events">';
 
-            for (let event of time.events) {
-                // TODO: Add color
+                for (let event of time.events) {
+                    event_html =
+                        '<div class="event" data-id="' + event.id + '" ' + (event.type === 'regular' ? '' : 'active-event') + '>' +
+                            (event.type === 'regular' ? '' : '<a href="event.html?id=' + event.id + '">') +
+                                '<p class="event__title">' + event.title + '</p>' +
 
-                if (event.id == undefined) {
-                    event_html = '<div class="event">' +
-                        '<p class="event__title">' + event.title + '</p>' +
+                                (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
 
-                        (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
-
-                        ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
-                            '<div class="event__last_line">' +
-                            '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                            '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
-                            '</div>') +
+                                ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '<div class="event__last_line">' +
+                                    '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
+                                    '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
+                                '</div>') +
+                            (event.type === 'regular' ? '' : '</a>') +
                         '</div>';
+
+
+                    time_html += event_html;
                 }
-                else {
-                    event_html = '<div class="event" data-id="' + event.id + '">' +
-                        '<a href="event.html?id=' + event.id + '">' +
-                        '<p class="event__title">' + event.title + '</p>' +
 
-                        (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+                time_html += '</div>' + '</div>';
 
-                        ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
-                            '<div class="event__last_line">' +
-                            '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                            '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
-                            '</div>') +
-                        '</a>'+ '</div>';
-                }
-                time_html += event_html;
+                time_html += '<hr class="border_line">';
 
+                day_html += time_html;
             }
-
-            time_html += '</div>' + '</div>' + '<hr class="border_line">';
-
-            day_html += time_html;
-        }
 
 
         document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html

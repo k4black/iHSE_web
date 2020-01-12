@@ -164,6 +164,8 @@ function setupAdminButtons() {
     console.log('setupAdminButtons');
     let popup = document.getElementById('popup');
 
+    let selectedDay = document.getElementsByClassName("day selected")[0].children[1].textContent;
+
 
     let removeButtons = document.getElementsByClassName("remove_event");
     console.log('removeButtons ' + removeButtons.length);
@@ -199,7 +201,7 @@ function setupAdminButtons() {
 
             console.log(id + title + desc + names + loc);
 
-            openEditEvent(id, title, type, times[0], times[1] === undefined ? "" : times[1], desc, names, loc);
+            openEditEvent(id, title, type, selectedDay, times[0], times[1] === undefined ? "" : times[1], desc, names, loc);
         });
     }
 
@@ -213,7 +215,7 @@ function setupAdminButtons() {
             let times = createButtons[i].parentElement.previousElementSibling.textContent.split('\n');
             console.log('Create Event [' + times[0] + "," + times[1] + "]");
 
-            openCreateEvent(times[0], times[1] === undefined ? "" : times[1]);
+            openCreateEvent(selectedDay, times[0], times[1] === undefined ? "" : times[1]);
         });
     }
 
@@ -229,16 +231,17 @@ function setupAdminButtons() {
         }
 
         addTimeButtons[i].addEventListener('click', function () {
-            openCreateEvent(startTime, '');
+            openCreateEvent(selectedDay, startTime, '');
         });
     }
 }
 
 
-function openEditEvent(id, title, type, time1, time2, desc, names, location) {
+function openEditEvent(id, title, type, date, time1, time2, desc, names, location) {
     document.getElementById('id').value = id;
     document.getElementById('title').value = title;
     document.getElementById('type').value = type;
+    document.getElementById('date').value = date;
     document.getElementById('time1').value = time1;
     document.getElementById('time2').value = time2;
     document.getElementById('desc').value = desc;
@@ -248,9 +251,9 @@ function openEditEvent(id, title, type, time1, time2, desc, names, location) {
     popup.style.display = 'block';
 }
 
-function openCreateEvent(time1, time2) {
+function openCreateEvent(date, time1, time2) {
     console.log('create event');
-    openEditEvent('', '', 'regular', time1, time2, '', '', '');
+    openEditEvent('', '', 'regular', date, time1, time2, '', '', '');
 }
 
 function saveEvent() {
@@ -259,11 +262,12 @@ function saveEvent() {
     let id = document.getElementById('id').value;
     let title = document.getElementById('title').value;
     let type = document.getElementById('type').value;
+    let date = document.getElementById('date').value;
     let time = document.getElementById('time1').value + '\n' + document.getElementById('time2').value;
     let desc = document.getElementById('desc').value;
     let names = document.getElementById('names').value;
     let location = document.getElementById('location').value;
 
-    alert('Save event: ' + id + ' ' + title + ' ' + type + ' ' + time + ' ' + desc + ' ' + names + ' ' + location);
+    alert('Save event: ' + id + ' ' + title + ' ' + type + ' ' + date + ' ' + time + ' ' + desc + ' ' + names + ' ' + location);
 }
 

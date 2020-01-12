@@ -15,7 +15,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
-
 </head>
 <body>
 
@@ -151,19 +150,22 @@
 
             <div>
                 <label for="title">title</label>
-                <input id="title" value="" type="text">
+                <input id="title" value="" type="text" style="width:400px">
             </div>
 
             <div>
                 <label for="type">type</label>
-                <select size="1" id="type">
+                <select size="1" id="type" style="width: 200px; height: 50px; font-size: 15px">
                     <option value="regular" selected>regular</option>
                     <option value="master">master</option>
                     <option value="lection">lection</option>
                 </select>
             </div>
 
-
+            <div>
+                <label for="date">date [DD.MM]</label>
+                <input id="date" value="" type="text">
+            </div>
 
             <div>
                 <label for="time1">time [from:to]</label>
@@ -173,7 +175,7 @@
 
             <div>
                 <label for="desc">description</label>
-                <input id="desc" value="" type="text">
+                <textarea id="desc" cols="40" rows="3" style="font-size: 15px;"></textarea>
             </div>
 
             <div>
@@ -185,7 +187,6 @@
                 <label for="location">location</label>
                 <input id="location" value="" type="text">
             </div>
-
 
             <button onclick="document.getElementById('popup').style.display = 'none';saveEvent()">Save</button>
         </div>
