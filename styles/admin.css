@@ -136,6 +136,16 @@ div.tabs button[disabled] {
 
 }
 
+button {
+    display: inline-flex !important;
+    flex-direction: row;
+    align-items: center;
+}
+
+button * {
+    display: inline-block;
+    margin: 0!important;
+}
 
 button:hover {
     background: #006cae;

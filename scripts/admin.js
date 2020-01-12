@@ -236,9 +236,15 @@ function pull_table(table_name) {
                     columns: columns
                 });
             }
-
             else if (this.status === 401) {  // No account data
                 alert('Требуется авторизация!');
+            } else {
+
+                // $table.bootstrapTable('destroy');
+                // $table.bootstrapTable({
+                //     data: [],
+                //     columns: []
+                // });
             }
         }
     };
@@ -360,12 +366,14 @@ function edit_row(row) {
 function operateFormatter(value, row, index) {
     return [
         '<button class="edit" href="javascript:void(0)" title="Edit">',
-            '<i class="fa fa-wrench"></i> ',
+            // '<i class="fa fa-wrench"></i> ',
+            '<i class="material-icons" style="font-size:15px">build</i>',
             'Edit',
         '</button>',
         '<button class="remove danger_button" href="javascript:void(0)" title="Remove">',
-            '<i class="fa fa-trash"></i> ',
-            'Remove',
+            // '<i class="fa fa-trash"></i> ',
+            '<i class="material-icons" style="font-size:18px">delete</i>',
+            '<p>Remove</p>',
         '</button>'
     ].join('')
 }
