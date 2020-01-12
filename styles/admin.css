@@ -77,6 +77,8 @@ div.tabs {
     border-bottom: solid 1px #151552;
     background-color: #efefef;
     margin-bottom: 25px;
+
+    overflow-x: scroll;
 }
 
 div.tabs button {
@@ -88,6 +90,15 @@ div.tabs button {
     border-bottom-left-radius: 0!important;
     border-bottom-right-radius: 0!important;
     font-size: 18px;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+div.tabs button * {
+    display: inline-block;
+    margin: 0;
 }
 
 
@@ -99,7 +110,8 @@ div.tabs button.active_tab {
 }
 
 div.tabs button[disabled] {
-    color: #8a8a8a;
+    color: #a1a1a1;
+    background-color: #e6e6e6;
 }
 
 

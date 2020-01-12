@@ -445,11 +445,23 @@ $(function () {
         $('.tabs button').removeClass('active_tab');
         $('#tab_users').addClass('active_tab');
     };
-    $('#tab_events')[0].onclick = function () {
-        current_table = 'events';
-        pull_table(current_table);
+    $('#tab_sessions')[0].onclick = function () {
+        current_table = 'sessions';
         $('.tabs button').removeClass('active_tab');
-        $('#tab_events').addClass('active_tab');
+        $('#tab_sessions').addClass('active_tab');
+        pull_table(current_table);
+    };
+    $('#tab_credits')[0].onclick = function () {
+        current_table = 'credits';
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_credits').addClass('active_tab');
+        pull_table(current_table);
+    };
+    $('#tab_codes')[0].onclick = function () {
+        current_table = 'codes';
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_codes').addClass('active_tab');
+        pull_table(current_table);
     };
     $('#tab_feedback')[0].onclick = function () {
         current_table = 'feedback';
@@ -457,11 +469,23 @@ $(function () {
         $('.tabs button').removeClass('active_tab');
         $('#tab_feedback').addClass('active_tab');
     };
-    $('#tab_sessions')[0].onclick = function () {
-        current_table = 'sessions';
-        $('.tabs button').removeClass('active_tab');
-        $('#tab_sessions').addClass('active_tab');
+    $('#tab_projects')[0].onclick = function () {
+        current_table = 'projects';
         pull_table(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_projects').addClass('active_tab');
+    };
+    $('#tab_events')[0].onclick = function () {
+        current_table = 'events';
+        pull_table(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_events').addClass('active_tab');
+    };
+    $('#tab_classes')[0].onclick = function () {
+        current_table = 'classes';
+        pull_table(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_classes').addClass('active_tab');
     };
 
   });

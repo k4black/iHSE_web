@@ -37,7 +37,9 @@ cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "users" (
                     "pass"	INTEGER,
                     "team"	INTEGER,
                     "credits"	INTEGER DEFAULT (0),
-                    "avatar" TEXT  DEFAULT ('')
+                    "avatar" TEXT  DEFAULT (''),
+                     project_id serial,
+                     foreign key (project_id) references projects(id)
                   );
                """)
 cursor.execute('''
@@ -50,6 +52,19 @@ cursor.execute('''
                         team int,
                         credits int default 0,
                         avatar text default ''
+                    ); 
+                    ''')
+
+# Credits
+cursor.execute('''
+                    create table if not exists credits (
+                        id serial not null primary key unique,
+                        user_id serial,
+                        event_id serial,
+                        date text,
+                        value int default 0,
+                        foreign key (user_id) references users(id),
+                        foreign key (event_id) references classes(id),
                     ); 
                     ''')
 
@@ -82,7 +97,7 @@ cursor.execute('''create table if not exists sessions (
                     ''')
 
 
-# Feedback: voted or not
+# Feedback
 cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
                     "user_id"	INTEGER NOT NULL PRIMARY KEY,
                     "days"	TEXT,
@@ -92,12 +107,34 @@ cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
                """)
 cursor.execute("""
                     create table if not exists feedback (
-                        user_id int not null primary key,
+                        id serial not null primary key,
+                        user_id serial,
                         days text,
-                        time text default 'datetime(''now'', ''localtime'')'
+                        time text default 'datetime(''now'', ''localtime'')',
+                        foreign key (user_id) references users(id)
                     );
                     """)
 
+
+# Projects
+cursor.execute('''
+                    create table if not exists projects (
+                        id serial not null primary key unique,
+                        title text,
+                        type int,
+                        def_type int,
+                        direction text,
+                        description text
+                    ); 
+                    ''')
+# cursor.execute('''
+#                     create table if not exists project_users (
+#                         user_id serial,
+#                         project_id serial,
+#                         foreign key (user_id) references users(id)
+#                         foreign key (project_id) references projects(id)
+#                     );
+#                     ''')
 
 # Events
 cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "events" (
@@ -110,39 +147,39 @@ cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "events" (
                     "date" TEXT
                   );
                """)
-cursor.execute('''
-                    create table if not exists events (
-                        id serial not null primary key unique,
-                        type int,
-                        title text,
-                        credits int,
-                        count int default 0,
-                        total int,
-                        date text
-                    );
-                    ''')
-#  TODO: Migration
 # cursor.execute('''
 #                     create table if not exists events (
 #                         id serial not null primary key unique,
 #                         type int,
 #                         title text,
-#                         description text,
-#                         host text,
-#                         place text,
-#                         time, text,
+#                         credits int,
+#                         count int default 0,
+#                         total int,
 #                         date text
 #                     );
 #                     ''')
-# cursor.execute('''
-#                     create table if not exists classes (
-#                         id serial not null primary key unique,
-#                         credits int,
-#                         count int default 0,
-#                         total int
-#                         foreign key (id) references events(id)
-#                     );
-#                     ''')
+#  TODO: Migration
+cursor.execute('''
+                    create table if not exists events (
+                        id serial not null primary key unique,
+                        type int,
+                        title text,
+                        description text,
+                        host text,
+                        place text,
+                        time, text,
+                        date text
+                    );
+                    ''')
+cursor.execute('''
+                    create table if not exists classes (
+                        id serial not null primary key unique,
+                        credits int,
+                        count int default 0,
+                        total int,
+                        foreign key (id) references events(id)
+                    );
+                    ''')
 conn.commit()
 
 
