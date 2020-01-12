@@ -79,8 +79,10 @@ function getDay(dayNum) {
                 for (let event of time.events) {
                     event_html =
                         '<div class="event" data-id="' + event.id + '" ' + (event.type === 'regular' ? '' : 'active-event') + '>' +
-                            '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
-                            '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
+                            // '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
+                            '<button class="admin_element remove_event"><i class="material-icons">close</i></button>' +
+                            // '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
+                            '<button class="admin_element edit_event"><i class="material-icons" style="font-size:20px">build</i></button>' +
 
                             (event.type === 'regular' ? '' : '<a href="event.html?id=' + event.id + '">') +
                                 '<p class="event__title">' + event.title + '</p>' +
@@ -98,10 +100,10 @@ function getDay(dayNum) {
                     time_html += event_html;
                 }
 
-                time_html += '<button class="admin_element add_event_button">+</button>';
+                time_html += '<button class="admin_element add_event_button"><i class="material-icons">add</i></button>';
                 time_html += '</div>' + '</div>';
 
-                time_html += '<div class="border_wrapper">' + '<hr class="border_line">' + '<button class="admin_element add_time_button">+</button>' + '</div>';
+                time_html += '<div class="border_wrapper">' + '<hr class="border_line">' + '<button class="admin_element add_time_button"><i class="material-icons">add</i></button>' + '</div>';
 
                 day_html += time_html;
             }

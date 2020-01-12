@@ -568,11 +568,15 @@ form {
     height: 25px;
     width: 25px;
 
-
     vertical-align: middle;
 
-    color: #b4b4b4;
-    font-size: 25px;
+    color: #dddddd;
+    font-size: 20px;
+}
+
+.mobile__item__active .mobile__item__icon {
+
+    color: #9c9c9c;
 }
 
 .mobile__item__name {
@@ -799,6 +803,14 @@ input.masked,
 
 
 
+
+
+
+
+
+body:not(.admin) .admin_element  {
+    display: none;
+}
 
 
 

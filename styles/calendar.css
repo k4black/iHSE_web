@@ -120,11 +120,6 @@
 
 
 
-body:not(.admin) .admin_element  {
-    display: none;
-}
-
-
 
 .border_wrapper {
     position: relative;
@@ -174,7 +169,7 @@ body:not(.admin) .admin_element  {
     border-radius: 10px;
     width: 100%;
     height: auto;
-    padding: 10px 10px;
+    padding: 5px 10px;
     /* background-color: orange; */
     display: flex;
     flex-direction: column;
@@ -282,3 +277,14 @@ body:not(.admin) .admin_element  {
 
 .popup_body a.close:hover {background-position: 0 12px}
 
+
+
+.event button, .border_wrapper button {
+    padding: 1px;
+}
+
+.event button i {
+    padding: 0;
+    font-size: 24px;
+    color: #3e3e3e;
+}
