@@ -73,58 +73,40 @@ function getDay(dayNum) {
             for (let time of day_data) {
 
                 time_html = '<div class="time">' +
-                    '<div class="bar">' + time.time + '</div>' +
-                    '<div class="events">';
+                                '<div class="bar">' + time.time + '</div>' +
+                                    '<div class="events">';
 
                 for (let event of time.events) {
-                    // TODO: Add color
-
-
-                    if (event.type === 'regular') {
-                        event_html = '<div class="event" data-id="' + event.id + '">' +
-                            '<p class="event__title">' + event.title + '</p>' +
-
-                            (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
-
-                            ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
-                                '<div class="event__last_line">' +
-                                '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                                '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
-                                '</div>') +
-                            '</div>';
-                    }
-                    else {
-                        event_html = '<div class="event" data-id="' + event.id + '" active-event>' +
+                    event_html =
+                        '<div class="event" data-id="' + event.id + '" ' + (event.type === 'regular' ? '' : 'active-event') + '>' +
                             '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
                             '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
 
-                            '<a href="event.html?id=' + event.id + '">' +
+                            (event.type === 'regular' ? '' : '<a href="event.html?id=' + event.id + '">') +
                                 '<p class="event__title">' + event.title + '</p>' +
 
                                 (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
 
-                                ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '' +
-                                    '<div class="event__last_line">' +
+                                ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '<div class="event__last_line">' +
                                     '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
                                     '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
-                                    '</div>') +
-                            '</a>' + '</div>';
-                    }
+                                '</div>') +
+                            (event.type === 'regular' ? '' : '</a>') +
+                        '</div>';
+
                     
                     time_html += event_html;
                 }
 
                 time_html += '<button class="admin_element add_event_button">+</button>';
+                time_html += '</div>' + '</div>';
 
-                time_html += '</div>' + '</div>' +
-                    '<div class="border_wrapper">' + '<hr class="border_line">' + '<button class="admin_element add_time_button">+</button>' + '</div>';
+                time_html += '<div class="border_wrapper">' + '<hr class="border_line">' + '<button class="admin_element add_time_button">+</button>' + '</div>';
 
                 day_html += time_html;
             }
 
-
             document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
-
 
             setupAdminButtons();
         }
@@ -203,6 +185,8 @@ function setupAdminButtons() {
             console.log('Edit Event ' + editButtons[i].parentElement.getAttribute('data-id'));
             let id = editButtons[i].parentElement.getAttribute('data-id');
 
+            let type = editButtons[i].nextElementSibling.tagName === 'A' ? 'master' : 'regular';
+
             let title = editButtons[i].parentElement.getElementsByClassName('event__title')[0].textContent;
             let desc = editButtons[i].parentElement.getElementsByClassName('event__desc');
             desc = desc.length === 0 ? "" : desc[0].textContent;
@@ -215,7 +199,7 @@ function setupAdminButtons() {
 
             console.log(id + title + desc + names + loc);
 
-            openEditEvent(id, title, times[0], times[1] === undefined ? "" : times[1], desc, names, loc);
+            openEditEvent(id, title, type, times[0], times[1] === undefined ? "" : times[1], desc, names, loc);
         });
     }
 
@@ -235,9 +219,10 @@ function setupAdminButtons() {
 }
 
 
-function openEditEvent(id, title, time1, time2, desc, names, location) {
+function openEditEvent(id, title, type, time1, time2, desc, names, location) {
     document.getElementById('id').value = id;
     document.getElementById('title').value = title;
+    document.getElementById('type').value = type;
     document.getElementById('time1').value = time1;
     document.getElementById('time2').value = time2;
     document.getElementById('desc').value = desc;
@@ -249,7 +234,7 @@ function openEditEvent(id, title, time1, time2, desc, names, location) {
 
 function openCreateEvent(time1, time2) {
     console.log('create event');
-    openEditEvent('', '', time1, time2, '', '', '');
+    openEditEvent('', '', 'regular', time1, time2, '', '', '');
 }
 
 function saveEvent() {
@@ -257,11 +242,12 @@ function saveEvent() {
 
     let id = document.getElementById('id').value;
     let title = document.getElementById('title').value;
+    let type = document.getElementById('type').value;
     let time = document.getElementById('time1').value + '\n' + document.getElementById('time2').value;
     let desc = document.getElementById('desc').value;
     let names = document.getElementById('names').value;
     let location = document.getElementById('location').value;
 
-    alert('Save event: ' + id + ' ' + title + ' ' + time + ' ' + desc + ' ' + names + ' ' + location);
+    alert('Save event: ' + id + ' ' + title + ' ' + type + ' ' + time + ' ' + desc + ' ' + names + ' ' + location);
 }
 
