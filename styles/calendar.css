@@ -120,7 +120,7 @@
 
 
 
-.wrapper:not(.admin) .admin_element  {
+body:not(.admin) .admin_element  {
     display: none;
 }
 

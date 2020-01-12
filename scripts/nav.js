@@ -75,6 +75,11 @@ if (sidebar != null) {
                     hidden[i].classList.remove('mobile__item__hidden');
                 }
 
+                // Add admin tag
+                if (user.type >= 2) {
+                    document.querySelectorAll('body')[0].classList.add('admin');
+                }
+
                 // Show sidebar items
                 var hidden = document.querySelectorAll('.header__item__hidden');
                 for (var i = 0; i < hidden.length; ++i) {

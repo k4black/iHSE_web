@@ -161,6 +161,8 @@ for (let i = 0; i < days.length; i++) {
 
 
 function setupAdminButtons() {
+    // document.getElementsByTagName('body')[0].classList.add('admin');
+
     console.log('setupAdminButtons');
     let popup = document.getElementById('popup');
 
