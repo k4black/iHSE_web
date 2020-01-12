@@ -58,7 +58,6 @@ cursor.execute('''
 # Credits
 cursor.execute('''
                     create table if not exists credits (
-                        id serial not null primary key unique,
                         user_id serial,
                         event_id serial,
                         date text,
@@ -180,6 +179,7 @@ cursor.execute('''
                         foreign key (id) references events(id)
                     );
                     ''')
+
 conn.commit()
 
 
@@ -788,26 +788,3 @@ def remove_session(sess_id):
         logout
     """
     logout(sess_id)
-
-
-
-
-
-
-
-""" TEST """
-# sql.register('user', 6445723, 0, '+7 915', 0)
-# sql.register('Hasd Trra', 23344112, 0, '+7 512', 0)
-# sql.register('ddds Ddsa', 33232455, 0, '+7 333', 1)
-# sql.register('aiuy Ddsa', 44542234, 0, '+7 234', 1)
-# sql.register('AArruyaa Ddsa', 345455, 1, '+7 745', 1)
-# sql.register('AAaa ryui', 23344234523112, 0, '+7 624', 0)
-# sql.register('AAruiria', 563563265, 0, '+7 146', 0)
-#
-#
-# print( sql.login('Name', 22222331, 'Gggg', '0:0:0:0') )
-# a = sql.login('user', 6445723, 'AgentUserAgent', '0:0:0:0')
-# print(a[0])
-# print(a[0].hex() )
-# print( sql.login('AAaa ryui', 23344234523112, 'Agent', '0:0:0:0') )
-

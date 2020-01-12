@@ -240,11 +240,11 @@ function pull_table(table_name) {
                 alert('Требуется авторизация!');
             } else {
 
-                // $table.bootstrapTable('destroy');
-                // $table.bootstrapTable({
-                //     data: [],
-                //     columns: []
-                // });
+                $table.bootstrapTable('destroy');
+                $table.bootstrapTable({
+                    data: [],
+                    columns: []
+                });
             }
         }
     };

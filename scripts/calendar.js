@@ -177,7 +177,7 @@ function setupAdminButtons() {
     for (let i = 0; i < removeButtons.length; ++i) {
         removeButtons[i].addEventListener('click', function () {
             // alert('clicked remove');
-            console.log('Remove Event ' + removeButtons[i].parentElement.getAttribute('data-id'));
+            removeEvent(removeButtons[i].parentElement.getAttribute('data-id'));
         });
     }
 
@@ -272,6 +272,92 @@ function saveEvent() {
     let names = document.getElementById('names').value;
     let location = document.getElementById('location').value;
 
-    alert('Save event: ' + id + ' ' + title + ' ' + type + ' ' + date + ' ' + time + ' ' + desc + ' ' + names + ' ' + location);
+    alert('Saving event: ' + id + ' ' + title + ' ' + type + ' ' + date + ' ' + time + ' ' + desc + ' ' + names + ' ' + location);
+
+    if (title === '' || date === '' || time === '') {
+        alert('Cannot save with empty TITLE or DATE or TIME');
+        return;
+    }
+
+    let data = JSON.stringify({
+                                "id": id,
+                                "title": title,
+                                "type": type,
+                                "date": date,
+                                "time": time,
+                                "desc": desc,
+                                "names": names,
+                                "location": location,
+                                });
+
+
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 1) {  // Opened
+            // setLoading();
+        }
+
+        if (this.readyState === 4) {  // When request is done
+            // setLoaded();
+            let selectedDay = document.getElementsByClassName("day selected")[0].children[1].textContent;
+
+            if (this.status === 200) {  // Got it
+                alert("ok!");
+            }
+
+            if (this.status === 405) {  //  Method Not Allowed or already got it
+                alert("Cannot save event! NO PERMISSIONS");  // TODO: show Html error message
+            }
+
+            getDay(selectedDay);
+        }
+    };
+
+    xhttp.open("POST", "http://ihse.tk:50000/save_event", true);
+    //xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Content-Type', 'text/plain');
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send(data);
 }
 
+
+function removeEvent(id) {
+    console.log('Remove event _ ' + id);
+
+    if (id === undefined || id === '') {
+        console.log('Cannot delete event with empty ID');
+        alert('Cannot delete event with empty ID');
+        return;
+    }
+
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 1) {  // Opened
+            // setLoading();
+        }
+
+        if (this.readyState === 4) {  // When request is done
+            // setLoaded();
+            let selectedDay = document.getElementsByClassName("day selected")[0].children[1].textContent;
+
+            if (this.status === 200) {  // Got it
+                alert("ok!");
+            }
+
+            if (this.status === 405) {  //  Method Not Allowed or already got it
+                alert("Cannot remove event! NO PERMISSIONS");  // TODO: show Html error message
+            }
+
+            getDay(selectedDay);
+        }
+    };
+
+
+    xhttp.open("GET", "http://ihse.tk:50000/remove_event" + "?id=" + id, true);
+    //xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Content-Type', 'text/plain');
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}
