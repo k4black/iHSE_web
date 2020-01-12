@@ -216,6 +216,22 @@ function setupAdminButtons() {
             openCreateEvent(times[0], times[1] === undefined ? "" : times[1]);
         });
     }
+
+
+    let addTimeButtons = document.getElementsByClassName("add_time_button");
+    for (let i = 0; i < addTimeButtons.length; ++i) {
+        let startTime;
+        if (addTimeButtons[i].parentElement.previousSibling.classList[0] === 'time') {
+            let times = addTimeButtons[i].parentElement.previousSibling.children[0].textContent.split('\n');
+            startTime = times === undefined || times.length < 2 ? '' : times[1];
+        } else {
+            startTime = '';
+        }
+
+        addTimeButtons[i].addEventListener('click', function () {
+            openCreateEvent(startTime, '');
+        });
+    }
 }
 
 
