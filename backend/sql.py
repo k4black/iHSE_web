@@ -37,9 +37,7 @@ cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "users" (
                     "pass"	INTEGER,
                     "team"	INTEGER,
                     "credits"	INTEGER DEFAULT (0),
-                    "avatar" TEXT  DEFAULT (''),
-                     project_id serial,
-                     foreign key (project_id) references projects(id)
+                    "avatar" TEXT  DEFAULT ('')
                   );
                """)
 cursor.execute('''
@@ -51,7 +49,9 @@ cursor.execute('''
                         pass int,
                         team int,
                         credits int default 0,
-                        avatar text default ''
+                        avatar text default '',
+                        project_id serial default 0,
+                        foreign key (project_id) references projects(id)
                     ); 
                     ''')
 
@@ -340,7 +340,7 @@ def get_events():
     Args:
 
     Returns:
-        event objects: list of event objects - [ (id, type, title, credits, total, date), ...]
+        event objects: list of event objects - [ (id, type, title, description, host, place, time, date), ...]
 
     """
     cursor.execute('select * from events;')
@@ -367,13 +367,13 @@ def remove_event(event_id):
     # conn.commit()
 
 
-# TODO: delete after migration
+# TODO: gsheets loading
 def load_events(events_list):
     """ Load all users to sql table
     Clear users table and sessions table and insert all users in users table
 
     Args:
-        events_list: list of event objects - [ (id, type, title, credits, total, date), ...]
+        events_list: list of event objects - [ (id, type, title, description, host, place, time, date), ...]
 
     Returns:
 
@@ -392,15 +392,36 @@ def load_events(events_list):
 
     return
 
-    # cursor.execute("DELETE FROM events")
+
+def get_classes():
+    """ Get all classes (events type) from sql table
+
+    Args:
+
+    Returns:
+        class objects: list of event objects - [ (id, credits, count, total), ...]
+
+    """
+    cursor.execute('select * from classes;')
+    classes_list = cursor.fetchall()
+
+    return classes_list
+
+
+def remove_class(class_id):
+    """ Delete class by id
+
+    Args:
+        class_id: class id (event id) from bd
+
+    Returns:
+        # Success delete or not
+
+    """
+    cursor.execute(f'delete from classes where id = {class_id};')
+    conn.commit()
+    # cursor.execute("DELETE FROM events WHERE id=?", (event_id, ))
     # conn.commit()
-    #
-    # for event_obj in events_list:
-    #     cursor.execute("""INSERT INTO events(id, type, title, credits, total)
-    #                       SELECT ?, ?, ?, ?, ?
-    #                       WHERE NOT EXISTS(SELECT 1 FROM events WHERE title=?)""",
-    #                    (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[2]))
-    #     conn.commit()
 
 
 def get_sessions():
@@ -579,12 +600,10 @@ def get_event(event_id):
         event_id: event id from bd
 
     Returns:
-        event_obj: (id, type, title, credits, count, total, date)
+        event_obj: (id, type, title, description, host, place, time, date)
     """
     cursor.execute(f'select * from events where id = {event_id};')
     events = cursor.fetchall()
-    # cursor.execute("SELECT * FROM events WHERE id=?", (event_id, ))
-    # events = cursor.fetchall()
 
     if len(events) == 0:  # No such event
         return None
@@ -596,50 +615,49 @@ def edit_event(event_obj):
     """ Update event
 
     Args:
-        event_obj: event obj (id, type, title, credits, count, total, date)
+        event_obj: event obj (id, type, title, description, host, place, time, date)
 
     Returns:
     """
     cursor.execute(f'''update events set
                                 type = {event_obj[1]},
                                 title = \'{event_obj[2]}\',
-                                credits = {event_obj[3]},
-                                count = {event_obj[4]},
-                                total = {event_obj[5]},
-                                date = \'{event_obj[6]}\'
+                                description = {event_obj[3]},
+                                host = {event_obj[4]},
+                                place = {event_obj[5]},
+                                time = \'{event_obj[6]}\'
+                                date = \'{event_obj[7]}\'
                             where id = {event_obj[0]};
                         ''')
     conn.commit()
-    # cursor.execute("REPLACE INTO events (id, type, title, credits, count, total, date)", event_obj)
-    # conn.commit()
 
 
 def insert_event(event_obj):
     """ Insert event
 
     Args:
-        event_obj: event obj (None, type, title, credits, count, total, date)
+        event_obj: event obj (None, type, title, description, host, place, time, date)
 
     Returns:
     """
-    cursor.execute(f'insert into events (type, title, credits, count, total, date) values ({event_obj[1]}, \'{event_obj[2]}\', {event_obj[3]}, {event_obj[4]}, {event_obj[5]}, \'{event_obj[6]}\');')
+    cursor.execute(f'insert into events (type, title, description, host, place, time, date) values ({event_obj[1]}, \'{event_obj[2]}\', {event_obj[3]}, {event_obj[4]}, {event_obj[5]}, \'{event_obj[6]}\', \'{event_obj[7]}\');')
     conn.commit()
     # cursor.execute("REPLACE INTO events (id, type, title, credits, count, total, date)", event_obj)
     # conn.commit()
 
 
-def enroll_user(event_id, user_obj):
+def enroll_user(class_id, user_obj):  # TODO
     """ Enroll user in event
 
     Args:
-        event_id: event id from bd
+        class_id: class id (event id) from bd
         user_obj: (id, user_type, phone, name, pass, team, credits)
 
     Returns:
         True/False: Success or not
     """
 
-    cursor.execute(f'select * from events where id = {event_id};')
+    cursor.execute(f'select * from class where id = {class_id};')
     events = cursor.fetchall()
     # cursor.execute("SELECT * FROM events WHERE id=?", (event_id, ))
     # events = cursor.fetchall()
@@ -647,13 +665,15 @@ def enroll_user(event_id, user_obj):
     if len(events) == 0 or events[0][4] >= events[0][5]:  # No such event or too many people
         return False
 
-    cursor.execute(f'update events set count = {events[0][4] + 1} where id = {event_id};')
+    event = events[0]
+
+    cursor.execute(f'update class set count = {event[4] + 1} where id = {class_id};')
     conn.commit()
-    # cursor.execute("UPDATE events SET count=? WHERE id=?", (events[0][4] + 1, event_id, ))
-    # conn.commit()
+
     return True
 
 
+# TODO
 def checkin_user(user_obj, event_obj):
     """ Checkin user in event
     Add user credits for the event
