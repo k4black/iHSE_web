@@ -58,6 +58,7 @@ cursor.execute('''
 # Credits
 cursor.execute('''
                     create table if not exists credits (
+                        id serial not null primary key unique,
                         user_id serial,
                         event_id serial,
                         date text,
@@ -283,8 +284,6 @@ def clear_users():
     """
     cursor.execute('delete from users;')
     conn.commit()
-    # cursor.execute("DELETE FROM users")
-    # conn.commit()
 
 
 def remove_user(user_id):
@@ -385,13 +384,23 @@ def use_code(code):
     conn.commit()
 
 
+def clear_codes():
+    """ Clear all codes from sql table
+
+    Args:
+    Returns:
+    """
+    cursor.execute('delete from codes;')
+    conn.commit()
+
+
 def get_credits():
     """ Get all credits from sql table
 
     Args:
 
     Returns:
-        credits objects: list of credits objects - [ (user_id, event_id, date, value), ...]
+        credits objects: list of credits objects - [ (id, user_id, event_id, date, value), ...]
 
     """
     cursor.execute('select * from credits;')
@@ -407,13 +416,44 @@ def get_credits(user_id):
         user_id: id of user for selecting
 
     Returns:
-        credits objects: list of credits objects - [ (user_id, event_id, date, value), ...]
+        credits objects: list of credits objects - [ (id, user_id, event_id, date, value), ...]
 
     """
-    cursor.execute(f'select * from credits  where user_id = {user_id};')
+    cursor.execute(f'select * from credits where user_id = {user_id};')
     credits_list = cursor.fetchall()
 
     return credits_list
+
+
+def insert_credit(credit_obj):
+    """ Insert credit
+
+    Args:
+        credit_obj: credit obj (None, user_id, event_id, date, value)
+
+    Returns:
+    """
+    cursor.execute(f'insert into credits (user_id, event_id, date, value) values ({credit_obj[1]}, {credit_obj[2]}, \'{credit_obj[3]}\', {credit_obj[4]}); ')
+    conn.commit()
+
+
+def edit_credit(credit_obj):
+    """ Update credit
+
+    Args:
+        credit_obj: credit obj (id, user_id, event_id, date, value)
+
+    Returns:
+    """
+    # test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
+    cursor.execute(f'''update credits set
+                                user_id = {credit_obj[1]},
+                                event_id = {credit_obj[2]},
+                                date = \'{credit_obj[3]}\',
+                                value = {credit_obj[4]},
+                            where id = {credit_obj[0]};
+                        ''')
+    conn.commit()
 
 
 def remove_credit(credit_id):
@@ -427,6 +467,16 @@ def remove_credit(credit_id):
 
     """
     cursor.execute(f'delete from credits where id = {credit_id};')
+    conn.commit()
+
+
+def clear_credits():
+    """ Clear all credits from sql table
+
+    Args:
+    Returns:
+    """
+    cursor.execute('delete from credits;')
     conn.commit()
 
 
@@ -445,6 +495,39 @@ def get_projects():
     return projects_list
 
 
+def insert_project(project_obj):
+    """ Insert project
+
+    Args:
+        project_obj: project obj (None, title, type, def_type, direction, description)
+
+    Returns:
+        # TODO: Return id
+    """
+    cursor.execute(
+        f'insert into projects (title, type, def_type, direction, description) values (\'{project_obj[1]}\', \'{project_obj[2]}\', \'{project_obj[3]}\', \'{project_obj[4]}\', \'{project_obj[5]}\'); ')
+    conn.commit()
+
+
+def edit_project(project_obj):
+    """ Update project
+
+    Args:
+        project_obj: project obj (id, title, type, def_type, direction, description)
+
+    Returns:
+    """
+    cursor.execute(f'''update projects set
+                                title = \'{project_obj[1]}\',
+                                type = \'{project_obj[2]}\',
+                                def_type = \'{project_obj[3]}\',
+                                direction = \'{project_obj[4]}\',
+                                description = \'{project_obj[5]}\',
+                            where id = {project_obj[0]};
+                        ''')
+    conn.commit()
+
+
 def remove_project(projects_id):
     """ Delete project by id
 
@@ -456,6 +539,16 @@ def remove_project(projects_id):
 
     """
     cursor.execute(f'delete from projects where id = {projects_id};')
+    conn.commit()
+
+
+def clear_projects():
+    """ Clear all projects from sql table
+
+    Args:
+    Returns:
+    """
+    cursor.execute('delete from projects;')
     conn.commit()
 
 
@@ -676,13 +769,8 @@ def insert_user(user_obj):
 
     Returns:
     """
-    # test_conn = psycopg2.connect('dbname=root user=root password=root')
-    # test_cursor = test_conn.cursor()
-    # test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
     cursor.execute(f'insert into users (user_type, phone, name, pass, team, credits, project_id) values ({user_obj[1]}, \'{user_obj[2]}\', \'{user_obj[3]}\', {user_obj[4]}, {user_obj[5]}, {user_obj[6]}, {user_obj[7]}); ')
-    # cursor.execute("REPLACE INTO users (user_type, phone, name, pass, team, credits)", user_obj[1:])
     conn.commit()
-    # conn.commit()
 
 
 def get_user_by_phone(phone):
@@ -715,8 +803,6 @@ def clear_events():
     """
     cursor.execute('delete from events;')
     conn.commit()
-    # cursor.execute("DELETE FROM events")
-    # conn.commit()
 
 
 def get_event(event_id):
@@ -766,10 +852,43 @@ def insert_event(event_obj):
 
     Returns:
     """
+
+    # TODO : Insert class
     cursor.execute(f'insert into events (type, title, description, host, place, time, date) values ({event_obj[1]}, \'{event_obj[2]}\', {event_obj[3]}, {event_obj[4]}, {event_obj[5]}, \'{event_obj[6]}\', \'{event_obj[7]}\');')
     conn.commit()
     # cursor.execute("REPLACE INTO events (id, type, title, credits, count, total, date)", event_obj)
     # conn.commit()
+
+
+def insert_class(class_obj):
+    """ Insert project
+
+    Args:
+        class_obj: class obj (None, credits, count, total)
+
+    Returns:
+        # TODO: Return id
+    """
+    cursor.execute(
+        f'insert into classes (credits, count, total) values ({class_obj[1]}, {class_obj[2]}, {class_obj[3]}); ')
+    conn.commit()
+
+
+def edit_class(class_obj):
+    """ Update project
+
+    Args:
+        class_obj: class obj (id, credits, count, total)
+
+    Returns:
+    """
+    cursor.execute(f'''update classes set
+                                credits = {class_obj[1]},
+                                count = {class_obj[2]},
+                                total = {class_obj[3]},
+                            where id = {class_obj[0]};
+                        ''')
+    conn.commit()
 
 
 def enroll_user(class_id, user_obj):  # TODO

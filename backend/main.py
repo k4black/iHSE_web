@@ -539,12 +539,20 @@ def admin_panel(env, query, cookie):
 
         if table_name == 'users':
             sql.clear_users()
+        elif table_name == 'credits':
+            sql.clear_credits()
         elif table_name == 'sessions':
             sql.clear_sessions()
+        elif table_name == 'codes':
+            sql.clear_codes()
         # elif table_name == 'feedback':
         #     sql.clear_feedback()
+        elif table_name == 'projects':
+            sql.clear_projects()
         elif table_name == 'events':
             sql.clear_events()
+        elif table_name == 'classes':
+            sql.clear_classes()
         else:
             return ('400 Bad Request',
                     [
@@ -574,37 +582,69 @@ def admin_panel(env, query, cookie):
         if 'id' not in obj.keys() or obj['id'] == '':
             if table_name == 'users':
                 data = (None, obj['type'], obj['phone'], obj['name'], obj['pass'], obj['team'], obj['credits'],
-                        obj['avatar'])
+                        obj['avatar'], obj['project_id'])
                 sql.insert_user(data)
+
+            elif table_name == 'credits':
+                data = (None, obj['user_id'], obj['event_id'], obj['date'], obj['value'])
+                sql.insert_credit(data)
 
             elif table_name == 'sessions':
                 data = (None, obj['user_id'], obj['user_type'], obj['user_agent'], obj['last_ip'], obj['time'])
                 sql.insert_session(data)
 
+            elif table_name == 'codes':
+                data = (obj['code'], obj['type'], obj['used'])
+                sql.insert_code(data)
+
                 # elif table_name == 'feedback':
                 #     data = (obj['user_id'], obj['days'], obj['time'])
                 #     sql.insert_feedback(data)
 
+            elif table_name == 'projects':
+                data = (None, obj['title'], obj['type'], obj['def_type'], obj['direction'], obj['description'])
+                sql.insert_project(data)
+
             elif table_name == 'events':
-                data = (None, obj['type'], obj['title'], obj['credits'], obj['count'], obj['total'], obj['date'])
+                data = (None, obj['type'], obj['title'], obj['description'], obj['host'], obj['place'], obj['time'], obj['date'])
                 sql.insert_event(data)
+
+            elif table_name == 'classes':
+                data = (None, obj['credits'], obj['count'], obj['total'])
+                sql.insert_class(data)
 
         else:
             if table_name == 'users':
-                data = (obj['id'], obj['type'], obj['phone'], obj['name'], obj['pass'], obj['team'], obj['credits'], obj['avatar'])
+                data = (obj['id'], obj['type'], obj['phone'], obj['name'], obj['pass'], obj['team'], obj['credits'], obj['avatar'], obj['project_id'])
                 sql.edit_user(data)
+
+            elif table_name == 'credits':
+                data = (obj['id'], obj['user_id'], obj['event_id'], obj['date'], obj['value'])
+                sql.edit_credit(data)
 
             elif table_name == 'sessions':
                 data = (obj['id'], obj['user_id'], obj['user_type'], obj['user_agent'], obj['last_ip'], obj['time'])
                 sql.edit_session(data)
 
+            elif table_name == 'codes':
+                data = (obj['code'], obj['type'], obj['used'])
+                sql.edit_code(data)
+
             # elif table_name == 'feedback':
             #     data = (ibj['user_id'], obj['days'], obj['time'])
             #     sql.edit_feedback(data)
 
+            elif table_name == 'projects':
+                data = (obj['id'], obj['title'], obj['type'], obj['def_type'], obj['direction'], obj['description'])
+                sql.edit_project(data)
+
             elif table_name == 'events':
-                data = (obj['id'], obj['type'], obj['title'], obj['credits'], obj['count'], obj['total'], obj['date'])
+                data = (obj['id'], obj['type'], obj['title'], obj['description'], obj['host'], obj['place'], obj['time'], obj['date'])
                 sql.edit_event(data)
+
+            elif table_name == 'classes':
+                data = (obj['id'], obj['credits'], obj['count'], obj['total'])
+                sql.edit_class(data)
 
 
         return ('200 OK',
