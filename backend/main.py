@@ -508,6 +508,7 @@ def admin_panel(env, query, cookie):
                     'total': event[3]
                 })
         else:
+            print(' ========  400 Bad Request by admin  ======== ')
             return ('400 Bad Request',
                     [
                         # Because in js there is xhttp.withCredentials = true;
