@@ -334,6 +334,57 @@ def load_users(users_list):
         conn_sqlite.commit()
 
 
+def load_codes(codes):
+    """ Cleat codes table and setup from codes
+
+    Args:
+        codes: codes list - [(str, int), (str, int), ... ]
+
+    Returns:
+
+    """
+
+    for code in codes:
+        cursor.execute(f'insert into codes (code, type, used) values ({code[0]}, \'{code[1]}\', 0);')
+    conn.commit()
+
+
+def get_codes():
+    """ Get all codes from sql table
+
+    Args:
+
+    Returns:
+        project objects: list of project objects - [ (code, type, used), ...]
+
+    """
+    cursor.execute('select * from code;')
+    codes_list = cursor.fetchall()
+
+    return codes_list
+
+
+def use_code(code):
+    """ Set code used
+
+    Args:
+        code: code from bd
+
+    Returns:
+        Success delete or not
+
+    """
+
+    cursor.execute(f'select * from codes where code = {code};')
+    codes_list = cursor.fetchall()
+
+    if len(codes_list) == 0 or codes_list[0][2]:
+        return False
+
+    cursor.execute(f'update codes set used = {1}, where code = {code};')
+    conn.commit()
+
+
 def get_credits():
     """ Get all credits from sql table
 
@@ -365,17 +416,17 @@ def get_credits(user_id):
     return credits_list
 
 
-def remove_projects(credits_id):
-    """ Delete credits by id
+def remove_credit(credit_id):
+    """ Delete credit by id
 
     Args:
-        credits_id: projects id from bd
+        credit_id: projects id from bd
 
     Returns:
         # Success delete or not
 
     """
-    cursor.execute(f'delete from credits where id = {credits_id};')
+    cursor.execute(f'delete from credits where id = {credit_id};')
     conn.commit()
 
 
@@ -394,8 +445,8 @@ def get_projects():
     return projects_list
 
 
-def remove_projects(projects_id):
-    """ Delete projects by id
+def remove_project(projects_id):
+    """ Delete project by id
 
     Args:
         projects_id: projects id from bd
