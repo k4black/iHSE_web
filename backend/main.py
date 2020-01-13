@@ -664,14 +664,26 @@ def admin_panel(env, query, cookie):
         if table_name == 'users':
             sql.remove_user(obj_id)
 
+        if table_name == 'credits':
+            sql.remove_credit(obj_id)
+
         elif table_name == 'sessions':
             sql.remove_session(obj_id)
+
+        elif table_name == 'codes':
+            sql.remove_code(obj_id)
 
         # elif table_name == 'feedback':
         #     sql.remove_feedback(obj_id)
 
+        elif table_name == 'projects':
+            sql.remove_project(obj_id)
+
         elif table_name == 'events':
             sql.remove_event(obj_id)
+
+        elif table_name == 'classes':
+            sql.remove_class(obj_id)
 
         return ('200 OK',
                 [
