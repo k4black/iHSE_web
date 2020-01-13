@@ -265,7 +265,7 @@ def get_users():
     Args:
 
     Returns:
-        user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar), ...]
+        user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar, project_id), ...]
     """
     cursor.execute('select * from users;')
     users_list = cursor.fetchall()
@@ -309,7 +309,7 @@ def load_users(users_list):
     Clear users table and sessions table and insert all users in users table
 
     Args:
-        users_list: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar), ...]
+        users_list: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar, project_id), ...]
 
     Returns:
 
@@ -334,6 +334,80 @@ def load_users(users_list):
         conn_sqlite.commit()
 
 
+def get_credits():
+    """ Get all credits from sql table
+
+    Args:
+
+    Returns:
+        credits objects: list of credits objects - [ (user_id, event_id, date, value), ...]
+
+    """
+    cursor.execute('select * from credits;')
+    credits_list = cursor.fetchall()
+
+    return credits_list
+
+
+def get_credits(user_id):
+    """ Get all credits of user from sql table
+
+    Args:
+        user_id: id of user for selecting
+
+    Returns:
+        credits objects: list of credits objects - [ (user_id, event_id, date, value), ...]
+
+    """
+    cursor.execute(f'select * from credits  where user_id = {user_id};')
+    credits_list = cursor.fetchall()
+
+    return credits_list
+
+
+def remove_projects(credits_id):
+    """ Delete credits by id
+
+    Args:
+        credits_id: projects id from bd
+
+    Returns:
+        # Success delete or not
+
+    """
+    cursor.execute(f'delete from credits where id = {credits_id};')
+    conn.commit()
+
+
+def get_projects():
+    """ Get all projects from sql table
+
+    Args:
+
+    Returns:
+        project objects: list of project objects - [ (id, title, type, def_type, direction, description), ...]
+
+    """
+    cursor.execute('select * from projects;')
+    projects_list = cursor.fetchall()
+
+    return projects_list
+
+
+def remove_projects(projects_id):
+    """ Delete projects by id
+
+    Args:
+        projects_id: projects id from bd
+
+    Returns:
+        # Success delete or not
+
+    """
+    cursor.execute(f'delete from projects where id = {projects_id};')
+    conn.commit()
+
+
 def get_events():
     """ Get all events from sql table
 
@@ -352,7 +426,7 @@ def get_events():
 
 
 def remove_event(event_id):
-    """ Delete user by id
+    """ Delete event by id
 
     Args:
         event_id: event id from bd
@@ -369,8 +443,8 @@ def remove_event(event_id):
 
 # TODO: gsheets loading
 def load_events(events_list):
-    """ Load all users to sql table
-    Clear users table and sessions table and insert all users in users table
+    """ Load all events to sql table
+    Clear events and insert all events in events table
 
     Args:
         events_list: list of event objects - [ (id, type, title, description, host, place, time, date), ...]
@@ -506,7 +580,7 @@ def get_user(user_id):
         user_id: user id from bd
 
     Returns:
-        user_obj: (id, user_type, phone, name, pass, team, credits)
+        user_obj: (id, user_type, phone, name, pass, team, credits, avatar, project_id)
                      or None if there is no such user
 
     """
@@ -525,7 +599,7 @@ def edit_user(user_obj):
     """ Update user
 
     Args:
-        user_obj: user obj (id, user_type, phone, name, pass, team, credits)
+        user_obj: user obj (id, user_type, phone, name, pass, team, credits, project_id)
 
     Returns:
     """
@@ -536,7 +610,8 @@ def edit_user(user_obj):
                                 name = \'{user_obj[3]}\',
                                 pass = {user_obj[4]},
                                 team = {user_obj[5]},
-                                credits = {user_obj[6]}
+                                credits = {user_obj[6]},
+                                project_id = {user_obj[7]},
                             where id = {user_obj[0]};
                         ''')
     conn.commit()
@@ -546,14 +621,14 @@ def insert_user(user_obj):
     """ Insert user
 
     Args:
-        user_obj: user obj (None, user_type, phone, name, pass, team, credits)
+        user_obj: user obj (None, user_type, phone, name, pass, team, credits, project_id)
 
     Returns:
     """
     # test_conn = psycopg2.connect('dbname=root user=root password=root')
     # test_cursor = test_conn.cursor()
     # test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
-    cursor.execute(f'insert into users (user_type, phone, name, pass, team, credits) values ({user_obj[1]}, \'{user_obj[2]}\', \'{user_obj[3]}\', {user_obj[4]}, {user_obj[5]}, {user_obj[6]}); ')
+    cursor.execute(f'insert into users (user_type, phone, name, pass, team, credits, project_id) values ({user_obj[1]}, \'{user_obj[2]}\', \'{user_obj[3]}\', {user_obj[4]}, {user_obj[5]}, {user_obj[6]}, {user_obj[7]}); ')
     # cursor.execute("REPLACE INTO users (user_type, phone, name, pass, team, credits)", user_obj[1:])
     conn.commit()
     # conn.commit()
@@ -566,7 +641,7 @@ def get_user_by_phone(phone):
         phone: phone - str
 
     Returns:
-        user_obj: (id, user_type, phone, name, pass, team, credits)
+        user_obj: (id, user_type, phone, name, pass, team, credits, avatar, project_id)
                      or None if there is no such user
 
     """
@@ -679,7 +754,7 @@ def checkin_user(user_obj, event_obj):
     Add user credits for the event
 
     Args:
-        user_obj: (id, user_type, phone, name, pass, team, credits)
+        user_obj: (id, user_type, phone, name, pass, team, credits, avatar, project_id)
         event_obj: (id, type, title, credits, count, total, date)
 
     Returns:
