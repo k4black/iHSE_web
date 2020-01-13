@@ -438,6 +438,15 @@ def admin_panel(env, query, cookie):
                     'credits': user[6],
                     'avatar': user[7]
                 })
+        elif table_name == 'credits':
+            data = []
+            for credit in sql.get_credits():
+                data.append({
+                    'user_id': credit[0],
+                    'event_id': credit[1],
+                    'date': credit[2],
+                    'value': credit[3]
+                })
         elif table_name == 'sessions':
             data = []
             for sess in sql.get_sessions():
@@ -445,9 +454,17 @@ def admin_panel(env, query, cookie):
                     'id': (sess[0]).hex(),
                     'user_id': sess[1],
                     'user_type': sess[2],
-                    'user_agent': sess[3][:40],
+                    'user_agent': sess[3],
                     'last_ip': sess[4],
                     'time': sess[5],
+                })
+        elif table_name == 'codes':
+            data = []
+            for code in sql.get_codes():
+                data.append({
+                    'code': code[0],
+                    'type': code[1],
+                    'used': code[2]
                 })
         # elif table_name == 'feedback':
         #     data = []
@@ -457,6 +474,17 @@ def admin_panel(env, query, cookie):
         #             'days': feedback[1],
         #             'time': feedback[2]
         #         })
+        elif table_name == 'projects':
+            data = []
+            for project in sql.get_projects():
+                data.append({
+                    'id': project[0],
+                    'title': project[1],
+                    'type': project[2],
+                    'def_type': project[3],
+                    'direction': project[4],
+                    'description': project[5]
+                })
         elif table_name == 'events':
             data = []
             for event in sql.get_events():
@@ -464,10 +492,20 @@ def admin_panel(env, query, cookie):
                     'id': event[0],
                     'type': event[1],
                     'title': event[2],
-                    'credits': event[3],
-                    'count': event[4],
-                    'total': event[5],
-                    'date': event[6]
+                    'description': event[3],
+                    'host': event[4],
+                    'place': event[5],
+                    'time': event[6],
+                    'date': event[7]
+                })
+        elif table_name == 'classes':
+            data = []
+            for event in sql.get_classes():
+                data.append({
+                    'id': event[0],
+                    'credits': event[1],
+                    'count': event[2],
+                    'total': event[3]
                 })
         else:
             return ('400 Bad Request',

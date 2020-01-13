@@ -67,6 +67,15 @@ cursor.execute('''
                     ); 
                     ''')
 
+# Codes
+cursor.execute('''
+                    create table if not exists codes (
+                        code text,
+                        type int default 0,
+                        used int default 0
+                    ); 
+                    ''')
+
 # Sessions
 cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
                     "id"	BLOB NOT NULL PRIMARY KEY UNIQUE DEFAULT (randomblob(16)),
@@ -108,8 +117,10 @@ cursor.execute("""
                     create table if not exists feedback (
                         id serial not null primary key,
                         user_id serial,
-                        days text,
+                        data text,
                         time text default 'datetime(''now'', ''localtime'')',
+                        main_message text,
+                        main_score int,
                         foreign key (user_id) references users(id)
                     );
                     """)
@@ -157,7 +168,6 @@ cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "events" (
 #                         date text
 #                     );
 #                     ''')
-#  TODO: Migration
 cursor.execute('''
                     create table if not exists events (
                         id serial not null primary key unique,
