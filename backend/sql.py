@@ -53,7 +53,7 @@ cursor.execute('''
                         date text,
                         value int default 0,
                         foreign key (user_id) references users(id),
-                        foreign key (event_id) references classes(id),
+                        foreign key (event_id) references classes(id)
                     ); 
                     ''')
 
