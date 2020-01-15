@@ -436,7 +436,8 @@ def admin_panel(env, query, cookie):
                     'pass': user[4],
                     'team': user[5],
                     'credits': user[6],
-                    'avatar': user[7]
+                    'avatar': user[7],
+                    'project_id': user[8]
                 })
         elif table_name == 'credits':
             data = []
