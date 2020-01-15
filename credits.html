@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/credits.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
     <link rel="stylesheet" href="styles/circle.css">
 
     <style>
@@ -23,140 +25,97 @@
             background-color: #000000;
         }
     </style>
+
+
+    <!--   bootstrap-table dependencies    -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css">
+    <link href="https://unpkg.com/bootstrap-table@1.15.5/dist/extensions/fixed-columns/bootstrap-table-fixed-columns.css" rel="stylesheet">
+
+    <link href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.15.5/dist/extensions/fixed-columns/bootstrap-table-fixed-columns.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.15.5/dist/extensions/key-events/bootstrap-table-key-events.min.js"></script>
+
 </head>
 <body>
 
+<header class="header">
 
-    <header class="header">
+    <div class="header__left">
+        <nav class="arrow">
+            <button class="arrow__button">
+                <i class="mobile__item__icon large material-icons">arrow_back</i>
 
-        <div class="header__left">
-            <nav class="hamburger">
-                <button class="hamburger__button">
-                    <span class="hamburger__button-bar"></span>
-                    <span class="hamburger__button-bar"></span>
-                    <span class="hamburger__button-bar"></span>
-                </button>
-            </nav>
+            </button>
+        </nav>
 
-            <div class="title">Кредиты</div>
-        </div>
+        <div class="title">Админ-Кредиты</div>
+    </div>
 
-    </header>
+</header>
 
+<div class="wrapper">
+    <div id="toolbar">
+        <button id="addCredit" class="btn btn-primary">
+            <i class="fa fa-plus"></i> Add New Column
+        </button>
+        <button id="clear_table" class="btn danger_button">
+            <i class="fa fa-times"></i> Clear table
+        </button>
+    </div>
 
-    <nav class="mobile">
+    <div class="table-responsive">
 
-        <!--Background for the sidebar-->
-        <div class="mobile__background"></div>
+<!--    <table id="table" data-height="400" data-show-columns="true"></table>-->
 
-        <!--Sidebar appear by button-->
-        <div class="mobile__sidebar">
+    <table id="table"  class="table"
+           data-sort-name="PR_x0020_Spec"
+           data-buttons-align="left"
+           data-sort-order="desc"
+           data-show-columns="true"
+           data-virtual-scroll="true"
+           data-search="true"
+           data-show-refresh="true"
+           data-toolbar="#toolbar">
+    </table>
+    </div>
 
-            <div class="mobile__sidebar__account">
-                <!--<a href="#">-->
-                <div class="mobile__sidebar__avatar"></div>
+    <hr>
 
-                <p class="mobile__sidebar__name">Гость</p>
-                <p class="mobile__sidebar__phone">+X (XXX) XXX-XXXX</p>
-                <!--</a>-->
-            </div>
-
-            <!--  TODO: Material icons by sprite  -->
-
-            <div class="mobile__sidebar__group">
-                <a class="mobile__item mobile__item__active" href="#">
-                    <!--                <img class="mobile__item__icon" src="">-->
-                    <i class="mobile__item__icon large material-icons">home</i>
-                    <p class="mobile__item__name">Главная</p>
-                    <div id="nt__home" class="mobile__item__notification"></div>
-                </a>
-
-                <a class="mobile__item mobile__item__hidden" href="account.html">
-                    <!--                <img class="mobile__item__icon" src="">-->
-                    <i class="mobile__item__icon large material-icons">school</i>
-                    <p class="mobile__item__name">Аккаунт</p>
-                </a>
-
-                <a class="mobile__item" href="calendar.html">
-                    <!--                <img class="mobile__item__icon" src="">-->
-                    <i class="mobile__item__icon large material-icons">today</i>
-                    <p class="mobile__item__name">Календарь</p>
-                    <!--<div id="nt__cal" class="mobile__item__notification"></div>-->
-                </a>
-
-                <a class="mobile__item mobile__item__hidden" href="feedback.html">
-                    <!--                <img class="mobile__item__icon" src="">-->
-                    <i class="mobile__item__icon large material-icons">feedback</i>
-                    <p class="mobile__item__name">Отзывы</p>
-                    <div id="nt__feed" class="mobile__item__notification"></div>
-                </a>
-
-                <a class="mobile__item" href="projects.html">
-                    <!--                <img class="mobile__item__icon" src="">-->
-                    <i class="mobile__item__icon large material-icons">apps</i>
-                    <p class="mobile__item__name">Проекты</p>
-                    <div id="nt__prj" class="mobile__item__notification"></div>
-                </a>
-            </div>
-
-            <!--<div class="mobile__sidebar__line"></div>-->
-            <hr class="border_line">
-
-            <div class="mobile__sidebar__group">
-
-    <!--            <a class="mobile__item mobile__item__hidden" href="settings.html">-->
-    <!--                &lt;!&ndash;                <img class="mobile__item__icon" src="">&ndash;&gt;-->
-    <!--                <i class="mobile__item__icon large material-icons">settings</i>-->
-    <!--                <p class="mobile__item__name">Настройки</p>-->
-    <!--            </a>-->
-
-                <a class="mobile__item" href="about.html">
-                    <!--                <img class="mobile__item__icon" src="">-->
-                    <i class="mobile__item__icon large material-icons">info</i>
-                    <p class="mobile__item__name">About</p>
-                </a>
-            </div>
-
-        </div>
-    </nav>
-
-    <div class="wrapper data__loading">
-
-        <div class="c100 p0">
-            <span>0%</span>
-            <div class="slice">
-                <div class="bar"></div>
-                <div class="fill"></div>
-            </div>
-        </div>
-
-        <div id="chart_div"></div>
-
-
-        <i class="large material-icons" style="font-size: 30px">ac_unit</i>
-
-        <p class="loading__resource">21312341234</p>
-
-        <div class="loading__resource" style="width: 120px; height: 50px; margin: 25px">
-
-
-        <main class="background">
-            <div class="background__image" ></div>
-        </main>
-
-
-        <button type="button" style="height: 40px; width: 100px; background-color: #007ac5  " onclick="loadDoc()">Change Content</button>
-        <div id="demo" class="demo">def</div>
-
-        <div class="credits__chart__scroll" style="">
-            <div id="credits__chart"></div>
+    <div class="c100 p0">
+        <span>0%</span>
+        <div class="slice">
+            <div class="bar"></div>
+            <div class="fill"></div>
         </div>
     </div>
 
+    <div id="chart_div"></div>
 
-    <footer class="footer">
-        <div   id="touchsurface">Yummy!</div>
-    </footer>
+
+    <i class="large material-icons" style="font-size: 30px">ac_unit</i>
+
+    <p class="loading__resource">21312341234</p>
+
+    <div class="loading__resource" style="width: 120px; height: 50px; margin: 25px">
+
+
+    <main class="background">
+        <div class="background__image" ></div>
+    </main>
+
+
+    <button type="button" style="height: 40px; width: 100px; background-color: #007ac5  " onclick="loadDoc()">Change Content</button>
+    <div id="demo" class="demo">def</div>
+
+    <div class="credits__chart__scroll" style="">
+        <div id="credits__chart"></div>
+    </div>
+</div>
 
 
 

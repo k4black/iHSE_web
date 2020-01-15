@@ -8,38 +8,27 @@ import psycopg2
 """                    SQLite database creation                  """
 """ ---===---==========================================---===--- """
 
+
 conn = psycopg2.connect('dbname=root user=root password=root')
 cursor = conn.cursor()
 
 
-conn_sqlite = sqlite3.connect("/home/ubuntu/db/main.sqlite", check_same_thread=False)
-conn_sqlite.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
-conn_sqlite.execute("PRAGMA wal_autocheckpoint=100")
-conn_sqlite.execute("PRAGMA busy_timeout=1000")
-conn_sqlite.execute("PRAGMA synchronous=1")
-
-cursor_sqlite = conn_sqlite.cursor()
+# conn_sqlite = sqlite3.connect("/home/ubuntu/db/main.sqlite", check_same_thread=False)
+# conn_sqlite.execute("PRAGMA journal_mode=WAL")  # https://www.sqlite.org/wal.html
+# conn_sqlite.execute("PRAGMA wal_autocheckpoint=100")
+# conn_sqlite.execute("PRAGMA busy_timeout=1000")
+# conn_sqlite.execute("PRAGMA synchronous=1")
 
 
 def checkpoint():
-    conn_sqlite.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # WAL
-    conn_sqlite.execute("VACUUM;")  # Repack database file
+    pass
+    # conn_sqlite.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # WAL
+    # conn_sqlite.execute("VACUUM;")  # Repack database file
 
 
 checkpoint()
 
 # Users
-cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "users" (
-                    "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                    "user_type"	INTEGER,
-                    "phone"	TEXT,
-                    "name"	TEXT,
-                    "pass"	INTEGER,
-                    "team"	INTEGER,
-                    "credits"	INTEGER DEFAULT (0),
-                    "avatar" TEXT  DEFAULT ('')
-                  );
-               """)
 cursor.execute('''
                     create table if not exists users (
                         id serial not null primary key unique,
@@ -78,16 +67,6 @@ cursor.execute('''
                     ''')
 
 # Sessions
-cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "sessions" (
-                    "id"	BLOB NOT NULL PRIMARY KEY UNIQUE DEFAULT (randomblob(16)),
-                    "user_id"	INTEGER,
-                    "user_type"	INTEGER,
-                    "user_agent"	TEXT,
-                    "last_ip"	TEXT,
-                    "time"	TEXT,
-                    FOREIGN KEY("user_id") REFERENCES "users"("id")
-                  );
-               """)
 cursor.execute("""CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
                   RETURNS bytea AS $$
                   SELECT decode(string_agg(lpad(to_hex(width_bucket(random(), 0, 1, 256)-1),2,'0') ,''), 'hex')
@@ -107,13 +86,6 @@ cursor.execute('''create table if not exists sessions (
 
 
 # Feedback
-cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "feedback" (
-                    "user_id"	INTEGER NOT NULL PRIMARY KEY,
-                    "days"	TEXT,
-                    "time"	TEXT DEFAULT(datetime('now','localtime')),
-                    FOREIGN KEY("user_id") REFERENCES "users"("id")
-                  );
-               """)
 cursor.execute("""
                     create table if not exists feedback (
                         id serial not null primary key,
@@ -148,27 +120,6 @@ cursor.execute('''
 #                     ''')
 
 # Events
-cursor_sqlite.execute("""CREATE TABLE IF NOT EXISTS  "events" (
-                    "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                    "type"	INTEGER,
-                    "title"	TEXT,
-                    "credits"	INTEGER,
-                    "count" INTEGER DEFAULT (0),
-                    "total" INTEGER,
-                    "date" TEXT
-                  );
-               """)
-# cursor.execute('''
-#                     create table if not exists events (
-#                         id serial not null primary key unique,
-#                         type int,
-#                         title text,
-#                         credits int,
-#                         count int default 0,
-#                         total int,
-#                         date text
-#                     );
-#                     ''')
 cursor.execute('''
                     create table if not exists events (
                         id serial not null primary key unique,
@@ -223,40 +174,8 @@ def safety_injections(param):
     return param
 
 
-# TODO: Safety sql (if db is busy)
-# TODO: delete  after migration
-def safety_request(sql):
-    """ Try to run sql code event if db is busy
-
-    Args:
-        sql: sql code - string
-
-    Returns:
-        None
-
-    """
-
-    timeout = 10
-
-    for x in range(0, timeout):
-        try:
-            with conn_sqlite:
-                conn_sqlite.execute(sql)
-                conn_sqlite.commit()
-        except sqlite3.Warning:  # TODO?
-            time.sleep(1)
-            pass
-
-        finally:
-            break
-    else:
-        with conn_sqlite:
-            conn_sqlite.execute(sql)
-            conn_sqlite.commit()
-
-
 """ ---===---==========================================---===--- """
-"""           SQLite database interaction via sqlite3            """
+"""           SQLite database interaction via postgre            """
 """ ---===---==========================================---===--- """
 
 
@@ -270,8 +189,6 @@ def get_users():
     """
     cursor.execute('select * from users;')
     users_list = cursor.fetchall()
-    # cursor.execute("SELECT * FROM users")
-    # users_list = cursor.fetchall()
 
     return users_list
 
@@ -302,7 +219,7 @@ def remove_user(user_id):
     # conn.commit()
 
 
-# TODO: delete  after migration
+# TODO: delete  after migration ???
 def load_users(users_list):
     """ Load all users to sql table
     Clear users table and sessions table and insert all users in users table
@@ -316,8 +233,8 @@ def load_users(users_list):
 
     # Clear user and sessions tables
     # cursor.execute("DELETE FROM sessions")
-    cursor_sqlite.execute("DELETE FROM users")
-    conn_sqlite.commit()
+    cursor.execute("DELETE FROM users")
+    conn.commit()
 
     # Add users in bd
     for user_obj in users_list:
@@ -326,11 +243,11 @@ def load_users(users_list):
         else:
             avatar = user_obj[7]
 
-        cursor_sqlite.execute("""INSERT INTO users(id, user_type, phone, name, pass, team, credits, avatar)
+        cursor.execute("""INSERT INTO users(id, user_type, phone, name, pass, team, credits, avatar)
                           SELECT ?, ?, ?, ?, ?, ?, ?, ?
                           WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
                               (user_obj[0], user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[6], avatar, user_obj[3], user_obj[4]))
-        conn_sqlite.commit()
+    conn.commit()
 
 
 def load_codes(codes):
@@ -599,14 +516,14 @@ def load_events(events_list):
 
     # Safe update events - save count of people
     for event_obj in events_list:
-        cursor_sqlite.execute("""
+        cursor.execute("""
                           INSERT OR IGNORE INTO events(id, type, title, credits, total, date)
                           VALUES (?, ?, ?, ?, ?, ?); 
                         """, (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[5],))
-        cursor_sqlite.execute("""
+        cursor.execute("""
                           UPDATE events SET type=?, title=?, credits=?, total=? WHERE id=?; 
                         """, (event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[0]))
-    conn_sqlite.commit()
+    conn.commit()
 
     return
 
@@ -984,6 +901,7 @@ def login(phone, passw, agent, ip, time='0'):
         sess_id: session id - string of hex
                  b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
     """
+
     # Check user with name and pass exist and got it
     cursor.execute(f'select * from users where phone = \'{phone}\' and pass = {passw};')
     users = cursor.fetchall()
@@ -1038,8 +956,6 @@ def edit_session(sess_obj):
                             where id = {sess_obj[0]};
                         ''')
     conn.commit()
-    # cursor.execute("REPLACE INTO sessions (id, user_id, user_type, user_agent, last_ip, time)", sess_obj)
-    # conn.commit()
 
 
 def insert_session(sess_obj):
@@ -1052,8 +968,6 @@ def insert_session(sess_obj):
     """
     cursor.execute(f'insert into sessions (user_id, user_type, user_agent, last_ip, time) values ({sess_obj[1]}, {sess_obj[2]}, \'{sess_obj[3]}\', \'{sess_obj[4]}\', \'{sess_obj[5]}\');')
     conn.commit()
-    # cursor.execute("REPLACE INTO sessions (id, user_id, user_type, user_agent, last_ip, time)", sess_obj)
-    # conn.commit()
 
 
 def remove_session(sess_id):

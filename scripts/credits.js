@@ -5,6 +5,128 @@
  */
 
 
+/** ===============  TABLE REQUESTS  =============== */
+
+
+
+var $table = $('#table');
+
+
+  function buildTable($el, cells, rows) {
+    var i
+    var j
+    var row
+    var columns = []
+    var data = [];
+
+    for (i = 0; i < cells; i++) {
+      columns.push({
+        field: 'field' + i,
+        title: 'Cell' + i,
+        sortable: true,
+        rowspan: 2,
+        valign: 'middle',
+        formatter: function (val) {
+          return '<div class="item">' + val + '</div>'
+        },
+        events: {
+          'click .item': function () {
+            console.log('click')
+          }
+        }
+      })
+    }
+
+    for (i = 0; i < rows; i++) {
+      row = {}
+      for (j = 0; j < cells + 3; j++) {
+        row['field' + j] = 'Row-' + i + '-' + j
+      }
+      data.push(row)
+    }
+
+    columns.push({
+      title: 'More Cells',
+      colspan: 3,
+      align: 'center'
+    });
+
+    columns.push({
+      title: 'More Cells 2',
+      colspan: 3,
+      align: 'center'
+    });
+
+
+    //     columns.push({
+    //     title: 'Actions',
+    //     field: 'operate',
+    //     formatter: 'operateFormatter',
+    //     events: 'operateEvents',
+    //     width: '200'
+    // });
+
+
+    $el.bootstrapTable('destroy').bootstrapTable({
+      columns: [columns, [{
+        field: 'field' + cells,
+        title: 'Cells' + cells,
+        sortable: true,
+        align: 'center'
+      }, {
+        field: 'field' + (cells + 1),
+        title: 'Cells' + (cells + 1),
+        sortable: true,
+        align: 'center'
+      }, {
+        field: 'field' + (cells + 2),
+        title: 'Cells' + (cells + 2),
+        align: 'center'
+      }, {
+        field: 'field' + cells,
+        title: 'Cells' + cells,
+        sortable: true,
+        align: 'center'
+      }, {
+        field: 'field' + (cells + 1),
+        title: 'Cells' + (cells + 1),
+        sortable: true,
+        align: 'center'
+      }, {
+        field: 'field' + (cells + 2),
+        title: 'Cells' + (cells + 2),
+        align: 'center'
+      }]],
+
+
+      data: data,
+      search: true,
+      fixedColumns: true,
+      fixedNumber: 2
+    })
+  }
+
+
+$(function() {
+    buildTable($table, 10, 50)
+  });
+
+
+
+function operateFormatter(value, row, index) {
+return [
+    '<button class="edit" href="javascript:void(0)" title="Edit">',
+        // '<i class="fa fa-wrench"></i> ',
+        '<i class="material-icons" style="font-size:15px">build</i>',
+        'Edit',
+    '</button>',
+    '<button class="remove danger_button" href="javascript:void(0)" title="Remove">',
+        // '<i class="fa fa-trash"></i> ',
+        '<i class="material-icons" style="font-size:18px">delete</i>',
+        '<p>Remove</p>',
+    '</button>'
+].join('')
+}
 
 
 /** ===============  LOGIC and REQUESTS  =============== */

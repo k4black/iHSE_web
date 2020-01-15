@@ -809,7 +809,7 @@ def get_names(env, query, cookie):
 
 
     # Names
-    data = [ i[3] for i in sql.get_users() ]
+    data = [i[3] for i in sql.get_users()]
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
@@ -1155,7 +1155,6 @@ def post_login(env, phone, passw):
 
     Returns:
          None; Only http answer
-
     """
 
     print(phone)
