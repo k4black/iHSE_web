@@ -96,7 +96,7 @@ cursor.execute('''
                         description text,
                         host text,
                         place text,
-                        time, text,
+                        time text,
                         date text
                     );
                     ''')
