@@ -28,6 +28,18 @@ def checkpoint():
 
 checkpoint()
 
+# Projects
+cursor.execute('''
+                    create table if not exists projects (
+                        id serial not null primary key unique,
+                        title text,
+                        type int,
+                        def_type int,
+                        direction text,
+                        description text
+                    ); 
+                    ''')
+
 # Users
 cursor.execute('''
                     create table if not exists users (
@@ -42,6 +54,62 @@ cursor.execute('''
                         project_id serial default 0,
                         foreign key (project_id) references projects(id)
                     ); 
+                    ''')
+
+# Sessions
+cursor.execute("""CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
+                  RETURNS bytea AS $$
+                  SELECT decode(string_agg(lpad(to_hex(width_bucket(random(), 0, 1, 256)-1),2,'0') ,''), 'hex')
+                  FROM generate_series(1, $1);
+                  $$
+                  LANGUAGE 'sql';""")
+cursor.execute('''create table if not exists sessions (
+                        id bytea not null primary key unique default random_bytea(16),
+                        user_id int,
+                        user_type int,
+                        user_agent text,
+                        last_ip text,
+                        time text,
+                        foreign key (user_id) references users(id)
+                    );
+                    ''')
+
+# Feedback
+cursor.execute("""
+                    create table if not exists feedback (
+                        id serial not null primary key,
+                        user_id serial,
+                        data text,
+                        time text default 'datetime(''now'', ''localtime'')',
+                        main_message text,
+                        main_score int,
+                        foreign key (user_id) references users(id)
+                    );
+                    """)
+
+# Events
+cursor.execute('''
+                    create table if not exists events (
+                        id serial not null primary key unique,
+                        type int,
+                        title text,
+                        description text,
+                        host text,
+                        place text,
+                        time, text,
+                        date text
+                    );
+                    ''')
+
+# Classes
+cursor.execute('''
+                    create table if not exists classes (
+                        id serial not null primary key unique,
+                        credits int,
+                        count int default 0,
+                        total int,
+                        foreign key (id) references events(id)
+                    );
                     ''')
 
 # Credits
@@ -66,50 +134,9 @@ cursor.execute('''
                     ); 
                     ''')
 
-# Sessions
-cursor.execute("""CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
-                  RETURNS bytea AS $$
-                  SELECT decode(string_agg(lpad(to_hex(width_bucket(random(), 0, 1, 256)-1),2,'0') ,''), 'hex')
-                  FROM generate_series(1, $1);
-                  $$
-                  LANGUAGE 'sql';""")
-cursor.execute('''create table if not exists sessions (
-                        id bytea not null primary key unique default random_bytea(16),
-                        user_id int,
-                        user_type int,
-                        user_agent text,
-                        last_ip text,
-                        time text,
-                        foreign key (user_id) references users(id)
-                    );
-                    ''')
 
 
-# Feedback
-cursor.execute("""
-                    create table if not exists feedback (
-                        id serial not null primary key,
-                        user_id serial,
-                        data text,
-                        time text default 'datetime(''now'', ''localtime'')',
-                        main_message text,
-                        main_score int,
-                        foreign key (user_id) references users(id)
-                    );
-                    """)
 
-
-# Projects
-cursor.execute('''
-                    create table if not exists projects (
-                        id serial not null primary key unique,
-                        title text,
-                        type int,
-                        def_type int,
-                        direction text,
-                        description text
-                    ); 
-                    ''')
 # cursor.execute('''
 #                     create table if not exists project_users (
 #                         user_id serial,
@@ -119,28 +146,7 @@ cursor.execute('''
 #                     );
 #                     ''')
 
-# Events
-cursor.execute('''
-                    create table if not exists events (
-                        id serial not null primary key unique,
-                        type int,
-                        title text,
-                        description text,
-                        host text,
-                        place text,
-                        time, text,
-                        date text
-                    );
-                    ''')
-cursor.execute('''
-                    create table if not exists classes (
-                        id serial not null primary key unique,
-                        credits int,
-                        count int default 0,
-                        total int,
-                        foreign key (id) references events(id)
-                    );
-                    ''')
+
 
 conn.commit()
 
