@@ -429,8 +429,10 @@ def admin_panel(env, query, cookie):
             data = sql.process_sql(sql.get_users(), 'users')
         elif table_name == 'credits':
             data = sql.process_sql(sql.get_credits(), 'credits')
+            print('credits', data)
         elif table_name == 'sessions':
             data = sql.process_sql(sql.get_sessions(), 'sessions')
+            print('sessions', data)
         elif table_name == 'codes':
             data = sql.process_sql(sql.get_codes(), 'codes')
         # elif table_name == 'feedback':
