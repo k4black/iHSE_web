@@ -238,3 +238,13 @@ button:not(.danger_button) {
 button.update {
     margin-top: 100px;
 }
+
+
+
+
+
+
+.total {
+    font-weight: bold;
+    font-style: italic;
+}

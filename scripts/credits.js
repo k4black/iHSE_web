@@ -9,107 +9,377 @@
 
 
 
+
 var $table = $('#table');
 
 
-  function buildTable($el, cells, rows) {
-    var i
-    var j
-    var row
-    var columns = []
+
+
+function groupBy(arr, property) {
+    return arr.reduce(function(memo, x) {
+        if (!memo[x[property]]) {
+            memo[x[property]] = [];
+        }
+        memo[x[property]].push(x);
+        return memo;
+    }, {});
+}
+
+
+function processCredits(credits_raw) {
+    credits_raw.sort(function(first, second) {
+        return first.user_id - second.user_id;
+    });
+
+    let credits_rawGroups = groupBy(credits_raw, 'user_id');
+
+    let credits = {};
+
+    for (let user_id in credits_rawGroups) {
+        credits[user_id] = processUserCredits(credits_rawGroups[user_id]);
+    }
+
+    return credits;
+}
+
+
+function processUserCredits(userCredits_raw) {
+    userCredits_raw.sort(function(first, second) {
+        return first.date - second.date;
+    });
+    userCredits_rawGroups = groupBy(userCredits_raw, 'date');
+
+    let userCredits = [];
+
+    for (let date in userCredits_rawGroups) {
+        userCredits[date] = [];
+
+        for (let j in userCredits_rawGroups[date]) {
+            userCredits[date].push({'id': userCredits_rawGroups[date][j].id, 'event_id': userCredits_rawGroups[date][j].event_id, 'value': userCredits_rawGroups[date][j].value});
+        }
+    }
+
+    return userCredits;
+}
+
+
+
+function processUsers(users_raw) {
+    let users = {};
+
+    for (let i in users_raw) {
+        users[users_raw[i].id] = users_raw[i];
+    }
+
+    return users;
+}
+
+
+function getDays(credits) {
+    let days = {};
+
+    for (let user_id in credits) {
+        for (let date in credits[user_id]) {
+            days[date] = new Set();
+        }
+    }
+
+    for (let user_id in credits) {
+        for (let date in credits[user_id]) {
+            for (let i in credits[user_id][date]) {
+                days[date].add(credits[user_id][date][i].event_id);
+            }
+        }
+    }
+
+    return days;
+}
+
+
+
+credits_raw = [
+    {'id': 0, 'user_id': 3, 'event_id': 0, 'date': '06.10', 'value': 100},
+    {'id': 1, 'user_id': 3, 'event_id': 1, 'date': '06.10', 'value': 200},
+    {'id': 2, 'user_id': 3, 'event_id': 3, 'date': '07.10', 'value': 300},
+    {'id': 3, 'user_id': 3, 'event_id': 4, 'date': '07.10', 'value': 100},
+    {'id': 4, 'user_id': 3, 'event_id': 5, 'date': '07.10', 'value': 50},
+    {'id': 5, 'user_id': 3, 'event_id': 6, 'date': '08.10', 'value': 311},
+
+    {'id': 6, 'user_id': 1, 'event_id': 0, 'date': '06.10', 'value': 311},
+    {'id': 7, 'user_id': 1, 'event_id': 2, 'date': '07.10', 'value': 30},
+    {'id': 8, 'user_id': 1, 'event_id': 5, 'date': '07.10', 'value': 50},
+    {'id': 9, 'user_id': 1, 'event_id': 6, 'date': '08.10', 'value': 64},
+    {'id': 10, 'user_id': 1, 'event_id': 7, 'date': '09.10', 'value': 45},
+
+    {'id': 11, 'user_id': 4, 'event_id': 1, 'date': '06.10', 'value': 311},
+    {'id': 12, 'user_id': 4, 'event_id': 2, 'date': '07.10', 'value': 30},
+    {'id': 13, 'user_id': 4, 'event_id': 5, 'date': '07.10', 'value': 50},
+    {'id': 14, 'user_id': 4, 'event_id': 7, 'date': '09.10', 'value': 64},
+    {'id': 15, 'user_id': 4, 'event_id': 8, 'date': '09.10', 'value': 45},
+];
+
+
+users_raw = [
+    {'id': 4, name: 'Boiko Tcar', 'group': 2, 'total': 777},
+    {'id': 3, name: 'Inav Petrovich', 'group': 0, 'total': 666},
+    {'id': 1, name: 'Max Pedroviv', 'group': 1, 'total': 999},
+];
+
+
+users = processUsers(users_raw);
+credits = processCredits(credits_raw);
+days = getDays(credits);
+
+
+
+function daysToTableColumns(days) {
+    let columnsTop = [];
+    let columnsBottom = [];
+
+    let userColumns = ['id', 'name', 'group', 'total'];
+    let fixedColumns = userColumns.length;
+
+
+    let specialColumns = ['olymp', 'sport'];
+
+
+    for (let i of userColumns) {
+        columnsTop.push({
+            field: i,
+            title: i,
+            sortable: true,
+            rowspan: 2,
+            valign: 'middle',
+            filter: "input"
+        });
+    }
+
+
+    for (let date in days) {
+        columnsTop.push({
+            title: date,
+            colspan: days[date].size + 1,
+            align: 'center'
+        });
+
+        for (let i of days[date]) {
+            columnsBottom.push({
+                field: 'date' + date + 'id' + i,
+                title: i,
+                sortable: true,
+                align: 'center',
+                valign: 'middle',
+                formatter: function (val) {
+                    return '<div class="item">' + val + '</div>'
+                },
+                events: {
+                    'click .item': function () {
+                        console.log('click')
+                    }
+                }
+            });
+        }
+        columnsBottom.push({
+            field: 'date' + date + 'total',
+            title: 'Total',
+            sortable: true,
+            align: 'center',
+            valign: 'middle',
+            formatter: function (val) {
+                return '<div class="total">' + val + '</div>'
+            }
+        });
+    }
+
+    for (let i of specialColumns) {
+        columnsTop.push({
+            field: i,
+            title: i,
+            sortable: true,
+            rowspan: 2,
+            valign: 'middle'
+        });
+    }
+
+
+    return [columnsTop, columnsBottom];
+}
+
+function creditsToTableData(credits, days) {
+    let data = [];
+
+    for (let user_id in credits) {
+
+        row = {};
+
+        row['id'] = user_id;
+        row['name'] = users[user_id].name;
+        row['group'] = users[user_id].group;
+        row['total'] = users[user_id].total;
+
+        // To avoid undef
+        for (let date in days) {
+            for (let k of days[date]) {
+                row['date' + date + 'id' + k] = 0;
+            }
+            row['date' + date + 'total'] = 0;
+        }
+
+        for (let date in credits[user_id]) {
+            let sum = 0;
+            for (let k in credits[user_id][date]) {
+                row['date' + date + 'id' + credits[user_id][date][k].event_id] = credits[user_id][date][k].value;
+                sum += credits[user_id][date][k].value;
+            }
+
+            row['date' + date + 'total'] = sum;
+        }
+
+        data.push(row);
+    }
+
+    return data;
+}
+
+
+
+
+function testBuild($el, cells, subcells, rows) {
+    var row;
+    var columns = [];
     var data = [];
 
-    for (i = 0; i < cells; i++) {
-      columns.push({
-        field: 'field' + i,
-        title: 'Cell' + i,
-        sortable: true,
-        rowspan: 2,
-        valign: 'middle',
-        formatter: function (val) {
-          return '<div class="item">' + val + '</div>'
-        },
-        events: {
-          'click .item': function () {
-            console.log('click')
-          }
+    let userColumns = ['id', 'name', 'group', 'total'];
+    let fixedColumns = userColumns.length;
+
+    let specialColumns = ['olymp', 'sport'];
+
+
+    for (let i of userColumns) {
+        columns.push({
+            field: i,
+            title: i,
+            sortable: true,
+            rowspan: 2,
+            valign: 'middle'
+        });
+    }
+
+
+    for (let i = 0; i < cells; ++i) {
+        columns.push({
+            title: 'More Cells ' + i ,
+            colspan: subcells,
+            align: 'center'
+        });
+    }
+
+    for (let i of specialColumns) {
+        columns.push({
+            field: i,
+            title: i,
+            sortable: true,
+            rowspan: 2,
+            valign: 'middle'
+        });
+    }
+
+
+    columnsBot = [];
+
+    for (let i = 0; i < cells; ++i) {
+        for (let k = 0; k < subcells - 1; ++k) {
+            columnsBot.push({
+                field: 'field' + (i*subcells + k),
+                title: 'Cells' + (i*subcells + k),
+                sortable: true,
+                align: 'center',
+                valign: 'middle',
+                formatter: function (val) {
+                    return '<div class="item">' + val + '</div>'
+                },
+                events: {
+                    'click .item': function () {
+                        console.log('click')
+                    }
+                }
+            });
         }
-      })
+        columnsBot.push({
+            field: 'field' + (i*subcells + subcells - 1),
+            title: 'Total' + (i*subcells + subcells - 1),
+            sortable: true,
+            align: 'center',
+            valign: 'middle',
+            formatter: function (val) {
+                return '<div class="total">' + val + '</div>'
+            }
+        });
     }
 
-    for (i = 0; i < rows; i++) {
-      row = {}
-      for (j = 0; j < cells + 3; j++) {
-        row['field' + j] = 'Row-' + i + '-' + j
-      }
-      data.push(row)
+
+
+
+    for (let i = 0; i < rows; i++) {
+        row = {};
+        for (let j of userColumns) {
+            row[j] = j + i;
+        }
+
+        for (let j = 0; j < cells; j++) {
+            for (let k = 0; k < subcells; ++k) {
+                row['field' + (j*subcells + k)] = 'Row' + i + ' ' + j + ':' + k;
+            }
+        }
+
+        for (let j of specialColumns) {
+            row[j] = j + i;
+        }
+
+        data.push(row);
     }
 
-    columns.push({
-      title: 'More Cells',
-      colspan: 3,
-      align: 'center'
-    });
-
-    columns.push({
-      title: 'More Cells 2',
-      colspan: 3,
-      align: 'center'
-    });
 
 
-    //     columns.push({
-    //     title: 'Actions',
-    //     field: 'operate',
-    //     formatter: 'operateFormatter',
-    //     events: 'operateEvents',
-    //     width: '200'
-    // });
+    console.log(columns);
+    console.log(columnsBot);
+    console.log(data);
 
 
     $el.bootstrapTable('destroy').bootstrapTable({
-      columns: [columns, [{
-        field: 'field' + cells,
-        title: 'Cells' + cells,
-        sortable: true,
-        align: 'center'
-      }, {
-        field: 'field' + (cells + 1),
-        title: 'Cells' + (cells + 1),
-        sortable: true,
-        align: 'center'
-      }, {
-        field: 'field' + (cells + 2),
-        title: 'Cells' + (cells + 2),
-        align: 'center'
-      }, {
-        field: 'field' + cells,
-        title: 'Cells' + cells,
-        sortable: true,
-        align: 'center'
-      }, {
-        field: 'field' + (cells + 1),
-        title: 'Cells' + (cells + 1),
-        sortable: true,
-        align: 'center'
-      }, {
-        field: 'field' + (cells + 2),
-        title: 'Cells' + (cells + 2),
-        align: 'center'
-      }]],
-
-
-      data: data,
-      search: true,
-      fixedColumns: true,
-      fixedNumber: 2
+        columns: [columns, columnsBot],
+        data: data,
+        search: true,
+        fixedColumns: true,
+        fixedNumber: fixedColumns
     })
-  }
+}
+
+
+
+
+
+function buildTable($el, credits, days) {
+    let [columnsTop, columnsBottom] = daysToTableColumns(days);
+    let data = creditsToTableData(credits, days);
+
+    console.log('data', data);
+
+    $el.bootstrapTable('destroy').bootstrapTable({
+        undefinedText: '0',
+        columns: [columnsTop, columnsBottom],
+        data: data,
+        search: true,
+        fixedColumns: true,
+        fixedNumber: 4,
+    });
+}
 
 
 $(function() {
-    buildTable($table, 10, 50)
-  });
+    buildTable($table, credits, getDays(credits));
+    // testBuild($table, 3, 5, 3);
+});
 
 
 
