@@ -476,16 +476,17 @@ def admin_panel(env, query, cookie):
         #             'time': feedback[2]
         #         })
         elif table_name == 'projects':
-            data = []
-            for project in sql.get_projects():
-                data.append({
-                    'id': project[0],
-                    'title': project[1],
-                    'type': project[2],
-                    'def_type': project[3],
-                    'direction': project[4],
-                    'description': project[5]
-                })
+            data = sql.process_sql(sql.get_projects(), 'projects')
+
+            # for project in sql.get_projects():
+            #     data.append({
+            #         'id': project[0],
+            #         'title': project[1],
+            #         'type': project[2],
+            #         'def_type': project[3],
+            #         'direction': project[4],
+            #         'description': project[5]
+            #     })
         elif table_name == 'events':
             data = []
             for event in sql.get_events():

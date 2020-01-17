@@ -151,6 +151,26 @@ cursor.execute('''
 conn.commit()
 
 
+table_fields = {
+    'projects': ('id', 'title', 'type', 'def_type', 'direction', 'description'),
+    'users': ('id', 'user_type', 'phone', 'name', 'pass', 'team', 'credits', 'avatar', 'project_id'),
+    'sessions': ('id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'),
+    'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', 'date'),
+    'classes': ('id', 'credits', 'count', 'total'),
+    'credits': ('id', 'user_id', 'event_id', 'date', 'value'),
+    'codes': ('code', 'type', 'used')
+}
+
+
+def process_sql(data_raw: list, table: str):
+    data = []
+
+    for line in data_raw:
+        data.append({table_fields[table][i]: line[i] for i in range(table_fields[table])})
+
+    return data
+
+
 """ ---===---==========================================---===--- """
 """           Auxiliary functions for sql interactions           """
 """ ---===---==========================================---===--- """
