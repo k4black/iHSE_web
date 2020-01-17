@@ -601,6 +601,10 @@ def get_sessions():
     sessions_list = cursor.fetchall()
     # cursor.execute("SELECT * FROM sessions")
     # sessions_list = cursor.fetchall()
+
+    for i in range(len(sessions_list)):
+        sessions_list[i][0] = (sessions_list[i][0]).hex()
+
     return sessions_list
 
 
