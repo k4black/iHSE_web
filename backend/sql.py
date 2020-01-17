@@ -730,7 +730,7 @@ def insert_event(event_obj):
     Returns:
     """
 
-    cursor.execute(f'insert into events (type, title, description, host, place, time, date) values ({event_obj[1]}, \'{event_obj[2]}\', {event_obj[3]}, {event_obj[4]}, {event_obj[5]}, \'{event_obj[6]}\', \'{event_obj[7]}\') RETURNING id;')
+    cursor.execute(f'insert into events (type, title, description, host, place, time, date) values ({event_obj[1]}, \'{event_obj[2]}\', \'{event_obj[3]}\', \'{event_obj[4]}\', \'{event_obj[5]}\', \'{event_obj[6]}\', \'{event_obj[7]}\') RETURNING id;')
     id_of_new_event = cursor.fetchone()[0]
 
     if event_obj[1] == 1:
@@ -777,7 +777,7 @@ def remove_event(event_id):
     cursor.execute(f'delete from events where id = {event_id};')
     cursor.execute(f'delete from classes where id = {event_id};')
 
-    # TODO: Delete events from credits 
+    # TODO: Delete events from credits
 
     conn.commit()
 
