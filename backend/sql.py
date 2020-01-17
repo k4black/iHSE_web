@@ -603,7 +603,7 @@ def get_sessions():
     # sessions_list = cursor.fetchall()
 
     for i in range(len(sessions_list)):
-        sessions_list[i][0] = (sessions_list[i][0]).hex()
+        sessions_list[i] = ((sessions_list[i][0]).hex(), *sessions_list[i][1:])
 
     return sessions_list
 
