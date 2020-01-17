@@ -426,47 +426,13 @@ def admin_panel(env, query, cookie):
         print(f'Got get_table {table_name}')
 
         if table_name == 'users':
-            data = []
-            for user in sql.get_users():
-                data.append({
-                    'id': user[0],
-                    'type': user[1],
-                    'phone': user[2],
-                    'name': user[3],
-                    'pass': user[4],
-                    'team': user[5],
-                    'credits': user[6],
-                    'avatar': user[7],
-                    'project_id': user[8]
-                })
+            data = sql.process_sql(sql.get_users(), 'users')
         elif table_name == 'credits':
-            data = []
-            for credit in sql.get_credits():
-                data.append({
-                    'user_id': credit[0],
-                    'event_id': credit[1],
-                    'date': credit[2],
-                    'value': credit[3]
-                })
+            data = sql.process_sql(sql.get_credits(), 'credits')
         elif table_name == 'sessions':
-            data = []
-            for sess in sql.get_sessions():
-                data.append({
-                    'id': (sess[0]).hex(),
-                    'user_id': sess[1],
-                    'user_type': sess[2],
-                    'user_agent': sess[3],
-                    'last_ip': sess[4],
-                    'time': sess[5],
-                })
+            data = sql.process_sql(sql.get_sessions(), 'sessions')
         elif table_name == 'codes':
-            data = []
-            for code in sql.get_codes():
-                data.append({
-                    'code': code[0],
-                    'type': code[1],
-                    'used': code[2]
-                })
+            data = sql.process_sql(sql.get_codes(), 'codes')
         # elif table_name == 'feedback':
         #     data = []
         #     for feedback in sql.get_feedback():
@@ -477,38 +443,10 @@ def admin_panel(env, query, cookie):
         #         })
         elif table_name == 'projects':
             data = sql.process_sql(sql.get_projects(), 'projects')
-
-            # for project in sql.get_projects():
-            #     data.append({
-            #         'id': project[0],
-            #         'title': project[1],
-            #         'type': project[2],
-            #         'def_type': project[3],
-            #         'direction': project[4],
-            #         'description': project[5]
-            #     })
         elif table_name == 'events':
-            data = []
-            for event in sql.get_events():
-                data.append({
-                    'id': event[0],
-                    'type': event[1],
-                    'title': event[2],
-                    'description': event[3],
-                    'host': event[4],
-                    'place': event[5],
-                    'time': event[6],
-                    'date': event[7]
-                })
+            data = sql.process_sql(sql.get_events(), 'events')
         elif table_name == 'classes':
-            data = []
-            for event in sql.get_classes():
-                data.append({
-                    'id': event[0],
-                    'credits': event[1],
-                    'count': event[2],
-                    'total': event[3]
-                })
+            data = sql.process_sql(sql.get_classes(), 'classes')
         else:
             print(' ========  400 Bad Request by admin  ======== ')
             return ('400 Bad Request',
