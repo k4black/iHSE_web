@@ -75,6 +75,17 @@ function processUsers(users_raw) {
 }
 
 
+function processEvents(events_raw) {
+    let events = {};
+
+    for (let i in events_raw) {
+        events[events_raw[i].id] = events_raw[i];
+    }
+
+    return events;
+}
+
+
 function getDays(credits) {
     let days = {};
 
@@ -95,6 +106,18 @@ function getDays(credits) {
     return days;
 }
 
+
+events_raw = [
+    {'id': 0, 'type': 2, 'title': 'Some title'},
+    {'id': 1, 'type': 2, 'title': 'Some title'},
+    {'id': 2, 'type': 2, 'title': 'Some title'},
+    {'id': 3, 'type': 2, 'title': 'Some title'},
+    {'id': 4, 'type': 2, 'title': 'Some title'},
+    {'id': 5, 'type': 2, 'title': 'Some title'},
+    {'id': 6, 'type': 2, 'title': 'Some title'},
+    {'id': 7, 'type': 2, 'title': 'Some title'},
+    {'id': 8, 'type': 2, 'title': 'Some title'},
+];
 
 
 credits_raw = [
@@ -126,6 +149,9 @@ users_raw = [
 ];
 
 
+
+
+events = processEvents(events_raw);
 users = processUsers(users_raw);
 credits = processCredits(credits_raw);
 days = getDays(credits);
@@ -243,127 +269,11 @@ function creditsToTableData(credits, days) {
 
 
 
-
-function testBuild($el, cells, subcells, rows) {
-    var row;
-    var columns = [];
-    var data = [];
-
-    let userColumns = ['id', 'name', 'group', 'total'];
-    let fixedColumns = userColumns.length;
-
-    let specialColumns = ['olymp', 'sport'];
-
-
-    for (let i of userColumns) {
-        columns.push({
-            field: i,
-            title: i,
-            sortable: true,
-            rowspan: 2,
-            valign: 'middle'
-        });
-    }
-
-
-    for (let i = 0; i < cells; ++i) {
-        columns.push({
-            title: 'More Cells ' + i ,
-            colspan: subcells,
-            align: 'center'
-        });
-    }
-
-    for (let i of specialColumns) {
-        columns.push({
-            field: i,
-            title: i,
-            sortable: true,
-            rowspan: 2,
-            valign: 'middle'
-        });
-    }
-
-
-    columnsBot = [];
-
-    for (let i = 0; i < cells; ++i) {
-        for (let k = 0; k < subcells - 1; ++k) {
-            columnsBot.push({
-                field: 'field' + (i*subcells + k),
-                title: 'Cells' + (i*subcells + k),
-                sortable: true,
-                align: 'center',
-                valign: 'middle',
-                formatter: function (val) {
-                    return '<div class="item">' + val + '</div>'
-                },
-                events: {
-                    'click .item': function () {
-                        console.log('click')
-                    }
-                }
-            });
-        }
-        columnsBot.push({
-            field: 'field' + (i*subcells + subcells - 1),
-            title: 'Total' + (i*subcells + subcells - 1),
-            sortable: true,
-            align: 'center',
-            valign: 'middle',
-            formatter: function (val) {
-                return '<div class="total">' + val + '</div>'
-            }
-        });
-    }
-
-
-
-
-    for (let i = 0; i < rows; i++) {
-        row = {};
-        for (let j of userColumns) {
-            row[j] = j + i;
-        }
-
-        for (let j = 0; j < cells; j++) {
-            for (let k = 0; k < subcells; ++k) {
-                row['field' + (j*subcells + k)] = 'Row' + i + ' ' + j + ':' + k;
-            }
-        }
-
-        for (let j of specialColumns) {
-            row[j] = j + i;
-        }
-
-        data.push(row);
-    }
-
-
-
-    console.log(columns);
-    console.log(columnsBot);
-    console.log(data);
-
-
-    $el.bootstrapTable('destroy').bootstrapTable({
-        columns: [columns, columnsBot],
-        data: data,
-        search: true,
-        fixedColumns: true,
-        fixedNumber: fixedColumns
-    })
-}
-
-
-
-
-
 function buildTable($el, credits, days) {
     let [columnsTop, columnsBottom] = daysToTableColumns(days);
     let data = creditsToTableData(credits, days);
 
-    console.log('data', data);
+    // console.log('data', data);
 
     $el.bootstrapTable('destroy').bootstrapTable({
         undefinedText: '0',

@@ -16,6 +16,8 @@ cursor = conn.cursor()
 
 def checkpoint():
     # TODO: do we need checkpoint now? Maybe same flags should be set somehow in the PostgreSQL (need to check that)?
+    # TODO: I dont f_ing know. Did you found where db file located?
+
     pass
     # conn_sqlite.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # WAL
     # conn_sqlite.execute("VACUUM;")  # Repack database file
@@ -197,6 +199,7 @@ def safety_injections(param):
 """         PostgreSQL database interaction via psycopg2         """
 """ ---===---==========================================---===--- """
 # TODO: on the higher level we need to prompt admin before every remove_<smth>() is performed
+# TODO: yep. I know. Temporary commented this code for checking and testing
 
 
 # Projects
@@ -653,6 +656,7 @@ def clear_sessions():
 
 # Feedback
 # TODO: do we handle feedback at all!?
+# TODO: Yeeeees. Somehow. Now i have some ideas, but you are welcome with any thoughts
 
 
 # Events
@@ -726,11 +730,17 @@ def insert_event(event_obj):
     Returns:
     """
 
-    # TODO : Insert class
-    cursor.execute(f'insert into events (type, title, description, host, place, time, date) values ({event_obj[1]}, \'{event_obj[2]}\', {event_obj[3]}, {event_obj[4]}, {event_obj[5]}, \'{event_obj[6]}\', \'{event_obj[7]}\');')
+    cursor.execute(f'insert into events (type, title, description, host, place, time, date) values ({event_obj[1]}, \'{event_obj[2]}\', {event_obj[3]}, {event_obj[4]}, {event_obj[5]}, \'{event_obj[6]}\', \'{event_obj[7]}\') RETURNING id;')
+    id_of_new_event = cursor.fetchone()[0]
+
+    if event_obj[1] == 1:
+        # class
+        cursor.execute(f'insert into classes (id, credits, count, total) values ({id_of_new_event}, 100, 0, 10);')
+    else:
+        # regular
+        pass
+
     conn.commit()
-    # cursor.execute("REPLACE INTO events (id, type, title, credits, count, total, date)", event_obj)
-    # conn.commit()
 
 
 def edit_event(event_obj):
@@ -765,9 +775,11 @@ def remove_event(event_id):
 
     """
     cursor.execute(f'delete from events where id = {event_id};')
+    cursor.execute(f'delete from classes where id = {event_id};')
+
+    # TODO: Delete events from credits 
+
     conn.commit()
-    # cursor.execute("DELETE FROM events WHERE id=?", (event_id, ))
-    # conn.commit()
 
 
 def clear_events():
@@ -805,8 +817,7 @@ def insert_class(class_obj):
     Returns:
         # TODO: Return id
     """
-    cursor.execute(
-        f'insert into classes (credits, count, total) values ({class_obj[1]}, {class_obj[2]}, {class_obj[3]}); ')
+    cursor.execute(f'insert into classes (credits, count, total) values ({class_obj[1]}, {class_obj[2]}, {class_obj[3]}); ')
     conn.commit()
 
 
@@ -864,10 +875,7 @@ def remove_class(class_id):
         # Success delete or not
 
     """
-    cursor.execute(f'delete from classes where id = {class_id};')
-    conn.commit()
-    # cursor.execute("DELETE FROM events WHERE id=?", (event_id, ))
-    # conn.commit()
+    remove_event(class_id)
 
 
 # Credits
