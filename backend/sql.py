@@ -168,6 +168,9 @@ def process_sql(data_raw: list, table: str):
     for line in data_raw:
         data.append({table_fields[table][i]: line[i] for i in range(len(table_fields[table]))})
 
+    if len(data) == 0:  # TODO: Some sh*t
+        data = [{table_fields[table][i]: '' for i in range(len(table_fields[table]))}]
+
     return data
 
 

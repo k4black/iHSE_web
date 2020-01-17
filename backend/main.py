@@ -434,13 +434,7 @@ def admin_panel(env, query, cookie):
         elif table_name == 'codes':
             data = sql.process_sql(sql.get_codes(), 'codes')
         # elif table_name == 'feedback':
-        #     data = []
-        #     for feedback in sql.get_feedback():
-        #         data.append({
-        #             'user_id': feedback[0],
-        #             'days': feedback[1],
-        #             'time': feedback[2]
-        #         })
+        #     data = sql.process_sql(sql.get_feedback(), 'feedback')
         elif table_name == 'projects':
             data = sql.process_sql(sql.get_projects(), 'projects')
         elif table_name == 'events':
