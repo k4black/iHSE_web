@@ -303,7 +303,7 @@ def use_code(code):
     if len(codes_list) == 0 or codes_list[0][2]:
         return False
 
-    cursor.execute(f'update codes set used = {1}, where code = {code};')
+    cursor.execute(f'update codes set used = {1} where code = {code};')
     conn.commit()
 
 
@@ -373,7 +373,7 @@ def edit_credit(credit_obj):
                                 user_id = {credit_obj[1]},
                                 event_id = {credit_obj[2]},
                                 date = \'{credit_obj[3]}\',
-                                value = {credit_obj[4]},
+                                value = {credit_obj[4]}
                             where id = {credit_obj[0]};
                         ''')
     conn.commit()
@@ -678,7 +678,7 @@ def edit_user(user_obj):
                                 pass = {user_obj[4]},
                                 team = {user_obj[5]},
                                 credits = {user_obj[6]},
-                                project_id = {user_obj[7]},
+                                project_id = {user_obj[7]}
                             where id = {user_obj[0]};
                         ''')
     conn.commit()
@@ -808,7 +808,7 @@ def edit_class(class_obj):
     cursor.execute(f'''update classes set
                                 credits = {class_obj[1]},
                                 count = {class_obj[2]},
-                                total = {class_obj[3]},
+                                total = {class_obj[3]}
                             where id = {class_obj[0]};
                         ''')
     conn.commit()
