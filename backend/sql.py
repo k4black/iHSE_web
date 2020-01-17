@@ -775,11 +775,13 @@ def remove_event(event_id):
         # Success delete or not
 
     """
-    cursor.execute(f'update credits set event_id = -1 where event_id = {event_id};')
-
-    cursor.execute(f'delete from classes where id = {event_id};')
-    cursor.execute(f'delete from events where id = {event_id};')
-
+    try:
+        cursor.execute(f'update credits set event_id = -1 where event_id = {event_id};')
+        cursor.execute(f'delete from classes where id = {event_id};')
+        cursor.execute(f'delete from events where id = {event_id};')
+    except (psycopg2.InternalError, psycopg2.IntegrityError) as error:
+        print(error)
+        cursor.execute('rollback;')
     conn.commit()
 
 
