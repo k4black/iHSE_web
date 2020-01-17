@@ -732,9 +732,9 @@ def insert_event(event_obj):
 
     cursor.execute(f'insert into events (id, type, title, description, host, place, time, date) values (default, {event_obj[1]}, \'{event_obj[2]}\', \'{event_obj[3]}\', \'{event_obj[4]}\', \'{event_obj[5]}\', \'{event_obj[6]}\', \'{event_obj[7]}\') RETURNING id;')
     id_of_new_event = cursor.fetchone()[0]
-    print('Added event ID=', id_of_new_event)
+    print('Added event ID=', id_of_new_event, 'type', event_obj[1])
 
-    if event_obj[1] == 1:
+    if int(event_obj[1]) == 1:
         # class
         cursor.execute(f'insert into classes (id, credits, count, total) values ({id_of_new_event}, 100, 0, 10);')
     else:
