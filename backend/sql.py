@@ -355,7 +355,7 @@ def get_credits():
     return credits_list
 
 
-def get_credits(user_id):
+def get_credits_by_id(user_id):
     """ Get all credits of user from sql table
 
     Args:
