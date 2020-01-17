@@ -445,7 +445,7 @@ def edit_project(project_obj):
                                 type = \'{project_obj[2]}\',
                                 def_type = \'{project_obj[3]}\',
                                 direction = \'{project_obj[4]}\',
-                                description = \'{project_obj[5]}\',
+                                description = \'{project_obj[5]}\'
                             where id = {project_obj[0]};
                         ''')
     conn.commit()
