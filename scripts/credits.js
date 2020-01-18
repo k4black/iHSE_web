@@ -113,15 +113,16 @@ function getDays(credits) {
 
 
 events_raw = [
-    {'id': 0, 'type': 2, 'title': 'Some title 0'},
-    {'id': 1, 'type': 2, 'title': 'Some title 1'},
-    {'id': 2, 'type': 2, 'title': 'Some title 2'},
-    {'id': 3, 'type': 2, 'title': 'Some title 3'},
-    {'id': 4, 'type': 2, 'title': 'Some title 4'},
-    {'id': 5, 'type': 2, 'title': 'Some title 5'},
-    {'id': 6, 'type': 2, 'title': 'Some title 6'},
-    {'id': 7, 'type': 2, 'title': 'Some title 7'},
-    {'id': 8, 'type': 2, 'title': 'Some title 8'},
+    {'id': 0, 'type': 1, 'title': 'Some title 0', 'date': '06.10'},
+    {'id': 1, 'type': 1, 'title': 'Some title 1', 'date': '06.10'},
+    {'id': 2, 'type': 1, 'title': 'Some title 2', 'date': '07.10'},
+    {'id': 3, 'type': 1, 'title': 'Some title 3', 'date': '07.10'},
+    {'id': 4, 'type': 1, 'title': 'Some title 4', 'date': '07.10'},
+    {'id': 5, 'type': 1, 'title': 'Some title 5', 'date': '07.10'},
+    {'id': 6, 'type': 1, 'title': 'Some title 6', 'date': '08.10'},
+    {'id': 7, 'type': 1, 'title': 'Some title 7', 'date': '09.10'},
+    {'id': 8, 'type': 1, 'title': 'Some title 8', 'date': '09.10'},
+    {'id': 9, 'type': 1, 'title': 'Some title 9', 'date': '06.10'},
 ];
 
 
@@ -163,7 +164,7 @@ days = getDays(credits);
 
 
 
-function daysToTableColumns(days, events) {
+function getTableColumns(days, events) {
     let columnsTop = [];
     let columnsBottom = [];
 
@@ -238,7 +239,7 @@ function daysToTableColumns(days, events) {
     return [columnsTop, columnsBottom];
 }
 
-function creditsToTableData(credits, days) {
+function getTableData(credits, days) {
     let data = [];
 
     for (let user_id in credits) {
@@ -277,20 +278,20 @@ function creditsToTableData(credits, days) {
 
 
 function buildTable($el, credits, days, events) {
-    let [columnsTop, columnsBottom] = daysToTableColumns(days, events);
-    let data = creditsToTableData(credits, days);
+    let [columnsTop, columnsBottom] = getTableColumns(days, events);
+    let data = getTableData(credits, days);
 
     // console.log('data', data);
 
     $el.bootstrapTable('destroy').bootstrapTable({
-        responseHandler(res) {
-          res.rows.forEach(row => {
-            row.id = {
-              'tableexport-msonumberformat': '\\@'
-            }
-          });
-          return res
-        },
+        // responseHandler(res) {
+        //   res.rows.forEach(row => {
+        //     row.id = {
+        //       'tableexport-msonumberformat': '\\@'
+        //     }
+        //   });
+        //   return res
+        // },
         undefinedText: '0',
         columns: [columnsTop, columnsBottom],
         data: data,
@@ -308,34 +309,118 @@ $(function() {
     let userColumns = ['id', 'name', 'group', 'total'];
 
 
-    $table.on('click-cell.bs.table', function (e, name, args) {
-        if (userColumns.includes(name)) {
+    // $table.on('click-cell.bs.table', function (e, name, args) {
+
+    // })
+
+
+    $table.on('all.bs.table', function (e, name, args) {
+        if (name !== "click-cell.bs.table") {
+            return;
+        }
+
+        if (userColumns.includes(args[0])) {
             return;
         }
 
         console.log(name, args);
-        let date = name.slice(4, 9);
-        let id = name.slice(11);
-        console.log(date, id, id === 'tal');
+        let id = args[2].id;
+        let value = args[1];
+        let date = args[0].slice(4, 9);
+        let event_id = args[0].slice(11);
+        console.log(id, date, event_id, event_id === 'tal');
 
+        if (event_id === 'tal') {
+            // Total
+            addCredit(id, date, 0);
+        } else {
+            // edit some
+            if (value === 0 || value === '0') {
+                editCredit('', id, event_id, date, value);
+            } else {
+                let filtered = credits[id][date].filter(function(credit) {return credit.event_id == event_id});
+                // console.log('credits', credits);
+                // console.log('id/date', id, date, event_id);
+                // console.log('filtered', filtered);
+                let credit_id = '';
+                if (filtered.length !== 0) {
+                    credit_id = filtered[0].id;
+                }
 
+                editCredit(credit_id, id, event_id, date, value);
+            }
+        }
     })
 });
 
 
 
-function add_credit() {
-    edit_credit('', '', 0)
+function addCredit(user_id, date, value) {
+    editCredit('', user_id,'', date,value)
 }
 
-function edit_credit(id, event_id, value) {
+function editCredit(id, user_id, event_id, date, value) {
+    document.getElementById('id').value = id;
+    document.getElementById('user_id').value = user_id;
+    document.getElementById('event_id').value = event_id;
+    document.getElementById('date').value = date;
+    document.getElementById('value').value = value;
 
+    $popup.style.display = 'block';
 }
 
 
 
-function save_credit() {
+function saveCredit() {
+    let id = document.getElementById('id').value;
+    let user_id = document.getElementById('user_id').value;
+    let event_id = document.getElementById('event_id').value;
+    let date = document.getElementById('date').value;
+    let value = document.getElementById('value').value;
 
+    alert('Saving credit: ' + id + ' ' + user_id + ' ' + event_id + ' ' + date + ' ' + value);
+
+    if (date === '' || event_id === '' || value === '') {
+        alert('Cannot save with empty EVENT_ID or DATE or VALUE');
+        return;
+    }
+
+    $popup.style.display = 'none';
+
+    let data = JSON.stringify({
+                                "id": id,
+                                "user_id": user_id,
+                                "event_id": event_id,
+                                "date": date,
+                                "value": value,
+                                });
+
+
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 1) {  // Opened
+            // setLoading();
+        }
+
+        if (this.readyState === 4) {  // When request is done
+            // setLoaded();
+
+            if (this.status === 200) {  // Got it
+                alert("ok!");
+            }
+
+            if (this.status === 405) {  //  Method Not Allowed or already got it
+                alert("Cannot save event! NO PERMISSIONS");  // TODO: show Html error message
+            }
+        }
+    };
+
+    xhttp.open("POST", "http://ihse.tk:50000/save_credit", true);
+    //xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Content-Type', 'text/plain');
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send(data);
 }
 
 
