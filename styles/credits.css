@@ -1,9 +1,9 @@
 .title_cell {
-    background-color: #d8d8d8;
+    background-color: #e5e5e5;
 }
 
-td:has(+ .total_cell)  {
-    background-color: #e6e6e6;
+.total_cell  {
+    background-color: #f3f3f3;
 }
 
 
