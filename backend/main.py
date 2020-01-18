@@ -515,37 +515,71 @@ def admin_panel(env, query, cookie):
         print(f'Update row (raw)  {env["wsgi.input"]} len:{env.get("CONTENT_LENGTH", 0)}')
         obj = get_json_by_response(env)
 
-        if table_name == 'users':
-            data = sql.dict_to_tuple(obj, 'users')
-            sql.edit_user(data)
+        if 'id' not in obj.keys() or obj['id'] == '':
+            if table_name == 'users':
+                data = sql.dict_to_tuple(obj, 'users')
+                sql.insert_user(data)
 
-        elif table_name == 'credits':
-            data = sql.dict_to_tuple(obj, 'credits')
-            sql.edit_credit(data)
+            elif table_name == 'credits':
+                data = sql.dict_to_tuple(obj, 'credits')
+                sql.insert_credit(data)
 
-        elif table_name == 'sessions':
-            data = sql.dict_to_tuple(obj, 'sessions')
-            sql.edit_session(data)
+            elif table_name == 'sessions':
+                data = sql.dict_to_tuple(obj, 'sessions')
+                sql.insert_session(data)
 
-        elif table_name == 'codes':
-            data = sql.dict_to_tuple(obj, 'codes')
-            sql.edit_code(data)
+            elif table_name == 'codes':
+                data = sql.dict_to_tuple(obj, 'codes')
+                sql.insert_code(data)
 
-        # elif table_name == 'feedback':
-        #     data = sql.dict_to_tuple(obj, 'feedback')
-        #     sql.edit_feedback(data)
+                # elif table_name == 'feedback':
+                #     data = sql.dict_to_tuple(obj, 'users')
+                #     sql.insert_feedback(data)
 
-        elif table_name == 'projects':
-            data = sql.dict_to_tuple(obj, 'projects')
-            sql.edit_project(data)
+            elif table_name == 'projects':
+                data = sql.dict_to_tuple(obj, 'projects')
+                sql.insert_project(data)
 
-        elif table_name == 'events':
-            data = sql.dict_to_tuple(obj, 'events')
-            sql.edit_event(data)
+            elif table_name == 'events':
+                data = sql.dict_to_tuple(obj, 'events')
+                sql.insert_event(data)
 
-        elif table_name == 'classes':
-            data = sql.dict_to_tuple(obj, 'classes')
-            sql.edit_class(data)
+            elif table_name == 'classes':
+                data = sql.dict_to_tuple(obj, 'classes')
+                sql.insert_class(data)
+
+        else:
+            if table_name == 'users':
+                data = sql.dict_to_tuple(obj, 'users')
+                sql.edit_user(data)
+
+            elif table_name == 'credits':
+                data = sql.dict_to_tuple(obj, 'credits')
+                sql.edit_credit(data)
+
+            elif table_name == 'sessions':
+                data = sql.dict_to_tuple(obj, 'sessions')
+                sql.edit_session(data)
+
+            elif table_name == 'codes':
+                data = sql.dict_to_tuple(obj, 'codes')
+                sql.edit_code(data)
+
+            # elif table_name == 'feedback':
+            #     data = sql.dict_to_tuple(obj, 'feedback')
+            #     sql.edit_feedback(data)
+
+            elif table_name == 'projects':
+                data = sql.dict_to_tuple(obj, 'projects')
+                sql.edit_project(data)
+
+            elif table_name == 'events':
+                data = sql.dict_to_tuple(obj, 'events')
+                sql.edit_event(data)
+
+            elif table_name == 'classes':
+                data = sql.dict_to_tuple(obj, 'classes')
+                sql.edit_class(data)
 
         return ('200 OK',
                 [
