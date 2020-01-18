@@ -416,7 +416,8 @@ function saveCredit() {
         }
     };
 
-    xhttp.open("POST", "http://ihse.tk:50000/save_credit", true);
+
+    xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table=credits", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
