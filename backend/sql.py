@@ -777,10 +777,10 @@ def edit_event(event_obj):
     cursor.execute(f'''update events set
                                 type = {event_obj[1]},
                                 title = \'{event_obj[2]}\',
-                                description = {event_obj[3]},
-                                host = {event_obj[4]},
-                                place = {event_obj[5]},
-                                time = \'{event_obj[6]}\'
+                                description = \'{event_obj[3]}\',
+                                host = \'{event_obj[4]}\',
+                                place = \'{event_obj[5]}\',
+                                time = \'{event_obj[6]}\',
                                 date = \'{event_obj[7]}\'
                             where id = {event_obj[0]};
                         ''')
