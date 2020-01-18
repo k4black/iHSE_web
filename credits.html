@@ -53,16 +53,38 @@
         <nav class="arrow">
             <button class="arrow__button">
                 <i class="mobile__item__icon large material-icons">arrow_back</i>
-
             </button>
         </nav>
 
         <div class="title">Админ-Кредиты</div>
     </div>
-
 </header>
 
+<div class="overlay admin_element" id="popup">
+    <div class="popup_body">
+        <a class="close" onclick="document.getElementById('popup').style.display = 'none'">Close</a>
+
+        <div style="display: block">
+            <label for="id">id</label>
+            <input id="id" value="" type="text" disabled>
+        </div>
+
+        <div>
+            <label for="event_id">event_id</label>
+            <input id="event_id" value="" type="text" style="width:200px">
+        </div>
+
+        <div>
+            <label for="value">value</label>
+            <input id="value" value="0" type="text" style="width:200px">
+        </div>
+
+        <button onclick="document.getElementById('popup').style.display = 'none';saveEvent()">Save</button>
+    </div>
+</div>
+
 <div class="wrapper">
+
     <div id="toolbar">
         <button id="addCredit" class="btn btn-primary">
             <i class="fa fa-plus"></i> Add New Column

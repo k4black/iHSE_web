@@ -921,7 +921,7 @@ def insert_credit(credit_obj):
 
     Returns:
     """
-    cursor.execute(f'insert into credits (user_id, event_id, date, value) values ({credit_obj[1]}, {credit_obj[2]}, \'{credit_obj[3]}\', {credit_obj[4]}); ')
+    cursor.execute(f'insert into credits (id, user_id, event_id, date, value) values (default, {credit_obj[1]}, {credit_obj[2]}, \'{credit_obj[3]}\', {credit_obj[4]}); ')
     conn.commit()
 
 
@@ -933,7 +933,6 @@ def edit_credit(credit_obj):
 
     Returns:
     """
-    # test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
     cursor.execute(f'''update credits set
                                 user_id = {credit_obj[1]},
                                 event_id = {credit_obj[2]},

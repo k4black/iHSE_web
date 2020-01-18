@@ -11,8 +11,13 @@
 
 
 var $table = $('#table');
+var $popup = $('#popup')[0];
 
 
+
+function creditsFormatter(value, row, index) {
+    return '<div class="item" id="' + row.id + '">' + '<p>' + value + '</p></div>'
+}
 
 
 function groupBy(arr, property) {
@@ -108,15 +113,15 @@ function getDays(credits) {
 
 
 events_raw = [
-    {'id': 0, 'type': 2, 'title': 'Some title'},
-    {'id': 1, 'type': 2, 'title': 'Some title'},
-    {'id': 2, 'type': 2, 'title': 'Some title'},
-    {'id': 3, 'type': 2, 'title': 'Some title'},
-    {'id': 4, 'type': 2, 'title': 'Some title'},
-    {'id': 5, 'type': 2, 'title': 'Some title'},
-    {'id': 6, 'type': 2, 'title': 'Some title'},
-    {'id': 7, 'type': 2, 'title': 'Some title'},
-    {'id': 8, 'type': 2, 'title': 'Some title'},
+    {'id': 0, 'type': 2, 'title': 'Some title 0'},
+    {'id': 1, 'type': 2, 'title': 'Some title 1'},
+    {'id': 2, 'type': 2, 'title': 'Some title 2'},
+    {'id': 3, 'type': 2, 'title': 'Some title 3'},
+    {'id': 4, 'type': 2, 'title': 'Some title 4'},
+    {'id': 5, 'type': 2, 'title': 'Some title 5'},
+    {'id': 6, 'type': 2, 'title': 'Some title 6'},
+    {'id': 7, 'type': 2, 'title': 'Some title 7'},
+    {'id': 8, 'type': 2, 'title': 'Some title 8'},
 ];
 
 
@@ -158,7 +163,7 @@ days = getDays(credits);
 
 
 
-function daysToTableColumns(days) {
+function daysToTableColumns(days, events) {
     let columnsTop = [];
     let columnsBottom = [];
 
@@ -192,15 +197,17 @@ function daysToTableColumns(days) {
             columnsBottom.push({
                 field: 'date' + date + 'id' + i,
                 title: i,
+                titleTooltip: 'Title: ' + events[i].title,
                 sortable: true,
                 align: 'center',
                 valign: 'middle',
-                formatter: function (val) {
-                    return '<div class="item">' + val + '</div>'
-                },
+                formatter: creditsFormatter,
+                // formatter: function (val) {
+                //     return '<div class="item">' + val + '</div>'
+                // },
                 events: {
-                    'click .item': function () {
-                        console.log('click')
+                    'click .item': function (event) {
+                        console.log('click ' + event.currentTarget)
                     }
                 }
             });
@@ -269,13 +276,21 @@ function creditsToTableData(credits, days) {
 
 
 
-function buildTable($el, credits, days) {
-    let [columnsTop, columnsBottom] = daysToTableColumns(days);
+function buildTable($el, credits, days, events) {
+    let [columnsTop, columnsBottom] = daysToTableColumns(days, events);
     let data = creditsToTableData(credits, days);
 
     // console.log('data', data);
 
     $el.bootstrapTable('destroy').bootstrapTable({
+        responseHandler(res) {
+          res.rows.forEach(row => {
+            row.id = {
+              'tableexport-msonumberformat': '\\@'
+            }
+          });
+          return res
+        },
         undefinedText: '0',
         columns: [columnsTop, columnsBottom],
         data: data,
@@ -287,26 +302,42 @@ function buildTable($el, credits, days) {
 
 
 $(function() {
-    buildTable($table, credits, getDays(credits));
+    buildTable($table, credits, getDays(credits), events);
     // testBuild($table, 3, 5, 3);
+
+    let userColumns = ['id', 'name', 'group', 'total'];
+
+
+    $table.on('click-cell.bs.table', function (e, name, args) {
+        if (userColumns.includes(name)) {
+            return;
+        }
+
+        console.log(name, args);
+        let date = name.slice(4, 9);
+        let id = name.slice(11);
+        console.log(date, id, id === 'tal');
+
+
+    })
 });
 
 
 
-function operateFormatter(value, row, index) {
-return [
-    '<button class="edit" href="javascript:void(0)" title="Edit">',
-        // '<i class="fa fa-wrench"></i> ',
-        '<i class="material-icons" style="font-size:15px">build</i>',
-        'Edit',
-    '</button>',
-    '<button class="remove danger_button" href="javascript:void(0)" title="Remove">',
-        // '<i class="fa fa-trash"></i> ',
-        '<i class="material-icons" style="font-size:18px">delete</i>',
-        '<p>Remove</p>',
-    '</button>'
-].join('')
+function add_credit() {
+    edit_credit('', '', 0)
 }
+
+function edit_credit(id, event_id, value) {
+
+}
+
+
+
+function save_credit() {
+
+}
+
 
 
 /** ===============  LOGIC and REQUESTS  =============== */
