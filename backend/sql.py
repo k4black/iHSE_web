@@ -1,6 +1,8 @@
-import sqlite3
 import time
 import string
+import typing as tp
+
+import sqlite3
 import psycopg2
 
 
@@ -154,7 +156,7 @@ table_fields = {
 }
 
 
-def process_sql(data_raw: list, table: str):
+def process_sql(data_raw: tp.List[tp.Tuple[tp.Any]], table: str) -> tp.List[tp.Dict[str, tp.Any]]:
     data = []
 
     for line in data_raw:
@@ -164,6 +166,21 @@ def process_sql(data_raw: list, table: str):
         data = [{table_fields[table][i]: '' for i in range(len(table_fields[table]))}]
 
     return data
+
+
+def dict_to_tuple(data_raw: tp.Dict[str, tp.Any], table: str) -> tp.Tuple[tp.Any]:
+    data = []  # type: tp.List[tp.Any]
+
+    for field in table_fields[table]:
+        try:
+            if field == 'id' and data_raw[field] == '':
+                data.append(None)  # No id. Replace by None
+            else:
+                data.append(data_raw[field])
+        except KeyError:
+            data.append(None)  # if no field
+
+    return tuple(data)
 
 
 """ ---===---==========================================---===--- """
@@ -780,7 +797,7 @@ def remove_event(event_id):
 
     """
     if event_id == 0 or event_id == '0':
-        return 
+        return
 
     try:
         cursor.execute(f'update credits set event_id = 0 where event_id = {event_id};')

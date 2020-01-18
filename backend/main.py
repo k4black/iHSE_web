@@ -517,71 +517,69 @@ def admin_panel(env, query, cookie):
 
         if 'id' not in obj.keys() or obj['id'] == '':
             if table_name == 'users':
-                data = (None, obj['type'], obj['phone'], obj['name'], obj['pass'], obj['team'], obj['credits'],
-                        obj['avatar'], obj['project_id'])
+                data = sql.dict_to_tuple(obj, 'users')
                 sql.insert_user(data)
 
             elif table_name == 'credits':
-                data = (None, obj['user_id'], obj['event_id'], obj['date'], obj['value'])
+                data = sql.dict_to_tuple(obj, 'credits')
                 sql.insert_credit(data)
 
             elif table_name == 'sessions':
-                data = (None, obj['user_id'], obj['user_type'], obj['user_agent'], obj['last_ip'], obj['time'])
+                data = sql.dict_to_tuple(obj, 'sessions')
                 sql.insert_session(data)
 
             elif table_name == 'codes':
-                data = (obj['code'], obj['type'], obj['used'])
+                data = sql.dict_to_tuple(obj, 'codes')
                 sql.insert_code(data)
 
                 # elif table_name == 'feedback':
-                #     data = (obj['user_id'], obj['days'], obj['time'])
+                #     data = sql.dict_to_tuple(obj, 'users')
                 #     sql.insert_feedback(data)
 
             elif table_name == 'projects':
-                data = (None, obj['title'], obj['type'], obj['def_type'], obj['direction'], obj['description'])
+                data = sql.dict_to_tuple(obj, 'projects')
                 sql.insert_project(data)
 
             elif table_name == 'events':
-                data = (None, obj['type'], obj['title'], obj['description'], obj['host'], obj['place'], obj['time'], obj['date'])
+                data = sql.dict_to_tuple(obj, 'events')
                 sql.insert_event(data)
 
             elif table_name == 'classes':
-                data = (None, obj['credits'], obj['count'], obj['total'])
+                data = sql.dict_to_tuple(obj, 'classes')
                 sql.insert_class(data)
 
         else:
             if table_name == 'users':
-                data = (obj['id'], obj['type'], obj['phone'], obj['name'], obj['pass'], obj['team'], obj['credits'], obj['avatar'], obj['project_id'])
+                data = sql.dict_to_tuple(obj, 'users')
                 sql.edit_user(data)
 
             elif table_name == 'credits':
-                data = (obj['id'], obj['user_id'], obj['event_id'], obj['date'], obj['value'])
+                data = sql.dict_to_tuple(obj, 'credits')
                 sql.edit_credit(data)
 
             elif table_name == 'sessions':
-                data = (obj['id'], obj['user_id'], obj['user_type'], obj['user_agent'], obj['last_ip'], obj['time'])
+                data = sql.dict_to_tuple(obj, 'sessions')
                 sql.edit_session(data)
 
             elif table_name == 'codes':
-                data = (obj['code'], obj['type'], obj['used'])
+                data = sql.dict_to_tuple(obj, 'codes')
                 sql.edit_code(data)
 
             # elif table_name == 'feedback':
-            #     data = (ibj['user_id'], obj['days'], obj['time'])
+            #     data = sql.dict_to_tuple(obj, 'feedback')
             #     sql.edit_feedback(data)
 
             elif table_name == 'projects':
-                data = (obj['id'], obj['title'], obj['type'], obj['def_type'], obj['direction'], obj['description'])
+                data = sql.dict_to_tuple(obj, 'projects')
                 sql.edit_project(data)
 
             elif table_name == 'events':
-                data = (obj['id'], obj['type'], obj['title'], obj['description'], obj['host'], obj['place'], obj['time'], obj['date'])
+                data = sql.dict_to_tuple(obj, 'events')
                 sql.edit_event(data)
 
             elif table_name == 'classes':
-                data = (obj['id'], obj['credits'], obj['count'], obj['total'])
+                data = sql.dict_to_tuple(obj, 'classes')
                 sql.edit_class(data)
-
 
         return ('200 OK',
                 [
