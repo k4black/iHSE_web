@@ -575,7 +575,6 @@ def admin_panel(env, query, cookie):
 
             elif table_name == 'events':
                 data = sql.dict_to_tuple(obj, 'events')
-                print(data)
                 sql.edit_event(data)
 
             elif table_name == 'classes':

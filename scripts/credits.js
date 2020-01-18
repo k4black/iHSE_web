@@ -157,13 +157,6 @@ users_raw = [
 
 
 
-events = processEvents(events_raw);
-users = processUsers(users_raw);
-credits = processCredits(credits_raw);
-days = getDays(credits);
-
-
-
 function getTableColumns(days, events) {
     let columnsTop = [];
     let columnsBottom = [];
@@ -239,7 +232,7 @@ function getTableColumns(days, events) {
     return [columnsTop, columnsBottom];
 }
 
-function getTableData(credits, days) {
+function getTableData(credits, users, days) {
     let data = [];
 
     for (let user_id in credits) {
@@ -277,9 +270,9 @@ function getTableData(credits, days) {
 
 
 
-function buildTable($el, credits, days, events) {
+function buildTable($el, credits, users, days, events) {
     let [columnsTop, columnsBottom] = getTableColumns(days, events);
-    let data = getTableData(credits, days);
+    let data = getTableData(credits, users, days);
 
     // console.log('data', data);
 
@@ -302,16 +295,22 @@ function buildTable($el, credits, days, events) {
 }
 
 
-$(function() {
-    buildTable($table, credits, getDays(credits), events);
-    // testBuild($table, 3, 5, 3);
+var readyStatus = 0; // +1 For each loaded table (users, events, credits)
+
+function checkCreateTable(events_raw, users_raw, credits_raw) {
+    if (readyStatus < 3) {
+        return;
+    }
+
+
+    let events = processEvents(events_raw);
+    let users = processUsers(users_raw);
+    let credits = processCredits(credits_raw);
+
+
+    buildTable($table, credits, users, getDays(credits), events);
 
     let userColumns = ['id', 'name', 'group', 'total'];
-
-
-    // $table.on('click-cell.bs.table', function (e, name, args) {
-
-    // })
 
 
     $table.on('all.bs.table', function (e, name, args) {
@@ -351,6 +350,95 @@ $(function() {
             }
         }
     })
+}
+
+
+
+
+
+
+function loadEvents() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+                events_raw = JSON.parse(this.responseText);
+                readyStatus++;
+                checkCreateTable(events_raw, users_raw, credits_raw);
+            }
+            else if (this.status === 401) {  // No account data
+                alert('Требуется авторизация!');
+            } else {
+                alert('Требуется авторизация!');
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + 'events', true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+function loadUsers() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+                users_raw = JSON.parse(this.responseText);
+                readyStatus++;
+                checkCreateTable(events_raw, users_raw, credits_raw);
+            }
+            else if (this.status === 401) {  // No account data
+                alert('Требуется авторизация!');
+            } else {
+                alert('Требуется авторизация!');
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + 'users', true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+function loadCredits() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+                credits_raw = JSON.parse(this.responseText);
+                readyStatus++;
+                checkCreateTable(events_raw, users_raw, credits_raw);
+            }
+            else if (this.status === 401) {  // No account data
+                alert('Требуется авторизация!');
+            } else {
+                alert('Требуется авторизация!');
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + 'credits', true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+
+function loadAndCreateTable() {
+    readyStatus = 0;
+
+    // Loading of tables (users, events, credits)
+    loadEvents();
+    loadCredits();
+    loadUsers();
+}
+
+
+$(function() {
+    loadAndCreateTable();
 });
 
 
@@ -408,6 +496,9 @@ function saveCredit() {
 
             if (this.status === 200) {  // Got it
                 alert("ok!");
+                // TODO: Optimize?
+                loadAndCreateTable();
+
             }
 
             if (this.status === 405) {  //  Method Not Allowed or already got it
