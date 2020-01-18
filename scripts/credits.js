@@ -149,9 +149,9 @@ credits_raw = [
 
 
 users_raw = [
-    {'id': 4, name: 'Boiko Tcar', 'group': 2, 'total': 777},
-    {'id': 3, name: 'Inav Petrovich', 'group': 0, 'total': 666},
-    {'id': 1, name: 'Max Pedroviv', 'group': 1, 'total': 999},
+    {'id': 4, 'name': 'Boiko Tcar', 'team': 2, 'credits': 777},
+    {'id': 3, 'name': 'Inav Petrovich', 'team': 0, 'credits': 666},
+    {'id': 1, 'name': 'Max Pedroviv', 'team': 1, 'credits': 999},
 ];
 
 
@@ -245,8 +245,8 @@ function getTableData(credits, users, days) {
 
         row['id'] = user_id;
         row['name'] = users[user_id].name;
-        row['group'] = users[user_id].group;
-        row['total'] = users[user_id].total;
+        row['group'] = users[user_id].team;
+        row['total'] = users[user_id].credits;
 
         // To avoid undef
         for (let date in days) {
@@ -313,6 +313,17 @@ function checkCreateTable(events_raw, users_raw, credits_raw) {
 
 
     buildTable($table, credits, users, getDays(credits), events);
+
+
+    let totalCells = $('.total_cell');
+    for (let i in totalCells) {
+        totalCells[i].parentNode.style.background = '#e6e6e6';
+    }
+
+    let titleCells = $('.title_cell');
+    for (let i in titleCells) {
+        titleCells[i].parentNode.style.background = '#d8d8d8';
+    }
 
     let userColumns = ['id', 'name', 'group', 'total'];
 
