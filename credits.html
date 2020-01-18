@@ -64,29 +64,31 @@
     <div class="popup_body">
         <a class="close" onclick="document.getElementById('popup').style.display = 'none'">Close</a>
 
-        <div style="display: block">
-            <label for="id">id</label>
-            <input id="id" value="" type="text" disabled>
-        </div>
+        <div class="fields">
+            <div style="display: block">
+                <label for="id">id</label>
+                <input id="id" value="" type="text" disabled>
+            </div>
 
-        <div>
-            <label for="user_id">user_id</label>
-            <input id="user_id" value="" type="text" style="width:200px" disabled>
-        </div>
+            <div>
+                <label for="user_id">user_id</label>
+                <input id="user_id" value="" type="text" style="width:200px" disabled>
+            </div>
 
-        <div>
-            <label for="event_id">event_id</label>
-            <input id="event_id" value="" type="text" style="width:200px" disabled>
-        </div>
+            <div>
+                <label for="event_id">event_id</label>
+                <input id="event_id" value="" type="text" style="width:200px" disabled>
+            </div>
 
-        <div>
-            <label for="date">date</label>
-            <input id="date" value="" type="text" style="width:200px" disabled>
-        </div>
+            <div>
+                <label for="date">date</label>
+                <input id="date" value="" type="text" style="width:200px" disabled>
+            </div>
 
-        <div>
-            <label for="value">value</label>
-            <input id="value" value="0" type="text" style="width:200px">
+            <div>
+                <label for="value">value</label>
+                <input id="value" value="0" type="text" style="width:200px">
+            </div>
         </div>
 
         <button onclick="document.getElementById('popup').style.display = 'none';saveCredit()">Save</button>

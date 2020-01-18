@@ -142,49 +142,51 @@
         <div class="popup_body" >
             <a class="close" onclick="document.getElementById('popup').style.display = 'none'">Close</a>
 
-            <div style="display: block">
-                <label for="id">id</label>
-                <input id="id" value="" type="text" disabled>
-            </div>
+            <div class="fields">
+                <div style="display: block">
+                    <label for="id">id</label>
+                    <input id="id" value="" type="text" disabled>
+                </div>
 
-            <div>
-                <label for="title">title</label>
-                <input id="title" value="" type="text" style="width:400px">
-            </div>
+                <div>
+                    <label for="title">title</label>
+                    <input id="title" value="" type="text" style="width:400px">
+                </div>
 
-            <div>
-                <label for="type">type</label>
-                <select size="1" id="type" style="width: 200px;font-size: 15px">
-                    <option value="regular" selected>regular</option>
-                    <option value="master">master</option>
-                    <option value="lection">lection</option>
-                </select>
-            </div>
+                <div>
+                    <label for="type">type</label>
+                    <select size="1" id="type" style="width: 200px;font-size: 15px">
+                        <option value="regular" selected>regular</option>
+                        <option value="master">master</option>
+                        <option value="lection">lection</option>
+                    </select>
+                </div>
 
-            <div>
-                <label for="date">date [DD.MM]</label>
-                <input id="date" value="" type="text">
-            </div>
+                <div>
+                    <label for="date">date [DD.MM]</label>
+                    <input id="date" value="" type="text">
+                </div>
 
-            <div>
-                <label for="time1">time [from:to]</label>
-                <input id="time1" value="" type="text">
-                <input id="time2" value="" type="text">
-            </div>
+                <div>
+                    <label for="time1">time [from:to]</label>
+                    <input id="time1" value="" type="text">
+                    <input id="time2" value="" type="text">
+                </div>
 
-            <div>
-                <label for="desc">description</label>
-                <textarea id="desc" cols="40" rows="3" style="font-size: 15px;"></textarea>
-            </div>
+                <div>
+                    <label for="desc">description</label>
+                    <textarea id="desc" cols="40" rows="3" style="font-size: 15px;"></textarea>
+                </div>
 
-            <div>
-                <label for="names">host</label>
-                <input id="names" value="" type="text">
-            </div>
+                <div>
+                    <label for="names">host</label>
+                    <input id="names" value="" type="text">
+                </div>
 
-            <div>
-                <label for="location">location</label>
-                <input id="location" value="" type="text">
+                <div>
+                    <label for="location">location</label>
+                    <input id="location" value="" type="text">
+                </div>
             </div>
 
             <button onclick="document.getElementById('popup').style.display = 'none';saveEvent()">Save</button>
