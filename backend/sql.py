@@ -251,18 +251,21 @@ def edit_project(project_obj):
     conn.commit()
 
 
-def remove_project(projects_id):
+def remove_project(project_id):
     """ Delete project by id
 
     Args:
-        projects_id: projects id from bd
+        project_id: projects id from bd
 
     Returns:
         # Success delete or not
-
     """
-    cursor.execute(f'update users set project_id = -1 where project_id = {projects_id};')
-    cursor.execute(f'delete from projects where id = {projects_id};')
+
+    if project_id == 0 or project_id == '0':
+        return
+
+    cursor.execute(f'update users set project_id = 0 where project_id = {project_id};')
+    cursor.execute(f'delete from projects where id = {project_id};')
     conn.commit()
 
 
@@ -272,7 +275,8 @@ def clear_projects():
     Args:
     Returns:
     """
-    cursor.execute('delete from projects;')
+
+    cursor.execute('delete from projects where id != 0;')
     conn.commit()
 
 
@@ -775,8 +779,11 @@ def remove_event(event_id):
         # Success delete or not
 
     """
+    if event_id == 0 or event_id == '0':
+        return 
+
     try:
-        cursor.execute(f'update credits set event_id = -1 where event_id = {event_id};')
+        cursor.execute(f'update credits set event_id = 0 where event_id = {event_id};')
         cursor.execute(f'delete from classes where id = {event_id};')
         cursor.execute(f'delete from events where id = {event_id};')
     except (psycopg2.InternalError, psycopg2.IntegrityError) as error:
@@ -791,7 +798,7 @@ def clear_events():
     Args:
     Returns:
     """
-    cursor.execute('delete from events;')
+    cursor.execute('delete from events where id != 0;;')
     conn.commit()
 
 
