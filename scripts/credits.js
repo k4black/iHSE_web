@@ -317,12 +317,12 @@ function checkCreateTable(events_raw, users_raw, credits_raw) {
 
     let totalCells = $('.total_cell');
     for (let i = 0; i < totalCells.length; ++i) {
-        totalCells[i].parentNode.style.background = '#0000010';
+        totalCells[i].parentNode.style.background = '#00000005';
     }
 
     let titleCells = $('.title_cell');
     for (let i = 0; i < titleCells.length; ++i) {
-        titleCells[i].parentNode.style.background = '#000001f';
+        titleCells[i].parentNode.style.background = '#0000000f';
     }
 
     let userColumns = ['id', 'name', 'group', 'total'];
