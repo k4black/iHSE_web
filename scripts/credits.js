@@ -175,7 +175,10 @@ function getTableColumns(days, events) {
             sortable: true,
             rowspan: 2,
             valign: 'middle',
-            filter: "input"
+            filter: "input",
+            formatter: function (val) {
+                return '<div class="title_cell">' + val + '</div>'
+            }
         });
     }
 
@@ -213,7 +216,7 @@ function getTableColumns(days, events) {
             align: 'center',
             valign: 'middle',
             formatter: function (val) {
-                return '<div class="total">' + val + '</div>'
+                return '<div class="total total_cell">' + val + '</div>'
             }
         });
     }

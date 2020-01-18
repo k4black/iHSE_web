@@ -1,67 +1,10 @@
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 999;
-    display: none
+.title_cell {
+    background-color: #a1a1a1;
 }
 
-.popup_body {
-    position: fixed;
-    padding:20px;
-    top: 50%;
-    left: 50%;
-
-    width: 700px;
-    height: 500px;
-    margin: -220px 0 0 -345px;
-    background: #e9e9e9;
-    border-radius: 5px;
+.total_cell {
+    background-color: #d8d8d8;
 }
-
-.popup_body .fields {
-    width: 100%;
-    height: 95%;
-}
-
-.popup_body .fields input {
-    width: 200px;
-    height: 50px;
-}
-
-
-.popup_body .fields label {
-    width: 200px;
-    height: 50px;
-    position: static;
-}
-
-
-.popup_body a.close {
-    position: relative;
-    z-index: 1100;
-    float: right;
-    margin: 15px 15px 0 0;
-    display: block;
-    height: fit-content;
-    width: fit-content;
-}
-
-.popup_body button {
-    width: 100px;
-    height: 30px;
-}
-
-.popup_body a.close:hover {background-position: 0 12px}
-
-
-
-
-
-
 
 
 
