@@ -391,11 +391,11 @@ def insert_user(user_obj):
     """ Insert user
 
     Args:
-        user_obj: user obj (None, user_type, phone, name, pass, team, credits, project_id)
+        user_obj: user obj (None, user_type, phone, name, pass, team, credits, avatar, project_id)
 
     Returns:
     """
-    cursor.execute(f'insert into users (user_type, phone, name, pass, team, credits, project_id) values ({user_obj[1]}, \'{user_obj[2]}\', \'{user_obj[3]}\', {user_obj[4]}, {user_obj[5]}, {user_obj[6]}, {user_obj[7]}); ')
+    cursor.execute(f'insert into users (user_type, phone, name, pass, team, credits, avatar, project_id) values ({user_obj[1]}, \'{user_obj[2]}\', \'{user_obj[3]}\', {user_obj[4]}, {user_obj[5]}, {user_obj[6]}, \'{user_obj[7]}\', {user_obj[8]}); ')
     conn.commit()
 
 
@@ -403,7 +403,7 @@ def edit_user(user_obj):
     """ Update user
 
     Args:
-        user_obj: user obj (id, user_type, phone, name, pass, team, credits, project_id)
+        user_obj: user obj (id, user_type, phone, name, pass, team, credits, avatar, project_id)
 
     Returns:
     """
@@ -415,7 +415,8 @@ def edit_user(user_obj):
                                 pass = {user_obj[4]},
                                 team = {user_obj[5]},
                                 credits = {user_obj[6]},
-                                project_id = {user_obj[7]}
+                                avatar = \'{user_obj[7]}\',
+                                project_id = {user_obj[8]}
                             where id = {user_obj[0]};
                         ''')
     conn.commit()
