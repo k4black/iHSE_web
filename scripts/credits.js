@@ -331,6 +331,7 @@ function checkCreateTable(events_raw, users_raw, credits_raw) {
 
         if (event_id === 'tal') {
             // Total
+            return;
             addCredit(id, date, 0);
         } else {
             // edit some
