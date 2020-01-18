@@ -235,7 +235,8 @@ function getTableColumns(days, events) {
 function getTableData(credits, users, days) {
     let data = [];
 
-    for (let user_id in credits) {
+    // for (let user_id in credits) {
+    for (let user_id in users) {
 
         row = {};
 
