@@ -1,6 +1,30 @@
 
 
 
+.user_type, .event_type {
+    width: 100px;
+    height: 30px;
+
+    color: #cccccc;
+    border-radius: 5px;
+    border: 1px solid #a1a1a1;
+}
+
+
+.regular_user, .regular_event {
+    background-color: #307bbb;
+}
+
+.moderator_user, .class_event {
+    background-color: #e08833;
+}
+
+.admin_user {
+    background-color: #DB2828;
+}
+
+
+
 .replaced_cell {
     font-style: italic;
 }

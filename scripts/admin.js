@@ -151,6 +151,39 @@ function getTableColumns(tableName, fields) {
                     }
                 },
             });
+        } else if (fields[tableName][i] === 'user_type' || (tableName === 'events' && fields[tableName][i] === 'type')) {
+            columns.push({
+                title: fields[tableName][i],
+                field: fields[tableName][i],
+                sortable: 'true',
+                formatter: function (val) {
+                    try {
+                        if (fields[tableName][i] === 'user_type') {
+                            if (val === 0 || val === '0') {
+                                // Regualr user
+                                return '<div class="user_type regular_user" user_type=' + val + ' title="user_type: ' + val + '">regular</div>'
+                            } else if (val === 1 || val === '1') {
+                                // Moderator
+                                return '<div class="user_type moderator_user" user_type=' + val + ' title="user_type: ' + val + '">moderator</div>'
+                            } else if (val === 2 || val === '2') {
+                                // Admin
+                                return '<div class="user_type admin_user" user_type=' + val + ' title="user_type: ' + val + '">admin</div>'
+                            }
+                        }
+                        if (tableName === 'events' && fields[tableName][i] === 'type') {
+                            if (val === 0 || val === '0') {
+                                // Regualr event
+                                return '<div class="event_type regular_event" event_type=' + val + ' title="event_type: ' + val + '">regular</div>'
+                            } else if (val === 1 || val === '1') {
+                                // Class
+                                return '<div class="event_type class_event" event_type=' + val + ' title="event_type: ' + val + '">class</div>'
+                            }
+                        }
+                    } catch (err) {
+                        console.log('Error', err)
+                    }
+                },
+            });
         } else {
             columns.push({
                 title: fields[tableName][i],
