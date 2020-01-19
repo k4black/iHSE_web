@@ -5,6 +5,10 @@
  */
 
 
+
+
+
+
 // TODO: chart when 2-3 credits only
 (function(w) {
     //private variable
@@ -221,115 +225,175 @@ function createBar() {
 
 
 
+// TODO: get days from server
+var days = ['05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06', '13.06', '14.06', '15.06', '16.06', '17.06', '18.06'];
+
+var data = [30, 40, 35, 0, 9, 16, 30, 21, 12, 0, 0];
+var dataShort = [30, 40, 35, 0, 9, 16, 30, 21, 12];
+
 
 /**
  * Setup linechart - credits for days
- * https://apexcharts.com/docs/installation/
- * todo: optimize
+ * https://apexcharts.com/
  */
-startDay = 5;
-startMonth = 6;
-numOfDays = 14;
+// import ApexCharts from 'apexcharts'
+function setupCreditsChart(days, data, dataShort) {
+    var options = {
+        chart: {
+            height: '105%',
+            width: Math.min(data.length * 50, 450) ,
+            // type: 'line',
+            zoom: {
+                enabled: false
+            },
+            toolbar: {
+                show: false
+            }
+        },
+        colors: ['#007ac5', "#e39100"],
+        // title: {
+        //   text: 'Credits story'
+        // },
+        legend: {
+            show: false
+        },
+        tooltip: {
+            enabled: false,
+            // enabledOnSeries: [0]
+        },
+        fill: {
+            colors: ['#007ac5']
+        },
+        dataLabels: {
+            // enabled: true,
+            enabledOnSeries: [1]
+        },
+        stroke: {
+            // curve: 'straight',
+            curve: ['smooth', 'straight']
+        },
+        series: [{
+          name: 'Credits',
+          type: 'column',
+          data: data
+        }, {
+          type: 'line',
+          data: dataShort
+        }],
+        animations: {
+            enabled: true,
+            easing: 'easeinout',
+            speed: 800,
+            animateGradually: {
+                enabled: true,
+                delay: 150
+            },
+            dynamicAnimation: {
+                enabled: true,
+                speed: 350
+            }
+        },
+        background: '#fff',
+        grid: {
+            // borderColor: '#111',
+            row: {
+                // colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                opacity: 0.5
+            },
+        },
+        // labels: series.monthDataSeries1.dates,
+        xaxis: {
+            categories: days,
+        },
+    };
 
-topbar_html = "";
-
-var days = [];
-for (var i = 0; i < numOfDays; ++i) {
-    let day_text = (startDay + i) + '.' + ('' + startMonth).padStart(2, '0');
-    days.push( day_text );
+    var chart = new ApexCharts(document.querySelector('#credits__chart'), options);
+    chart.render();
 }
 
 
-// Get chart data
-data = [1, 2, 3, 4, 5];
 
-function createChart() {
 
+function groupBy(arr, property) {
+    return arr.reduce(function(memo, x) {
+        if (!memo[x[property]]) {
+            memo[x[property]] = [];
+        }
+        memo[x[property]].push(x);
+        return memo;
+    }, {});
 }
-var xhttp = new XMLHttpRequest();
 
-xhttp.onreadystatechange = function () {
-    if (this.readyState === 4) {  // When request is done
 
-        if (this.status === 200) {  // Authorized
+function processCredits(credits_raw) {
+    credits_raw.sort(function(first, second) {
+        return first.date - second.date;
+    });
 
-            let credits = JSON.parse(this.responseText);
-            // var data = credits.data;
-            var data = credits;
-            // console.log(data);
+    let credits_rawGroups = groupBy(credits_raw, 'date');
 
-            // Chart options
-            var options = {
-                chart: {
-                    height: '110%',
-                    width: data.length * 40,
-                    type: 'line',
-                    zoom: {
-                        enabled: false
-                    },
-                    toolbar: {
-                        show: false
+    let credits = {};
+
+    for (let date in credits_rawGroups) {
+        credits[date] = processUserCredits(credits_rawGroups[date]);
+    }
+
+    return credits;
+}
+
+
+
+function loadCredits() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {  // When request is done
+
+            if (this.status === 200) {  // Authorized
+                let credits_raw = JSON.parse(this.responseText);
+                let credits = processCredits(credits_raw);
+
+                let data_pre = {};
+                data = [];
+                for (let date in days) {
+                    data_pre[date] = 0;
+                }
+
+
+                for (let date in credits) {
+                    let sum = 0;
+
+                    for (let i in credits[date]) {
+                        sum += credits[date][i].value;
                     }
-                },
-                colors: ['#007ac5'],
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    curve: 'straight'
-                },
-                series: [{
-                    name: "Credits",
-                    data: data
-                }],
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800,
-                    animateGradually: {
-                        enabled: true,
-                        delay: 150
-                    },
-                    dynamicAnimation: {
-                        enabled: true,
-                        speed: 350
+
+                    data_pre[date] = sum;
+                }
+
+
+                let flag = false;
+                for (let i = days.length - 1; i >= 0; --i) {
+                    if (data_pre[days[i]] !== 0) {
+                        flag = true;
                     }
-                },
-                background: '#fff',
-                grid: {
-                    // borderColor: '#111',
-                    row: {
-                        // colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                        opacity: 0.5
-                    },
-                },
-                // labels: series.monthDataSeries1.dates,
-                xaxis: {
-                    categories: days,
-                },
-            };
 
-            // Run and draw chart
-            if(window.checkLoaded()) {
-                var chart = new ApexCharts(document.querySelector("#credits__chart"), options);
+                    if (flag) {
+                        dataShort.unshift(data_pre[days[i]]);
+                    }
+                    data.unshift(data_pre[days[i]]);
+                }
+                
 
-                console.log(chart);
-                chart.render();
-            } else {
-                window.addEventListener('load', function () {
-                    var chart = new ApexCharts(document.querySelector("#credits__chart"), options);
-
-                    console.log(chart);
-                    chart.render();
-                })
+                setupCreditsChart(days, data, dataShort);
             }
         }
-    }
-};
+    };
 
-xhttp.open("GET", "http://ihse.tk:50000/credits", true);
-xhttp.withCredentials = true;  // To receive cookie
-xhttp.send();
+    xhttp.open("GET", "http://ihse.tk:50000/credits", true);
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}
+
 
 
 
