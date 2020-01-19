@@ -162,8 +162,8 @@ def process_sql(data_raw: tp.List[tp.Tuple[tp.Any]], table: str) -> tp.List[tp.D
     for line in data_raw:
         data.append({table_fields[table][i]: line[i] for i in range(len(table_fields[table]))})
 
-    if len(data) == 0:  # TODO: Some sh*t
-        data = [{table_fields[table][i]: '' for i in range(len(table_fields[table]))}]
+    # if len(data) == 0:  # TODO: Some sh*t
+    #     data = [{table_fields[table][i]: '' for i in range(len(table_fields[table]))}]
 
     return data
 
