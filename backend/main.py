@@ -837,13 +837,10 @@ def get_credits(env, query, cookie):
     if user_obj[2] is None:  # No User
         return user_obj
 
+    data = sql.get_credits_by_id(user_obj[0])
+    processes_data = sql.process_sql(data, 'credits')
 
-    # Json credits data
-    data = gsheets.get_credits(user_obj)
-
-    # print('Credits data ', data)
-
-    json_data = json.dumps(data)
+    json_data = json.dumps(processes_data)
     json_data = json_data.encode('utf-8')
 
     return ('200 OK',
@@ -872,28 +869,48 @@ def get_event(env, query, cookie):
 
     Returns:
         data: which will be transmitted
-
     """
 
-    event = gsheets.get_event(query['id'])
+    event = sql.get_event(query['id'])
 
     # Json event data
-    data = {}
+    data = sql.tuple_to_dict(event, 'events')
 
-    data['title'] = event[1]
-    data['time'] = event[2]
-    data['date'] = event[3]
-    data['loc'] = event[4]
-    data['host'] = event[5]
-    data['desc'] = event[6]
+    json_data = json.dumps(data)
+    json_data = json_data.encode('utf-8')
 
-    if len(event) > 10:
-        data['anno'] = event[10]
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
 
-    if len(event) > 8:
-        data['count'] = sql.get_event(query['id'])[4]
-        data['total'] = event[9]
 
+# @cache
+def get_class(env, query, cookie):
+    """ Class data HTTP request
+    Get class description by class id
+
+    Args:
+        env: HTTP request environment - dict
+        query: url query parameters - dict (may be empty)
+
+    Note:
+        Cached by TIMEOUT
+
+    Returns:
+        data: which will be transmitted
+    """
+
+    class_event = sql.get_class(query['id'])
+
+    # Json event data
+    data = sql.tuple_to_dict(class_event, 'classes')
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')

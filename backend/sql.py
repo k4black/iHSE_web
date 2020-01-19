@@ -861,6 +861,25 @@ def get_classes():
     return classes_list
 
 
+def get_class(event_id):
+    """ Get event obj by id
+
+    Args:
+        event_id: event id from bd
+
+    Returns:
+        class_obj: (id, credits, count, total)
+    """
+
+    cursor.execute(f'select * from classes where id = {event_id};')
+    events = cursor.fetchall()
+
+    if len(events) == 0:  # No such event
+        return None
+    else:
+        return events[0]
+
+
 def insert_class(class_obj):
     """ Insert project
 
@@ -947,7 +966,7 @@ def get_credits():
     return credits_list
 
 
-def get_credits_by_id(user_id):
+def get_credits_by_id(user_id):  # TODO: Hm.. Rename to get_credits(user_id)
     """ Get all credits of user from sql table
 
     Args:
@@ -955,8 +974,8 @@ def get_credits_by_id(user_id):
 
     Returns:
         credits objects: list of credits objects - [ (id, user_id, event_id, date, value), ...]
-
     """
+
     cursor.execute(f'select * from credits where user_id = {user_id};')
     credits_list = cursor.fetchall()
 
