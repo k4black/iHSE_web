@@ -718,7 +718,7 @@ def get_day(date: str):
         event objects: list of event objects - [ (id, type, title, description, host, place, time, date), ...]
 
     """
-    cursor.execute(f'select * from events where date = {date};')
+    cursor.execute(f'select * from events where date = \'{date}\';')
     events_list = cursor.fetchall()
 
     return events_list
