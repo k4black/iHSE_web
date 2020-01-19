@@ -6,14 +6,26 @@
     font-weight: bold;
 }
 
+.cell p {
+    margin: 0;
+}
+
 
 .total_cell {
+    font-weight: bold;
+    font-style: italic;
     background-color: #00000004;
 }
 
 .title_cell {
     background-color: #0000000D;
 }
+
+
+
+
+
+
 
 
 
@@ -131,43 +143,6 @@ button.danger_button:hover  {
 }
 
 
-/*tr {*/
-/*    border:1pt solid #cccccc;*/
-
-/*}*/
-
-/*tr:hover {*/
-/*    background: #00000005;*/
-/*}*/
-
-/*tr button {*/
-
-/*}*/
-
-/*td {*/
-/*    border-left: 1pt solid #e2e2e2;*/
-/*    border-right: 1pt solid #e2e2e2;*/
-/*}*/
-
-
-
-/*thead {*/
-/*    background-color: #a7a7a7;*/
-/*}*/
-
-/*thead tr {*/
-/*    height: 50px !important;*/
-/*}*/
-
-/*thead th {*/
-/*    border-left: 1pt solid #898989;*/
-/*    border-right: 1pt solid #898989;*/
-/*}*/
-
-/*thead tr:hover {*/
-/*    background: #00000000;*/
-/*}*/
-
 
 
 
@@ -193,16 +168,5 @@ button.update {
 
 
 
-
-
-
-.total {
-    font-weight: bold;
-    font-style: italic;
-}
-
-.item p {
-    margin: 0;
-}
 
 
