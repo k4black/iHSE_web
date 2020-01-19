@@ -1,9 +1,18 @@
-.item {
+.cell {
     cursor: pointer;
 }
 
-.item:hover {
+.cell:hover {
     font-weight: bold;
+}
+
+
+.total_cell {
+    background-color: #00000004;
+}
+
+.title_cell {
+    background-color: #0000000D;
 }
 
 

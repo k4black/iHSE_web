@@ -292,7 +292,7 @@ function buildTable($el, credits, users, days, events) {
         //   });
         //   return res
         // },
-        onAll: styleTable,
+        // onAll: styleTable,
         undefinedText: '0',
         columns: [columnsTop, columnsBottom],
         data: data,
@@ -302,18 +302,6 @@ function buildTable($el, credits, users, days, events) {
     });
 }
 
-
-function styleTable() {
-    let totalCells = $('.total_cell');
-    for (let i = 0; i < totalCells.length; ++i) {
-        totalCells[i].parentNode.style.background = '#00000004';
-    }
-
-    let titleCells = $('.title_cell');
-    for (let i = 0; i < titleCells.length; ++i) {
-        titleCells[i].parentNode.style.background = '#0000000d';
-    }
-}
 
 
 var readyStatus = 0; // +1 For each loaded table (users, events, credits)
@@ -330,9 +318,6 @@ function checkCreateTable(events_raw, users_raw, credits_raw) {
 
 
     buildTable($table, credits, users, getDays(credits), events);
-
-    styleTable();
-
 
     let userColumns = ['id', 'name', 'group', 'total'];
 
