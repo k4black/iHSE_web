@@ -355,7 +355,8 @@ function removeEvent(id) {
     };
 
 
-    xhttp.open("GET", "http://ihse.tk:50000/remove_event" + "?id=" + id, true);
+    xhttp.open("POST", "http://ihse.tk:50000/admin_remove_data?" + "table="+'events' + "&id=" + id, true);
+    // xhttp.open("GET", "http://ihse.tk:50000/remove_event" + "?id=" + id, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
