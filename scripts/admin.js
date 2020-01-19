@@ -94,7 +94,7 @@ function getTableColumns(tableName, fields) {
                 field: fields[tableName][i],
                 sortable: 'true',
                 formatter: function (val) {
-                    return '<div class="replaced_cell" id=' + val + '>' + (fields[tableName][i] === 'user_id' ? users : events)[val].name + '</div>'
+                    return '<div class="replaced_cell" id=' + val + ' title="id: ' + val + '">' + (fields[tableName][i] === 'user_id' ? users : events)[val].name + '</div>'
                 },
             });
         } else {
@@ -115,11 +115,6 @@ function getTableColumns(tableName, fields) {
     });
 
     return columns;
-}
-
-
-function getTableData(tableName, data) {
-    return data[tableName];
 }
 
 
@@ -471,6 +466,8 @@ window.operateEvents = {
 
 
 function setupTabs() {
+    console.log('setup-ing tabs');
+    
     // TODO: Optimize
     $('#tab_users')[0].onclick = function () {
         current_table = 'users';
