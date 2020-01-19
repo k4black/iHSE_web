@@ -312,9 +312,9 @@ function checkCreateTable(events_raw, users_raw, credits_raw) {
     }
 
 
-    let events = processEvents(events_raw);
-    let users = processUsers(users_raw);
-    let credits = processCredits(credits_raw);
+    events = processEvents(events_raw);
+    users = processUsers(users_raw);
+    credits = processCredits(credits_raw);
 
 
     buildTable($table, credits, users, getDays(credits), events);

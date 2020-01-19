@@ -148,8 +148,8 @@ function checkCreateTable(events_raw, users_raw) {
         return;
     }
 
-    let events = processEvents(events_raw);
-    let users = processUsers(users_raw);
+    events = processEvents(events_raw);
+    users = processUsers(users_raw);
 
     buildTable($table, current_table, fields, data);
 }
@@ -198,7 +198,7 @@ function loadEvents() {
             if (this.status === 200) { // If ok set up fields name and phone
                 events_raw = JSON.parse(this.responseText);
                 readyStatus++;
-                checkCreateTable(events_raw, users_raw, credits_raw);
+                checkCreateTable(events_raw, users_raw);
             }
             else if (this.status === 401) {  // No account data
                 alert('Требуется авторизация!');
@@ -221,7 +221,7 @@ function loadUsers() {
             if (this.status === 200) { // If ok set up fields name and phone
                 users_raw = JSON.parse(this.responseText);
                 readyStatus++;
-                checkCreateTable(events_raw, users_raw, credits_raw);
+                checkCreateTable(events_raw, users_raw);
             }
             else if (this.status === 401) {  // No account data
                 alert('Требуется авторизация!');
@@ -254,6 +254,9 @@ function loadAndCreateTable(table_name) {
 $(function() {
     current_table = 'users';
     loadAndCreateTable(current_table);
+
+    setupToolbar();
+    setupTabs();
 });
 
 
@@ -312,7 +315,7 @@ function remove_row(table_name, row_id) {
  * Clear table on server
  * Send http POST request to clear table data (or send error if cookie does not exist)
  */
-// window.addEventListener('load', pull_table);
+// window.addEventListener('load', loadAndCreateTable);
 function clear_table(table_name) {
     var xhttp = new XMLHttpRequest();
 
@@ -358,7 +361,7 @@ function update_row(index, id) {
 
     $table.bootstrapTable('updateRow', {index: index, row: tmp_row});
     post_row(current_table, tmp_row);
-    pull_table(current_table);  // TODO: Check update
+    loadAndCreateTable(current_table);  // TODO: Check update
 }
 
 function create_row() {
@@ -377,7 +380,7 @@ function create_row() {
 
     $table.bootstrapTable('append', tmp_row);
     post_row(current_table, tmp_row);
-    pull_table(current_table);  // TODO: Check update
+    loadAndCreateTable(current_table);  // TODO: Check update
 }
 
 function edit_row(row) {
@@ -458,7 +461,7 @@ window.operateEvents = {
                 values: [row.id]
                 });
             remove_row(current_table, row.id);
-            pull_table(current_table);  // TODO: Check update
+            loadAndCreateTable(current_table);  // TODO: Check update
         } else {
             // pass
         }
@@ -467,8 +470,59 @@ window.operateEvents = {
 
 
 
+function setupTabs() {
+    // TODO: Optimize
+    $('#tab_users')[0].onclick = function () {
+        current_table = 'users';
+        loadAndCreateTable(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_users').addClass('active_tab');
+    };
+    $('#tab_sessions')[0].onclick = function () {
+        current_table = 'sessions';
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_sessions').addClass('active_tab');
+        loadAndCreateTable(current_table);
+    };
+    $('#tab_credits')[0].onclick = function () {
+        current_table = 'credits';
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_credits').addClass('active_tab');
+        loadAndCreateTable(current_table);
+    };
+    $('#tab_codes')[0].onclick = function () {
+        current_table = 'codes';
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_codes').addClass('active_tab');
+        loadAndCreateTable(current_table);
+    };
+    $('#tab_feedback')[0].onclick = function () {
+        current_table = 'feedback';
+        loadAndCreateTable(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_feedback').addClass('active_tab');
+    };
+    $('#tab_projects')[0].onclick = function () {
+        current_table = 'projects';
+        loadAndCreateTable(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_projects').addClass('active_tab');
+    };
+    $('#tab_events')[0].onclick = function () {
+        current_table = 'events';
+        loadAndCreateTable(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_events').addClass('active_tab');
+    };
+    $('#tab_classes')[0].onclick = function () {
+        current_table = 'classes';
+        loadAndCreateTable(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_classes').addClass('active_tab');
+    };
+}
 
-$(function () {
+function setupToolbar() {
     $popup_inputs = $popup_inputs[0];
     console.log($popup_inputs);
 
@@ -494,58 +548,8 @@ $(function () {
         edit_row({});
         $popup.fadeIn(350);
     });
+}
 
-    
-    $('#tab_users')[0].onclick = function () {
-        current_table = 'users';
-        pull_table(current_table);
-        $('.tabs button').removeClass('active_tab');
-        $('#tab_users').addClass('active_tab');
-    };
-    $('#tab_sessions')[0].onclick = function () {
-        current_table = 'sessions';
-        $('.tabs button').removeClass('active_tab');
-        $('#tab_sessions').addClass('active_tab');
-        pull_table(current_table);
-    };
-    $('#tab_credits')[0].onclick = function () {
-        current_table = 'credits';
-        $('.tabs button').removeClass('active_tab');
-        $('#tab_credits').addClass('active_tab');
-        pull_table(current_table);
-    };
-    $('#tab_codes')[0].onclick = function () {
-        current_table = 'codes';
-        $('.tabs button').removeClass('active_tab');
-        $('#tab_codes').addClass('active_tab');
-        pull_table(current_table);
-    };
-    $('#tab_feedback')[0].onclick = function () {
-        current_table = 'feedback';
-        pull_table(current_table);
-        $('.tabs button').removeClass('active_tab');
-        $('#tab_feedback').addClass('active_tab');
-    };
-    $('#tab_projects')[0].onclick = function () {
-        current_table = 'projects';
-        pull_table(current_table);
-        $('.tabs button').removeClass('active_tab');
-        $('#tab_projects').addClass('active_tab');
-    };
-    $('#tab_events')[0].onclick = function () {
-        current_table = 'events';
-        pull_table(current_table);
-        $('.tabs button').removeClass('active_tab');
-        $('#tab_events').addClass('active_tab');
-    };
-    $('#tab_classes')[0].onclick = function () {
-        current_table = 'classes';
-        pull_table(current_table);
-        $('.tabs button').removeClass('active_tab');
-        $('#tab_classes').addClass('active_tab');
-    };
-
-  });
 
 
 /** ===============  LOGIC and REQUESTS  =============== */
