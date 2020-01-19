@@ -18,131 +18,246 @@ current_table = 'users';
 
 
 
-var data = [
-    {
-        "id": 0,
-        "name": "test0",
-        "price": "$0"
-    },
-    {
-        "id": 1,
-        "name": "test1",
-        "price": "$1"
-    },
-    {
-        "id": 2,
-        "name": "test2",
-        "price": "$2"
-    },
-    {
-        "id": 3,
-        "name": "test3",
-        "price": "$3"
-    },
-    {
-        "id": 4,
-        "name": "test4",
-        "price": "$4"
-    },
-    {
-        "id": 5,
-        "name": "test5",
-        "price": "$5"
-    },
-    {
-        "id": 6,
-        "name": "test6",
-        "price": "$6"
-    },
-    {
-        "id": 7,
-        "name": "test7",
-        "price": "$7"
-    },
-    {
-        "id": 8,
-        "name": "test8",
-        "price": "$8"
-    },
-    {
-        "id": 9,
-        "name": "test9",
-        "price": "$9"
-    },
-    {
-        "id": 10,
-        "name": "test10",
-        "price": "$10"
-    },
-    {
-        "id": 11,
-        "name": "test11",
-        "price": "$11"
-    },
-    {
-        "id": 12,
-        "name": "test12",
-        "price": "$12"
-    },
-    {
-        "id": 13,
-        "name": "test13",
-        "price": "$13"
-    },
-    {
-        "id": 14,
-        "name": "test14",
-        "price": "$14"
-    },
-    {
-        "id": 15,
-        "name": "test15",
-        "price": "$15"
-    },
-    {
-        "id": 16,
-        "name": "test16",
-        "price": "$16"
-    },
-    {
-        "id": 17,
-        "name": "test17",
-        "price": "$17"
-    },
-    {
-        "id": 18,
-        "name": "test18",
-        "price": "$18"
-    },
-    {
-        "id": 19,
-        "name": "test19",
-        "price": "$19"
-    },
-    {
-        "id": 20,
-        "name": "test20",
-        "price": "$20"
-    }
+events_raw = [
+    {'id': 0, 'type': 1, 'title': 'Some title 0', 'date': '06.10'},
+    {'id': 1, 'type': 1, 'title': 'Some title 1', 'date': '06.10'},
+    {'id': 2, 'type': 1, 'title': 'Some title 2', 'date': '07.10'},
+    {'id': 3, 'type': 1, 'title': 'Some title 3', 'date': '07.10'},
+    {'id': 4, 'type': 1, 'title': 'Some title 4', 'date': '07.10'},
+    {'id': 5, 'type': 1, 'title': 'Some title 5', 'date': '07.10'},
+    {'id': 6, 'type': 1, 'title': 'Some title 6', 'date': '08.10'},
+    {'id': 7, 'type': 1, 'title': 'Some title 7', 'date': '09.10'},
+    {'id': 8, 'type': 1, 'title': 'Some title 8', 'date': '09.10'},
+    {'id': 9, 'type': 1, 'title': 'Some title 9', 'date': '06.10'},
 ];
-var fields = ['id', 'name', 'price'];
 
-var columns = [];  // TODO: columns name map
-for (let i = 0; i < fields.length; ++i) {
+
+users_raw = [
+    {'id': 4, 'name': 'Boiko Tcar', 'team': 2, 'credits': 777},
+    {'id': 3, 'name': 'Inav Petrovich', 'team': 0, 'credits': 666},
+    {'id': 1, 'name': 'Max Pedroviv', 'team': 1, 'credits': 999},
+];
+
+
+
+function processUsers(users_raw) {
+    let users = {};
+
+    for (let i in users_raw) {
+        users[users_raw[i].id] = users_raw[i];
+    }
+
+    return users;
+}
+
+
+function processEvents(events_raw) {
+    let events = {};
+
+    for (let i in events_raw) {
+        events[events_raw[i].id] = events_raw[i];
+    }
+
+    return events;
+}
+
+
+
+
+let users;
+let events;
+
+
+
+let data = [
+    {'id': 'NONE', 'title': 'NONE', 'type': 'NONE', 'def_type': 'NONE', 'direction': 'NONE', 'description': 'NONE'}
+];
+let fields = {
+    'projects': ['id', 'title', 'type', 'def_type', 'direction', 'description'],
+    'users': ['id', 'user_type', 'phone', 'name', 'pass', 'team', 'credits', 'avatar', 'project_id'],
+    'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
+    'events': ['id', 'type', 'title', 'description', 'host', 'place', 'time', 'date'],
+    'classes': ['id', 'credits', 'count', 'total'],
+    'credits': ['id', 'user_id', 'event_id', 'date', 'value'],
+    'codes': ['code', 'type', 'used']
+};
+
+
+
+function getTableColumns(tableName, fields) {
+    let columns = [];
+
+    for (let i = 0; i < fields[tableName].length; ++i) {
+        if (fields[tableName][i] === 'user_id') {
+            columns.push({
+                title: fields[tableName][i],
+                field: fields[tableName][i],
+                sortable: 'true',
+                formatter: function (val) {
+                    return '<div id=' + val + '>' + data['users'][val] + '</div>'
+                },
+            });
+        } else {
+            columns.push({
+                title: fields[tableName][i],
+                field: fields[tableName][i],
+                sortable: 'true'
+            });
+        }
+    }
+
     columns.push({
-        title: fields[i],
-        field: fields[i],
-        sortable: 'true'
+        title: 'Actions',
+        field: 'operate',
+        formatter: 'operateFormatter',
+        events: 'operateEvents',
+        width: '200'
+    });
+
+    return columns;
+}
+
+
+function getTableData(tableName, data) {
+    return data[tableName];
+}
+
+
+
+function buildTable($el, tableName, fields, data) {
+    console.log('building - ' + tableName + ' from ', fields, data);
+    let columns = getTableColumns(tableName, fields);
+    // let tableData = getTableData(tableName, data);
+
+    $el.bootstrapTable('destroy').bootstrapTable({
+        undefinedText: '-',
+        columns: columns,
+        data: data,
+        search: true
     });
 }
 
-columns.push({
-    title: 'Actions',
-    field: 'operate',
-    formatter: 'operateFormatter',
-    events: 'operateEvents',
-    width: '200'
+
+
+
+
+let readyStatus = 0;  // loaded current table + users + events
+
+function checkCreateTable(events_raw, users_raw) {
+    if (readyStatus < 2) {
+        return;
+    }
+
+    let events = processEvents(events_raw);
+    let users = processUsers(users_raw);
+
+    buildTable($table, current_table, fields, data);
+}
+
+
+
+
+
+// buildTable($table, current_table, fields, data);
+
+
+
+
+/**
+ * Get table information from server
+ * Send http GET request and get table data (or send error if cookie does not exist)
+ */
+function loadTable(table_name) {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+                data = JSON.parse(this.responseText);
+                readyStatus++;
+                checkCreateTable(events_raw, users_raw);
+            }
+            else if (this.status === 401) {  // No account data
+                alert('Требуется авторизация!');
+            } else {
+                alert('Требуется авторизация!');
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + table_name, true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+function loadEvents() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+                events_raw = JSON.parse(this.responseText);
+                readyStatus++;
+                checkCreateTable(events_raw, users_raw, credits_raw);
+            }
+            else if (this.status === 401) {  // No account data
+                alert('Требуется авторизация!');
+            } else {
+                alert('Требуется авторизация!');
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + 'events', true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+function loadUsers() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+                users_raw = JSON.parse(this.responseText);
+                readyStatus++;
+                checkCreateTable(events_raw, users_raw, credits_raw);
+            }
+            else if (this.status === 401) {  // No account data
+                alert('Требуется авторизация!');
+            } else {
+                alert('Требуется авторизация!');
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + 'users', true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+
+
+
+
+
+function loadAndCreateTable(table_name) {
+    readyStatus = 0;
+
+    // Loading of tables (users, events, and Main one)
+    loadEvents();
+    loadUsers();
+    loadTable(table_name);  // TODO: Optimize
+}
+
+
+$(function() {
+    current_table = 'users';
+    loadAndCreateTable(current_table);
 });
+
+
+
 
 
 
@@ -191,68 +306,6 @@ function remove_row(table_name, row_id) {
     xhttp.send();
 }
 
-
-
-
-/**
- * Get table information from server
- * Send http GET request and get table data (or send error if cookie does not exist)
- */
-// window.addEventListener('load', pull_table);
-function pull_table(table_name) {
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields name and phone
-
-                data = JSON.parse(this.responseText);
-                // fields = data[0].keys();
-                fields = Object.keys(data[0]);
-
-                columns = [];  // TODO: columns name map
-                for (let i = 0; i < fields.length; ++i) {
-                    columns.push({
-                        title: fields[i],
-                        field: fields[i],
-                        sortable: 'true'
-                    });
-                }
-
-                columns.push({
-                    title: 'Actions',
-                    field: 'operate',
-                    formatter: 'operateFormatter',
-                    events: 'operateEvents',
-                    width: '200'
-                });
-
-                // console.log('Got data for "' + table_name + '" with columns: ' + fields + ' and data: ' + data);
-
-                // TODO: Check Show table update
-                $table.bootstrapTable('destroy');
-                $table.bootstrapTable({
-                    data: data,
-                    columns: columns
-                });
-            }
-            else if (this.status === 401) {  // No account data
-                alert('Требуется авторизация!');
-            } else {
-
-                $table.bootstrapTable('destroy');
-                $table.bootstrapTable({
-                    data: [],
-                    columns: []
-                });
-            }
-        }
-    };
-
-    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + table_name, true);
-    xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
-}
 
 
 /**
@@ -379,6 +432,7 @@ function operateFormatter(value, row, index) {
 }
 
 
+
 // Add buttons Edin and Remove
 window.operateEvents = {
     'click .edit': function (e, value, row, index) {
@@ -411,22 +465,17 @@ window.operateEvents = {
     }
 };
 
+
+
+
 $(function () {
-
-    // Creating table  - adding data and columns
-    $table.bootstrapTable({
-        data: data,
-        columns: columns
-    });
-    pull_table(current_table);
-
     $popup_inputs = $popup_inputs[0];
     console.log($popup_inputs);
 
     $refresh_btn = $refresh_btn.item(0);
     $refresh_btn.onclick = (function () {
         console.log('refresh');
-        pull_table(current_table);
+        loadAndCreateTable(current_table);
     });
 
     $clear_btn.onclick = (function () {
