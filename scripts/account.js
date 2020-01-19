@@ -184,9 +184,11 @@ document.querySelector('.header__button').addEventListener('click', function () 
 var bar;
 if(window.checkLoaded()) {
     createBar();
+    loadCredits();
 } else {
     window.addEventListener('load', function () {
         createBar();
+        loadCredits();
     })
 }
 function createBar() {
@@ -382,7 +384,7 @@ function loadCredits() {
                     }
                     data.unshift(data_pre[days[i]]);
                 }
-                
+
 
                 setupCreditsChart(days, data, dataShort);
             }
