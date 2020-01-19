@@ -94,7 +94,7 @@ function getTableColumns(tableName, fields) {
                 field: fields[tableName][i],
                 sortable: 'true',
                 formatter: function (val) {
-                    return '<div id=' + val + '>' + data['users'][val] + '</div>'
+                    return '<div id=' + val + '>' + users[val] + '</div>'
                 },
             });
         } else {
