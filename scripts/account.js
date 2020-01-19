@@ -356,7 +356,6 @@ function loadCredits() {
                 let credits = processCredits(credits_raw);
 
                 let data_pre = {};
-                data = [];
                 for (let date in days) {
                     data_pre[date] = 0;
                 }
@@ -366,13 +365,15 @@ function loadCredits() {
                     let sum = 0;
 
                     for (let i in credits[date]) {
-                        sum += credits[date][i].value;
+                        sum += (credits[date][i].value === undefined ? 0 : credits[date][i].value);
                     }
 
                     data_pre[date] = sum;
                 }
 
 
+                data = [];
+                dataShort = [];
                 let flag = false;
                 for (let i = days.length - 1; i >= 0; --i) {
                     if (data_pre[days[i]] !== 0) {
