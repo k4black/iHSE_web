@@ -191,7 +191,7 @@ function setupAdminButtons() {
             console.log('Edit Event ' + editButtons[i].parentElement.getAttribute('data-id'));
             let id = editButtons[i].parentElement.getAttribute('data-id');
 
-            let type = editButtons[i].nextElementSibling.tagName === 'A' ? 'master' : 'regular';
+            let type = editButtons[i].nextElementSibling.tagName === 'A' ? 1 : 0;
 
             let title = editButtons[i].parentElement.getElementsByClassName('event__title')[0].textContent;
             let desc = editButtons[i].parentElement.getElementsByClassName('event__desc');
@@ -257,7 +257,7 @@ function openEditEvent(id, title, type, date, time1, time2, desc, names, locatio
 
 function openCreateEvent(date, time1, time2) {
     console.log('create event');
-    openEditEvent('', '', 'regular', date, time1, time2, '', '', '');
+    openEditEvent('', '', 0, date, time1, time2, '', '', '');
 }
 
 function saveEvent() {
@@ -282,7 +282,7 @@ function saveEvent() {
     let data = JSON.stringify({
                                 "id": id,
                                 "title": title,
-                                "type": type,
+                                "type": type === '' ? 0 : type,
                                 "date": date,
                                 "time": time,
                                 "desc": desc,
