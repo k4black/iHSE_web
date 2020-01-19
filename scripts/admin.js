@@ -88,13 +88,13 @@ function getTableColumns(tableName, fields) {
     let columns = [];
 
     for (let i = 0; i < fields[tableName].length; ++i) {
-        if (fields[tableName][i] === 'user_id') {
+        if (fields[tableName][i] === 'user_id' || fields[tableName][i] === 'event_id') {
             columns.push({
                 title: fields[tableName][i],
                 field: fields[tableName][i],
                 sortable: 'true',
                 formatter: function (val) {
-                    return '<div id=' + val + '>' + users[val] + '</div>'
+                    return '<div class="replaced_cell" id=' + val + '>' + (fields[tableName][i] === 'user_id' ? users : events)[val].name + '</div>'
                 },
             });
         } else {

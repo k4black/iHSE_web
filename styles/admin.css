@@ -1,5 +1,12 @@
 
 
+
+.replaced_cell {
+    font-style: italic;
+}
+
+
+
 div.tabs {
     display: flex;
     flex-direction: row;
