@@ -178,7 +178,8 @@ function getTableColumns(days, events) {
             filter: "input",
             formatter: function (val) {
                 return '<div class="title_cell">' + val + '</div>'
-            }
+            },
+            class: 'title_cell'
         });
     }
 
@@ -206,7 +207,8 @@ function getTableColumns(days, events) {
                     'click .item': function (event) {
                         console.log('click ' + event.currentTarget)
                     }
-                }
+                },
+                class: 'cell'
             });
         }
         columnsBottom.push({
@@ -217,7 +219,8 @@ function getTableColumns(days, events) {
             valign: 'middle',
             formatter: function (val) {
                 return '<div class="total total_cell">' + val + '</div>'
-            }
+            },
+            class: 'total_cell'
         });
     }
 
