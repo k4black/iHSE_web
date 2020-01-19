@@ -337,7 +337,7 @@ function processCredits(credits_raw) {
     let credits = {};
 
     for (let date in credits_rawGroups) {
-        credits[date] = processUserCredits(credits_rawGroups[date]);
+        credits[date] = credits_rawGroups[date];
     }
 
     return credits;
