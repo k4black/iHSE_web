@@ -84,7 +84,7 @@ function getDay(dayNum) {
                             // '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
                             '<button class="admin_element edit_event"><i class="material-icons" style="font-size:20px">build</i></button>' +
 
-                            (event.type === 'regular' ? '' : '<a href="event.html?id=' + event.id + '">') +
+                            (event.type === 0 || event.type === '0' ? '' : '<a href="event.html?id=' + event.id + '">') +
                                 '<p class="event__title">' + event.title + '</p>' +
 
                                 (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
