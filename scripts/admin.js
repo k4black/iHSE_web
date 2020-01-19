@@ -37,6 +37,12 @@ users_raw = [
     {'id': 1, 'name': 'Max Pedroviv', 'team': 1, 'credits': 999},
 ];
 
+projects_raw = [
+    {'id': 4, 'title': 'Proj test'},
+    {'id': 3, 'title': 'some prj'},
+    {'id': 1, 'title': 'And other one'},
+];
+
 
 
 function processUsers(users_raw) {
@@ -61,10 +67,22 @@ function processEvents(events_raw) {
 }
 
 
+function processProjects(projects_raw) {
+    let projects = {};
+
+    for (let i in projects_raw) {
+        projects[projects_raw[i].id] = projects_raw[i];
+    }
+
+    return projects;
+}
+
+
 
 
 let users;
 let events;
+let projects;
 
 
 
@@ -129,21 +147,24 @@ window.operateEvents = {
 function getTableColumns(tableName, fields) {
     let columns = [];
 
-    for (let i = 0; i < fields[tableName].length; ++i) {
-        if (fields[tableName][i] === 'user_id' || fields[tableName][i] === 'event_id' || (tableName === 'classes' && fields[tableName][i] === 'id')) {
+    for (let field of fields[tableName]) {
+        if (field === 'user_id' || field === 'event_id' || field === 'project_id' || (tableName === 'classes' && field === 'id')) {
             columns.push({
-                title: fields[tableName][i],
-                field: fields[tableName][i],
+                title: field,
+                field: field,
                 sortable: 'true',
                 formatter: function (val) {
                     try {
-                        if (fields[tableName][i] === 'user_id') {
+                        if (field === 'user_id') {
                             return '<div class="replaced_cell" user_id=' + val + ' title="user_id: ' + val + '">' + users[val].name + '</div>'
                         }
-                        if (fields[tableName][i] === 'event_id') {
+                        if (field === 'event_id') {
                             return '<div class="replaced_cell" event_id=' + val + ' title="event_id: ' + val + '">' + events[val].title + '</div>'
                         }
-                        if (tableName === 'classes' && fields[tableName][i] === 'id') {
+                        if (field === 'project_id') {
+                            return '<div class="replaced_cell" project_id=' + val + ' title="project_id: ' + val + '">' + projects[val].title + '</div>'
+                        }
+                        if (tableName === 'classes' && field === 'id') {
                             return '<div class="replaced_cell" event_id=' + val + ' title="event_id: ' + val + '">' + events[val].title + '</div>'
                         }
                     } catch (err) {
@@ -151,14 +172,14 @@ function getTableColumns(tableName, fields) {
                     }
                 },
             });
-        } else if (fields[tableName][i] === 'user_type' || (tableName === 'events' && fields[tableName][i] === 'type')) {
+        } else if (field === 'user_type' || (tableName === 'events' && field === 'type')) {
             columns.push({
-                title: fields[tableName][i],
-                field: fields[tableName][i],
+                title: field,
+                field: field,
                 sortable: 'true',
                 formatter: function (val) {
                     try {
-                        if (fields[tableName][i] === 'user_type') {
+                        if (field === 'user_type') {
                             if (val === 0 || val === '0') {
                                 // Regualr user
                                 return '<div class="user_type regular_user" user_type=' + val + ' title="user_type: ' + val + '">regular</div>'
@@ -170,7 +191,7 @@ function getTableColumns(tableName, fields) {
                                 return '<div class="user_type admin_user" user_type=' + val + ' title="user_type: ' + val + '">admin</div>'
                             }
                         }
-                        if (tableName === 'events' && fields[tableName][i] === 'type') {
+                        if (tableName === 'events' && field === 'type') {
                             if (val === 0 || val === '0') {
                                 // Regualr event
                                 return '<div class="event_type regular_event" event_type=' + val + ' title="event_type: ' + val + '">regular</div>'
@@ -186,8 +207,8 @@ function getTableColumns(tableName, fields) {
             });
         } else {
             columns.push({
-                title: fields[tableName][i],
-                field: fields[tableName][i],
+                title: field,
+                field: field,
                 sortable: 'true'
             });
         }
@@ -225,13 +246,14 @@ function buildTable($el, tableName, fields, data) {
 
 let readyStatus = 0;  // loaded current table + users + events
 
-function checkCreateTable(events_raw, users_raw) {
-    if (readyStatus < 2) {
+function checkCreateTable(events_raw, users_raw, projects_raw) {
+    if (readyStatus < 3) {
         return;
     }
 
     events = processEvents(events_raw);
     users = processUsers(users_raw);
+    projects = processProjects(projects_raw);
 
     buildTable($table, current_table, fields, data);
 }
@@ -257,7 +279,7 @@ function loadTable(table_name) {
             if (this.status === 200) { // If ok set up fields name and phone
                 data = JSON.parse(this.responseText);
                 readyStatus++;
-                checkCreateTable(events_raw, users_raw);
+                checkCreateTable(events_raw, users_raw, projects_raw);
             }
             else if (this.status === 401) {  // No account data
                 alert('Требуется авторизация!');
@@ -280,7 +302,7 @@ function loadEvents() {
             if (this.status === 200) { // If ok set up fields name and phone
                 events_raw = JSON.parse(this.responseText);
                 readyStatus++;
-                checkCreateTable(events_raw, users_raw);
+                checkCreateTable(events_raw, users_raw, projects_raw);
             }
             else if (this.status === 401) {  // No account data
                 alert('Требуется авторизация!');
@@ -303,7 +325,7 @@ function loadUsers() {
             if (this.status === 200) { // If ok set up fields name and phone
                 users_raw = JSON.parse(this.responseText);
                 readyStatus++;
-                checkCreateTable(events_raw, users_raw);
+                checkCreateTable(events_raw, users_raw, projects_raw);
             }
             else if (this.status === 401) {  // No account data
                 alert('Требуется авторизация!');
@@ -318,6 +340,29 @@ function loadUsers() {
     xhttp.send();
 }
 
+function loadProjects() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields name and phone
+                projects_raw = JSON.parse(this.responseText);
+                readyStatus++;
+                checkCreateTable(events_raw, users_raw, projects_raw);
+            }
+            else if (this.status === 401) {  // No account data
+                alert('Требуется авторизация!');
+            } else {
+                alert('Требуется авторизация!');
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + 'projects', true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
 
 
 
@@ -326,9 +371,10 @@ function loadUsers() {
 function loadAndCreateTable(table_name) {
     readyStatus = 0;
 
-    // Loading of tables (users, events, and Main one)
+    // Loading of tables (users, events, projects, and Main one)
     loadEvents();
     loadUsers();
+    loadProjects();
     loadTable(table_name);  // TODO: Optimize
 }
 
