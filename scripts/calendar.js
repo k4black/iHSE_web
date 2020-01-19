@@ -267,7 +267,7 @@ function saveEvent() {
     let title = document.getElementById('title').value;
     let type = document.getElementById('type').value;
     let date = document.getElementById('date').value;
-    let time = document.getElementById('time1').value + '\n' + document.getElementById('time2').value;
+    let time = document.getElementById('time1').value + (document.getElementById('time2').value === '' ? '' : '\n') + document.getElementById('time2').value;
     let desc = document.getElementById('desc').value;
     let names = document.getElementById('names').value;
     let location = document.getElementById('location').value;
