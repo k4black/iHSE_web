@@ -850,6 +850,7 @@ body:not(.admin) .admin_element  {
 .popup_body .fields input {
     width: 200px;
     height: 50px;
+    display: inline-block;
 }
 
 
@@ -857,6 +858,7 @@ body:not(.admin) .admin_element  {
     width: 200px;
     height: 50px;
     position: static;
+    display: inline-block;
 }
 
 

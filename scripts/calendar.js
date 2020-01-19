@@ -108,6 +108,10 @@ function getDay(dayNum) {
                 day_html += time_html;
             }
 
+            if (day_data.length === 0) {
+                day_html = '<div class="border_wrapper">' + '<hr class="border_line">' + '<button class="admin_element add_time_button"><i class="material-icons">add</i></button>' + '</div>';
+            }
+
             document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
 
             setupAdminButtons();
