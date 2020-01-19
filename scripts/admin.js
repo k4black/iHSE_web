@@ -106,27 +106,18 @@ function operateFormatter(value, row, index) {
 window.operateEvents = {
     'click .edit': function (e, value, row, index) {
         // alert('You click like action, row: ' + JSON.stringify(row));
-
-        $popup.attr('row_index', index);
-        $popup.attr('row_id', row["id"]);
-        $popup.attr('row_edit', true);
-
         editRow(row);
-
-        console.log($popup.attr('row_index'));
-        console.log($popup.attr('row_id'));
-
         $popup.fadeIn(350);
     },
     'click .remove': function (e, value, row, index) {
         // alert('You click like action, row: ' + JSON.stringify(row));
 
         if (confirm("Are you sure? You wand to remove: \n" + JSON.stringify(row))) {
-            $table.bootstrapTable('remove', {
-                field: 'id',
-                values: [row.id]
-                });
-            remove_row(current_table, row.id);
+            // $table.bootstrapTable('remove', {
+            //     field: 'id',
+            //     values: [row.id]
+            //     });
+            removeRow(current_table, row.id);
         } else {
             // pass
         }
@@ -324,34 +315,10 @@ $(function() {
 
 
 /**
- * Add or update row
- * Send http POST request to create/update row
- */
-function post_row(table_name, row) {
-    var xhttp = new XMLHttpRequest();
-
-    // xhttp.onreadystatechange = function() {
-    //     if (this.readyState === 4) {
-    //         if (this.status === 200) {
-    //             // TODO ?
-    //         }
-    //     }
-    // };
-    console.log('Edited row', row);
-    data = JSON.stringify(row);
-    xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+table_name, true);
-    //xhttp.setRequestHeader('Content-Type', 'application/json');
-    xhttp.setRequestHeader('Content-Type', 'text/plain');
-    xhttp.withCredentials = true;  // To receive cookie
-    xhttp.send(data);
-}
-
-
-/**
  * Delete row by id
  * Send http POST request to delete row
  */
-function remove_row(table_name, row_id) {
+function removeRow(table_name, row_id) {
     var xhttp = new XMLHttpRequest();
 
     // xhttp.onreadystatechange = function() {
@@ -373,7 +340,7 @@ function remove_row(table_name, row_id) {
  * Clear table on server
  * Send http POST request to clear table data (or send error if cookie does not exist)
  */
-function clear_table(table_name) {
+function clearTable(table_name) {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
@@ -393,54 +360,61 @@ function clear_table(table_name) {
         }
     };
 
-    xhttp.open("POST", "http://ihse.tk:50000/admin_clear_table?" + "table=" + table_name, true);
+    xhttp.open("POST", "http://ihse.tk:50000/admin_clearTable?" + "table=" + table_name, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
 
 
 
-
-function update_row(index, id) {
-    tmp_row = {  // TODO: remove
-        "id": id * id,
-        "name": "test1000",
-        "price": "111$0"
-    };
-
-    console.log($popup_inputs);
-
-    for (let i = 0; i < fields.length; ++i) {
-        console.log(fields[i], $popup_inputs.querySelector('input[name=' + fields[i] + ']'));
-        tmp_row[fields[i]] = $popup_inputs.querySelector('input[name=' + fields[i] + ']').value;
-    }
-
-
-    $table.bootstrapTable('updateRow', {index: index, row: tmp_row});
-    post_row(current_table, tmp_row);
-    loadAndCreateTable(current_table);  // TODO: Check update
-}
-
-function create_row() {
-    tmp_row = {  // TODO: remove
-        "id": id * id,
-        "name": "test1000",
-        "price": "111$0"
-    };
+/**
+ * Add or update row
+ * Send http POST request to create/update row
+ */
+function saveRow() {
+    let row = {};
 
     console.log($popup_inputs);
 
-    for (let i = 0; i < fields.length; ++i) {
-        console.log(fields[i], $popup_inputs.querySelector('input[name=' + fields[i] + ']'));
-        tmp_row[fields[i]] = $popup_inputs.querySelector('input[name=' + fields[i] + ']').value;
+    for (let field of fields[current_table]) {
+        console.log(field, $popup_inputs.querySelector('input[name=' + field + ']'));
+        row[field] = $popup_inputs.querySelector('input[name=' + field + ']').value;
     }
 
-    $table.bootstrapTable('append', tmp_row);
-    post_row(current_table, tmp_row);
+    // $table.bootstrapTable('updateRow', {index: index, row: row});
+    
+    var xhttp = new XMLHttpRequest();
+
+    // xhttp.onreadystatechange = function() {
+    //     if (this.readyState === 4) {
+    //         if (this.status === 200) {
+    //             // TODO ?
+    //         }
+    //     }
+    // };
+    
+    console.log('Edited row', row);
+    
+    let  data = JSON.stringify(row);
+    xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+table_name, true);
+    //xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Content-Type', 'text/plain');
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send(data);
+    
+    
     loadAndCreateTable(current_table);  // TODO: Check update
 }
 
+function createRow() {
+    let row = {};
 
+    for (let field of fields[current_table]) {
+        row[field] = '';
+    }
+
+    editRow(row);
+}
 
 
 function editRow(row) {
@@ -531,20 +505,19 @@ function setupToolbar() {
         loadAndCreateTable(current_table);
     });
 
-    $('#clear_table').click(function () {
+    $('#clearTable').click(function () {
         console.log('clear table');
         if (confirm("Are you sure? You wand to clear: \n" + current_table)) {
-            clear_table(current_table);
+            clearTable(current_table);
         } else {
             // pass
         }
     });
 
-    $('#addNewRow')[0].onclick = (function () {
+    $('#addNewRow').click(function () {
         console.log('Adding new row');
 
-        $popup.attr('row_edit', false);
-        editRow({});
+        createRow();
         $popup.fadeIn(350);
     });
 }
