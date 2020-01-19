@@ -87,11 +87,11 @@ function getDay(dayNum) {
                             (event.type === 0 || event.type === '0' ? '' : '<a href="event.html?id=' + event.id + '">') +
                                 '<p class="event__title">' + event.title + '</p>' +
 
-                                (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+                                (event.description === undefined ? "" : '<p class="event__desc">' + event.description + '</p>') +
 
-                                ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '<div class="event__last_line">' +
+                                ((event.host === undefined || event.host === '') && (event.place === undefined || event.place === '') ? "" : '<div class="event__last_line">' +
                                     '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                                    '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
+                                    '<span class="event__loc">' + (event.place === undefined ? "" : event.place) + '</span>' +
                                 '</div>') +
                             (event.type === 0 || event.type === '0' ? '' : '</a>') +
                         '</div>';
@@ -285,9 +285,9 @@ function saveEvent() {
                                 "type": type === '' ? 0 : type,
                                 "date": date,
                                 "time": time,
-                                "desc": desc,
-                                "names": names,
-                                "location": location,
+                                "description": desc,
+                                "host": names,
+                                "place": location,
                                 });
 
 
@@ -314,7 +314,7 @@ function saveEvent() {
         }
     };
 
-    xhttp.open("POST", "http://ihse.tk:50000/save_event", true);
+    xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+'events', true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
