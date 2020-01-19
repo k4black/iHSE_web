@@ -53,7 +53,7 @@ xhttp.onreadystatechange = function() {
                                     '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
                                     '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
                                 '</div>') +
-                            (event.type === 'regular' ? '' : '</a>') +
+                            (event.type === 0 || event.type === '0' ? '' : '</a>') +
                         '</div>';
 
 
