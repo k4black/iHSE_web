@@ -111,7 +111,7 @@ window.operateEvents = {
         $popup.attr('row_id', row["id"]);
         $popup.attr('row_edit', true);
 
-        edit_row(row);
+        editRow(row);
 
         console.log($popup.attr('row_index'));
         console.log($popup.attr('row_id'));
@@ -441,34 +441,24 @@ function create_row() {
 }
 
 
-function edit_row(row) {
+
+
+function editRow(row) {
     console.log(row);
 
     $popup_inputs.innerHTML = '';
     let inputs_html = '';
-    for (let i = 0; i < columns.length; ++i) {
-        if (columns[i]['field'] === 'operate') {
-            break;
-        }
+    for (let field of fields[current_table]) {
+        console.log(field, row[field]);
 
-        console.log(columns[i]['title'], columns[i]['field'], row[columns[i]['field']]);
-
-        let current_inputs_html = '<label for=' + columns[i]['title'] + '>' + columns[i]['title'] + '</label>';
+        let current_inputs_html = '<label for=' + field + '>' + field + '</label>';
         if (Object.keys(row).length === 0) {
-            if (columns[i]['title'] === 'id') {
-                current_inputs_html += '<input name=' + columns[i]['title'] + ' value="" type="text" disabled>';
-            } else {
-                current_inputs_html += '<input name=' + columns[i]['title'] + ' value="" type="text">';
-            }
+            current_inputs_html += '<input name=' + field + ' value="" type="text" ' + (field === 'id' ? 'disabled' : '') + '>';
         } else {
-            if (columns[i]['title'] === 'id') {
-                current_inputs_html += '<input name=' + columns[i]['title'] + ' value="' + row[columns[i]['field']] + '" type="text" disabled>';
-            } else {
-                current_inputs_html += '<input name=' + columns[i]['title'] + ' value="' + row[columns[i]['field']] + '" type="text">';
-            }
+            current_inputs_html += '<input name=' + field + ' value="' + row[field] + '" type="text" ' + (field === 'id' ? 'disabled' : '') + '>';
         }
 
-        inputs_html += '<div style="display: block">' + current_inputs_html + '</div>';
+        inputs_html += '<div style="display:block">' + current_inputs_html + '</div>';
     }
 
     $popup_inputs.innerHTML = inputs_html;
@@ -554,7 +544,7 @@ function setupToolbar() {
         console.log('Adding new row');
 
         $popup.attr('row_edit', false);
-        edit_row({});
+        editRow({});
         $popup.fadeIn(350);
     });
 }
