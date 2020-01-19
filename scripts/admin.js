@@ -332,6 +332,9 @@ function removeRow(table_name, row_id) {
     xhttp.open("POST", "http://ihse.tk:50000/admin_remove_data?" + "table="+table_name + "&id=" + row_id, true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
+
+
+    loadAndCreateTable(current_table);  // TODO: Check update
 }
 
 
@@ -363,6 +366,9 @@ function clearTable(table_name) {
     xhttp.open("POST", "http://ihse.tk:50000/admin_clearTable?" + "table=" + table_name, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
+
+
+    loadAndCreateTable(current_table);  // TODO: Check update
 }
 
 
