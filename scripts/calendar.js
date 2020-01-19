@@ -231,10 +231,14 @@ function setupAdminButtons() {
     let addTimeButtons = document.getElementsByClassName("add_time_button");
     for (let i = 0; i < addTimeButtons.length; ++i) {
         let startTime;
-        if (addTimeButtons[i].parentElement.previousSibling.classList[0] === 'time') {
-            let times = addTimeButtons[i].parentElement.previousSibling.children[0].textContent.split('\n');
-            startTime = times === undefined || times.length < 2 ? '' : times[1];
-        } else {
+        try {
+            if (addTimeButtons[i].parentElement.previousSibling.classList[0] === 'time') {
+                let times = addTimeButtons[i].parentElement.previousSibling.children[0].textContent.split('\n');
+                startTime = times === undefined || times.length < 2 ? '' : times[1];
+            } else {
+                startTime = '';
+            }
+        } catch (err) {
             startTime = '';
         }
 
