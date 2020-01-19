@@ -1,3 +1,11 @@
+.item {
+    cursor: pointer;
+}
+
+
+.item:hover {
+    font-weight: bold;
+}
 
 
 
