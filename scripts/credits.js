@@ -289,6 +289,7 @@ function buildTable($el, credits, users, days, events) {
         //   });
         //   return res
         // },
+        onAll: styleTable,
         undefinedText: '0',
         columns: [columnsTop, columnsBottom],
         data: data,
@@ -296,6 +297,19 @@ function buildTable($el, credits, users, days, events) {
         fixedColumns: true,
         fixedNumber: 4,
     });
+}
+
+
+function styleTable() {
+    let totalCells = $('.total_cell');
+    for (let i = 0; i < totalCells.length; ++i) {
+        totalCells[i].parentNode.style.background = '#00000004';
+    }
+
+    let titleCells = $('.title_cell');
+    for (let i = 0; i < titleCells.length; ++i) {
+        titleCells[i].parentNode.style.background = '#0000000d';
+    }
 }
 
 
@@ -314,16 +328,8 @@ function checkCreateTable(events_raw, users_raw, credits_raw) {
 
     buildTable($table, credits, users, getDays(credits), events);
 
+    styleTable();
 
-    let totalCells = $('.total_cell');
-    for (let i = 0; i < totalCells.length; ++i) {
-        totalCells[i].parentNode.style.background = '#00000005';
-    }
-
-    let titleCells = $('.title_cell');
-    for (let i = 0; i < titleCells.length; ++i) {
-        titleCells[i].parentNode.style.background = '#0000000f';
-    }
 
     let userColumns = ['id', 'name', 'group', 'total'];
 
