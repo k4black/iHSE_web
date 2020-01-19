@@ -43,7 +43,7 @@ xhttp.onreadystatechange = function() {
 
                 for (let event of time.events) {
                     event_html =
-                        '<div class="event" data-id="' + event.id + '" ' + (event.type === 'regular' ? '' : 'active-event') + '>' +
+                        '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
                             (event.type === 0 || event.type === '0' ? '' : '<a href="event.html?id=' + event.id + '">') +
                                 '<p class="event__title">' + event.title + '</p>' +
 

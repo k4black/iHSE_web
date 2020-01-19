@@ -78,7 +78,7 @@ function getDay(dayNum) {
 
                 for (let event of time.events) {
                     event_html =
-                        '<div class="event" data-id="' + event.id + '" ' + (event.type === 'regular' ? '' : 'active-event') + '>' +
+                        '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
                             // '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
                             '<button class="admin_element remove_event"><i class="material-icons">close</i></button>' +
                             // '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
