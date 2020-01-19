@@ -10,8 +10,7 @@ var $table = $('#table');
 var $popup = $('#popup');
 var $popup_inputs = $('#popup .fields');
 console.log($popup_inputs);
-var $refresh_btn = document.getElementsByName("refresh");
-var $clear_btn = document.getElementById("clear_table");
+
 
 
 current_table = 'users';
@@ -80,6 +79,58 @@ let fields = {
     'classes': ['id', 'credits', 'count', 'total'],
     'credits': ['id', 'user_id', 'event_id', 'date', 'value'],
     'codes': ['code', 'type', 'used']
+};
+
+
+
+
+
+function operateFormatter(value, row, index) {
+    return [
+        '<button class="edit" href="javascript:void(0)" title="Edit">',
+            // '<i class="fa fa-wrench"></i> ',
+            '<i class="material-icons" style="font-size:15px">build</i>',
+            'Edit',
+        '</button>',
+        '<button class="remove danger_button" href="javascript:void(0)" title="Remove">',
+            // '<i class="fa fa-trash"></i> ',
+            '<i class="material-icons" style="font-size:18px">delete</i>',
+            '<p>Remove</p>',
+        '</button>'
+    ].join('')
+}
+
+
+
+// Add buttons Edin and Remove
+window.operateEvents = {
+    'click .edit': function (e, value, row, index) {
+        // alert('You click like action, row: ' + JSON.stringify(row));
+
+        $popup.attr('row_index', index);
+        $popup.attr('row_id', row["id"]);
+        $popup.attr('row_edit', true);
+
+        edit_row(row);
+
+        console.log($popup.attr('row_index'));
+        console.log($popup.attr('row_id'));
+
+        $popup.fadeIn(350);
+    },
+    'click .remove': function (e, value, row, index) {
+        // alert('You click like action, row: ' + JSON.stringify(row));
+
+        if (confirm("Are you sure? You wand to remove: \n" + JSON.stringify(row))) {
+            $table.bootstrapTable('remove', {
+                field: 'id',
+                values: [row.id]
+                });
+            remove_row(current_table, row.id);
+        } else {
+            // pass
+        }
+    }
 };
 
 
@@ -318,7 +369,6 @@ function remove_row(table_name, row_id) {
  * Clear table on server
  * Send http POST request to clear table data (or send error if cookie does not exist)
  */
-// window.addEventListener('load', loadAndCreateTable);
 function clear_table(table_name) {
     var xhttp = new XMLHttpRequest();
 
@@ -386,6 +436,7 @@ function create_row() {
     loadAndCreateTable(current_table);  // TODO: Check update
 }
 
+
 function edit_row(row) {
     console.log(row);
 
@@ -420,56 +471,6 @@ function edit_row(row) {
 }
 
 
-
-
-function operateFormatter(value, row, index) {
-    return [
-        '<button class="edit" href="javascript:void(0)" title="Edit">',
-            // '<i class="fa fa-wrench"></i> ',
-            '<i class="material-icons" style="font-size:15px">build</i>',
-            'Edit',
-        '</button>',
-        '<button class="remove danger_button" href="javascript:void(0)" title="Remove">',
-            // '<i class="fa fa-trash"></i> ',
-            '<i class="material-icons" style="font-size:18px">delete</i>',
-            '<p>Remove</p>',
-        '</button>'
-    ].join('')
-}
-
-
-
-// Add buttons Edin and Remove
-window.operateEvents = {
-    'click .edit': function (e, value, row, index) {
-        // alert('You click like action, row: ' + JSON.stringify(row));
-
-        $popup.attr('row_index', index);
-        $popup.attr('row_id', row["id"]);
-        $popup.attr('row_edit', true);
-
-        edit_row(row);
-
-        console.log($popup.attr('row_index'));
-        console.log($popup.attr('row_id'));
-
-        $popup.fadeIn(350);
-    },
-    'click .remove': function (e, value, row, index) {
-        // alert('You click like action, row: ' + JSON.stringify(row));
-
-        if (confirm("Are you sure? You wand to remove: \n" + JSON.stringify(row))) {
-            $table.bootstrapTable('remove', {
-                field: 'id',
-                values: [row.id]
-                });
-            remove_row(current_table, row.id);
-            loadAndCreateTable(current_table);  // TODO: Check update
-        } else {
-            // pass
-        }
-    }
-};
 
 
 
@@ -531,13 +532,12 @@ function setupToolbar() {
     $popup_inputs = $popup_inputs[0];
     console.log($popup_inputs);
 
-    $refresh_btn = $refresh_btn.item(0);
-    $refresh_btn.onclick = (function () {
+    $('[name="refresh"]').click(function () {
         console.log('refresh');
         loadAndCreateTable(current_table);
     });
 
-    $clear_btn.onclick = (function () {
+    $('#clear_table').click(function () {
         console.log('clear table');
         if (confirm("Are you sure? You wand to clear: \n" + current_table)) {
             clear_table(current_table);
