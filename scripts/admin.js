@@ -145,14 +145,18 @@ function getTableColumns(tableName, fields) {
                 field: fields[tableName][i],
                 sortable: 'true',
                 formatter: function (val) {
-                    if (fields[tableName][i] === 'user_id') {
-                        return '<div class="replaced_cell" user_id=' + val + ' title="user_id: ' + val + '">' + users[val].name + '</div>'
-                    }
-                    if (fields[tableName][i] === 'event_id') {
-                        return '<div class="replaced_cell" event_id=' + val + ' title="event_id: ' + val + '">' + events[val].title + '</div>'
-                    }
-                    if (tableName === 'classes' && fields[tableName][i] === 'id') {
-                        return '<div class="replaced_cell" event_id=' + val + ' title="event_id: ' + val + '">' + events[val].title + '</div>'
+                    try {
+                        if (fields[tableName][i] === 'user_id') {
+                            return '<div class="replaced_cell" user_id=' + val + ' title="user_id: ' + val + '">' + users[val].name + '</div>'
+                        }
+                        if (fields[tableName][i] === 'event_id') {
+                            return '<div class="replaced_cell" event_id=' + val + ' title="event_id: ' + val + '">' + events[val].title + '</div>'
+                        }
+                        if (tableName === 'classes' && fields[tableName][i] === 'id') {
+                            return '<div class="replaced_cell" event_id=' + val + ' title="event_id: ' + val + '">' + events[val].title + '</div>'
+                        }
+                    } catch (err) {
+                        console.log('Error', err)
                     }
                 },
             });
@@ -168,7 +172,7 @@ function getTableColumns(tableName, fields) {
     columns.push({
         title: 'Actions',
         field: 'operate',
-        formatter: 'operateFormatter',
+        formatter: operateFormatter,
         events: 'operateEvents',
         width: '200'
     });
