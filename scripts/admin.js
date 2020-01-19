@@ -88,13 +88,21 @@ function getTableColumns(tableName, fields) {
     let columns = [];
 
     for (let i = 0; i < fields[tableName].length; ++i) {
-        if (fields[tableName][i] === 'user_id' || fields[tableName][i] === 'event_id') {
+        if (fields[tableName][i] === 'user_id' || fields[tableName][i] === 'event_id' || (tableName === 'classes' && fields[tableName][i] === 'id')) {
             columns.push({
                 title: fields[tableName][i],
                 field: fields[tableName][i],
                 sortable: 'true',
                 formatter: function (val) {
-                    return '<div class="replaced_cell" id=' + val + ' title="id: ' + val + '">' + (fields[tableName][i] === 'user_id' ? users : events)[val].name + '</div>'
+                    if (fields[tableName][i] === 'user_id') {
+                        return '<div class="replaced_cell" user_id=' + val + ' title="user_id: ' + val + '">' + users[val].name + '</div>'
+                    }
+                    if (fields[tableName][i] === 'event_id') {
+                        return '<div class="replaced_cell" event_id=' + val + ' title="event_id: ' + val + '">' + events[val].title + '</div>'
+                    }
+                    if (tableName === 'classes' && fields[tableName][i] === 'id') {
+                        return '<div class="replaced_cell" event_id=' + val + ' title="event_id: ' + val + '">' + events[val].title + '</div>'
+                    }
                 },
             });
         } else {
@@ -121,12 +129,12 @@ function getTableColumns(tableName, fields) {
 
 function buildTable($el, tableName, fields, data) {
     console.log('building - ' + tableName + ' from ', fields, data);
-    let columns = getTableColumns(tableName, fields);
+    // let columns = getTableColumns(tableName, fields);
     // let tableData = getTableData(tableName, data);
 
     $el.bootstrapTable('destroy').bootstrapTable({
         undefinedText: '-',
-        columns: columns,
+        columns: getTableColumns(tableName, fields),
         data: data,
         search: true
     });
@@ -467,7 +475,7 @@ window.operateEvents = {
 
 function setupTabs() {
     console.log('setup-ing tabs');
-    
+
     // TODO: Optimize
     $('#tab_users')[0].onclick = function () {
         current_table = 'users';
