@@ -4,6 +4,9 @@ import json
 import time
 import sys
 import string
+from itertools import groupby
+from operator import itemgetter
+
 sys.path.append('/home/ubuntu/iHSE_web')
 
 
@@ -1011,11 +1014,21 @@ def get_day(env, query):
         print('day overflow, falling back to the last day available')
         day = '18.06'
 
-    data = gsheets.get_day(day)  # getting pseudo-json here
+    print('get data days for ', day)
+
+    data = sql.get_day(day)
+
+    data = sorted(data, key=itemgetter(6))
+    groups = groupby(data, key=itemgetter(6))
+
+    processed_data = [{'time': k, 'events': [sql.tuple_to_dict(x, 'events') for x in v]} for k, v in groups]
+    # [{time: 15.12, events: [events_obj]},  ... {}]
+
 
     #print('get_day', data)
 
-    json_data = json.dumps(data)  # creating real json here
+
+    json_data = json.dumps(processed_data)  # creating real json here
     json_data = json_data.encode('utf-8')
 
     return ('200 OK',

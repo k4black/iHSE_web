@@ -183,6 +183,15 @@ def dict_to_tuple(data_raw: tp.Dict[str, tp.Any], table: str) -> tp.Tuple[tp.Any
     return tuple(data)
 
 
+def tuple_to_dict(data_raw: tp.Tuple[tp.Any], table: str) -> tp.Dict[str, tp.Any]:
+    data = {}  # type: tp.Dict[str, tp.Any]
+
+    for i in range(len(table_fields[table])):
+        data[table_fields[table][i]] = data_raw[i]
+
+    return data
+
+
 """ ---===---==========================================---===--- """
 """           Auxiliary functions for sql interactions           """
 """ ---===---==========================================---===--- """
@@ -695,6 +704,22 @@ def get_events():
     events_list = cursor.fetchall()
     # cursor.execute("SELECT * FROM events")
     # events_list = cursor.fetchall()
+
+    return events_list
+
+
+def get_day(date: str):
+    """ Get all events for some day from sql table
+
+    Args:
+        date: dd.mm day for select data
+
+    Returns:
+        event objects: list of event objects - [ (id, type, title, description, host, place, time, date), ...]
+
+    """
+    cursor.execute(f'select * from events where date = {date};')
+    events_list = cursor.fetchall()
 
     return events_list
 
