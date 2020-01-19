@@ -2,10 +2,13 @@
 
 
 .user_type, .event_type {
-    width: 100px;
+    width: 85px;
     height: 30px;
 
-    color: #cccccc;
+    padding-top: 3px;
+
+    color: #f8f9fa;
+    font-weight: 500;
     border-radius: 5px;
     border: 1px solid #a1a1a1;
 }
@@ -16,7 +19,7 @@
 }
 
 .moderator_user, .class_event {
-    background-color: #e08833;
+    background-color: #fd8817;
 }
 
 .admin_user {
