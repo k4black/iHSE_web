@@ -936,7 +936,8 @@ def get_class(env, query, cookie):
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                # ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                ('Access-Control-Allow-Origin', '*'),
                 # To receive cookie
                 # ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
@@ -977,7 +978,7 @@ def get_feedback(env, query, cookie):
 
     return ('200 OK',
             [
-                ('Access-Control-Allow-Origin', ''),
+                ('Access-Control-Allow-Origin', '*'),
                 ('Content-type', 'application/json'),
                 ('Content-Length', str(len(json_data)))
              ],
