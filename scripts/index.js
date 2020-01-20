@@ -151,14 +151,14 @@ function loadEnrolls(class_id) {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
-                loadingEventEnd();
+                // loadingEventEnd();
 
                 enrolls_raw = JSON.parse( this.responseText );
             }
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/enrolls?id=" + class_id, true);
+    xhttp.open("GET", "http://ihse.tk:50000/enrolls?event_id=" + class_id, true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
