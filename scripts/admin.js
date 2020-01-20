@@ -95,7 +95,7 @@ let fields = {
     'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
     'events': ['id', 'type', 'title', 'description', 'host', 'place', 'time', 'date'],
     'classes': ['id', 'credits', 'count', 'total'],
-    'enrolls': ['id', 'event_id', 'user_id', 'time'],
+    'enrolls': ['id', 'event_id', 'user_id', 'time', 'attendance'],
     'credits': ['id', 'user_id', 'event_id', 'date', 'value'],
     'codes': ['code', 'type', 'used']
 };

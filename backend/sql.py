@@ -119,6 +119,7 @@ cursor.execute('''
                         event_id serial,
                         user_id serial,
                         time text default 'datetime(''now'', ''localtime'')',
+                        attendance int default 0,
                         foreign key (user_id) references users(id),
                         foreign key (event_id) references classes(id)
                     );
@@ -164,7 +165,7 @@ table_fields = {
     'sessions': ('id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'),
     'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', 'date'),
     'classes': ('id', 'credits', 'count', 'total'),
-    'enrolls': ('id', 'event_id', 'user_id', 'time'),
+    'enrolls': ('id', 'event_id', 'user_id', 'time', 'attendance'),
     'credits': ('id', 'user_id', 'event_id', 'date', 'value'),
     'codes': ('code', 'type', 'used')
 }
