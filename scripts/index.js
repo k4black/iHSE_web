@@ -341,7 +341,8 @@ function saveEnrolls() {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
-                loadClass(current_event);
+                // loadClass(current_event);
+                loadEnrolls(current_event);
             }
         }
     };
