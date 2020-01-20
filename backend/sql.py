@@ -1036,7 +1036,7 @@ def edit_enroll(enroll_obj):
 
     Returns:
     """
-    cursor.execute(f'''update classes set
+    cursor.execute(f'''update enrolls set
                                 event_id = {enroll_obj[1]},
                                 user_id = {enroll_obj[2]},
                                 time = {enroll_obj[3]}

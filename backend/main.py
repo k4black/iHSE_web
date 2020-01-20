@@ -450,7 +450,7 @@ def admin_panel(env, query, cookie):
         elif table_name == 'classes':
             data = sql.process_sql(sql.get_classes(), 'classes')
         elif table_name == 'enrolls':
-            data = sql.process_sql(sql.get_classes(), 'enrolls')
+            data = sql.process_sql(sql.get_enrolls(), 'enrolls')
         else:
             print(' ========  400 Bad Request by admin  ======== ')
             return ('400 Bad Request',
