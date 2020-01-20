@@ -1159,6 +1159,9 @@ def post(env, query, cookie):
     if env['PATH_INFO'] == '/mark_enrolls':
         return post_mark_enrolls(env, query, cookie)
 
+    if env['PATH_INFO'] == '/remove_enroll':
+        return post_remove_enroll(env, query, cookie)
+
     if env['PATH_INFO'] == '/enroll':
         # TODO: Remove on release - admin
         user_obj = get_user_by_response(cookie)
@@ -1453,6 +1456,53 @@ def post_mark_enrolls(env, query, cookie):
             enroll_obj = sql.dict_to_tuple(enroll, 'enrolls')
             sql.edit_enroll(enroll_obj)
             # TODO: add credits
+
+        return ('200 Ok',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                 ],
+                [])
+
+    else:
+        return ('405 Method Not Allowed',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
+
+
+# TODO: think mb rename
+def post_remove_enrolls(env, query, cookie):
+    """ Remove  HTTP request (by student )
+    By cookie add credits to user
+
+    Args:
+        env: HTTP request environment - dict
+        query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if all are ok
+            401 Unauthorized: if wrong session id
+            405 Method Not Allowed: already got it or timeout
+
+    Returns:
+         None; Only http answer
+
+    """
+
+    # Safety get user_obj
+    user_obj = get_user_by_response(cookie)
+
+    if user_obj[2] is None:  # No User  # TODO: Check admin or user remove himself
+        return user_obj
+
+    enroll_id = query['id']
+    sql.remove_enroll(enroll_id)
+
+    if 'a' is not None:
 
         return ('200 Ok',
                 [

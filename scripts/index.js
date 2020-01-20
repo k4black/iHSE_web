@@ -233,6 +233,15 @@ function loadEnrolls(class_id) {
                 }
 
                 document.querySelector('#users_list').innerHTML = users_list;
+
+                let close_list = document.querySelectorAll('#users_list button');
+                for (let i = 0; i < close_list.length; ++i) {
+                    close_list[i].onclick = function (val) {
+                        if (confirm('You really want to remove user <'+ close_list[i].parentElement.parentElement.firstElementChild.innerText +'> from this event?')) {
+                            removeEnroll(close_list[i].parentElement.parentElement.getAttribute('data-id'));
+                        }
+                    }
+                }
             }
         }
     };
@@ -332,6 +341,26 @@ function loadDay(day) {
     xhttp.send();
 }
 
+
+
+function removeEnroll(enroll_id) {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields
+                // loadingEventEnd();
+
+                loadClass(current_event);
+                loadEnrolls(current_event);
+            }
+        }
+    };
+
+    xhttp.open("POST", "http://ihse.tk:50000/remove_enroll?id=" + enroll_id, true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
 
 
 
