@@ -1044,7 +1044,7 @@ def insert_enroll(enroll_obj):
     Returns:
         # TODO: Return id
     """
-    cursor.execute(f'insert into enrolls (event_id, user_id, time) values ({enroll_obj[1]}, {enroll_obj[2]}, \'{enroll_obj[3]}\', \'{enroll_obj[4]}\'); ')
+    cursor.execute(f'insert into enrolls (event_id, user_id, time, attendance) values ({enroll_obj[1]}, {enroll_obj[2]}, \'{enroll_obj[3]}\', {enroll_obj[4]}); ')
     conn.commit()
 
 
@@ -1060,7 +1060,7 @@ def edit_enroll(enroll_obj):
                                 event_id = {enroll_obj[1]},
                                 user_id = {enroll_obj[2]},
                                 time = \'{enroll_obj[3]}\',
-                                attendance = \'{enroll_obj[4]}\',
+                                attendance = {enroll_obj[4]},
                             where id = {enroll_obj[0]};
                         ''')
     conn.commit()
