@@ -1060,7 +1060,7 @@ def edit_enroll(enroll_obj):
                                 event_id = {enroll_obj[1]},
                                 user_id = {enroll_obj[2]},
                                 time = \'{enroll_obj[3]}\',
-                                attendance = {enroll_obj[4]},
+                                attendance = {enroll_obj[4]}
                             where id = {enroll_obj[0]};
                         ''')
     conn.commit()
