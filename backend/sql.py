@@ -963,18 +963,18 @@ def remove_class(class_id):
 
 # Enrolls
 def get_enrolls():
-    """ Get all classes (events type) from sql table
+    """ Get all enrolls from sql table
 
     Args:
 
     Returns:
-        class objects: list of event objects - [ (id, credits, count, total), ...]
+        enroll_obj: list of enroll objects - [ (id, event_id, user_id, time), ...]
 
     """
-    cursor.execute('select * from classes;')
-    classes_list = cursor.fetchall()
+    cursor.execute('select * from enrolls;')
+    enrolls_list = cursor.fetchall()
 
-    return classes_list
+    return enrolls_list
 
 
 def get_enroll(enroll_id):

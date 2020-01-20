@@ -295,6 +295,7 @@ function loadTable(table_name) {
     xhttp.send();
 }
 
+
 function loadEvents() {
     var xhttp = new XMLHttpRequest();
 
