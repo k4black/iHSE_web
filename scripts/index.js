@@ -71,9 +71,11 @@ function setupClasses() {
             console.log('clicked event with id: ', class_events[i].getAttribute('data-id'));
 
             loadClass(class_events[i].getAttribute('data-id'));
-            document.querySelector('#class_popup').style.display = 'block';
-
             // TODO: Smooth visible
+
+            loadEnrolls(class_events[i].getAttribute('data-id'));
+
+            document.querySelector('#class_popup').style.display = 'block';
         }
     }
 }
@@ -188,7 +190,6 @@ function loadDay(day) {
                     current_events[event.id] = event;
                 }
             }
-
 
             var day_html = "";
             var time_html;

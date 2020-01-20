@@ -946,6 +946,47 @@ def get_class(env, query, cookie):
             [json_data])
 
 
+# @cache
+def get_enrolls(env, query, cookie):
+    """ Enrolls data HTTP request
+    Get enrolls list by event id or user id
+
+    Args:
+        env: HTTP request environment - dict
+        query: url query parameters - dict (may be empty)
+
+    Note:
+        Cached by TIMEOUT
+
+    Returns:
+        data: which will be transmitted
+    """
+
+    enrolls = []
+    if 'event_id' in query.keys():
+        enrolls = sql.get_enrolls_by_event_id(query['event_id'])
+    elif 'user_id' in query.keys():
+        enrolls = sql.get_enrolls_by_event_id(query['user_id'])
+
+    # Json event data
+    data = sql.process_sql(enrolls, 'enrolls')
+
+    json_data = json.dumps(data)
+    json_data = json_data.encode('utf-8')
+
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                # ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                ('Access-Control-Allow-Origin', '*'),
+                # To receive cookie
+                # ('Access-Control-Allow-Credentials', 'true'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
+
+
 def get_feedback(env, query, cookie):
     """ Account data HTTP request
     Got day num and return day event for feedback
