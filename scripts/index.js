@@ -89,31 +89,31 @@ function loadClass(class_id) {
                 console.log(event_class);
 
                 document.querySelector('#class_popup .title').innerText = current_events[class_id].title;
-                wrapper.querySelector('#class_popup .time').firstElementChild.innerText = current_events[class_id].time;
-                wrapper.querySelector('#class_popup .time').lastElementChild.innerText = current_events[class_id].date;
-                wrapper.querySelector('#class_popup .location').firstElementChild.innerText = current_events[class_id].place;
-                wrapper.querySelector('#class_popup .host').firstElementChild.innerText = current_events[class_id].host;
-                wrapper.querySelector('#class_popup .desc').firstElementChild.innerText = current_events[class_id].description;
+                document.querySelector('#class_popup .time').firstElementChild.innerText = current_events[class_id].time;
+                document.querySelector('#class_popup .time').lastElementChild.innerText = current_events[class_id].date;
+                document.querySelector('#class_popup .location').firstElementChild.innerText = current_events[class_id].place;
+                document.querySelector('#class_popup .host').firstElementChild.innerText = current_events[class_id].host;
+                document.querySelector('#class_popup .desc').firstElementChild.innerText = current_events[class_id].description;
 
 
                 if (event_class.anno === undefined) {
-                    wrapper.querySelector('#class_popup .anno').parentElement.innerHTML = "";
-                    wrapper.querySelector('#class_popup .anno').parentElement.style.display = 'none';
+                    document.querySelector('#class_popup .anno').parentElement.innerHTML = "";
+                    document.querySelector('#class_popup .anno').parentElement.style.display = 'none';
                 }
                 else {
-                    wrapper.querySelector('#class_popup .anno').firstElementChild.innerText = event_class.anno;
+                    document.querySelector('#class_popup .anno').firstElementChild.innerText = event_class.anno;
                 }
 
                 // TODO: Hide when there is no enrollment
                 if (event_class.total == undefined || event_class.total == "" || event_class.total === '0' || event_class.total === '0') {
                     document.querySelector('.enroll_section').style.visibility = 'hidden';
                 } else {
-                    wrapper.querySelector('#class_popup .count').innerText = event_class.count + ' / ' + event_class.total;
+                    document.querySelector('#class_popup .count').innerText = event_class.count + ' / ' + event_class.total;
 
                     setupBar(event_class.count / event_class.total);  // Number from 0.0 to 1.0
 
                     if (event_class.count >= event_class.total) {
-                        wrapper.querySelector('#btn').classList.add('inactive');
+                        document.querySelector('#btn').classList.add('inactive');
                     }
                 }
 
