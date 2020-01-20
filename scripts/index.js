@@ -20,6 +20,8 @@
 // https://kimmobrunfeldt.github.io/progressbar.js/
 // var ProgressBar = require('scripts/progressbar.js');
 function setupBar() {
+    document.querySelector('#container').innerHTML = '';
+
     bar = new ProgressBar.Line('#container', {
         strokeWidth: 4,
         easing: 'easeInOut',
@@ -80,10 +82,10 @@ function setupClasses() {
 function setupData(elem, data) {
     // let elem = document.querySelector(query);
     if (data === '') {
-        elem.parentElement.parentElement.style.display = 'block';
+        elem.parentElement.parentElement.style.display = 'none';
     } else {
         elem.innerText = data;
-        elem.parentElement.parentElement.style.display = 'none';
+        elem.parentElement.parentElement.style.display = 'block';
     }
 }
 
@@ -96,12 +98,12 @@ function loadClass(class_id) {
                 // loadingEventEnd();
 
                 let event_class = JSON.parse( this.responseText );
-                console.log(event_class);
+                console.log(event_class, current_events[class_id]);
 
                 document.querySelector('#class_popup .title').innerText = current_events[class_id].title;
 
                 setupData(document.querySelector('#class_popup .desc').firstElementChild, current_events[class_id].description);
-                setupData(document.querySelector('#class_popup .time').firstElementChild, current_events[class_id].time);
+                setupData(document.querySelector('#class_popup .time').firstElementChild, current_events[class_id].time.replace('\n', ' - '));
                 setupData(document.querySelector('#class_popup .time').lastElementChild, current_events[class_id].date);
                 setupData(document.querySelector('#class_popup .location').firstElementChild, current_events[class_id].place);
                 setupData(document.querySelector('#class_popup .host').firstElementChild, current_events[class_id].host);
@@ -114,19 +116,21 @@ function loadClass(class_id) {
                 // else {
                 //     document.querySelector('#class_popup .anno').firstElementChild.innerText = event_class.anno;
                 // }
+                setupData(document.querySelector('#class_popup .count').firstElementChild, event_class.count + ' / ' + event_class.total);
+                setupData(document.querySelector('#class_popup .count').lastElementChild, '2 было; 6 записалсь');
 
-                // TODO: Hide when there is no enrollment
-                if (event_class.total == undefined || event_class.total == "" || event_class.total === '0' || event_class.total === '0') {
-                    document.querySelector('.enroll_section').style.visibility = 'hidden';
-                } else {
-                    document.querySelector('#class_popup .count').innerText = event_class.count + ' / ' + event_class.total;
-
+                // // TODO: Hide when there is no enrollment
+                // if (event_class.total == undefined || event_class.total == "" || event_class.total === '0' || event_class.total === '0') {
+                //     document.querySelector('.enroll_section').style.visibility = 'hidden';
+                // } else {
+                //     document.querySelector('#class_popup .count').innerText = event_class.count + ' / ' + event_class.total;
+                //
                     setupBar(event_class.count / event_class.total);  // Number from 0.0 to 1.0
-
-                    if (event_class.count >= event_class.total) {
-                        document.querySelector('#btn').classList.add('inactive');
-                    }
-                }
+                //
+                //     if (event_class.count >= event_class.total) {
+                //         document.querySelector('#btn').classList.add('inactive');
+                //     }
+                // }
 
             }
         }
@@ -201,11 +205,11 @@ function loadDay(day) {
                             // (event.type === 0 || event.type === '0' ? '' : '<a href="event.html?id=' + event.id + '">') +
                                 '<p class="event__title">' + event.title + '</p>' +
 
-                                (event.desc === undefined ? "" : '<p class="event__desc">' + event.desc + '</p>') +
+                                (event.description === undefined ? "" : '<p class="event__desc">' + event.description + '</p>') +
 
-                                ((event.host === undefined || event.host === '') && (event.loc === undefined || event.loc === '') ? "" : '<div class="event__last_line">' +
+                                ((event.host === undefined || event.host === '') && (event.place === undefined || event.place === '') ? "" : '<div class="event__last_line">' +
                                     '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                                    '<span class="event__loc">' + (event.loc === undefined ? "" : event.loc) + '</span>' +
+                                    '<span class="event__loc">' + (event.place === undefined ? "" : event.place) + '</span>' +
                                 '</div>') +
                             // (event.type === 0 || event.type === '0' ? '' : '</a>') +
                         '</div>';
