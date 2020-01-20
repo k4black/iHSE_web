@@ -530,7 +530,7 @@ function editRow(row) {
                 for (let id in events) {
                     current_inputs_html += '<option value="' + id + '">' + events[id].title + '</option>';
                 }
-            } else if (field === 'projects_id') {
+            } else if (field === 'project_id') {
                 for (let id in projects) {
                     current_inputs_html += '<option value="' + id + '">' + projects[id].title + '</option>';
                 }
