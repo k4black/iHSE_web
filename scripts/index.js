@@ -146,7 +146,7 @@ function loadClass(class_id) {
 
 
 let enrolls_raw;
-let names;
+var names;
 
 function loadEnrolls(class_id) {
     var xhttp = new XMLHttpRequest();
