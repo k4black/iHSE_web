@@ -839,7 +839,7 @@ body:not(.admin) .admin_element  {
     height: fit-content;
     margin: -220px 0 0 -345px;
     background: #e9e9e9;
-    border-radius: 5px;
+    border-radius: 10px;
 }
 
 .popup_body .fields {

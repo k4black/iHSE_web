@@ -109,11 +109,8 @@ xhttp.send();
 
 // https://kimmobrunfeldt.github.io/progressbar.js/
 // var ProgressBar = require('scripts/progressbar.js');
-var bar;
-window.addEventListener('load', function () {
-    console.log('Load');
-
-    bar = new window.ProgressBar.Line('#container', {
+function setupBar() {
+    bar = new ProgressBar.Line('#container', {
         strokeWidth: 4,
         easing: 'easeInOut',
         duration: 1400,
@@ -127,6 +124,14 @@ window.addEventListener('load', function () {
             bar.path.setAttribute('stroke', state.color);
         }
     });
+}
+
+
+var bar;
+window.addEventListener('load', function () {
+    console.log('Load');
+
+    setupBar();
 });
 
 

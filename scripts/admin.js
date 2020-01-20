@@ -95,6 +95,7 @@ let fields = {
     'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
     'events': ['id', 'type', 'title', 'description', 'host', 'place', 'time', 'date'],
     'classes': ['id', 'credits', 'count', 'total'],
+    'enrolls': ['id', 'event_id', 'user_id', 'time'],
     'credits': ['id', 'user_id', 'event_id', 'date', 'value'],
     'codes': ['code', 'type', 'used']
 };
@@ -578,6 +579,12 @@ function setupTabs() {
         loadAndCreateTable(current_table);
         $('.tabs button').removeClass('active_tab');
         $('#tab_classes').addClass('active_tab');
+    };
+    $('#tab_enrolls')[0].onclick = function () {
+        current_table = 'enrolls';
+        loadAndCreateTable(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_enrolls').addClass('active_tab');
     };
 }
 

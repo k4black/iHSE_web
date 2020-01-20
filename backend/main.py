@@ -333,6 +333,9 @@ def get(env, query, cookie):
     if env['PATH_INFO'] == '/feedback':
         return get_feedback(env, query, cookie)
 
+    if env['PATH_INFO'] == '/class':
+        return get_class(env, query, cookie)
+
     if env['PATH_INFO'] == '/event':
         # TODO: Remove on release - admin
         user_obj = get_user_by_response(cookie)

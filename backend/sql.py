@@ -111,6 +111,19 @@ cursor.execute('''
                     );
                     ''')
 
+
+# Enrolls
+cursor.execute('''
+                    create table if not exists enrolls (
+                        id serial not null primary key unique,
+                        event_id serial,
+                        user_id serial,
+                        time text default 'datetime(''now'', ''localtime'')',
+                        foreign key (user_id) references users(id),
+                        foreign key (event_id) references classes(id)
+                    );
+                    ''')
+
 # Credits
 cursor.execute('''
                     create table if not exists credits (
@@ -151,6 +164,7 @@ table_fields = {
     'sessions': ('id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'),
     'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', 'date'),
     'classes': ('id', 'credits', 'count', 'total'),
+    'enrolls': ('id', 'event_id', 'user_id', 'time'),
     'credits': ('id', 'user_id', 'event_id', 'date', 'value'),
     'codes': ('code', 'type', 'used')
 }
