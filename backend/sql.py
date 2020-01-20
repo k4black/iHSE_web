@@ -961,6 +961,104 @@ def remove_class(class_id):
     remove_event(class_id)
 
 
+# Enrolls
+def get_enrolls():
+    """ Get all classes (events type) from sql table
+
+    Args:
+
+    Returns:
+        class objects: list of event objects - [ (id, credits, count, total), ...]
+
+    """
+    cursor.execute('select * from classes;')
+    classes_list = cursor.fetchall()
+
+    return classes_list
+
+
+def get_enroll(enroll_id):
+    """ Get enrolls obj by id
+
+    Args:
+        enroll_id: enroll id from bd
+
+    Returns:
+        enroll_obj: (id, event_id, user_id, time)
+    """
+
+    cursor.execute(f'select * from enrolls where id = {enroll_id};')
+    enrolls = cursor.fetchall()
+
+    if len(enrolls) == 0:  # No such event
+        return None
+    else:
+        return enrolls[0]
+
+
+def get_enrolls(event_id):
+    """ Get enrolls obj by id
+
+    Args:
+        event_id: event id from bd
+
+    Returns:
+        class_obj: (id, credits, count, total)
+    """
+
+    cursor.execute(f'select * from enrolls where event_id = {event_id};')
+    enrolls = cursor.fetchall()
+
+    if len(enrolls) == 0:  # No such event
+        return None
+    else:
+        return enrolls[0]
+
+
+def insert_enroll(enroll_obj):
+    """ Insert enroll
+
+    Args:
+        enroll_obj: class obj (None, credits, count, total)
+
+    Returns:
+        # TODO: Return id
+    """
+    cursor.execute(f'insert into enrolls (event_id, user_id, time) values ({enroll_obj[1]}, {enroll_obj[2]}, {enroll_obj[3]}); ')
+    conn.commit()
+
+
+def edit_enroll(enroll_obj):
+    """ Update enroll
+
+    Args:
+        enroll_obj: enroll obj (id, event_id, user_id, time)
+
+    Returns:
+    """
+    cursor.execute(f'''update classes set
+                                event_id = {enroll_obj[1]},
+                                user_id = {enroll_obj[2]},
+                                time = {enroll_obj[3]}
+                            where id = {enroll_obj[0]};
+                        ''')
+    conn.commit()
+
+
+def remove_enroll(enroll_id):
+    """ Delete enroll by id
+
+    Args:
+        enroll_id: enroll id from bd
+
+    Returns:
+        # Success delete or not
+    """
+
+    cursor.execute(f'delete from enrolls where id = {enroll_id};')
+    conn.commit()
+
+
 # Credits
 def get_credits():
     """ Get all credits from sql table

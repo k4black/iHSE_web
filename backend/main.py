@@ -449,6 +449,8 @@ def admin_panel(env, query, cookie):
             data = sql.process_sql(sql.get_events(), 'events')
         elif table_name == 'classes':
             data = sql.process_sql(sql.get_classes(), 'classes')
+        elif table_name == 'enrolls':
+            data = sql.process_sql(sql.get_classes(), 'enrolls')
         else:
             print(' ========  400 Bad Request by admin  ======== ')
             return ('400 Bad Request',
@@ -495,6 +497,8 @@ def admin_panel(env, query, cookie):
             sql.clear_events()
         elif table_name == 'classes':
             sql.clear_classes()
+        elif table_name == 'enrolls':
+            sql.clear_enrolls()
         else:
             return ('400 Bad Request',
                     [
@@ -554,6 +558,10 @@ def admin_panel(env, query, cookie):
                 data = sql.dict_to_tuple(obj, 'classes')
                 sql.insert_class(data)
 
+            elif table_name == 'enrolls':
+                data = sql.dict_to_tuple(obj, 'enrolls')
+                sql.insert_enroll(data)
+
         else:
             if table_name == 'users':
                 data = sql.dict_to_tuple(obj, 'users')
@@ -586,6 +594,10 @@ def admin_panel(env, query, cookie):
             elif table_name == 'classes':
                 data = sql.dict_to_tuple(obj, 'classes')
                 sql.edit_class(data)
+
+            elif table_name == 'enrolls':
+                data = sql.dict_to_tuple(obj, 'enrolls')
+                sql.edit_enrolls(data)
 
         return ('200 OK',
                 [
