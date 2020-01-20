@@ -514,16 +514,26 @@ function editRow(row) {
 
         let current_inputs_html = '<label for=' + field + '>' + field + '</label>';
         if (Object.keys(row).length === 0) {
-            current_inputs_html += '<input name=' + field + ' value="" type="text" ' + (field === 'id' ? 'disabled' : '') + (field === 'user_id' || field === 'event_id' ? 'list=' + field + '_list' : '') + '>';
+            current_inputs_html += '<input name=' + field + ' value="" type="text" ' + (field === 'id' ? 'disabled' : '') + (field === 'user_id' || field === 'event_id' || field === 'project_id' ? 'list=' + field + '_list' : '') + '>';
         } else {
-            current_inputs_html += '<input name=' + field + ' value="' + row[field] + '" type="text" ' + (field === 'id' ? 'disabled' : '') + (field === 'user_id' || field === 'event_id' ? 'list=' + field + '_list' : '') + '>';
+            current_inputs_html += '<input name=' + field + ' value="' + row[field] + '" type="text" ' + (field === 'id' ? 'disabled' : '') + (field === 'user_id' || field === 'event_id' || field === 'project_id' ? 'list=' + field + '_list' : '') + '>';
         }
 
-        if (field === 'user_id' || field === 'event_id') {
+        if (field === 'user_id' || field === 'event_id' || field === 'project_id') {
             current_inputs_html += '<datalist id="' + field + '_list" name="' + field + '_list">';
 
-            for (let id in users) {
-                current_inputs_html += '<option value="' + id + '">' + (field === 'user_id' ? users[id].name : events[id].title) + '</option>';
+            if (field === 'user_id') {
+                for (let id in users) {
+                    current_inputs_html += '<option value="' + id + '">' + users[id].name + '</option>';
+                }
+            } else if (field === 'event_id') {
+                for (let id in events) {
+                    current_inputs_html += '<option value="' + id + '">' + events[id].title + '</option>';
+                }
+            } else if (field === 'projects_id') {
+                for (let id in projects) {
+                    current_inputs_html += '<option value="' + id + '">' + projects[id].title + '</option>';
+                }
             }
 
             current_inputs_html += '</datalist>';
