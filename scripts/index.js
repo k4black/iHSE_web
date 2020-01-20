@@ -44,6 +44,7 @@ function setupBar() {
 var bar;
 
 
+
 window.addEventListener('load', function () {
     console.log('Load');
 
@@ -57,7 +58,7 @@ window.addEventListener('load', function () {
     else
         today = dd + '.' + mm;
 
-
+    loadNames();
     loadDay(today);
 
     // setupBar(0.8);
@@ -119,7 +120,7 @@ function loadClass(class_id) {
                 //     document.querySelector('#class_popup .anno').firstElementChild.innerText = event_class.anno;
                 // }
                 setupData(document.querySelector('#class_popup .count').firstElementChild, event_class.count + ' / ' + event_class.total);
-                setupData(document.querySelector('#class_popup .count').lastElementChild, '2 было; 6 записалсь');
+                // setupData(document.querySelector('#class_popup .count').lastElementChild, '2 было; 6 записалсь');
 
                 // // TODO: Hide when there is no enrollment
                 // if (event_class.total == undefined || event_class.total == "" || event_class.total === '0' || event_class.total === '0') {
@@ -145,6 +146,8 @@ function loadClass(class_id) {
 
 
 let enrolls_raw;
+let names;
+
 function loadEnrolls(class_id) {
     var xhttp = new XMLHttpRequest();
 
@@ -152,8 +155,27 @@ function loadEnrolls(class_id) {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
                 // loadingEventEnd();
+                readyStatus++;
 
                 enrolls_raw = JSON.parse(this.responseText);
+
+                let attendance = 0;
+                for (let i in enrolls_raw) {
+                    attendance += enrolls_raw[i].attendance;
+                }
+
+                setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + enrolls_raw.length + ' записалсь');
+
+
+                let users_list = '';
+
+                for (let i in enrolls_raw) {
+                    let name = names[enrolls_raw[i].user_id];
+
+                    users_list += '<p user-id="' + name.id + '">' + name.id + ' - ' + name.name + '</p>'
+                }
+
+                document.querySelector('#users_list').innerHTML = users_list;
             }
         }
     };
@@ -164,6 +186,24 @@ function loadEnrolls(class_id) {
 }
 
 
+function loadNames() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields
+                // loadingEventEnd();
+                readyStatus++;
+
+                names = JSON.parse(this.responseText);
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/names", true);
+    // xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
 
 
 

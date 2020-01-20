@@ -767,7 +767,7 @@ def get_names(env, query, cookie):
 
 
     # Names
-    data = [i[3] for i in sql.get_users()]
+    data = [{'name': i[3], 'id': i[0]} for i in sql.get_users()]  # TODO: Move in sql.py
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
@@ -775,9 +775,10 @@ def get_names(env, query, cookie):
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                # ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                ('Access-Control-Allow-Origin', '*'),
                 # To receive cookie
-                ('Access-Control-Allow-Credentials', 'true'),
+                # ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
                 ('Content-Length', str(len(json_data)))
              ],
