@@ -597,7 +597,7 @@ def admin_panel(env, query, cookie):
 
             elif table_name == 'enrolls':
                 data = sql.dict_to_tuple(obj, 'enrolls')
-                sql.edit_enrolls(data)
+                sql.edit_enroll(data)
 
         return ('200 OK',
                 [
@@ -636,6 +636,9 @@ def admin_panel(env, query, cookie):
 
         elif table_name == 'classes':
             sql.remove_class(obj_id)
+
+        elif table_name == 'enrolls':
+            sql.remove_enroll(obj_id)
 
         return ('200 OK',
                 [
