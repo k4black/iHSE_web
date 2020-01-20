@@ -1077,7 +1077,7 @@ def remove_enroll(enroll_id):
     """
 
     cursor.execute(f'delete from enrolls where id = {enroll_id};')
-    conn.commit()  # TODO: Check (and think) if theteare credtis according this event. delete it 
+    conn.commit()  # TODO: Check (and think) if theteare credtis according this event. delete it
 
 
 # Credits

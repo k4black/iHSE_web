@@ -1473,7 +1473,7 @@ def post_mark_enrolls(env, query, cookie):
 
 
 # TODO: think mb rename
-def post_remove_enrolls(env, query, cookie):
+def post_remove_enroll(env, query, cookie):
     """ Remove  HTTP request (by student )
     By cookie add credits to user
 
