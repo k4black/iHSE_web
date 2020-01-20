@@ -514,9 +514,19 @@ function editRow(row) {
 
         let current_inputs_html = '<label for=' + field + '>' + field + '</label>';
         if (Object.keys(row).length === 0) {
-            current_inputs_html += '<input name=' + field + ' value="" type="text" ' + (field === 'id' ? 'disabled' : '') + '>';
+            current_inputs_html += '<input name=' + field + ' value="" type="text" ' + (field === 'id' ? 'disabled' : '') + (field === 'user_id' || field === 'event_id' ? 'list=' + field + '_list' : '') + '>';
         } else {
-            current_inputs_html += '<input name=' + field + ' value="' + row[field] + '" type="text" ' + (field === 'id' ? 'disabled' : '') + '>';
+            current_inputs_html += '<input name=' + field + ' value="' + row[field] + '" type="text" ' + (field === 'id' ? 'disabled' : '') + (field === 'user_id' || field === 'event_id' ? 'list=' + field + '_list' : '') + '>';
+        }
+
+        if (field === 'user_id' || field === 'event_id') {
+            current_inputs_html += '<datalist id="' + field + '_list" name="' + field + '_list">';
+
+            for (let id in users) {
+                current_inputs_html += '<option value="' + id + '">' + (field === 'user_id' ? users[id].name : events[id].title) + '</option>';
+            }
+
+            current_inputs_html += '</datalist>';
         }
 
         inputs_html += '<div style="display:block">' + current_inputs_html + '</div>';
