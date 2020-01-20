@@ -990,7 +990,7 @@ def get_enroll(enroll_id):
     cursor.execute(f'select * from enrolls where id = {enroll_id};')
     enrolls = cursor.fetchall()
 
-    if len(enrolls) == 0:  # No such event
+    if len(enrolls) == 0:  # No such enrolls
         return None
     else:
         return enrolls[0]
@@ -1009,10 +1009,10 @@ def get_enrolls_by_event_id(event_id):
     cursor.execute(f'select * from enrolls where event_id = {event_id};')
     enrolls = cursor.fetchall()
 
-    if len(enrolls) == 0:  # No such event
-        return None
+    if len(enrolls) == 0:  # No such enrolls
+        return []
     else:
-        return enrolls[0]
+        return enrolls
 
 
 def get_enrolls_by_user_id(user_id):
@@ -1028,10 +1028,10 @@ def get_enrolls_by_user_id(user_id):
     cursor.execute(f'select * from enrolls where user_id = {user_id};')
     enrolls = cursor.fetchall()
 
-    if len(enrolls) == 0:  # No such event
-        return None
+    if len(enrolls) == 0:  # No such enrolls
+        return []
     else:
-        return enrolls[0]
+        return enrolls
 
 
 def insert_enroll(enroll_obj):
