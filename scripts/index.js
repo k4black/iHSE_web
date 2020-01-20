@@ -376,7 +376,7 @@ function saveEnrolls() {
 
     let data = JSON.stringify(data_raw);
 
-    xhttp.open("POST", "http://ihse.tk:50000/enroll?", true);
+    xhttp.open("POST", "http://ihse.tk:50000/mark_enrolls?", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
