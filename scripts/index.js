@@ -10,6 +10,32 @@
 
 
 
+function groupBy(arr, property) {
+    return arr.reduce(function(memo, x) {
+        if (!memo[x[property]]) {
+            memo[x[property]] = [];
+        }
+        memo[x[property]].push(x);
+        return memo;
+    }, {});
+}
+
+
+function processNames(names_raw) {
+    names_raw.sort(function(first, second) {
+        return first.id - second.id;
+    });
+
+    let names_rawGroups = groupBy(names_raw, 'id');
+
+    let names = {};
+
+    for (let user_id in names_rawGroups) {
+        names[user_id] = names_rawGroups[user_id][0];
+    }
+
+    return names;
+}
 
 
 /** ===============  LOGIC and REQUESTS  =============== */
@@ -155,7 +181,6 @@ function loadEnrolls(class_id) {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
                 // loadingEventEnd();
-                readyStatus++;
 
                 enrolls_raw = JSON.parse(this.responseText);
 
@@ -169,10 +194,17 @@ function loadEnrolls(class_id) {
 
                 let users_list = '';
 
+
                 for (let i in enrolls_raw) {
                     let name = names[enrolls_raw[i].user_id];
+                    let close = '<button class="danger_button"><i class="mobile__item__icon large material-icons">clear</i></button>';
+                    let checkbox = '<input type="checkbox" ' + (enrolls_raw[i].attendance === 0 || enrolls_raw[i].attendance === '0' ? '' : 'checked') + '>';
 
-                    users_list += '<p user-id="' + name.id + '">' + name.id + ' - ' + name.name + '</p>'
+                    users_list += '<div class="user" user-id="' + name.id + '">';
+
+                    users_list += '<p>'+ name.name +'</p>' + '<div>' + checkbox + close + '</div>';
+
+                    users_list += '</div>';
                 }
 
                 document.querySelector('#users_list').innerHTML = users_list;
@@ -193,9 +225,9 @@ function loadNames() {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
                 // loadingEventEnd();
-                readyStatus++;
 
-                names = JSON.parse(this.responseText);
+                let names_raw = JSON.parse(this.responseText);
+                names = processNames(names_raw);
             }
         }
     };

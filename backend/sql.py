@@ -985,7 +985,7 @@ def get_enroll(enroll_id):
         enroll_id: enroll id from bd
 
     Returns:
-        enroll_obj: (id, event_id, user_id, time)
+        enroll_obj: (id, event_id, user_id, time, attendance)
     """
 
     cursor.execute(f'select * from enrolls where id = {enroll_id};')
@@ -1004,7 +1004,7 @@ def get_enrolls_by_event_id(event_id):
         event_id: event id from bd
 
     Returns:
-        class_obj: (id, credits, count, total)
+        enroll_objs: [(id, event_id, users_id, time, attendance), ...]
     """
 
     cursor.execute(f'select * from enrolls where event_id = {event_id};')
@@ -1023,7 +1023,7 @@ def get_enrolls_by_user_id(user_id):
         user_id: user id from bd
 
     Returns:
-        class_obj: (id, credits, count, total)
+        enroll_objs: [(id, event_id, users_id, time, attendance), ...]
     """
 
     cursor.execute(f'select * from enrolls where user_id = {user_id};')
@@ -1039,12 +1039,12 @@ def insert_enroll(enroll_obj):
     """ Insert enroll
 
     Args:
-        enroll_obj: class obj (None, credits, count, total)
+        enroll_obj: class obj (None, credits, count, total, attendance)
 
     Returns:
         # TODO: Return id
     """
-    cursor.execute(f'insert into enrolls (event_id, user_id, time) values ({enroll_obj[1]}, {enroll_obj[2]}, {enroll_obj[3]}); ')
+    cursor.execute(f'insert into enrolls (event_id, user_id, time) values ({enroll_obj[1]}, {enroll_obj[2]}, \'{enroll_obj[3]}\', \'{enroll_obj[4]}\'); ')
     conn.commit()
 
 
@@ -1052,14 +1052,15 @@ def edit_enroll(enroll_obj):
     """ Update enroll
 
     Args:
-        enroll_obj: enroll obj (id, event_id, user_id, time)
+        enroll_obj: enroll obj (id, event_id, user_id, time, attendance)
 
     Returns:
     """
     cursor.execute(f'''update enrolls set
                                 event_id = {enroll_obj[1]},
                                 user_id = {enroll_obj[2]},
-                                time = {enroll_obj[3]}
+                                time = \'{enroll_obj[3]}\',
+                                attendance = \'{enroll_obj[4]}\',
                             where id = {enroll_obj[0]};
                         ''')
     conn.commit()

@@ -300,7 +300,16 @@ footer div {
 }
 
 .enroll__button {
-    margin-top: 60px;
+    width: 50px!important;
+    height: 50px!important;
+    display: block;
+    position: absolute;
+    top: -25px;
+    right: 10px;
+}
+
+.enroll__button i {
+    font-size: 25px;
 }
 
 
@@ -309,6 +318,44 @@ footer div {
     pointer-events: none;
 }
 
+
+
+
+
+
+.users_list {
+    margin-top: 30px;
+}
+
+.users_list * {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.user {
+    width: 100%;
+}
+
+.user button {
+    width: 40px!important;
+    height: 40px!important;
+}
+
+.user input {
+    width: 25px!important;
+    height: 25px!important;
+}
+
+.user p {
+    line-height: 0.8;
+}
+
+/*.user div {*/
+/*    width: fit-content;*/
+/*}*/
 
 
 
