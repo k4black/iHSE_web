@@ -759,12 +759,11 @@ def get_names(env, query, cookie):
 
     """
 
-    # Safety get user_obj
-    user_obj = get_user_by_response(cookie)
-
-    if user_obj[2] is None:  # No User
-        return user_obj
-
+    # # Safety get user_obj
+    # user_obj = get_user_by_response(cookie)
+    #
+    # if user_obj[2] is None:  # No User
+    #     return user_obj
 
     # Names
     data = [{'name': i[3], 'id': i[0]} for i in sql.get_users()]  # TODO: Move in sql.py
