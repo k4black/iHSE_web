@@ -8,6 +8,7 @@
 // TODO: Hide .html
 // ihse.tk/login.html -> ihse.tk/login
 
+var current_event = 0;
 
 
 function groupBy(arr, property) {
@@ -35,6 +36,23 @@ function processNames(names_raw) {
     }
 
     return names;
+}
+
+
+function processEnrolls(enrolls_raw) {
+    enrolls_raw.sort(function(first, second) {
+        return first.id - second.id;
+    });
+
+    let enrolls_rawGroups = groupBy(enrolls_raw, 'id');
+
+    let enrolls = {};
+
+    for (let user_id in enrolls_rawGroups) {
+        enrolls[user_id] = enrolls_rawGroups[user_id][0];
+    }
+
+    return enrolls;
 }
 
 
@@ -88,6 +106,10 @@ window.addEventListener('load', function () {
     loadDay(today);
 
     // setupBar(0.8);
+
+    document.querySelector('#save').onclick = function (val) {
+        saveEnrolls();
+    };
 });
 
 
@@ -100,8 +122,9 @@ function setupClasses() {
             loadClass(class_events[i].getAttribute('data-id'));
             // TODO: Smooth visible
 
-            loadEnrolls(class_events[i].getAttribute('data-id'));
+            current_event = class_events[i].getAttribute('data-id');
 
+            loadEnrolls(class_events[i].getAttribute('data-id'));
             document.querySelector('#class_popup').style.display = 'block';
         }
     }
@@ -171,7 +194,7 @@ function loadClass(class_id) {
 }
 
 
-let enrolls_raw;
+let enrolls;
 var names;
 
 function loadEnrolls(class_id) {
@@ -182,7 +205,9 @@ function loadEnrolls(class_id) {
             if (this.status === 200) { // If ok set up fields
                 // loadingEventEnd();
 
-                enrolls_raw = JSON.parse(this.responseText);
+                let enrolls_raw = JSON.parse(this.responseText);
+                enrolls = processEnrolls(enrolls_raw);
+
 
                 let attendance = 0;
                 for (let i in enrolls_raw) {
@@ -200,7 +225,7 @@ function loadEnrolls(class_id) {
                     let close = '<button class="danger_button"><i class="mobile__item__icon large material-icons">clear</i></button>';
                     let checkbox = '<input type="checkbox" ' + (enrolls_raw[i].attendance === 0 || enrolls_raw[i].attendance === '0' ? '' : 'checked') + '>';
 
-                    users_list += '<div class="user" user-id="' + name.id + '">';
+                    users_list += '<div class="user" data-id="'+ enrolls_raw[i].id +'" user-id="' + name.id + '">';
 
                     users_list += '<p>'+ name.name +'</p>' + '<div>' + checkbox + close + '</div>';
 
@@ -306,4 +331,56 @@ function loadDay(day) {
     xhttp.open("GET", "http://ihse.tk:50000/day?day=" + day, true);
     xhttp.send();
 }
+
+
+
+
+function saveEnrolls() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields
+                loadClass();
+            }
+        }
+    };
+
+    let data_raw = [];
+
+    let enroll_list = document.querySelectorAll('#class_popup .users_list .user');
+    for (let i = 0; i < enroll_list.length; ++i) {
+        console.log(i, enroll_list[i]);
+
+        if (enrolls[enroll_list[i].getAttribute('data-id')].attendance != enroll_list[i].children[1].firstChild.checked) {
+            // Enroll status changed
+
+            console.log('New status for ', enroll_list[i].getAttribute('user-id'), ' is ', enroll_list[i].children[1].firstChild.checked);
+
+            let status = (enroll_list[i].children[1].firstChild.checked ? 1 : 0);
+
+            data_raw.push({
+                'id': enroll_list[i].getAttribute('data-id'),
+                'event_id': current_event,
+                'user_id': enroll_list[i].getAttribute('user-id'),
+                'attendance': status
+            });
+        }
+
+    }
+
+    if (data_raw.length === 0) {
+        return;
+    }
+
+
+    let data = JSON.stringify(data_raw);
+
+    xhttp.open("POST", "http://ihse.tk:50000/enroll?", true);
+    //xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Content-Type', 'text/plain');
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send(data);
+}
+
 

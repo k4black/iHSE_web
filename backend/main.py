@@ -1156,6 +1156,9 @@ def post(env, query, cookie):
     if env['PATH_INFO'] == '/credits':
         return post_credits(env, query, cookie)
 
+    if env['PATH_INFO'] == '/mark_enrolls':
+        return post_mark_enrolls(env, query, cookie)
+
     if env['PATH_INFO'] == '/enroll':
         # TODO: Remove on release - admin
         user_obj = get_user_by_response(cookie)
@@ -1386,7 +1389,6 @@ def post_credits(env, query, cookie):
 
     event_id = 42  # TODO: Get event id from code
 
-
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
@@ -1398,6 +1400,59 @@ def post_credits(env, query, cookie):
     if event_obj is not None:
         gsheets.save_credits(user_obj, event_obj)
         sql.checkin_user(user_obj, event_obj)
+
+        return ('200 Ok',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                 ],
+                [])
+
+    else:
+        return ('405 Method Not Allowed',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
+
+
+# TODO: think mb rename
+def post_mark_enrolls(env, query, cookie):
+    """ Sing in at lecture  HTTP request (by student )
+    By cookie add credits to user
+
+    Args:
+        env: HTTP request environment - dict
+        query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if all are ok
+            401 Unauthorized: if wrong session id
+            405 Method Not Allowed: already got it or timeout
+
+    Returns:
+         None; Only http answer
+
+    """
+
+    # Safety get user_obj
+    user_obj = get_user_by_response(cookie)
+
+    if user_obj[2] is None:  # No User  # TODO: Check admin
+        return user_obj
+
+
+    enrolls = get_json_by_response(env)
+
+    if enrolls is not None:
+
+        # TODO: check do better
+        for enroll in enrolls:
+            enroll_obj = sql.dict_to_tuple(enroll, 'enrolls')
+            sql.edit_enroll(enroll_obj)
+            # TODO: add credits
 
         return ('200 Ok',
                 [
