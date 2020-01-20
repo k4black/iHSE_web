@@ -968,8 +968,11 @@ def get_enrolls(env, query, cookie):
     enrolls = []
     if 'event_id' in query.keys():
         enrolls = sql.get_enrolls_by_event_id(query['event_id'])
+        print('enrolls by event_id ', enrolls)
     elif 'user_id' in query.keys():
         enrolls = sql.get_enrolls_by_event_id(query['user_id'])
+        print('enrolls by user_id ', enrolls)
+
 
     # Json event data
     data = sql.process_sql(enrolls, 'enrolls')

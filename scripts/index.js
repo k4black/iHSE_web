@@ -153,7 +153,7 @@ function loadEnrolls(class_id) {
             if (this.status === 200) { // If ok set up fields
                 // loadingEventEnd();
 
-                enrolls_raw = JSON.parse( this.responseText );
+                enrolls_raw = JSON.parse(this.responseText);
             }
         }
     };
