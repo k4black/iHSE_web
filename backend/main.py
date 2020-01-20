@@ -902,7 +902,7 @@ def get_event(env, query, cookie):
                 # Because in js there is xhttp.withCredentials = true;
                 ('Access-Control-Allow-Origin', 'http://ihse.tk'),
                 # To receive cookie
-                ('Access-Control-Allow-Credentials', 'true'),
+                # ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
                 ('Content-Length', str(len(json_data)))
              ],
@@ -938,7 +938,7 @@ def get_class(env, query, cookie):
                 # Because in js there is xhttp.withCredentials = true;
                 ('Access-Control-Allow-Origin', 'http://ihse.tk'),
                 # To receive cookie
-                ('Access-Control-Allow-Credentials', 'true'),
+                # ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
                 ('Content-Length', str(len(json_data)))
              ],
