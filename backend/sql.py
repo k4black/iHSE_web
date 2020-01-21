@@ -927,6 +927,25 @@ def get_class(event_id):
         return events[0]
 
 
+def check_class(class_id):
+    """ Chack class have empty places
+
+    Args:
+        class_id: class id (event id) from bd
+
+    Returns:
+        bool - True - has places
+    """
+
+    cursor.execute(f'select * from classes where id = {class_id};')
+    class_obj = cursor.fetchone()
+
+    if class_obj is None:
+        return False
+
+    return class_obj[2] < class_obj[3]
+
+
 def insert_class(class_obj):
     """ Insert project
 
