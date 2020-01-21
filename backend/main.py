@@ -1450,7 +1450,6 @@ def post_mark_enrolls(env, query, cookie):
     if user_obj[2] is None:  # No User  # TODO: Check admin
         return user_obj
 
-
     enrolls = get_json_by_response(env)
 
     if enrolls is not None:
@@ -1459,7 +1458,9 @@ def post_mark_enrolls(env, query, cookie):
         for enroll in enrolls:
             enroll_obj = sql.dict_to_tuple(enroll, 'enrolls')
             sql.edit_enroll(enroll_obj)
-            # TODO: add credits
+
+            if enroll['attendance'] == 1 or enroll['attendance'] == '1':
+                sql.pay_credit(enroll['user_id'], enroll['event_id'])
 
         return ('200 Ok',
                 [

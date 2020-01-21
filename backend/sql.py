@@ -1189,6 +1189,32 @@ def insert_credit(credit_obj):
     conn.commit()
 
 
+def pay_credit(user_id, event_id):
+    """ Insert credit for user
+
+    Args:
+        user_id: user id from db
+        event_id: event id from db
+
+    Returns:
+    """
+
+    # TODO: Make all of this in the sql
+    cursor.execute(f'select * from events where id = {event_id};')
+    event = cursor.fetchone()
+    cursor.execute(f'select * from classes where id = {event_id};')
+    class_ = cursor.fetchone()
+
+    cursor.execute(f'select * from credits where event_id = {event_id} and user_id = {user_id};')
+    credits = cursor.fetchall()
+    if len(credits) == 0:
+        cursor.execute(f'insert into credits (id, user_id, event_id, date, value) values (default, {user_id}, {event_id}, \'{event[7]}\', {class_[1]}); ')
+    else:
+        cursor.execute(f'update credits set value = {class_[1]} where id = {credits[0][0]};')
+
+    conn.commit()
+
+
 def edit_credit(credit_obj):
     """ Update credit
 
