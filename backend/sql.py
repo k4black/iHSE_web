@@ -1047,7 +1047,7 @@ def insert_enroll(enroll_obj):
 
     cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
     event = cursor.fetchone()
-    cursor.execute(f'update classes set count = {event[4] + 1} where id = {event[0]};')
+    cursor.execute(f'update classes set count = {event[2] + 1} where id = {event[0]};')
 
     cursor.execute(f'insert into enrolls (event_id, user_id, time, attendance) values ({enroll_obj[1]}, {enroll_obj[2]}, \'{enroll_obj[3]}\', {enroll_obj[4]});')
     conn.commit()
@@ -1069,12 +1069,12 @@ def edit_enroll(enroll_obj):
         # Change old event
         cursor.execute(f'select * from classes where id = {enroll[1]};')
         current_event = cursor.fetchone()
-        cursor.execute(f'update classes set count = {current_event[4] - 1} where id = {current_event[0]};')
+        cursor.execute(f'update classes set count = {current_event[2] - 1} where id = {current_event[0]};')
 
         # Change new event
         cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
         new_event = cursor.fetchone()
-        cursor.execute(f'update classes set count = {new_event[4] + 1} where id = {new_event[1]};')
+        cursor.execute(f'update classes set count = {new_event[2] + 1} where id = {new_event[1]};')
 
     cursor.execute(f'''update enrolls set
                                 event_id = {enroll_obj[1]},
@@ -1103,7 +1103,7 @@ def remove_enroll(enroll_id):
 
     cursor.execute(f'select * from classes where id = {event_id};')
     event = cursor.fetchone()
-    cursor.execute(f'update classes set count = {event[4] - 1} where id = {event_id};')
+    cursor.execute(f'update classes set count = {event[2] - 1} where id = {event_id};')
 
     cursor.execute(f'delete from enrolls where id = {enroll_id};')
     conn.commit()  # TODO: Check (and think) if theteare credtis according this event. delete it
