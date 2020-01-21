@@ -1191,7 +1191,8 @@ def get_projects(env, query):
 
     """
 
-    data = gsheets.get_projects()
+    data_raw = sql.get_projects()
+    data = sql.process_sql(data_raw, 'projects')
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
