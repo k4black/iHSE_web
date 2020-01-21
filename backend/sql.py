@@ -364,6 +364,77 @@ def clear_projects():
     conn.commit()
 
 
+# Days
+def get_days():
+    """ Get all projects from sql table
+
+    Args:
+
+    Returns:
+        day objects: list of day objects - [ (id, date, title, feedback), ...]
+
+    """
+    cursor.execute('select * from days;')
+    days_list = cursor.fetchall()
+
+    return days_list
+
+
+def insert_day(day_obj):
+    """ Insert day
+
+    Args:
+        day_obj: day obj (None, date, title, feedback)
+
+    Returns:
+        # TODO: Return id
+    """
+    cursor.execute(f'insert into days (date, title, feedback) values (\'{day_obj[1]}\', \'{day_obj[2]}\', {day_obj[3]}); ')
+    conn.commit()
+
+
+def edit_day(day_obj):
+    """ Update day
+
+    Args:
+        day_obj: day obj (id, date, title, feedback)
+
+    Returns:
+    """
+    cursor.execute(f'''update days set
+                                date = \'{day_obj[1]}\',
+                                title = \'{day_obj[2]}\',
+                                feedback = {day_obj[3]}
+                            where id = {day_obj[0]};
+                        ''')
+    conn.commit()
+
+
+def remove_day(day_id):
+    """ Delete project by id
+
+    Args:
+        day_id: day id from bd
+
+    Returns:
+        # Success delete or not
+    """
+
+    cursor.execute(f'delete from days where id = {day_id};')
+    conn.commit()
+
+
+def clear_days():
+    """ Clear all days from sql table
+
+    Args:
+    Returns:
+    """
+
+    cursor.execute('delete from days')
+    conn.commit()
+
+
 # Users
 # TODO: delete  after migration ???
 def load_users(users_list):
