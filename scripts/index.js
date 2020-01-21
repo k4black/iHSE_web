@@ -165,7 +165,7 @@ function setupEnrollButtons() {
         }
     }
 
-    document.querySelector('#deenroll').style.display = 'node';
+    document.querySelector('#deenroll').style.display = 'none';
     document.querySelector('#enroll').style.display = 'block';
 }
 
