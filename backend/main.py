@@ -189,15 +189,26 @@ CREDITS_ADDITIONAL = 0
 def read_config() -> None:
     """Read and save config file """
 
+    print('======= Read config file ======== ')
+
     global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL
 
     config = configparser.ConfigParser()
     config.read('config.ini')
 
-    CREDITS_TOTAL = config['CREDITS']['total']
-    CREDITS_MASTER = config['CREDITS']['masterclass']
-    CREDITS_LECTURE = config['CREDITS']['lecture']
-    CREDITS_ADDITIONAL = config['CREDITS']['additional']
+    try:
+        CREDITS_TOTAL = config['CREDITS']['total']
+        CREDITS_MASTER = config['CREDITS']['masterclass']
+        CREDITS_LECTURE = config['CREDITS']['lecture']
+        CREDITS_ADDITIONAL = config['CREDITS']['additional']
+    except KeyError:
+        print('No config file. Using default values')
+        CREDITS_TOTAL = 300
+        CREDITS_MASTER = 15
+        CREDITS_LECTURE = 15
+        CREDITS_ADDITIONAL = 5
+
+    print('===== End config file reading ===== ')
 
 
 def write_config() -> None:
