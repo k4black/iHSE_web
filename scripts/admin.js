@@ -465,10 +465,10 @@ function saveRow() {
 
     for (let field of fields[current_table]) {
         console.log(field, $popup_inputs.querySelector('input[name=' + field + ']'));
-        if (field !== 'time') {
-            row[field] = $popup_inputs.querySelector('input[name=' + field + ']').value;
-        } else {
+        if (current_table === 'events' && field === 'time') {
             row[field] = $popup_inputs.querySelector('input[name=' + field + ']').value.replace('-', '\n');
+        } else {
+            row[field] = $popup_inputs.querySelector('input[name=' + field + ']').value;
             // row[field] = time.replace(' ', '\n').replace('-', '\n');
         }
     }
