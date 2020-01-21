@@ -159,6 +159,36 @@ cursor.execute('''
 conn.commit()
 
 
+def recount_attendance():
+    enrolls = get_enrolls()
+
+    events_attendance_counter = {}
+    for enroll in enrolls:
+        if enroll[1] not in events_attendance_counter.keys():
+            events_attendance_counter[enroll[1]] = 0
+
+        events_attendance_counter[enroll[1]] += 1
+
+    for event_id, count in events_attendance_counter.items():
+        cursor.execute(f'update classes set count = {count} where id = {event_id}')
+    conn.commit()
+
+
+def recount_credits():
+    credits = get_credits()
+
+    user_credits_counter = {}
+    for credit in credits:
+        if credit[1] not in user_credits_counter.keys():
+            user_credits_counter[credit[1]] = 0
+
+        user_credits_counter[credit[1]] += credit[4]
+
+    for user_id, credits_total in user_credits_counter.items():
+        cursor.execute(f'update users set credits = {credits_total} where id = {user_id}')
+    conn.commit()
+
+
 table_fields = {
     'projects': ('id', 'title', 'type', 'def_type', 'direction', 'description'),
     'users': ('id', 'user_type', 'phone', 'name', 'pass', 'team', 'credits', 'avatar', 'project_id'),

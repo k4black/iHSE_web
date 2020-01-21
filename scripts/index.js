@@ -63,7 +63,7 @@ function processEnrolls(enrolls_raw) {
 
 // https://kimmobrunfeldt.github.io/progressbar.js/
 // var ProgressBar = require('scripts/progressbar.js');
-function setupBar() {
+function setupBar(val) {
     document.querySelector('#container').innerHTML = '';
 
     bar = new ProgressBar.Line('#container', {
@@ -81,7 +81,7 @@ function setupBar() {
         }
     });
 
-    bar.animate( 0.8 );  // Number from 0.0 to 1.0
+    bar.animate(val);  // Number from 0.0 to 1.0
 }
 
 
@@ -144,6 +144,12 @@ function setupData(elem, data) {
 
 
 function setupEnrollButtons() {
+    if (user === undefined) {
+        document.querySelector('#deenroll').style.display = 'none';
+        document.querySelector('#enroll').style.display = 'none';
+        return;
+    }
+
     document.querySelector('#enroll').onclick = function (val) {
         createEnroll();
     };
@@ -192,6 +198,7 @@ function loadClass(class_id) {
                 // setupData(document.querySelector('#class_popup .count').lastElementChild, '2 было; 6 записалсь');
 
                 document.querySelector('#credits').value = event_class.credits;
+                document.querySelector('#total').value = event_class.total;
 
                 current_class = event_class;
 
@@ -201,6 +208,7 @@ function loadClass(class_id) {
                 // } else {
                 //     document.querySelector('#class_popup .count').innerText = event_class.count + ' / ' + event_class.total;
                 //
+                console.log(event_class.count , event_class.total, event_class.count / event_class.total);
                 setupBar(event_class.count / event_class.total);  // Number from 0.0 to 1.0
                 //
                 //     if (event_class.count >= event_class.total) {
@@ -494,12 +502,16 @@ function saveClass() {
     };
 
     let credits = document.querySelector('#credits').value;
+    let total = document.querySelector('#total').value;
 
-    if (current_class.credits === credits) {
+    if (current_class.credits === credits && current_class.total === total) {
         return;
     }
 
-    current_class.credits = credits;
+    if (credits !== '')
+        current_class.credits = credits;
+    if (total !== '')
+        current_class.total = total;
     let data = JSON.stringify(current_class);
 
     xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+'classes', true);

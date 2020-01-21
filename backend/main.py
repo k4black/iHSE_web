@@ -1,5 +1,3 @@
-import urllib.parse
-from http.cookies import SimpleCookie
 import json
 import time
 import sys
@@ -7,26 +5,26 @@ import string
 from itertools import groupby
 from operator import itemgetter
 
-sys.path.append('/home/ubuntu/iHSE_web')
+# Threading for sync
+from threading import Timer
+from datetime import datetime
 
+import urllib.parse
+from http.cookies import SimpleCookie
 
-# import backend
 # Sqlite import
 from backend import sql
 # GSheetsAPI imports
 from backend import gsheets
 
-# Threading for sync
-from threading import Timer
 
-from datetime import datetime
+sys.path.append('/home/ubuntu/iHSE_web')
 
 TODAY = datetime.today().strftime('%d.%m')
 
 # Timeout of updating objects (from gsheets)
 TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s TODO: Couple of hours
 CREDITS = 300  # Max credits # TODO: Get from table?
-
 
 
 """ ---===---==========================================---===--- """
@@ -114,6 +112,10 @@ def update_cache():
     # Update today
     TODAY = datetime.today().strftime('%d.%m')
     print('Today ', TODAY)
+    print('sync time: ' + str(time.time()))
+
+
+    return
 
     # Update gsheets cache
     gsheets.update()
@@ -128,8 +130,6 @@ def update_cache():
     # SQL sync - wal checkpoint
     sql.checkpoint()
 
-    print('sync: ' + str(time.time()))
-
 
 def sync():
     """ Update cache and sync events, projects and etc
@@ -141,9 +141,9 @@ def sync():
 
     """
 
-    print('sync_start')
+    print('============ sync_start ============')
     update_cache()  # Sync itself
-    print('sync_end')
+    print('============= sync_end =============')
 
     start_sync(TIMEOUT)  # Update - to call again
 
@@ -167,6 +167,8 @@ def start_sync(delay):
     th.start()
 
 
+sql.recount_attendance()  # TODO: Remove move in sync
+sql.recount_credits()
 start_sync(0)  # Start sync
 
 
