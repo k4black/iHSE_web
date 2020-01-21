@@ -1,0 +1,70 @@
+
+.wrapper {
+    background-color: #eeeeee;
+}
+
+
+
+
+
+.fields {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+}
+
+.fields div {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.fields div * {
+    position: relative;
+    display: inline-block;
+    width: fit-content;
+    margin: 0 10px 0 0;
+    top: 0;
+}
+
+.fields div label {
+    width: 120px;
+}
+
+
+#days {
+    width: auto;
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.fields #days input:last-child {
+    width: fit-content;
+}
+.fields #days input {
+    width: 60px;
+}
+
+#days .day {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    margin: 5px 0 5px 0;
+}
+
+#days .day p {
+    width: 70px;
+}
+
+
+
+button {
+    margin-top: 25px!important;
+}

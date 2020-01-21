@@ -11,6 +11,7 @@ from datetime import datetime
 
 import urllib.parse
 from http.cookies import SimpleCookie
+import configparser
 
 # Sqlite import
 from backend import sql
@@ -91,7 +92,7 @@ def application(env, start_response):
 
 
 """ ---===---==========================================---===--- """
-"""          Auxiliary functions for processing requests         """
+"""                 Sync functions to update data                """
 """ ---===---==========================================---===--- """
 
 
@@ -174,6 +175,57 @@ def start_sync(delay):
 start_sync(0)  # Start sync
 
 
+""" ---===---==========================================---===--- """
+"""                   Config file interactions                   """
+""" ---===---==========================================---===--- """
+
+
+CREDITS_TOTAL = 0
+CREDITS_MASTER = 0
+CREDITS_LECTURE = 0
+CREDITS_ADDITIONAL = 0
+
+
+def read_config() -> None:
+    """Read and save config file """
+
+    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL
+
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+
+    CREDITS_TOTAL = config['CREDITS']['total']
+    CREDITS_MASTER = config['CREDITS']['masterclass']
+    CREDITS_LECTURE = config['CREDITS']['lecture']
+    CREDITS_ADDITIONAL = config['CREDITS']['additional']
+
+
+def write_config() -> None:
+    """Write current configuration to config file"""
+
+    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL
+
+    config = configparser.ConfigParser()
+
+    config['CREDITS'] = {
+        'total': CREDITS_TOTAL,
+        'masterclass': CREDITS_MASTER,
+        'lecture': CREDITS_LECTURE,
+        'additional': CREDITS_ADDITIONAL
+    }
+
+    with open('config.ini', 'w') as configfile:
+        config.write(configfile)
+
+
+read_config()
+
+
+""" ---===---==========================================---===--- """
+"""          f         """
+""" ---===---==========================================---===--- """
+
+
 def cache(foo):
     """ Decorator for cache some function
     Wil check exist cache version response or not and send it
@@ -218,6 +270,11 @@ def cache(foo):
         return cached_status, cached_headers, cached_data
 
     return decorated_foo
+
+
+""" ---===---==========================================---===--- """
+"""          Auxiliary functions for processing requests         """
+""" ---===---==========================================---===--- """
 
 
 def get_user_by_response(cookie):
@@ -433,6 +490,12 @@ def admin_panel(env, query, cookie):
     # TODO: ADMIN!
 
     print(f'Admin want to {env["PATH_INFO"]}')
+
+    if env['PATH_INFO'] == '/admin_get_config':
+        return get_config(env, query, cookie)
+
+    if env['PATH_INFO'] == '/admin_post_config':
+        return post_config(env, query, cookie)
 
     if env['PATH_INFO'] == '/admin_get_table':
         table_name = query['table']
@@ -742,6 +805,45 @@ def get_user(env, query, cookie):
                 ('Access-Control-Allow-Origin', 'http://ihse.tk'),
                 # To receive cookie
                 ('Access-Control-Allow-Credentials', 'true'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
+
+
+def get_config(env, query, cookie):
+    """ Config data HTTP request
+
+    Args:
+        env: HTTP request environment - dict
+        query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
+
+    Note:
+
+    Returns:
+        data: which will be transmitted
+
+    """
+
+    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL
+
+    data = {
+        'total': CREDITS_TOTAL,
+        'master': CREDITS_MASTER,
+        'lecture': CREDITS_LECTURE,
+        'additional': CREDITS_ADDITIONAL
+    }
+
+    json_data = json.dumps(data)
+    json_data = json_data.encode('utf-8')
+
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', '*'),
+                # To receive cookie
+                # ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
                 ('Content-Length', str(len(json_data)))
              ],
@@ -1181,6 +1283,59 @@ def post(env, query, cookie):
                     None)
 
         return post_enroll(env, query, cookie)
+
+
+def post_config(env, query, cookie):
+    """ Config data HTTP request
+
+    Args:
+        env: HTTP request environment - dict
+        query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if user exist and session created correctly
+                    and send cookie with sess id
+            401 Unauthorized: if wrong name of pass
+
+    Returns:
+         None; Only http answer
+    """
+
+    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL
+
+    config = get_json_by_response(env)
+
+    CREDITS_TOTAL = config['total']
+    CREDITS_MASTER = config['master']
+    CREDITS_LECTURE = config['lecture']
+    CREDITS_ADDITIONAL = config['additional']
+
+    write_config()
+
+    # Safety get user_obj
+    # user_obj = get_user_by_response(cookie)
+    #
+    # if user_obj[2] is None:  # No User
+    #     return user_obj
+
+    if True:  # TODO: Cherck rights
+
+        return ('200 OK',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                    # ('Location', 'http://ihse.tk/')
+                 ],
+                [])
+
+    else:
+        return ('405 Method Not Allowed',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
 
 
 def post_login(env, phone, passw):

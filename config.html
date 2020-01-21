@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, viewport-fit=cover">
+
+    <meta name="theme-color" content="#007ac5">
+
+    <title>Администратор | iHSE</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/config.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!--   bootstrap-table dependencies    -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.15.5/dist/extensions/toolbar/bootstrap-table-toolbar.min.js"></script>
+
+<!--    <script src="extensions/editable/bootstrap-table-editable.js"></script>-->
+
+</head>
+<body>
+
+<header class="header">
+
+    <div class="header__left">
+        <nav class="arrow">
+            <button class="arrow__button">
+                <i class="mobile__item__icon large material-icons">arrow_back</i>
+
+            </button>
+        </nav>
+
+        <div class="title">Админ-Конфигурация</div>
+    </div>
+
+</header>
+
+
+<div class="wrapper">
+
+    <div class="fields">
+        <div class="">
+            <i class="large material-icons">attach_money</i>
+            <label for="total">Total credits: </label>
+            <input id="total" type="text">
+<!--            <input id="total" type="number">-->
+        </div>
+
+        <div class="">
+            <i class="large material-icons">attach_money</i>
+            <label for="master">Master credits: </label>
+            <input id="master" type="text">
+<!--            <input id="total" type="number">-->
+        </div>
+
+        <div class="">
+            <i class="large material-icons">attach_money</i>
+            <label for="lecture">Lecture credits: </label>
+            <input id="lecture" type="text">
+<!--            <input id="total" type="number">-->
+        </div>
+
+        <div class="">
+            <i class="large material-icons">attach_money</i>
+            <label for="additional">Additional credits: </label>
+            <input id="additional" type="text">
+<!--            <input id="total" type="number">-->
+        </div>
+
+<!--        <div class="">-->
+<!--            <i class="large material-icons">calendar_today</i>-->
+<!--            <label>Days: </label>-->
+<!--            <div>-->
+<!--                <div id="days">-->
+<!--                    <div class="day"><p>1 день: </p><input type="text" placeholder="dd.mm"><p>Фидбек: </p><input class="day_status" type="checkbox"></div>-->
+<!--                    <div class="day"><p>2 день: </p><input type="text" placeholder="dd.mm"><p>Фидбек: </p><input class="day_status" type="checkbox"></div>-->
+<!--                    <div class="day"><p>3 день: </p><input type="text" placeholder="dd.mm"><p>Фидбек: </p><input class="day_status" type="checkbox"></div>-->
+<!--                    <div class="day"><p>4 день: </p><input type="text" placeholder="dd.mm"><p>Фидбек: </p><input class="day_status" type="checkbox"></div>-->
+<!--                    <button id="add_day"><i class="large material-icons">add</i>Добавить день</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <button id="save" onclick="saveConfig()"><i class="large material-icons">save</i>Save</button>
+    </div>
+
+</div>
+
+
+<!--Onpage logic -->
+<script defer async src="scripts/config.js"></script>
+<!--STD nav logic -->
+<script defer async src="scripts/nav.js"></script>
+
+</body>
+</html>

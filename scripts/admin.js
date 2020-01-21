@@ -97,7 +97,8 @@ let fields = {
     'classes': ['id', 'credits', 'count', 'total'],
     'enrolls': ['id', 'event_id', 'user_id', 'time', 'attendance'],
     'credits': ['id', 'user_id', 'event_id', 'date', 'value'],
-    'codes': ['code', 'type', 'used']
+    'codes': ['code', 'type', 'used'],
+    'day': ['id', 'date', 'title', 'feedback']
 };
 
 
@@ -522,10 +523,14 @@ function editRow(row) {
 
 
         let current_inputs_html = '<label for=' + field + '>' + field + '</label>';
+
+        let disabled = (field === 'id' ? 'disabled' : '');
+        let list = (field === 'user_id' || field === 'event_id' || field === 'project_id' ? 'list=' + field + '_list' : '');
+        let placeholder = (field === 'date' ? 'placeholder="dd.mm"' : '');
         if (Object.keys(row).length === 0) {
-            current_inputs_html += '<input name=' + field + ' value="" type="text" ' + (field === 'id' ? 'disabled' : '') + (field === 'user_id' || field === 'event_id' || field === 'project_id' ? 'list=' + field + '_list' : '') + '>';
+            current_inputs_html += '<input name=' + field + ' value="" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         } else {
-            current_inputs_html += '<input name=' + field + ' value="' + row[field] + '" type="text" ' + (field === 'id' ? 'disabled' : '') + (field === 'user_id' || field === 'event_id' || field === 'project_id' ? 'list=' + field + '_list' : '') + '>';
+            current_inputs_html += '<input name=' + field + ' value="' + row[field] + '" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         }
 
         if (field === 'user_id' || field === 'event_id' || field === 'project_id') {
@@ -615,6 +620,12 @@ function setupTabs() {
         loadAndCreateTable(current_table);
         $('.tabs button').removeClass('active_tab');
         $('#tab_enrolls').addClass('active_tab');
+    };
+    $('#tab_days')[0].onclick = function () {
+        current_table = 'days';
+        loadAndCreateTable(current_table);
+        $('.tabs button').removeClass('active_tab');
+        $('#tab_days').addClass('active_tab');
     };
 }
 

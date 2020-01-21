@@ -147,6 +147,16 @@ cursor.execute('''
                     ); 
                     ''')
 
+# Days
+cursor.execute('''
+                    create table if not exists days (
+                        id serial not null primary key unique,
+                        date text,
+                        title text default '',
+                        feedback int default 0
+                    ); 
+                    ''')
+
 # cursor.execute('''
 #                     create table if not exists project_users (
 #                         user_id serial,
@@ -202,7 +212,8 @@ table_fields = {
     'classes': ('id', 'credits', 'count', 'total'),
     'enrolls': ('id', 'event_id', 'user_id', 'time', 'attendance'),
     'credits': ('id', 'user_id', 'event_id', 'date', 'value'),
-    'codes': ('code', 'type', 'used')
+    'codes': ('code', 'type', 'used'),
+    'days': ('id', 'date', 'title', 'feedback')
 }
 
 
