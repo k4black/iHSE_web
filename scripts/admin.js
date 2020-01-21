@@ -515,7 +515,11 @@ function editRow(row) {
     $popup_inputs.innerHTML = '';
     let inputs_html = '';
     for (let field of fields[current_table]) {
+        if (current_table === 'events' && field === 'time') {
+            row[field] = row[field].replace('\n', '-');
+        }
         console.log(field, row[field]);
+
 
         let current_inputs_html = '<label for=' + field + '>' + field + '</label>';
         if (Object.keys(row).length === 0) {
