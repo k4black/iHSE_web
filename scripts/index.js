@@ -144,23 +144,23 @@ function setupData(elem, data) {
 
 
 function setupEnrollButtons() {
-    document.querySelector('enroll').onclick = function (val) {
+    document.querySelector('#enroll').onclick = function (val) {
         createEnroll();
     };
-    document.querySelector('deenroll').onclick = function (val) {
+    document.querySelector('#deenroll').onclick = function (val) {
         removeEnrollByUser();
     };
 
     for (let id in enrolls) {
         if (enrolls[id].user_id === user.id) {
-            document.querySelector('deenroll').style.display = 'block';
-            document.querySelector('enroll').style.display = 'none';
+            document.querySelector('#deenroll').style.display = 'block';
+            document.querySelector('#enroll').style.display = 'none';
             return;
         }
     }
 
-    document.querySelector('deenroll').style.display = 'node';
-    document.querySelector('enroll').style.display = 'block';
+    document.querySelector('#deenroll').style.display = 'node';
+    document.querySelector('#enroll').style.display = 'block';
 }
 
 function loadClass(class_id) {

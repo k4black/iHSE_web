@@ -1044,6 +1044,7 @@ def insert_enroll(enroll_obj):
     Returns:
         # TODO: Return id
     """
+    # TODO: Remove credits?
 
     cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
     event = cursor.fetchone()
