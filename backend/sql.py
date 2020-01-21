@@ -169,6 +169,8 @@ def recount_attendance():
 
         events_attendance_counter[enroll[1]] += 1
 
+    print('events_attendance_counter ', events_attendance_counter)
+
     for event_id, count in events_attendance_counter.items():
         cursor.execute(f'update classes set count = {count} where id = {event_id}')
     conn.commit()
@@ -183,6 +185,8 @@ def recount_credits():
             user_credits_counter[credit[1]] = 0
 
         user_credits_counter[credit[1]] += credit[4]
+
+    print('user_credits_counter ', user_credits_counter)
 
     for user_id, credits_total in user_credits_counter.items():
         cursor.execute(f'update users set credits = {credits_total} where id = {user_id}')
