@@ -1099,7 +1099,7 @@ def remove_enroll(enroll_id):
     cursor.execute(f'select * from enrolls where id = {enroll_id};')
     enroll = cursor.fetchone()
 
-    event_id = enroll['event_id']
+    event_id = enroll[1]
 
     cursor.execute(f'select * from classes where id = {event_id};')
     event = cursor.fetchone()
