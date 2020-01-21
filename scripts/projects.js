@@ -31,25 +31,25 @@ xhttp.onreadystatechange = function() {
             var project_html;
 
             for (var project of projects_data) {
-                var names = project.name.split(',');
-                var rez = '';
-                for (var i of names) {
-                    if (i == [])
-                        continue;
-
-                    var tmp_name = i.split(' ').filter(word => word != '');
-                    //console.log(tmp_name);
-
-                    if (tmp_name == [] || tmp_name.length <= 0)
-                        continue;
-
-                    if (rez != '') {
-                        rez += ', '
-                    }
-
-                    rez += tmp_name[0] + ' ' + tmp_name[1][0] + '.';
-
-                }
+                // var names = project.name.split(',');
+                var names = 'Names TODO remove';
+                // var rez = '';
+                // for (var i of names) {
+                //     if (i == [])
+                //         continue;
+                //
+                //     var tmp_name = i.split(' ').filter(word => word != '');
+                //     //console.log(tmp_name);
+                //
+                //     if (tmp_name == [] || tmp_name.length <= 0)
+                //         continue;
+                //
+                //     if (rez != '') {
+                //         rez += ', '
+                //     }
+                //
+                //     rez += tmp_name[0] + ' ' + tmp_name[1][0] + '.';
+                // }
 
 
                 project_html = '<div class="project">'+
@@ -61,18 +61,14 @@ xhttp.onreadystatechange = function() {
                                            '<span style="text-align: right">' + project.type + '</span>' +
                                        '</div>' +
 
-                                       '<p class="project__names">' + rez + '</p>' +
+                                       '<p class="project__names">' + names + '</p>' +
 
                                        '<p class="project__desc">' + project.desc + '</p>' +
 
                                    '</div>' +
                                '</div>';
-
-
-
                 projects_html += project_html + '<hr class="border_line">';
             }
-
 
             projects.innerHTML = projects_html;
         }
