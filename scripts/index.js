@@ -195,6 +195,7 @@ function loadClass(class_id) {
                 //     document.querySelector('#class_popup .anno').firstElementChild.innerText = event_class.anno;
                 // }
                 setupData(document.querySelector('#class_popup .count').firstElementChild, event_class.count + ' / ' + event_class.total);
+
                 // setupData(document.querySelector('#class_popup .count').lastElementChild, '2 было; 6 записалсь');
 
                 document.querySelector('#credits').value = event_class.credits;
@@ -249,6 +250,23 @@ function loadEnrolls(class_id) {
                 }
 
                 setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + enrolls_raw.length + ' записалсь');
+
+
+                let check_user = false;
+                for (let id in enrolls) {
+                    try {
+                        if (enrolls[id].user_id === user.id) {
+                            check_user = true;
+                            break;
+                        }
+                    } catch (e) {
+                        
+                    }
+                }
+
+
+                console.log((check_user ? 'Current user enrolled' : 'Current user NOT enrolled'));
+                setupData(document.querySelector('#class_popup .status').firstElementChild, (check_user ? 'Вы записаны на мероприятие!' : ''));
 
 
                 let users_list = '';
@@ -404,7 +422,7 @@ function createEnroll() {
 function removeEnrollByUser() {
     let enroll_id = -1;
     for (let id in enrolls) {
-        if (enrolls[id].event_id === current_event && enrolls[id].user_id === user.id) {
+        if (enrolls[id].event_id === current_class.id && enrolls[id].user_id === user.id) {
             enroll_id = id;
         }
     }

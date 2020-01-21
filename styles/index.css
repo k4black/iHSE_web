@@ -294,6 +294,12 @@ footer div {
     min-width: 50px;
 }
 
+
+.status p {
+    color: #22a91d!important;
+}
+
+
 /*.count p:first-child {*/
 /*    font-weight: normal!important;*/
 /*}*/
