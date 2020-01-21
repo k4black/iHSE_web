@@ -160,13 +160,12 @@ conn.commit()
 
 
 def recount_attendance():
-    enrolls = get_enrolls()
-
     events_attendance_counter = {}
-    for enroll in enrolls:
-        if enroll[1] not in events_attendance_counter.keys():
-            events_attendance_counter[enroll[1]] = 0
 
+    for event in get_classes():
+        events_attendance_counter[event[0]] = 0
+    
+    for enroll in get_enrolls():
         events_attendance_counter[enroll[1]] += 1
 
     print('events_attendance_counter ', events_attendance_counter)
@@ -177,10 +176,12 @@ def recount_attendance():
 
 
 def recount_credits():
-    credits = get_credits()
-
     user_credits_counter = {}
-    for credit in credits:
+
+    for user in get_classes():
+        user_credits_counter[user[0]] = 0
+
+    for credit in get_credits():
         if credit[1] not in user_credits_counter.keys():
             user_credits_counter[credit[1]] = 0
 
