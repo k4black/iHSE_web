@@ -142,7 +142,9 @@ def sync():
     """
 
     print('============ sync_start ============')
-    update_cache()  # Sync itself
+    sql.recount_attendance()  # TODO: Remove move in sync
+    sql.recount_credits()
+    # update_cache()  # Sync itself
     print('============= sync_end =============')
 
     start_sync(TIMEOUT)  # Update - to call again
@@ -167,8 +169,8 @@ def start_sync(delay):
     th.start()
 
 
-sql.recount_attendance()  # TODO: Remove move in sync
-sql.recount_credits()
+# sql.recount_attendance()  # TODO: Remove move in sync
+# sql.recount_credits()
 start_sync(0)  # Start sync
 
 
