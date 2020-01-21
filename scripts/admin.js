@@ -98,7 +98,7 @@ let fields = {
     'enrolls': ['id', 'event_id', 'user_id', 'time', 'attendance'],
     'credits': ['id', 'user_id', 'event_id', 'date', 'value'],
     'codes': ['code', 'type', 'used'],
-    'day': ['id', 'date', 'title', 'feedback']
+    'days': ['id', 'date', 'title', 'feedback']
 };
 
 
