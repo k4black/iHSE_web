@@ -50,7 +50,7 @@ function saveConfig() {
 
     let data = JSON.stringify(config);
 
-    xhttp.open("POST", "http://ihse.tk:50000/admin_get_config", true);
+    xhttp.open("POST", "http://ihse.tk:50000/admin_post_config", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
