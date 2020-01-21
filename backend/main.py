@@ -864,9 +864,10 @@ def get_config(env, query, cookie):
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', '*'),
+                # ('Access-Control-Allow-Origin', '*'),
+                ('Access-Control-Allow-Origin', 'http://ihse.tk'),
                 # To receive cookie
-                # ('Access-Control-Allow-Credentials', 'true'),
+                ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
                 ('Content-Length', str(len(json_data)))
              ],
