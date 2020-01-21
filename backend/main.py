@@ -721,6 +721,7 @@ def get_user(env, query, cookie):
     # Json account data
     data = {}
 
+    data['id'] = user_obj[0]
     data['name'] = user_obj[3]
     data['phone'] = user_obj[2]
     data['type'] = user_obj[1]
