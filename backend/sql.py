@@ -164,7 +164,7 @@ def recount_attendance():
 
     for event in get_classes():
         events_attendance_counter[event[0]] = 0
-    
+
     for enroll in get_enrolls():
         events_attendance_counter[enroll[1]] += 1
 
@@ -178,7 +178,7 @@ def recount_attendance():
 def recount_credits():
     user_credits_counter = {}
 
-    for user in get_classes():
+    for user in get_users():
         user_credits_counter[user[0]] = 0
 
     for credit in get_credits():
