@@ -1039,12 +1039,17 @@ def insert_enroll(enroll_obj):
     """ Insert enroll
 
     Args:
-        enroll_obj: class obj (None, credits, count, total, attendance)
+        enroll_obj: class obj (None, event_id, user_id, time, attendance)
 
     Returns:
         # TODO: Return id
     """
-    cursor.execute(f'insert into enrolls (event_id, user_id, time, attendance) values ({enroll_obj[1]}, {enroll_obj[2]}, \'{enroll_obj[3]}\', {enroll_obj[4]}); ')
+
+    cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
+    event = cursor.fetchone()
+    cursor.execute(f'update classes set count = {event[4] + 1} where id = {event[0]};')
+
+    cursor.execute(f'insert into enrolls (event_id, user_id, time, attendance) values ({enroll_obj[1]}, {enroll_obj[2]}, \'{enroll_obj[3]}\', {enroll_obj[4]});')
     conn.commit()
 
 
@@ -1056,6 +1061,21 @@ def edit_enroll(enroll_obj):
 
     Returns:
     """
+
+    cursor.execute(f'select * from enrolls where id = {enroll_obj[0]};')
+    enroll = cursor.fetchone()
+
+    if enroll[1] != enroll_obj[1]:
+        # Change old event
+        cursor.execute(f'select * from classes where id = {enroll[1]};')
+        current_event = cursor.fetchone()
+        cursor.execute(f'update classes set count = {current_event[4] - 1} where id = {current_event[0]};')
+
+        # Change new event
+        cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
+        new_event = cursor.fetchone()
+        cursor.execute(f'update classes set count = {new_event[4] + 1} where id = {new_event[1]};')
+
     cursor.execute(f'''update enrolls set
                                 event_id = {enroll_obj[1]},
                                 user_id = {enroll_obj[2]},
@@ -1075,6 +1095,15 @@ def remove_enroll(enroll_id):
     Returns:
         # Success delete or not
     """
+
+    cursor.execute(f'select * from enrolls where id = {enroll_id};')
+    enroll = cursor.fetchone()
+
+    event_id = enroll['event_id']
+
+    cursor.execute(f'select * from classes where id = {event_id};')
+    event = cursor.fetchone()
+    cursor.execute(f'update classes set count = {event[4] - 1} where id = {event_id};')
 
     cursor.execute(f'delete from enrolls where id = {enroll_id};')
     conn.commit()  # TODO: Check (and think) if theteare credtis according this event. delete it

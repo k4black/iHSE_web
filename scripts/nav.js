@@ -8,7 +8,7 @@
 // TODO: Compile site - optimize
 
 
-
+var user;
 
 
 /** ===============  LOGIC and REQUESTS  =============== */
@@ -63,7 +63,7 @@ if (sidebar != null) {
             if (this.status === 200) { // If ok set up fields name and phone
 
                 // console.log(this.responseText);
-                var user = JSON.parse(this.responseText);
+                user = JSON.parse(this.responseText);
                 sidebar.querySelector('.mobile__sidebar__name').innerText = user.name;
                 sidebar.querySelector('.mobile__sidebar__phone').innerText = user.phone;
 
@@ -113,7 +113,6 @@ if (sidebar != null) {
     xhttp.open("GET", "http://ihse.tk:50000/user", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
-
 }
 
 

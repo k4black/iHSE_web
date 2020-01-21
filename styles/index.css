@@ -240,7 +240,9 @@ footer div {
     justify-content: flex-start;
     align-items: center;
 
-    height: 50px;
+    /*height: 50px;*/
+    min-height: 35px;
+    margin: 10px 0 10px 0;
     width: 100%;
 
     line-height: 1.0;
@@ -274,6 +276,10 @@ footer div {
 .description div p:nth-child(2) {
     color: #b4b4b4;
     font-weight: lighter;
+}
+
+.description:last-child {
+    margin-bottom: 0;
 }
 
 
