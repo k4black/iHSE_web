@@ -468,8 +468,8 @@ function saveRow() {
         if (field !== 'time') {
             row[field] = $popup_inputs.querySelector('input[name=' + field + ']').value;
         } else {
-            let time = $popup_inputs.querySelector('input[name=' + field + ']').value;
-            row[field] = time.replace(' ', '\n').replace('-', '\n');
+            row[field] = $popup_inputs.querySelector('input[name=' + field + ']').value.replace('-', '\n');
+            // row[field] = time.replace(' ', '\n').replace('-', '\n');
         }
     }
 
