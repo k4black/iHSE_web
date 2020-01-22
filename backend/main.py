@@ -534,6 +534,8 @@ def admin_panel(env, query, cookie):
             data = sql.process_sql(sql.get_enrolls(), 'enrolls')
         elif table_name == 'days':
             data = sql.process_sql(sql.get_days(), 'days')
+        elif table_name == 'vacations':
+            data = sql.process_sql(sql.get_vacations(), 'vacations')
         else:
             print(' ========  400 Bad Request by admin  ======== ')
             return ('400 Bad Request',
@@ -584,6 +586,8 @@ def admin_panel(env, query, cookie):
             sql.clear_enrolls()
         elif table_name == 'days':
             sql.clear_days()
+        elif table_name == 'vacations':
+            sql.clear_vacations()
         else:
             return ('400 Bad Request',
                     [
@@ -651,6 +655,10 @@ def admin_panel(env, query, cookie):
                 data = sql.dict_to_tuple(obj, 'days')
                 sql.insert_day(data)
 
+            elif table_name == 'vacations':
+                data = sql.dict_to_tuple(obj, 'vacations')
+                sql.insert_vacation(data)
+
         else:
             if table_name == 'users':
                 data = sql.dict_to_tuple(obj, 'users')
@@ -692,6 +700,10 @@ def admin_panel(env, query, cookie):
                 data = sql.dict_to_tuple(obj, 'days')
                 sql.edit_day(data)
 
+            elif table_name == 'vacations':
+                data = sql.dict_to_tuple(obj, 'vacations')
+                sql.edit_vacation(data)
+
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
@@ -732,6 +744,12 @@ def admin_panel(env, query, cookie):
 
         elif table_name == 'enrolls':
             sql.remove_enroll(obj_id)
+
+        elif table_name == 'days':
+            sql.remove_day(obj_id)
+
+        elif table_name == 'vacations':
+            sql.remove_vacations(obj_id)
 
         return ('200 OK',
                 [

@@ -58,7 +58,7 @@ xhttp.onreadystatechange = function() {
 
                                        '<div class="project__top_line">' +
                                            '<span>' + project.title + '</span>' +
-                                           '<span style="text-align: right">' + project.type + '</span>' +
+                                           '<span style="text-align:right">' + project.type + '</span>' +
                                        '</div>' +
 
                                        '<p class="project__names">' + names + '</p>' +

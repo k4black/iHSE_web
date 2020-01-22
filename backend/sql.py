@@ -157,6 +157,20 @@ cursor.execute('''
                     ); 
                     ''')
 
+# Vacations
+cursor.execute('''
+                    create table if not exists vacations (
+                        id serial not null primary key unique,
+                        user_id serial,
+                        date_from text,
+                        date_to text,
+                        time_from text,
+                        time_to text,
+                        type int default 0,
+                        foreign key (user_id) references users(id)
+                    ); 
+                    ''')
+
 # cursor.execute('''
 #                     create table if not exists project_users (
 #                         user_id serial,
@@ -213,7 +227,8 @@ table_fields = {
     'enrolls': ('id', 'event_id', 'user_id', 'time', 'attendance'),
     'credits': ('id', 'user_id', 'event_id', 'date', 'value'),
     'codes': ('code', 'type', 'used'),
-    'days': ('id', 'date', 'title', 'feedback')
+    'days': ('id', 'date', 'title', 'feedback'),
+    'vacations': ('id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to', 'type')
 }
 
 
@@ -432,6 +447,81 @@ def clear_days():
     """
 
     cursor.execute('delete from days')
+    conn.commit()
+
+
+# Vacations
+def get_vacations():
+    """ Get all projects from sql table
+
+    Args:
+
+    Returns:
+        day objects: list of day objects - [ (id, user_id, date_from, date_to, time_from, time_to, type), ...]
+    """
+
+    cursor.execute('select * from vacations;')
+    days_list = cursor.fetchall()
+
+    return days_list
+
+
+def insert_vacation(vacation_obj):
+    """ Insert vacation
+
+    Args:
+        vacation_obj: vacation obj (None, user_id, date_from, date_to, time_from, time_to, type)
+
+    Returns:
+        # TODO: Return id
+    """
+    cursor.execute(f'insert into vacations (user_id, date_from, date_to, time_from, time_to, type) values ({vacation_obj[1]}, \'{vacation_obj[2]}\', \'{vacation_obj[3]}\', \'{vacation_obj[4]}\', \'{vacation_obj[5]}\', {vacation_obj[6]}); ')
+    conn.commit()
+
+
+def edit_vacation(vacation_obj):
+    """ Update day
+
+    Args:
+        vacation_obj: vacation obj (id, user_id, date_from, date_to, time_from, time_to, type)
+
+    Returns:
+    """
+
+    cursor.execute(f'''update vacations set
+                                user_id = {vacation_obj[1]},
+                                date_from = \'{vacation_obj[2]}\',
+                                date_to = \'{vacation_obj[3]}\',
+                                time_from = \'{vacation_obj[4]}\',
+                                time_to = \'{vacation_obj[5]}\',
+                                type = {vacation_obj[6]}
+                            where id = {vacation_obj[0]};
+                        ''')
+    conn.commit()
+
+
+def remove_vacation(vacation_id):
+    """ Delete project by id
+
+    Args:
+        vacation_id: vacation id from bd
+
+    Returns:
+        # Success delete or not
+    """
+
+    cursor.execute(f'delete from vacations where id = {vacation_id};')
+    conn.commit()
+
+
+def clear_vacations():
+    """ Clear all vacations from sql table
+
+    Args:
+    Returns:
+    """
+
+    cursor.execute('delete from vacations')
     conn.commit()
 
 
