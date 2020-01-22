@@ -411,6 +411,9 @@ def get(env, query, cookie):
     if env['PATH_INFO'] == '/enrolls':
         return get_enrolls(env, query, cookie)
 
+    if env['PATH_INFO'] == '/days':  # Get days list
+        return get_days(env, query, cookie)
+
     if env['PATH_INFO'] == '/event':
         # TODO: Remove on release - admin
         user_obj = get_user_by_response(cookie)
@@ -749,7 +752,7 @@ def admin_panel(env, query, cookie):
             sql.remove_day(obj_id)
 
         elif table_name == 'vacations':
-            sql.remove_vacations(obj_id)
+            sql.remove_vacation(obj_id)
 
         return ('200 OK',
                 [
@@ -1020,6 +1023,40 @@ def get_credits(env, query, cookie):
                 ('Access-Control-Allow-Origin', 'http://ihse.tk'),
                 # To receive cookie
                 ('Access-Control-Allow-Credentials', 'true'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+             ],
+            [json_data])
+
+
+def get_days(env, query, cookie):
+    """ Days data HTTP request
+
+    Args:
+        env: HTTP request environment - dict
+        query: url query parameters - dict (may be empty)
+        cookie: http cookie parameters - dict (may be empty)
+
+    Note:
+
+
+    Returns:
+        data: which will be transmitted
+
+    """
+
+    data = sql.get_days()
+    processes_data = sql.process_sql(data, 'days')
+
+    json_data = json.dumps(processes_data)
+    json_data = json_data.encode('utf-8')
+
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', '*'),
+                # To receive cookie
+                # ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
                 ('Content-Length', str(len(json_data)))
              ],
