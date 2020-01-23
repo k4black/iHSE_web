@@ -1,12 +1,4 @@
-/**
- * @fileoverview Index page logic
- * File providing all functions which are used to control index.html page
- * Including animations and http requests if that are sending by NOT nav elements
- */
 
-
-// TODO: Hide .html
-// ihse.tk/login.html -> ihse.tk/login
 
 var current_event = 0;
 
@@ -56,62 +48,7 @@ function processEnrolls(enrolls_raw) {
 }
 
 
-/** ===============  LOGIC and REQUESTS  =============== */
 
-
-
-
-// https://kimmobrunfeldt.github.io/progressbar.js/
-// var ProgressBar = require('scripts/progressbar.js');
-function setupBar(val) {
-    document.querySelector('#container').innerHTML = '';
-
-    bar = new ProgressBar.Line('#container', {
-        strokeWidth: 4,
-        easing: 'easeInOut',
-        duration: 1400,
-        color: '#007ac5',
-        trailColor: '#eee',
-        trailWidth: 1,
-        svgStyle: {width: '100%', height: '100%'},
-        from: {color: '#007ac5'},
-        to: {color: '#ed992f'},
-        step: (state, bar) => {
-            bar.path.setAttribute('stroke', state.color);
-        }
-    });
-
-    bar.animate(val);  // Number from 0.0 to 1.0
-}
-
-
-var bar;
-
-
-
-window.addEventListener('load', function () {
-    console.log('Load');
-
-    // Get today date
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-
-    if (today.getDate() < 5 || today.getMonth() + 1 < 6)
-        today = '05.06';
-    else
-        today = dd + '.' + mm;
-
-    loadNames();
-    loadDay(today);
-
-    // setupBar(0.8);
-
-    document.querySelector('#save').onclick = function (val) {
-        saveEnrolls();
-        saveClass();
-    };
-});
 
 
 function setupClasses() {
@@ -132,31 +69,7 @@ function setupClasses() {
 }
 
 
-function setupEnrollButtons() {
-    if (user === undefined) {
-        document.querySelector('#deenroll').style.display = 'none';
-        document.querySelector('#enroll').style.display = 'none';
-        return;
-    }
 
-    document.querySelector('#enroll').onclick = function (val) {
-        createEnroll();
-    };
-    document.querySelector('#deenroll').onclick = function (val) {
-        removeEnrollByUser();
-    };
-
-    for (let id in enrolls) {
-        if (enrolls[id].user_id === user.id) {
-            document.querySelector('#deenroll').style.display = 'block';
-            document.querySelector('#enroll').style.display = 'none';
-            return;
-        }
-    }
-
-    document.querySelector('#deenroll').style.display = 'none';
-    document.querySelector('#enroll').style.display = 'block';
-}
 
 
 function setupData(elem, data) {
@@ -260,7 +173,7 @@ function loadEnrolls(class_id) {
                             break;
                         }
                     } catch (e) {
-                        
+
                     }
                 }
 
@@ -304,6 +217,7 @@ function loadEnrolls(class_id) {
 }
 
 
+
 function loadNames() {
     var xhttp = new XMLHttpRequest();
 
@@ -325,74 +239,6 @@ function loadNames() {
 
 
 
-
-var current_events;
-var current_class;
-
-/**
- * Get day information from server
- * Send http GET request and get today json schedule
- * than parse of json data and create html
- */
-function loadDay(day) {
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            loadingEnd(); // TODO: Check
-
-            var day_data = JSON.parse( this.responseText );
-
-            current_events = {};
-            for (let time of day_data) {
-                for (let event of time.events) {
-                    current_events[event.id] = event;
-                }
-            }
-
-            var day_html = "";
-            var time_html;
-            var event_html;
-
-            for (let time of day_data) {
-                time_html = '<div class="time">' +
-                                '<div class="bar">' + time.time + '</div>' +
-                                    '<div class="events">';
-
-                for (let event of time.events) {
-                    event_html =
-                        '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
-                            // (event.type === 0 || event.type === '0' ? '' : '<a href="event.html?id=' + event.id + '">') +
-                                '<p class="event__title">' + event.title + '</p>' +
-
-                                (event.description === undefined ? "" : '<p class="event__desc">' + event.description + '</p>') +
-
-                                ((event.host === undefined || event.host === '') && (event.place === undefined || event.place === '') ? "" : '<div class="event__last_line">' +
-                                    '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                                    '<span class="event__loc">' + (event.place === undefined ? "" : event.place) + '</span>' +
-                                '</div>') +
-                            // (event.type === 0 || event.type === '0' ? '' : '</a>') +
-                        '</div>';
-
-                    time_html += event_html;
-                }
-
-                time_html += '</div>' + '</div>';
-                time_html += '<hr class="border_line">';
-
-                day_html += time_html;
-            }
-
-            document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
-
-
-            setupClasses();
-        }
-    };
-
-    xhttp.open("GET", "http://ihse.tk:50000/day?day=" + day, true);
-    xhttp.send();
-}
 
 
 
@@ -454,7 +300,6 @@ function removeEnroll(enroll_id) {
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
-
 
 
 function saveEnrolls() {
@@ -538,7 +383,5 @@ function saveClass() {
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send(data);
 }
-
-
 
 

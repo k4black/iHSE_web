@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/admin.css">
+    <link rel="stylesheet" href="styles/index.css">
     <link rel="stylesheet" href="styles/timelines.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -46,6 +47,113 @@
 </div>
 
 
+
+<div class="overlay" id="class_popup">
+        <div class="popup_body" >
+            <div class="class_popup_header">
+                <p class="title">Title</p>
+<!--                <i class="close" onclick="document.getElementById('class_popup').style.display = 'none'">Close</i>-->
+                <i class="mobile__item__icon large material-icons" onclick="document.getElementById('class_popup').style.display = 'none'">clear</i>
+            </div>
+            <div class="class_popup_wrapper">
+                <div class="description loading__resource">
+                    <i class="mobile__item__icon large material-icons">label_important</i>
+                    <div class="desc">
+                        <p>Some description of the event in several lines lines lines lines lines.</p>
+                    </div>
+                </div>
+
+                <div class="description loading__resource">
+                    <i class="mobile__item__icon large material-icons">access_time</i>
+                    <div class="time">
+                        <p>4 april 2110</p>
+                        <p>8:00 - 21:00</p>
+                    </div>
+                </div>
+
+                <div class="description loading__resource">
+                    <i class="mobile__item__icon large material-icons">place</i>
+                    <div class="location">
+                        <p>Some location</p>
+                    </div>
+                </div>
+
+                <div class="description loading__resource">
+                    <i class="mobile__item__icon large material-icons">person</i>
+                    <div class="host">
+                        <p>Host of the event</p>
+                    </div>
+                </div>
+
+                <div class="admin_element description loading__resource">
+                    <i class="mobile__item__icon large material-icons">attach_money</i>
+                    <div class="credits">
+<!--                        <p>1001</p>-->
+                        <input id="credits" value="169">
+                    </div>
+                </div>
+
+                <div class="admin_element description loading__resource">
+                    <i class="mobile__item__icon large material-icons">group</i>
+                    <div class="total">
+<!--                        <p>1001</p>-->
+                        <input id="total" value="10">
+                    </div>
+                </div>
+
+<!--                <div class="description loading__resource">-->
+<!--                    <i class="mobile__item__icon large material-icons">bookmark</i>-->
+<!--                    <div class="anno">-->
+<!--                        <p>Some description of the event in several lines lines lines lines lines.</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+                <div style="position: relative">
+                    <hr class="border_line">
+                    <button id="enroll" class="enroll__button"><i class="mobile__item__icon large material-icons">person_add</i></button>
+                    <button id="deenroll" class="enroll__button"><i class="mobile__item__icon large material-icons">person_add_disabled</i></button>
+                    <button id="save" class="admin_element enroll__button"><i class="mobile__item__icon large material-icons">save</i></button>
+                </div>
+<!--                <div id="container"></div>-->
+
+
+                <div class="enroll_section loading__resource" style="visibility: visible">
+
+                    <div class="description loading__resource">
+                        <i class="mobile__item__icon large material-icons ok_status">done</i>
+                        <div class="status">
+                            <p>Вы записаны на мероприятие!</p>
+                        </div>
+                    </div>
+
+                    <div class="description loading__resource">
+                        <i class="mobile__item__icon large material-icons">group</i>
+                        <div class="count">
+                            <p>14/44</p>
+                            <p>2 было; 6 записалсь</p>
+                        </div>
+                    </div>
+
+                    <div id="container"></div>
+
+<!--                    <h3 class="admin_element">Список записавшихся:</h3>-->
+<!--                    <div class="admin_element users_list_hint">-->
+<!--                        <p>Name</p>-->
+<!--                        <p>Atter</p>-->
+<!--                        <p>Remove</p>-->
+<!--                    </div>-->
+<!--       TODO: Choose best person             -->
+                    <div class="admin_element users_list" id="users_list"></div>
+
+                </div>
+
+
+<!--                <button class="admin_element" onclick="document.getElementById('class_popup').style.display = 'none';saveEvent()">Save</button>-->
+            </div>
+        </div>
+    </div>
+
+
 <div class="wrapper">
 
     <div class="tabs">
@@ -58,8 +166,9 @@
 
 
 
-<!--Onpage logic -->
+<script defer async src="scripts/popup_event.js"></script>
 
+<!--Onpage logic -->
 <script defer async src="scripts/timetable.min.js"></script>
 <script defer async src="scripts/timelines.js"></script>
 <!--STD nav logic -->

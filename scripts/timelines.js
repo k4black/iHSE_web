@@ -1,5 +1,27 @@
 
 
+function setupClasses() {
+    // console.log('setuping classes');
+    // let class_events = document.querySelectorAll('.class');
+    // for (let i in class_events) {
+    //     class_events[i].onclick = function (val) {
+    //         console.log('clicked event with id: ', class_events[i].getAttribute('data-id'));
+    //
+    //         loadClass(class_events[i].getAttribute('data-id'));
+    //         // TODO: Smooth visible
+    //
+    //         current_event = class_events[i].getAttribute('data-id');
+    //
+    //         loadEnrolls(class_events[i].getAttribute('data-id'));
+    //         document.querySelector('#class_popup').style.display = 'block';
+    //     }
+    // }
+}
+
+
+var current_events;
+
+
 
 
 var tabs = [];
@@ -80,6 +102,7 @@ function setupTabs() {
             loadAndCreateTimeline(current_timeline);
             $('.tabs button').removeClass('active_tab');
             $('#tab_' + name).addClass('active_tab');
+            // setupClasses();
         };
     }
 }
@@ -194,11 +217,21 @@ function buildTimeline(locations, events) {
             class: (events[i].type === 1 ? 'class' : 'regular'),
             onClick: function (event) {
                 if (events[i].type === 1) {
+                    console.log('clicked event with id: ', events[i].id);
+
+                    loadClass(events[i].id);
+                    // TODO: Smooth visible
+
+                    current_event = events[i].id;
+
+                    loadEnrolls(events[i].id);
+                    document.querySelector('#class_popup').style.display = 'block';
+
                     alert('You clicked on the ' + events[i].id + '=' + events[i].title + ' event in ' + events[i].place + '. This is an example of a click handler');
                 }
             },
             data: {
-                id: events[i].id
+                id: events[i].id,
             }
         };
         timetable.addEvent(events[i].title, events[i].place, new Date(2020, month - 1, day, hours1, min1), new Date(2020, month - 1, day, hours2, min2), options);
