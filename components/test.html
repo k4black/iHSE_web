@@ -12,7 +12,24 @@
 <body>
 
 
-    <!--# include file="./content.html" -->
+<!--    <script>-->
+<!--        function show() {-->
+<!--            var link = document.querySelector('link[rel="import"]');-->
+<!--            var content = link.import;-->
 
+<!--            // Grab DOM from warning.html's document.-->
+<!--            var el = content.querySelector('.warning');-->
+
+<!--            document.body.appendChild(el.cloneNode(true));-->
+<!--        }-->
+<!--    </script>-->
+<!--    <link rel="import" onload="show()" href="content.html">-->
+
+    <?php include "./content.html" ?>
+
+<!--  <link rel="import" id="link" onload="show()" href="content.html">-->
+
+    <!--# include file="./content.html" -->
+    <div id="container"></div>
 </body>
 </html>
