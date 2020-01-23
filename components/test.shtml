@@ -12,7 +12,7 @@
 <body>
 
 
-    <!--# include file="./content.html" -->
+<!--#include virtual="/components/content.html" -->
 
 </body>
 </html>
