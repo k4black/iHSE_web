@@ -11,8 +11,9 @@
 </head>
 <body>
 
+<!--# set var="test" value="Hello nginx!" -->
+<!--# echo var="test" -->
 
-<!--# echo hi -->
 <!--#include virtual="/components/content.html" -->
 
 </body>
