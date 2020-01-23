@@ -12,6 +12,7 @@
 <body>
 
 
+<!--# echo hi -->
 <!--#include virtual="/components/content.html" -->
 
 </body>
