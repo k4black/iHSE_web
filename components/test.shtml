@@ -13,6 +13,10 @@
 <body>
 
 
+<!--# set var="test" value="Hello nginx!" -->
+<!--# echo var="test" -->
+
+<!--# echo var="name" default="нет" -->
 
 <!--#include virtual="/components/content.html" -->
 
