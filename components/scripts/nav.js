@@ -15,12 +15,12 @@ var open = false;
 
 function showNav() {
     open = true;
-    document.querySelector('.mobile').classList.add('open');
+    document.querySelector('.mobile').classList.add('mobile__open');
     // console.log("Open menu");
 }
 
 function hideNav() {
     open = false;
-    document.querySelector('.mobile').classList.remove('open');
+    document.querySelector('.mobile').classList.remove('mobile__open');
     // console.log("Close menu");
 }

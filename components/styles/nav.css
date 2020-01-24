@@ -215,6 +215,36 @@
 
 
 
+
+
+/* Open sidebar */
+.mobile__open {
+    display: flex;
+    transform: translateX(0);
+}
+
+.mobile__open .mobile__background{
+
+    opacity: 1;
+
+    transform: translateX(0);
+    /*transition: transform 0ms ease-out;*/
+
+
+    transition-property: opacity, transform;
+    transition-delay: 0s, 0ms;
+    transition-duration: 400ms, 0ms;
+}
+
+.mobile__open .mobile__sidebar {
+    top: 0;
+    transform: translateX(0);
+}
+
+
+
+
+
 /*@media (min-width: 40rem) {*/
 /*@media (min-width: 1180px) {*/
 /*@media not handheld {*/
