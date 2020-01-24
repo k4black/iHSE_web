@@ -1,0 +1,21 @@
+<header class="header">
+    <div class="header__left">
+        <!--# if expr="$enable_menu" -->
+        <nav class="hamburger">
+            <button class="hamburger__button">
+                <span class="hamburger__button-bar"></span>
+                <span class="hamburger__button-bar"></span>
+                <span class="hamburger__button-bar"></span>
+            </button>
+        </nav>
+        <!--# else -->
+        <nav class="arrow">
+            <button class="arrow__button">
+                <i class="mobile__item__icon large material-icons">arrow_back</i>
+            </button>
+        </nav>
+        <!--# endif -->
+
+        <div class="title"><!--# echo var="title" default="" --></div>
+    </div>
+</header>

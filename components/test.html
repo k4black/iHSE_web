@@ -12,18 +12,22 @@
 
 
 </head>
-<body>
+<body onload="setupNav('calendar')">
 
 
-<!--# set var="test" value="Hello nginx!" -->
-<!--# echo var="test" -->
+<!--# set var="title" value="Главная" -->
+<!--# set var="enable_menu" value="true" -->
+<!--#include virtual="/components/header.html" -->
 
-<!--# echo var="name" default="нет" -->
+
+
+<!--#include virtual="/components/nav.html" -->
+
+
 
 <!--#include virtual="/components/content.html" -->
 
 
-<!--#include virtual="/components/nav.html" -->
 
 
 </body>

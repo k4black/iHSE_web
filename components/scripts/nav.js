@@ -12,7 +12,8 @@ function setupNav(active_tab) {
 }
 
 
-setupNav('home');
+
+
 
 
 /**
