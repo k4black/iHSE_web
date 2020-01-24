@@ -1,5 +1,8 @@
 
 
+var open_state = false;
+
+
 function setupNav(active_tab) {
     // active_tab \in {'home', 'calendar', 'feedback', 'projects'}
     console.log('LOGlog');
@@ -11,16 +14,15 @@ function setupNav(active_tab) {
 setupNav('home');
 
 
-var open = false;
 
 function showNav() {
-    open = true;
+    open_state = true;
     document.querySelector('.mobile').classList.add('mobile__open');
     // console.log("Open menu");
 }
 
 function hideNav() {
-    open = false;
+    open_state = false;
     document.querySelector('.mobile').classList.remove('mobile__open');
     // console.log("Close menu");
 }
