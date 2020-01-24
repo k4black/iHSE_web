@@ -8,13 +8,17 @@
 
     <title></title>
 
+
 </head>
 <body>
 
-<!--# set var="test" value="Hello nginx!" -->
-<!--# echo var="test" -->
+
 
 <!--#include virtual="/components/content.html" -->
+
+
+<!--#include virtual="/components/nav.html" -->
+
 
 </body>
 </html>
