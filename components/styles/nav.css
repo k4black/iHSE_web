@@ -215,3 +215,22 @@
 
 
 
+/*@media (min-width: 40rem) {*/
+/*@media (min-width: 1180px) {*/
+/*@media not handheld {*/
+/*@media device-aspect-ratio (min-device-aspect-ratio, max-device-aspect-ratio) {*/
+@media (min-width : 769px) {
+    .mobile__sidebar {
+        transform: translateX(0) !important;
+        max-width: 270px;
+        border-right: 1px #b4b4b4 solid;
+    }
+
+    .desktop__navigation div {
+        display: block;
+    }
+
+    .mobile {
+        /*display: none;*/
+    }
+}

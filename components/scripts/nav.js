@@ -9,3 +9,18 @@ function setupNav(active_tab) {
 
 
 setupNav('home');
+
+
+var open = false;
+
+function showNav() {
+    open = true;
+    document.querySelector('.mobile').classList.add('open');
+    // console.log("Open menu");
+}
+
+function hideNav() {
+    open = false;
+    document.querySelector('.mobile').classList.remove('open');
+    // console.log("Close menu");
+}
