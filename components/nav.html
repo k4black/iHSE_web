@@ -1,6 +1,7 @@
 
-<link rel="stylesheet" href="/styles/main.css">
-<link rel="stylesheet" href="/styles/index.css">
+<link rel="stylesheet" href="/components/styles/nav.css">
+<!--<link rel="stylesheet" href="/styles/main.css">-->
+<!--<link rel="stylesheet" href="/styles/index.css">-->
 
 
 
@@ -8,7 +9,7 @@
     <!--Background for the sidebar-->
     <div class="mobile__background"></div>
 
-    <!--Sidebar appear by button-->
+    <!--Sidebar appearing by button-->
     <div class="mobile__sidebar">
 
         <div class="mobile__sidebar__account">
@@ -22,35 +23,30 @@
 
 
         <div class="mobile__sidebar__group">
-            <a class="mobile__item mobile__item__active" href="/index.html">
-<!--                <img class="mobile__item__icon" src="">-->
+            <a id="mi_home" class="mobile__item mobile__item__active" href="/index.html">
                 <i class="mobile__item__icon large material-icons">home</i>
                 <p class="mobile__item__name">Главная</p>
                 <div id="nt__home" class="mobile__item__notification"></div>
             </a>
 
             <a class="mobile__item mobile__item__hidden" href="/account.html">
-<!--                <img class="mobile__item__icon" src="">-->
                 <i class="mobile__item__icon large material-icons">school</i>
                 <p class="mobile__item__name">Аккаунт</p>
             </a>
 
-            <a class="mobile__item" href="/calendar.html">
-<!--                <img class="mobile__item__icon" src="">-->
+            <a id="mi_calendar" class="mobile__item" href="/calendar.html">
                 <i class="mobile__item__icon large material-icons">today</i>
                 <p class="mobile__item__name">Календарь</p>
                 <!--<div id="nt__cal" class="mobile__item__notification"></div>-->
             </a>
 
-            <a class="mobile__item mobile__item__hidden" href="/feedback.html">
-<!--                <img class="mobile__item__icon" src="">-->
+            <a id="mi_feedback" class="mobile__item mobile__item__hidden" href="/feedback.html">
                 <i class="mobile__item__icon large material-icons">feedback</i>
                 <p class="mobile__item__name">Отзывы</p>
                 <div id="nt__feed" class="mobile__item__notification"></div>
             </a>
 
-            <a class="mobile__item" href="/projects.html">
-<!--                <img class="mobile__item__icon" src="">-->
+            <a id="mi_projects" class="mobile__item" href="/projects.html">
                 <i class="mobile__item__icon large material-icons">apps</i>
                 <p class="mobile__item__name">Проекты</p>
                 <div id="nt__prj" class="mobile__item__notification"></div>
@@ -61,44 +57,40 @@
         <hr class="border_line">
 
         <div class="mobile__sidebar__group">
-
             <a class="mobile__item admin_element" href="/credits.html">
-                <!--                <img class="mobile__item__icon" src="">-->
                 <i class="mobile__item__icon large material-icons">timeline</i>
                 <p class="mobile__item__name">Credits</p>
             </a>
 
             <a class="mobile__item admin_element" href="/admin.html">
-                <!--                <img class="mobile__item__icon" src="">-->
                 <i class="mobile__item__icon large material-icons">storage</i>
                 <p class="mobile__item__name">Admin</p>
             </a>
 
             <a class="mobile__item admin_element" href="/config.html">
-                <!--                <img class="mobile__item__icon" src="">-->
                 <i class="mobile__item__icon large material-icons">settings</i>
                 <p class="mobile__item__name">Config</p>
             </a>
 
             <a class="mobile__item" href="/about.html">
-<!--                <img class="mobile__item__icon" src="">-->
                 <i class="mobile__item__icon large material-icons">info</i>
                 <p class="mobile__item__name">О сайте</p>
             </a>
-
         </div>
 
         <hr class="border_line mobile__hidden" style="display: none">
 
         <div class="mobile__sidebar__group mobile__hidden" style="display: none">
-
             <a class=" mobile__item mobile__item__hidden mobile__item__logout">
-<!--                <img class="mobile__item__icon" src="">-->
                 <i class="mobile__item__icon large material-icons">exit_to_app</i>
                 <p class="mobile__item__name">Выйти</p>
             </a>
-
         </div>
 
     </div>
 </nav>
+
+
+
+<!--STD nav logic -->
+<script defer async src="/components/scripts/nav.js"></script>
