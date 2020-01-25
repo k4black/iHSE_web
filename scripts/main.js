@@ -14,3 +14,54 @@ function loadingEnd() {
         ls[i].classList.remove('data__loading');
     }
 }
+
+
+/**
+ * Group array of dicts by some field
+ */
+function groupBy(arr, property) {
+    return arr.reduce(function(memo, x) {
+        if (!memo[x[property]]) {
+            memo[x[property]] = [];
+        }
+        memo[x[property]].push(x);
+        return memo;
+    }, {});
+}
+
+
+
+
+
+function processNames(names_raw) {
+    names_raw.sort(function(first, second) {
+        return first.id - second.id;
+    });
+
+    let names_rawGroups = groupBy(names_raw, 'id');
+
+    let names = {};
+
+    for (let user_id in names_rawGroups) {
+        names[user_id] = names_rawGroups[user_id][0];
+    }
+
+    return names;
+}
+
+
+function processEnrolls(enrolls_raw) {
+    enrolls_raw.sort(function(first, second) {
+        return first.id - second.id;
+    });
+
+    let enrolls_rawGroups = groupBy(enrolls_raw, 'id');
+
+    let enrolls = {};
+
+    for (let user_id in enrolls_rawGroups) {
+        enrolls[user_id] = enrolls_rawGroups[user_id][0];
+    }
+
+    return enrolls;
+}
