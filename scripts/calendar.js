@@ -46,13 +46,13 @@ function setupDays() {
             let topbar_html = '';
             for (var i = 0; i < days.length; ++i) {
                 if (days[i].date === today) {  // TODO: Today
-                    topbar_html += '<div class="day today selected">'
+                    topbar_html += '<div class="day today selected"  onclick="selectDay()">'
                 } else {
                     topbar_html += '<div class="day" onclick="selectDay()">'
                 }
 
                 topbar_html += '<div class="day__num">' + i + '</div>' +
-                    '<div class="day__name">' + day_text + '</div>' +
+                    '<div class="day__name">' + days[i].date + '</div>' +
                     '</div>';
             }
 
