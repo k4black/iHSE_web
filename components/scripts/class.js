@@ -176,7 +176,7 @@ function setEnrolls() {
     }
     console.log('enrolls ', enrolls);
 
-    setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + enrolls.length + ' записалсь');
+    setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + Object.keys(enrolls).length + ' записалсь');
 
     // Check current user's attendance
     let check_user = false;
