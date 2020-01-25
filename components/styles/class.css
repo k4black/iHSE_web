@@ -15,6 +15,7 @@
     border-radius: 0;
 
     overflow-y: scroll;
+    background-color: #f7f7f7;;
 }
 
 .class_popup__header {
@@ -37,6 +38,11 @@
 .class_popup__header * {
     font-size: 30px!important;
     color: whitesmoke;
+}
+
+.class_popup__header__title {
+    margin-top: 10px;
+    margin-left: 15px;
 }
 
 .class_popup__header i {
