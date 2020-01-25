@@ -164,3 +164,36 @@ function loadEnrollsByClassId(class_id, func) {
 }
 
 
+
+/**
+ * Get names information from server
+ * Save enrolls list to global 'cache'
+ *
+ * Run func on OK status
+ */
+function loadNames(func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields
+                // loadingEventEnd();
+
+                let names_raw = JSON.parse(this.responseText);
+                names = groupByUnique(names_raw, 'id');
+                cache['names'] = names;
+                
+                func();
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/names", true);
+    // xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+
+
+
+

@@ -174,19 +174,23 @@ var names;
 
 
 
-
+/**
+ * Set enrolls information to class
+ * And manage current user attendance
+ */
 function setEnrolls() {
     let enrolls = cache['enrolls'];
 
+    // Setup buttons enroll/deenroll
     setupEnrollButtons();
 
     // Count number of attendance
     let attendance = 0;
-    for (let i in enrolls_raw) {
-        attendance += enrolls_raw[i].attendance;
+    for (let i in enrolls) {
+        attendance += enrolls[i].attendance;
     }
 
-    setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + enrolls_raw.length + ' записалсь');
+    setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + enrolls.length + ' записалсь');
 
     // Check current user's attendance
     let check_user = false;
@@ -206,12 +210,12 @@ function setEnrolls() {
 
     // Set up enrolls on this event
     let users_list = '';
-    for (let i in enrolls_raw) {
-        let name = names[enrolls_raw[i].user_id];
+    for (let i in enrolls) {
+        let name = names[enrolls[i].user_id];
         let close = '<button class="danger_button"><i class="mobile__item__icon large material-icons">clear</i></button>';
-        let checkbox = '<input type="checkbox" ' + (enrolls_raw[i].attendance === 0 || enrolls_raw[i].attendance === '0' ? '' : 'checked') + '>';
+        let checkbox = '<input type="checkbox" ' + (enrolls[i].attendance === 0 || enrolls[i].attendance === '0' ? '' : 'checked') + '>';
 
-        users_list += '<div class="enrolled_user" data-id="'+ enrolls_raw[i].id +'" user-id="' + name.id + '">';
+        users_list += '<div class="enrolled_user" data-id="'+ enrolls[i].id +'" user-id="' + name.id + '">';
 
         users_list += '<p>'+ name.name +'</p>' + '<div>' + checkbox + close + '</div>';
 
@@ -228,83 +232,6 @@ function setEnrolls() {
             }
         }
     }
-}
-
-
-
-function _loadEnrolls(class_id) {
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields
-                // loadingEventEnd();
-
-                let enrolls_raw = JSON.parse(this.responseText);
-                enrolls = groupByUnique(enrolls_raw, 'id');
-                cache['enrolls'] = enrolls;
-
-
-                setupEnrollButtons();
-
-
-                let attendance = 0;
-                for (let i in enrolls_raw) {
-                    attendance += enrolls_raw[i].attendance;
-                }
-
-                setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + enrolls_raw.length + ' записалсь');
-
-
-                let check_user = false;
-                for (let id in enrolls) {
-                    try {
-                        if (enrolls[id].user_id === user.id) {
-                            check_user = true;
-                            break;
-                        }
-                    } catch (e) {
-
-                    }
-                }
-
-
-                console.log((check_user ? 'Current user enrolled' : 'Current user NOT enrolled'));
-                setupData(document.querySelector('#class_popup .status').firstElementChild, (check_user ? 'Вы записаны на мероприятие!' : ''));
-
-
-                let users_list = '';
-
-
-                for (let i in enrolls_raw) {
-                    let name = names[enrolls_raw[i].user_id];
-                    let close = '<button class="danger_button"><i class="mobile__item__icon large material-icons">clear</i></button>';
-                    let checkbox = '<input type="checkbox" ' + (enrolls_raw[i].attendance === 0 || enrolls_raw[i].attendance === '0' ? '' : 'checked') + '>';
-
-                    users_list += '<div class="enrolled_user" data-id="'+ enrolls_raw[i].id +'" user-id="' + name.id + '">';
-
-                    users_list += '<p>'+ name.name +'</p>' + '<div>' + checkbox + close + '</div>';
-
-                    users_list += '</div>';
-                }
-
-                document.querySelector('#users_list').innerHTML = users_list;
-
-                let close_list = document.querySelectorAll('#users_list button');
-                for (let i = 0; i < close_list.length; ++i) {
-                    close_list[i].onclick = function (val) {
-                        if (confirm('You really want to remove user <'+ close_list[i].parentElement.parentElement.firstElementChild.innerText +'> from this event?')) {
-                            removeEnroll(close_list[i].parentElement.parentElement.getAttribute('data-id'));
-                        }
-                    }
-                }
-            }
-        }
-    };
-
-    xhttp.open("GET", "http://ihse.tk:50000/enrolls?event_id=" + class_id, true);
-    // xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
 }
 
 
