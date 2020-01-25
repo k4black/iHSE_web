@@ -227,10 +227,12 @@ function buildTimeline(locations, events) {
                     current_event = events[i].id;
 
                     // loadEnrolls(events[i].id);
-                    loadEnrollsByClassId(events[i].id, setEnrolls());
-                    document.querySelector('#class_popup').style.display = 'block';
+                    loadEnrollsByClassId(events[i].id, setEnrolls);
 
                     alert('You clicked on the ' + events[i].id + '=' + events[i].title + ' event in ' + events[i].place + '. This is an example of a click handler');
+
+                    // document.querySelector('#class_popup').style.display = 'block';
+                    showClass();
                 }
             },
             data: {
