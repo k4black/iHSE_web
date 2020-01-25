@@ -46,9 +46,9 @@ function setupDays() {
             let topbar_html = '';
             for (var i = 0; i < days.length; ++i) {
                 if (days[i].date === today) {  // TODO: Today
-                    topbar_html += '<div class="day today selected"  onclick="selectDay()">'
+                    topbar_html += '<div class="day today selected">'
                 } else {
-                    topbar_html += '<div class="day" onclick="selectDay()">'
+                    topbar_html += '<div class="day">'
                 }
 
                 topbar_html += '<div class="day__num">' + i + '</div>' +
@@ -57,6 +57,16 @@ function setupDays() {
             }
 
             document.querySelector('.topbar').innerHTML = topbar_html;
+
+            var days = document.querySelectorAll('.day');
+            for (let i = 0; i < days.length; i++) {
+                days[i].addEventListener('click', function() {
+                    document.querySelector('.selected').classList.remove('selected');
+                    this.classList.add('selected');
+
+                    getDay(this.lastElementChild.textContent);
+                });
+            }
         }
     };
 
