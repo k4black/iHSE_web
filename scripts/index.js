@@ -57,11 +57,9 @@ var current_class;
 function setDay() {
     loadingEnd(); // TODO: Check
 
-    current_events = cache['events'];
-
     let events = [];
-    for (let i in current_events) {
-        events.push(current_event[i]);
+    for (let i in cache['events']) {
+        events.push(cache['events'][i]);
     }
 
     var day_html = "";
