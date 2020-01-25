@@ -69,7 +69,9 @@ function loadUser() {
 
                 let sidebar = document.querySelector('.mobile__sidebar');
                 sidebar.querySelector('.mobile__sidebar__name').innerText = user.name;
-                sidebar.querySelector('.mobile__sidebar__phone').innerText = user.phone;
+                let phone = user.phone;
+                phone = '+' + phone[0] + ' (' + phone.slice(1, 4) + ') ' + phone.slice(4,7) + '-' + phone.slice(7);
+                sidebar.querySelector('.mobile__sidebar__phone').innerText = phone;
 
                 isLogin = true;
 

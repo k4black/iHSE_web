@@ -45,8 +45,13 @@
 
 .class_popup_wrapper {
     padding: 25px;
+    /*height: 530px;*/
+    /*overflow-y: scroll;*/
+    height: calc(100% - 70px);
+}
 
-    overflow-y: hidden;
+.class_popup_container {
+    overflow-y: scroll;
 }
 
 

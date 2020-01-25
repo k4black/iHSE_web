@@ -18,9 +18,14 @@ function loadingEnd() {
 
 /**
  * Group array of dicts by some field
+ * return: dict of arrays {id1: [], id2: [], ...}
  */
 function groupBy(arr, property) {
-    return arr.reduce(function(memo, x) {
+    arr.sort(function(first, second) {
+        return first[property] - second[property];
+    });
+
+    return arr.reduce(function (memo, x) {
         if (!memo[x[property]]) {
             memo[x[property]] = [];
         }
@@ -29,6 +34,22 @@ function groupBy(arr, property) {
     }, {});
 }
 
+/**
+ * Group array of dicts by some unique field
+ * return: dict of elements {id1: obj, id2: obj, ...}
+ */
+function groupByUnique(arr, property) {
+    arr.sort(function(first, second) {
+        return first[property] - second[property];
+    });
+
+    return arr.reduce(function(memo, x) {
+        if (!memo[x[property]]) {
+            memo[x[property]] = x;
+        }
+        return memo;
+    }, {});
+}
 
 
 

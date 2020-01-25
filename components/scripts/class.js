@@ -19,6 +19,34 @@ function hideClass() {
 
 
 
+// https://kimmobrunfeldt.github.io/progressbar.js/
+// var ProgressBar = require('scripts/progressbar.js');
+function setupBar(val) {
+    document.querySelector('#container').innerHTML = '';
+
+    bar = new ProgressBar.Line('#container', {
+        strokeWidth: 4,
+        easing: 'easeInOut',
+        duration: 1400,
+        color: '#007ac5',
+        trailColor: '#eee',
+        trailWidth: 1,
+        svgStyle: {width: '100%', height: '100%'},
+        from: {color: '#007ac5'},
+        to: {color: '#ed992f'},
+        step: (state, bar) => {
+            bar.path.setAttribute('stroke', state.color);
+        }
+    });
+
+    bar.animate(val);  // Number from 0.0 to 1.0
+}
+
+
+
+
+
+
 
 
 
@@ -356,15 +384,12 @@ function saveClass() {
         }
     };
 
-    let credits = document.querySelector('#credits').value;
     let total = document.querySelector('#total').value;
 
-    if (current_class.credits === credits && current_class.total === total) {
+    if (current_class.total === total) {
         return;
     }
 
-    if (credits !== '')
-        current_class.credits = credits;
     if (total !== '')
         current_class.total = total;
     let data = JSON.stringify(current_class);
