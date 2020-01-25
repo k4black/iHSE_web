@@ -6,13 +6,13 @@
  * Open and close
  */
 function showClass() {
-    open_state = true;
+    openState = true;
     document.getElementById('class_popup').style.display = 'block';
     // console.log("Open menu");
 }
 
 function hideClass() {
-    open_state = false;
+    openState = false;
     document.getElementById('class_popup').style.display = 'none';
     // console.log("Close menu");
 }
@@ -62,7 +62,9 @@ function setupClasses() {
             current_event = class_events[i].getAttribute('data-id');
 
             loadEnrolls(class_events[i].getAttribute('data-id'));
-            document.querySelector('#class_popup').style.display = 'block';
+
+            // document.querySelector('#class_popup').style.display = 'block';
+            showClass();
         }
     }
 }

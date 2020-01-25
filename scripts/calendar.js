@@ -84,16 +84,14 @@ function getDay(dayNum) {
                             // '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
                             '<button class="admin_element edit_event"><i class="material-icons" style="font-size:20px">build</i></button>' +
 
-                            (event.type === 0 || event.type === '0' ? '' : '<a href="class.html?id=' + event.id + '">') +
-                                '<p class="event__title">' + event.title + '</p>' +
+                            '<p class="event__title">' + event.title + '</p>' +
 
-                                (event.description === undefined ? "" : '<p class="event__desc">' + event.description + '</p>') +
+                            (event.description === undefined ? "" : '<p class="event__desc">' + event.description + '</p>') +
 
-                                ((event.host === undefined || event.host === '') && (event.place === undefined || event.place === '') ? "" : '<div class="event__last_line">' +
-                                    '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                                    '<span class="event__loc">' + (event.place === undefined ? "" : event.place) + '</span>' +
-                                '</div>') +
-                            (event.type === 0 || event.type === '0' ? '' : '</a>') +
+                            ((event.host === undefined || event.host === '') && (event.place === undefined || event.place === '') ? "" : '<div class="event__last_line">' +
+                                '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
+                                '<span class="event__loc">' + (event.place === undefined ? "" : event.place) + '</span>' +
+                            '</div>') +
                         '</div>';
 
                     
@@ -115,6 +113,7 @@ function getDay(dayNum) {
             document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
 
             setupAdminButtons();
+            setupClasses();
         }
     };
 

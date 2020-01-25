@@ -1,12 +1,17 @@
+/**
+ * @fileoverview Logic for sidebar
+ * File providing all functions which are used to control sidebar,
+ * witch can by applied to eny page
+ */
 
 
-var open_state = false;
+
+var openState = false;
 var isLogin = false;
 
 
 function setupNav(active_tab) {
     // active_tab \in {'home', 'calendar', 'feedback', 'projects'}
-    console.log('LOGlog');
 
     document.querySelector('#mi_' + active_tab).classList.add('mobile__item__active');
 
@@ -23,13 +28,13 @@ function setupNav(active_tab) {
  * Open and close
  */
 function showNav() {
-    open_state = true;
+    openState = true;
     document.querySelector('.mobile').classList.add('mobile__open');
     // console.log("Open menu");
 }
 
 function hideNav() {
-    open_state = false;
+    openState = false;
     document.querySelector('.mobile').classList.remove('mobile__open');
     // console.log("Close menu");
 }
