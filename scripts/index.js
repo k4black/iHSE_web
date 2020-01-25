@@ -34,7 +34,7 @@ window.addEventListener('load', function () {
         today = dd + '.' + mm;
 
     loadNames(function () {});
-    loadDay(today);
+    loadDay(today, setDay);
 
     // setupBar(0.8);
 
@@ -50,68 +50,55 @@ window.addEventListener('load', function () {
 var current_events;
 var current_class;
 
+
 /**
- * Get day information from server
- * Send http GET request and get today json schedule
- * than parse of json data and create html
+ * Read day data from cache and create html schedule
  */
-function loadDay(day) {
-    var xhttp = new XMLHttpRequest();
+function setDay() {
+    loadingEnd(); // TODO: Check
 
-    xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            loadingEnd(); // TODO: Check
+    current_events = cache['events'];
 
-            var day_data = JSON.parse( this.responseText );
+    let events = [];
+    for (let i in current_events) {
+        events.push(current_event[i]);
+    }
 
-            current_events = {};
-            for (let time of day_data) {
-                for (let event of time.events) {
-                    current_events[event.id] = event;
-                }
-            }
-            cache['events'] = current_events;
+    var day_html = "";
+    var time_html;
+    var event_html;
 
-            var day_html = "";
-            var time_html;
-            var event_html;
+    for (let time of groupBy(events, 'time')) {
+        time_html = '<div class="time">' +
+                        '<div class="bar">' + time.time + '</div>' +
+                            '<div class="events">';
 
-            for (let time of day_data) {
-                time_html = '<div class="time">' +
-                                '<div class="bar">' + time.time + '</div>' +
-                                    '<div class="events">';
+        for (let event of time.events) {
+            event_html =
+                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
+                    // (event.type === 0 || event.type === '0' ? '' : '<a href="class.html?id=' + event.id + '">') +
+                        '<p class="event__title">' + event.title + '</p>' +
 
-                for (let event of time.events) {
-                    event_html =
-                        '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
-                            // (event.type === 0 || event.type === '0' ? '' : '<a href="class.html?id=' + event.id + '">') +
-                                '<p class="event__title">' + event.title + '</p>' +
+                        (event.description === undefined ? "" : '<p class="event__desc">' + event.description + '</p>') +
 
-                                (event.description === undefined ? "" : '<p class="event__desc">' + event.description + '</p>') +
+                        ((event.host === undefined || event.host === '') && (event.place === undefined || event.place === '') ? "" : '<div class="event__last_line">' +
+                            '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
+                            '<span class="event__loc">' + (event.place === undefined ? "" : event.place) + '</span>' +
+                        '</div>') +
+                    // (event.type === 0 || event.type === '0' ? '' : '</a>') +
+                '</div>';
 
-                                ((event.host === undefined || event.host === '') && (event.place === undefined || event.place === '') ? "" : '<div class="event__last_line">' +
-                                    '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                                    '<span class="event__loc">' + (event.place === undefined ? "" : event.place) + '</span>' +
-                                '</div>') +
-                            // (event.type === 0 || event.type === '0' ? '' : '</a>') +
-                        '</div>';
-
-                    time_html += event_html;
-                }
-
-                time_html += '</div>' + '</div>';
-                time_html += '<hr class="border_line">';
-
-                day_html += time_html;
-            }
-
-            document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
-
-            setupClasses();
+            time_html += event_html;
         }
-    };
 
-    xhttp.open("GET", "http://ihse.tk:50000/day?day=" + day, true);
-    xhttp.send();
+        time_html += '</div>' + '</div>';
+        time_html += '<hr class="border_line">';
+
+        day_html += time_html;
+    }
+
+    document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
+
+    setupClasses();
 }
 

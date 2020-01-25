@@ -222,3 +222,32 @@ function loadClass(class_id, func) {
 }
 
 
+/**
+ * Get day information from server
+ * Send http GET request and get today json schedule
+ * Save enrolls list to global 'cache['events']'
+ *
+ * Run func on OK status
+ */
+function loadDay(day, func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+            let day_data = JSON.parse( this.responseText );
+
+            current_events = {};
+            for (let time of day_data) {
+                for (let event of time.events) {
+                    current_events[event.id] = event;
+                }
+            }
+            cache['events'] = current_events;
+
+            func();
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/day?day=" + day, true);
+    xhttp.send();
+}
