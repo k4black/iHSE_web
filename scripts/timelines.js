@@ -1,28 +1,5 @@
 
 
-loadNames(function () {});
-
-function setupClasses() {
-    // console.log('setuping classes');
-    // let class_events = document.querySelectorAll('.class');
-    // for (let i in class_events) {
-    //     class_events[i].onclick = function (val) {
-    //         console.log('clicked event with id: ', class_events[i].getAttribute('data-id'));
-    //
-    //         loadClass(class_events[i].getAttribute('data-id'));
-    //         // TODO: Smooth visible
-    //
-    //         current_event = class_events[i].getAttribute('data-id');
-    //
-    //         loadEnrolls(class_events[i].getAttribute('data-id'));
-    //         document.querySelector('#class_popup').style.display = 'block';
-    //     }
-    // }
-}
-
-
-var current_events;
-
 
 
 

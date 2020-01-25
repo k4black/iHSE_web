@@ -33,7 +33,7 @@ window.addEventListener('load', function () {
     else
         today = dd + '.' + mm;
 
-    loadNames(function () {});
+    // loadNames(function () {});
     loadDay(today, setDay);
 
     // setupBar(0.8);
