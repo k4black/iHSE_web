@@ -13,11 +13,8 @@
 
 var days;
 
-function selectDay() {
-    document.querySelector('.selected').classList.remove('selected');
-    this.classList.add('selected');
-
-    getDay(this.lastElementChild.textContent);
+function addDay() {
+    console.log('adding day');
 }
 
 
@@ -27,9 +24,10 @@ function setupDays() {
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-
             days = JSON.parse( this.responseText );
-            days_list = [];
+            sortBy(days, 'date');
+
+            let days_list = [];
             for (let day of days) {
                 days_list.push(day.date);
             }
@@ -56,15 +54,24 @@ function setupDays() {
                     '</div>';
             }
 
+            topbar_html += '<div class="admin_element day add_day"> <div class="day__num">' +
+                '<i class="mobile__item__icon large material-icons">add</i>' + '</div>' +
+                    '<div class="day__name">' + 'add_day' + '</div>' +
+                    '</div>';
+
             document.querySelector('.topbar').innerHTML = topbar_html;
 
             var days = document.querySelectorAll('.day');
             for (let i = 0; i < days.length; i++) {
                 days[i].addEventListener('click', function() {
-                    document.querySelector('.selected').classList.remove('selected');
-                    this.classList.add('selected');
+                    if (this.classList.includes('add_day')) {
+                        addDay();
+                    } else {
+                        document.querySelector('.selected').classList.remove('selected');
+                        this.classList.add('selected');
 
-                    getDay(this.lastElementChild.textContent);
+                        getDay(this.lastElementChild.textContent);
+                    }
                 });
             }
         }
@@ -101,7 +108,7 @@ for (var i = 0; i < numOfDays; ++i) {
         topbar_html += '<div class="day">'
     }
 
-    topbar_html +=          '<div class="day__num">' + i + '</div>' +
+    topbar_html += '<div class="day__num">' + i + '</div>' +
         '<div class="day__name">' + day_text + '</div>' +
         '</div>';
 }

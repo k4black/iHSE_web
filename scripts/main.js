@@ -17,13 +17,21 @@ function loadingEnd() {
 
 
 /**
+ * Sort array of dicts by some field
+ * return: array of objs
+ */
+function sortBy(arr, property) {
+    arr.sort(function (first, second) {
+        return first[property] - second[property];
+    });
+}
+
+/**
  * Group array of dicts by some field
  * return: dict of arrays {id1: [], id2: [], ...}
  */
 function groupBy(arr, property) {
-    arr.sort(function(first, second) {
-        return first[property] - second[property];
-    });
+    sortBy(arr, property);
 
     return arr.reduce(function (memo, x) {
         if (!memo[x[property]]) {
@@ -39,9 +47,7 @@ function groupBy(arr, property) {
  * return: dict of elements {id1: obj, id2: obj, ...}
  */
 function groupByUnique(arr, property) {
-    arr.sort(function(first, second) {
-        return first[property] - second[property];
-    });
+    sortBy(arr, property);
 
     return arr.reduce(function(memo, x) {
         if (!memo[x[property]]) {
