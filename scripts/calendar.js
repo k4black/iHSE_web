@@ -60,7 +60,7 @@ function setupDays() {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/days" + dayNum, true);
+    xhttp.open("GET", "http://ihse.tk:50000/days", true);
     xhttp.send();
 }
 
