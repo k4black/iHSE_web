@@ -68,12 +68,13 @@ function setDay() {
     var time_html;
     var event_html;
 
-    for (let time of groupBy(events, 'time')) {
+    let times = groupBy(events, 'time');
+    for (let time in times) {
         time_html = '<div class="time">' +
-                        '<div class="bar">' + time.time + '</div>' +
+                        '<div class="bar">' + times[time].time + '</div>' +
                             '<div class="events">';
 
-        for (let event of time.events) {
+        for (let event of times[time]) {
             event_html =
                 '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
                     // (event.type === 0 || event.type === '0' ? '' : '<a href="class.html?id=' + event.id + '">') +
