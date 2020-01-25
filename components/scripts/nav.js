@@ -43,9 +43,9 @@ function onAccountClicked() {
     console.log('onAccountClicked; status: ' + isLogin);
 
     if (isLogin) {
-        window.location.href = "account.html";
+        window.location.href = "/account.html";
     } else {
-        window.location.href = "login.html";
+        window.location.href = "/login.html";
     }
 }
 
