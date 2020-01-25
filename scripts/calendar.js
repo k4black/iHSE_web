@@ -21,8 +21,8 @@ function selectDay() {
 }
 
 
+setupDays();
 function setupDays() {
-
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
