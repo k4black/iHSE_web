@@ -15,7 +15,13 @@ function setupNav(active_tab) {
 
     document.querySelector('#mi_' + active_tab).classList.add('mobile__item__active');
 
-    loadUser(setUser);
+    if (user === undefined) {
+        setUser();
+    } else {
+        loadUser(setUser);
+    }
+
+    document.querySelector('.mobile__item__logout').addEventListener('click', logout);
 }
 
 
@@ -69,30 +75,14 @@ function setUser() {
     phone = '+' + phone[0] + ' (' + phone.slice(1, 4) + ') ' + phone.slice(4, 7) + '-' + phone.slice(7);
     sidebar.querySelector('.mobile__sidebar__phone').innerText = phone;
 
-    // Show menu items
-    var hidden = sidebar.querySelectorAll('.mobile__item__hidden');
+    // Show hiden sidebar items
+    let hidden = sidebar.querySelectorAll('.mobile__item__hidden');
     for (var i = 0; i < hidden.length; ++i) {
         hidden[i].classList.remove('mobile__item__hidden');
     }
 
-    // Setup admin/moderator tag
-    if (user.type >= 1) {
-        document.querySelectorAll('body')[0].classList.add('moderator');
-
-        if (user.type >= 2) {
-            document.querySelectorAll('body')[0].classList.add('admin');
-        }
-    }
-
-    // Show sidebar items
-    var hidden = document.querySelectorAll('.header__item__hidden');
-    for (var i = 0; i < hidden.length; ++i) {
-        hidden[i].classList.remove('header__item__hidden');
-        console.log('Show hidden items');
-    }
-
     // Setup avatar
-    if (user.avatar != null && user.avatar != undefined && user.avatar != '')
+    if (user.avatar != null && user.avatar != '')
         sidebar.querySelector('.mobile__sidebar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
     // Notification
@@ -106,93 +96,20 @@ function setUser() {
         sidebar.querySelector('#nt__prj').classList.add('active');
 }
 
-/**
- * Get account information from server
- * Send http GET request and get user bio (or guest bio if cookie does not exist)
- */
-function _loadUser() {
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields name and phone
-
-                // console.log(this.responseText);
-                user = JSON.parse(this.responseText);
-
-                let sidebar = document.querySelector('.mobile__sidebar');
-                sidebar.querySelector('.mobile__sidebar__name').innerText = user.name;
-                let phone = user.phone;
-                phone = '+' + phone[0] + ' (' + phone.slice(1, 4) + ') ' + phone.slice(4, 7) + '-' + phone.slice(7);
-                sidebar.querySelector('.mobile__sidebar__phone').innerText = phone;
-
-                // Show menu items
-                var hidden = sidebar.querySelectorAll('.mobile__item__hidden');
-                for (var i = 0; i < hidden.length; ++i) {
-                    hidden[i].classList.remove('mobile__item__hidden');
-                }
-
-                // Add admin/moderator tag
-                if (user.type >= 1) {
-                    document.querySelectorAll('body')[0].classList.add('moderator');
-
-                    if (user.type >= 2) {
-                        document.querySelectorAll('body')[0].classList.add('admin');
-                    }
-                }
-
-                // Show sidebar items
-                var hidden = document.querySelectorAll('.header__item__hidden');
-                for (var i = 0; i < hidden.length; ++i) {
-                    hidden[i].classList.remove('header__item__hidden');
-                    console.log('Show hidden items');
-                }
-
-
-                // Setup avatar
-                if (user.avatar != null && user.avatar != undefined && user.avatar != '')
-                    sidebar.querySelector('.mobile__sidebar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
-
-
-                // Notification
-                if (user.calendar)
-                    sidebar.querySelector('#nt__home').classList.add('active');
-
-                if (user.feedback)
-                    sidebar.querySelector('#nt__feed').classList.add('active');
-
-                // if (user.calendar)
-                //     sidebar.querySelector('#nt__cal').classList.add('active');
-
-                if (user.projects)
-                    sidebar.querySelector('#nt__prj').classList.add('active');
-
-            }
-        }
-    };
-
-    xhttp.open("GET", "http://ihse.tk:50000/user", true);
-    xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
-}
-
-
-
 
 /**
- * Logout button
+ * Logout function
  * Send http POST request to clear session id
  */
-var logout = document.querySelector('.mobile__item__logout');
-if (logout != null)
-logout.addEventListener('click', function () {
+function logout() {
+    user = undefined;
 
-    var xhttp = new XMLHttpRequest();
+
+    let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4) {
             if (this.status === 200) {
-
                 location = 'http://ihse.tk/index.html';  // Refer to start page
             }
 
@@ -205,7 +122,9 @@ logout.addEventListener('click', function () {
     xhttp.open("POST", "http://ihse.tk:50000/logout", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
-});
+}
+
+
 
 
 

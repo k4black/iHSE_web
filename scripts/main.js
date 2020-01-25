@@ -6,20 +6,32 @@
 
 
 
-/**
- * Cashed sql tables
- * ('users', 'events', ... etc)
- * Each of table groupedUnique by Id value in that group
- */
+// Cashed sql tables ('users', 'events', ... etc)
+// Each of table groupedUnique by Id value in that group
 var cache = {};
 
-/**
- * Current user or undefined if not login
- */
+// Current user or undefined if not login
 var user;
 
 
+/**
+ * Setup admin/moderator tag
+ */
+loadUser(function () {
+    if (user.type >= 1) {
+        document.querySelector('body').classList.add('moderator');
 
+        if (user.type >= 2) {
+            document.querySelector('body').classList.add('admin');
+        }
+    }
+});
+
+
+/**
+ * Check if all necessary resources are loaded
+ * If true then run function
+ */
 function checkLoading(foo, waiting_list) {
     let loaded = true;
     for (let res of waiting_list) {
@@ -122,3 +134,8 @@ function loadUser(func) {
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
+
+
+
+
+

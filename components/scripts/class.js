@@ -19,7 +19,12 @@ function hideClass() {
 
 
 
-// https://kimmobrunfeldt.github.io/progressbar.js/
+
+/**
+ * Setup progress bar,
+ * which display percentage of users enrolled this events
+ * https://kimmobrunfeldt.github.io/progressbar.js/
+ */
 // var ProgressBar = require('scripts/progressbar.js');
 function setupBar(val) {
     document.querySelector('#users_progress_bar').innerHTML = '';
