@@ -17,18 +17,22 @@
  * Send http GET request and get today json schedule
  * than parse of json data and create html
  */
-const urlParams = new URLSearchParams(window.location.search);
-var dayNum = urlParams.get('day');
 
-let today_date = new Date();  //January is 0!
-let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
+function loadDayFirstTime(days_list) {
+    let urlParams = new URLSearchParams(window.location.search);
+    var dayNum = urlParams.get('day');
 
-if (days_list.includes(dd_mm)) {
-    today = dd + '.' + mm;
-} else {
-    today = days_list[0];
+    let today_date = new Date();  //January is 0!
+    let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
+
+    if (days_list.includes(dd_mm)) {
+        today = dd + '.' + mm;
+    } else {
+        today = days_list[0];
+    }
+    loadDay((dayNum != null ? dayNum : today), setDay);
 }
-loadDay((dayNum != null ? dayNum : today), setDay);
+
 
 
 
@@ -42,7 +46,7 @@ function addDay() {
 
 
 setupDays();
-function setupDays() {
+function setupDays() {   // TODO: Refactor
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
@@ -84,6 +88,8 @@ function setupDays() {
 
             document.querySelector('.topbar').innerHTML = topbar_html;
 
+
+            // Set onclick loading other day
             var days = document.querySelectorAll('.day');
             for (let i = 0; i < days.length; i++) {
                 days[i].addEventListener('click', function() {
@@ -97,6 +103,8 @@ function setupDays() {
                     }
                 });
             }
+
+            loadDayFirstTime(days_list);
         }
     };
 
