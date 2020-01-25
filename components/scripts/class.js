@@ -115,9 +115,9 @@ function setupData(elem, data) {
 }
 
 
-
-    current_class = event_class;
-
+/**
+ * Set class fields in the popup class info
+ */
 function setClass() {
     let current_events = cache['events'];
     let event_class = cache['class'];
@@ -151,61 +151,6 @@ function setClass() {
 }
 
 
-
-function loadClass(class_id) {
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields
-                // loadingEventEnd();
-
-                let event_class = JSON.parse( this.responseText );
-                console.log(event_class, current_events[class_id]);
-
-                document.querySelector('#class_popup .class_popup__header__title').innerText = current_events[class_id].title;
-
-                setupData(document.querySelector('#class_popup .desc').firstElementChild, current_events[class_id].description);
-                setupData(document.querySelector('#class_popup .time').firstElementChild, current_events[class_id].time.replace('\n', ' - '));
-                setupData(document.querySelector('#class_popup .time').lastElementChild, current_events[class_id].date);
-                setupData(document.querySelector('#class_popup .location').firstElementChild, current_events[class_id].place);
-                setupData(document.querySelector('#class_popup .host').firstElementChild, current_events[class_id].host);
-                // if (event_class.anno === undefined) {
-                //     document.querySelector('#class_popup .anno').parentElement.innerHTML = "";
-                //     document.querySelector('#class_popup .anno').parentElement.style.display = 'none';
-                // }
-                // else {
-                //     document.querySelector('#class_popup .anno').firstElementChild.innerText = event_class.anno;
-                // }
-                setupData(document.querySelector('#class_popup .count').firstElementChild, event_class.count + ' / ' + event_class.total);
-
-                // setupData(document.querySelector('#class_popup .count').lastElementChild, '2 было; 6 записалсь');
-
-                document.querySelector('#total').value = event_class.total;
-
-                current_class = event_class;
-
-                // // TODO: Hide when there is no enrollment
-                // if (event_class.total == undefined || event_class.total == "" || event_class.total === '0' || event_class.total === '0') {
-                //     document.querySelector('.enroll_section').style.visibility = 'hidden';
-                // } else {
-                //     document.querySelector('#class_popup .count').innerText = event_class.count + ' / ' + event_class.total;
-                //
-                console.log(event_class.count , event_class.total, event_class.count / event_class.total);
-                setupBar(event_class.count / event_class.total);  // Number from 0.0 to 1.0
-                //
-                //     if (event_class.count >= event_class.total) {
-                //         document.querySelector('#btn').classList.add('inactive');
-                //     }
-                // }
-            }
-        }
-    };
-
-    xhttp.open("GET", "http://ihse.tk:50000/class?id=" + class_id, true);
-    // xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
-}
 
 
 let enrolls;

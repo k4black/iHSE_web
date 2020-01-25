@@ -150,7 +150,7 @@ function loadEnrollsByClassId(class_id, func) {
         if (this.readyState === 4) {
             if (this.status === 200) {
                 let enrolls_raw = JSON.parse(this.responseText);
-                enrolls = groupByUnique(enrolls_raw, 'id');
+                let enrolls = groupByUnique(enrolls_raw, 'id');
                 cache['enrolls'] = enrolls;
 
                 func();
