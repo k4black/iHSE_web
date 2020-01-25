@@ -64,7 +64,7 @@ function setupDays() {
             var days = document.querySelectorAll('.day');
             for (let i = 0; i < days.length; i++) {
                 days[i].addEventListener('click', function() {
-                    if (this.classList.includes('add_day')) {
+                    if (this.classList.contains('add_day')) {
                         addDay();
                     } else {
                         document.querySelector('.selected').classList.remove('selected');

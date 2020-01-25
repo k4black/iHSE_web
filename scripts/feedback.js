@@ -84,6 +84,65 @@ document.querySelector('.topbar').innerHTML = topbar_html;
 
 
 
+
+setupDays();
+function setupDays() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+            days = JSON.parse( this.responseText );
+            sortBy(days, 'date');
+
+            let days_list = [];
+            for (let day of days) {
+                if (day.feedback) {
+                    days_list.push(day.date);
+                }
+            }
+
+            let today_date = new Date();  //January is 0!
+            let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
+
+            if (days_list.includes(dd_mm)) {
+                today = dd + '.' + mm;
+            } else {
+                today = days_list[0];
+            }
+
+            let topbar_html = '';
+            for (var i = 0; i < days.length; ++i) {
+                if (days[i].date === today) {  // TODO: Today
+                    topbar_html += '<div class="day today selected">'
+                } else {
+                    topbar_html += '<div class="day">'
+                }
+
+                topbar_html += '<div class="day__num">' + i + '</div>' +
+                    '<div class="day__name">' + days[i].date + '</div>' +
+                    '</div>';
+            }
+
+            document.querySelector('.topbar').innerHTML = topbar_html;
+
+            var days = document.querySelectorAll('.day');
+            for (let i = 0; i < days.length; i++) {
+                days[i].addEventListener('click', function() {
+                    document.querySelector('.selected').classList.remove('selected');
+                    this.classList.add('selected');
+
+                    getDay(this.lastElementChild.textContent);
+                });
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/days", true);
+    xhttp.send();
+}
+
+
+
 /**
  * Get and set feedback day description
  * GET request to get day data
