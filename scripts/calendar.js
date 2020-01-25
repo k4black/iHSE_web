@@ -11,6 +11,59 @@
 
 
 
+var days;
+
+function selectDay() {
+    document.querySelector('.selected').classList.remove('selected');
+    this.classList.add('selected');
+
+    getDay(this.lastElementChild.textContent);
+}
+
+
+function setupDays() {
+
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+
+            days = JSON.parse( this.responseText );
+            days_list = [];
+            for (let day of days) {
+                days_list.push(day.date);
+            }
+
+            let today_date = new Date();  //January is 0!
+            let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
+
+            if (days_list.includes(dd_mm)) {
+                today = dd + '.' + mm;
+            } else {
+                today = days_list[0];
+            }
+
+            let topbar_html = '';
+            for (var i = 0; i < days.length; ++i) {
+                if (days[i].date === today) {  // TODO: Today
+                    topbar_html += '<div class="day today selected">'
+                } else {
+                    topbar_html += '<div class="day" onclick="selectDay()">'
+                }
+
+                topbar_html += '<div class="day__num">' + i + '</div>' +
+                    '<div class="day__name">' + day_text + '</div>' +
+                    '</div>';
+            }
+
+            document.querySelector('.topbar').innerHTML = topbar_html;
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/days" + dayNum, true);
+    xhttp.send();
+}
+
 
 var today_date = new Date();
 var dd = String(today_date.getDate()).padStart(2, '0');
@@ -48,6 +101,8 @@ document.querySelector('.topbar').innerHTML = topbar_html;
 
 
 
+var current_events;
+
 
 
 /**
@@ -64,7 +119,12 @@ function getDay(dayNum) {
             loadingEnd(); // TODO: Check
 
             var day_data = JSON.parse( this.responseText );
-
+            current_events = {};
+            for (let time of day_data) {
+                for (let event of time.events) {
+                    current_events[event.id] = event;
+                }
+            }
 
             var day_html = "";
             var time_html;
@@ -158,7 +218,6 @@ for (let i = 0; i < days.length; i++) {
 
         // TODO: set today
     });
-
 }
 
 
