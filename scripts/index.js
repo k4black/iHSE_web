@@ -70,6 +70,7 @@ function loadDay(day) {
                     current_events[event.id] = event;
                 }
             }
+            cache['events'] = current_events;
 
             var day_html = "";
             var time_html;

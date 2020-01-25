@@ -15,7 +15,7 @@ function setupNav(active_tab) {
 
     document.querySelector('#mi_' + active_tab).classList.add('mobile__item__active');
 
-    if (user === undefined) {
+    if (user !== undefined) {
         setUser();
     } else {
         loadUser(setUser);
