@@ -173,6 +173,7 @@ function setEnrolls() {
     for (let i in enrolls) {
         attendance += enrolls[i].attendance;
     }
+    console.log('enrolls ', enrolls);
 
     setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + enrolls.length + ' записалсь');
 
