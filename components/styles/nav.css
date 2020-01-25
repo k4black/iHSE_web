@@ -217,7 +217,7 @@
 
 
 
-/* Open sidebar */
+/* Opened sidebar */
 .mobile__open {
     display: flex;
     transform: translateX(0);
@@ -239,6 +239,13 @@
 .mobile__open .mobile__sidebar {
     top: 0;
     transform: translateX(0);
+}
+
+
+
+
+.mobile__sidebar .border_line {
+    margin: 5px 0px;
 }
 
 

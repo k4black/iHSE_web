@@ -1,7 +1,9 @@
+<link rel="stylesheet" href="/components/styles/header.css">
+
 <header class="header">
     <div class="header__left">
         <!--# if expr="$enable_menu" -->
-        <nav class="hamburger">
+        <nav class="hamburger" onclick="showNav()">
             <button class="hamburger__button">
                 <span class="hamburger__button-bar"></span>
                 <span class="hamburger__button-bar"></span>
@@ -9,7 +11,7 @@
             </button>
         </nav>
         <!--# else -->
-        <nav class="arrow">
+        <nav class="arrow" href="/index.html">
             <button class="arrow__button">
                 <i class="mobile__item__icon large material-icons">arrow_back</i>
             </button>
