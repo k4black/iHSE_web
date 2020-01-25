@@ -354,13 +354,13 @@ function saveClass() {
 
     let total = document.querySelector('#total').value;
 
-    if (current_class.total === total) {
+    if (cache['class'].total === total) {
         return;
     }
 
     if (total !== '')
-        current_class.total = total;
-    let data = JSON.stringify(current_class);
+        cache['class'].total = total;
+    let data = JSON.stringify(cache['class']);
 
     xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+'classes', true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
