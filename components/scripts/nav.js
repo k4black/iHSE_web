@@ -9,6 +9,8 @@ function setupNav(active_tab) {
     console.log('LOGlog');
 
     document.querySelector('#mi_' + active_tab).classList.add('mobile__item__active');
+
+    loadUser();
 }
 
 
