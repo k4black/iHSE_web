@@ -219,7 +219,9 @@ function buildTimeline(locations, events) {
                 if (events[i].type === 1) {
                     console.log('clicked event with id: ', events[i].id);
 
-                    loadClass(events[i].id);
+                    // loadClass(events[i].id);
+                    loadClass(events[i].id, setClass);
+
                     // TODO: Smooth visible
 
                     current_event = events[i].id;

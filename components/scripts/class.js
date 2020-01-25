@@ -61,7 +61,8 @@ function setupClasses() {
         class_events[i].onclick = function (val) {
             console.log('clicked event with id: ', class_events[i].getAttribute('data-id'));
 
-            loadClass(class_events[i].getAttribute('data-id'));
+            // loadClass(class_events[i].getAttribute('data-id'));
+            loadClass(class_events[i].getAttribute('data-id'), setClass);
             // TODO: Smooth visible
 
             current_event = class_events[i].getAttribute('data-id');
@@ -112,6 +113,44 @@ function setupData(elem, data) {
         elem.parentElement.parentElement.style.display = 'flex';
     }
 }
+
+
+
+    current_class = event_class;
+
+function setClass() {
+    let current_events = cache['events'];
+    let event_class = cache['class'];
+    let class_id = event_class.id;
+
+    document.querySelector('#class_popup .class_popup__header__title').innerText = current_events[class_id].title;
+
+    setupData(document.querySelector('#class_popup .desc').firstElementChild, current_events[class_id].description);
+    setupData(document.querySelector('#class_popup .time').firstElementChild, current_events[class_id].time.replace('\n', ' - '));
+    setupData(document.querySelector('#class_popup .time').lastElementChild, current_events[class_id].date);
+    setupData(document.querySelector('#class_popup .location').firstElementChild, current_events[class_id].place);
+    setupData(document.querySelector('#class_popup .host').firstElementChild, current_events[class_id].host);
+
+    setupData(document.querySelector('#class_popup .count').firstElementChild, event_class.count + ' / ' + event_class.total);
+    document.querySelector('#total').value = event_class.total;  // Admin editable field
+
+
+    // // TODO: Hide when there is no enrollment
+    // if (event_class.total == undefined || event_class.total == "" || event_class.total === '0' || event_class.total === '0') {
+    //     document.querySelector('.enroll_section').style.visibility = 'hidden';
+    // } else {
+    //     document.querySelector('#class_popup .count').innerText = event_class.count + ' / ' + event_class.total;
+    //
+    console.log(event_class.count , event_class.total, event_class.count / event_class.total);
+    setupBar(event_class.count / event_class.total);  // Number from 0.0 to 1.0
+
+    //     if (event_class.count >= event_class.total) {
+    //         document.querySelector('#btn').classList.add('inactive');
+    //     }
+    // }
+}
+
+
 
 function loadClass(class_id) {
     var xhttp = new XMLHttpRequest();
@@ -235,24 +274,7 @@ function setEnrolls() {
 }
 
 
-function loadNames() {
-    var xhttp = new XMLHttpRequest();
 
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields
-                // loadingEventEnd();
-
-                let names_raw = JSON.parse(this.responseText);
-                names = groupByUnique(names_raw, 'id');
-            }
-        }
-    };
-
-    xhttp.open("GET", "http://ihse.tk:50000/names", true);
-    // xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
-}
 
 
 
@@ -263,7 +285,8 @@ function createEnroll() {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
-                loadClass(current_event);
+                // loadClass(current_event);
+                loadClass(current_event, setClass);
                 // loadEnrolls(current_event);
                 loadEnrollsByClassId(current_event, setEnrolls);
             } else if (this.status === 401) {
@@ -305,7 +328,7 @@ function removeEnroll(enroll_id) {
             if (this.status === 200) { // If ok set up fields
                 // loadingEventEnd();
 
-                loadClass(current_event);
+                loadClass(current_event, setClass);
                 // loadEnrolls(current_event);
                 loadEnrollsByClassId(current_event, setEnrolls);
             }
@@ -376,7 +399,7 @@ function saveClass() {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
-                loadClass(current_event);
+                loadClass(current_event, setClass);
                 // loadEnrolls(current_event);
             }
         }

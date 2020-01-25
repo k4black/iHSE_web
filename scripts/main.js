@@ -182,7 +182,7 @@ function loadNames(func) {
                 let names_raw = JSON.parse(this.responseText);
                 names = groupByUnique(names_raw, 'id');
                 cache['names'] = names;
-                
+
                 func();
             }
         }
@@ -195,5 +195,30 @@ function loadNames(func) {
 
 
 
+/**
+ * Get class information from server by class_id (event_id)
+ * Save enrolls list to global 'cache['class']'
+ *
+ * Run func on OK status
+ */
+function loadClass(class_id, func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields
+                let event_class = JSON.parse(this.responseText);
+
+                cache['class'] = event_class;
+
+                func();
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/class?id=" + class_id, true);
+    // xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
 
 
