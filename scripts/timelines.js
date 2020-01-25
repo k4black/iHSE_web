@@ -1,5 +1,7 @@
 
 
+loadNames(function () {});
+
 function setupClasses() {
     // console.log('setuping classes');
     // let class_events = document.querySelectorAll('.class');
