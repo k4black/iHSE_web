@@ -171,6 +171,7 @@ function setEnrolls() {
     // Count number of attendance
     let attendance = 0;
     for (let i in enrolls) {
+        console.log(i, enrolls[i], enrolls[i].attendance);
         attendance += enrolls[i].attendance;
     }
     console.log('enrolls ', enrolls);
