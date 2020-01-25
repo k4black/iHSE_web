@@ -1,5 +1,24 @@
 <link rel="stylesheet" href="/components/styles/header.css">
 
+<script>
+    function backButton() {
+        switch (document.referrer) {
+            case "http://ihse.tk/register.html":
+                window.location.href = "http://ihse.tk/login.html";
+                break;
+
+            case "http://ihse.tk/create.html":
+                window.location.href = "http://ihse.tk/projects.html";
+                break;
+
+            default:
+                window.location.href = "http://ihse.tk/";
+                break;
+        }
+    // window.location.href = document.referrer;
+    }
+</script>
+
 <header class="header">
     <div class="header__left">
         <!--# if expr="$enable_menu" -->
@@ -11,7 +30,7 @@
             </button>
         </nav>
         <!--# else -->
-        <nav class="arrow" href="/index.html">
+        <nav class="arrow" onclick="backButton()">
             <button class="arrow__button">
                 <i class="mobile__item__icon large material-icons">arrow_back</i>
             </button>
