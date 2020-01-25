@@ -7,7 +7,7 @@
 
 
 var openState = false;
-var isLogin = false;
+
 
 
 function setupNav(active_tab) {
@@ -15,7 +15,7 @@ function setupNav(active_tab) {
 
     document.querySelector('#mi_' + active_tab).classList.add('mobile__item__active');
 
-    loadUser();
+    loadUser(setUser);
 }
 
 
@@ -47,9 +47,9 @@ function hideNav() {
  * OnClick try to open account.html
  */
 function onAccountClicked() {
-    console.log('onAccountClicked; status: ' + isLogin);
+    console.log('onAccountClicked; status: ' + user !== undefined);
 
-    if (isLogin) {
+    if (user !== undefined) {
         window.location.href = "/account.html";
     } else {
         window.location.href = "/login.html";
@@ -57,12 +57,60 @@ function onAccountClicked() {
 }
 
 
+/**
+ * Set user to account fields (sidebar)
+ * (or guest bio if cookie does not exist)
+ */
+function setUser() {
+    // Setup main bio (phone/name)
+    let sidebar = document.querySelector('.mobile__sidebar');
+    sidebar.querySelector('.mobile__sidebar__name').innerText = user.name;
+    let phone = user.phone;
+    phone = '+' + phone[0] + ' (' + phone.slice(1, 4) + ') ' + phone.slice(4, 7) + '-' + phone.slice(7);
+    sidebar.querySelector('.mobile__sidebar__phone').innerText = phone;
+
+    // Show menu items
+    var hidden = sidebar.querySelectorAll('.mobile__item__hidden');
+    for (var i = 0; i < hidden.length; ++i) {
+        hidden[i].classList.remove('mobile__item__hidden');
+    }
+
+    // Setup admin/moderator tag
+    if (user.type >= 1) {
+        document.querySelectorAll('body')[0].classList.add('moderator');
+
+        if (user.type >= 2) {
+            document.querySelectorAll('body')[0].classList.add('admin');
+        }
+    }
+
+    // Show sidebar items
+    var hidden = document.querySelectorAll('.header__item__hidden');
+    for (var i = 0; i < hidden.length; ++i) {
+        hidden[i].classList.remove('header__item__hidden');
+        console.log('Show hidden items');
+    }
+
+    // Setup avatar
+    if (user.avatar != null && user.avatar != undefined && user.avatar != '')
+        sidebar.querySelector('.mobile__sidebar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
+
+    // Notification
+    if (user.calendar)
+        sidebar.querySelector('#nt__home').classList.add('active');
+    if (user.feedback)
+        sidebar.querySelector('#nt__feed').classList.add('active');
+    // if (user.calendar)
+    //     sidebar.querySelector('#nt__cal').classList.add('active');
+    if (user.projects)
+        sidebar.querySelector('#nt__prj').classList.add('active');
+}
 
 /**
  * Get account information from server
  * Send http GET request and get user bio (or guest bio if cookie does not exist)
  */
-function loadUser() {
+function _loadUser() {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
@@ -77,8 +125,6 @@ function loadUser() {
                 let phone = user.phone;
                 phone = '+' + phone[0] + ' (' + phone.slice(1, 4) + ') ' + phone.slice(4, 7) + '-' + phone.slice(7);
                 sidebar.querySelector('.mobile__sidebar__phone').innerText = phone;
-
-                isLogin = true;
 
                 // Show menu items
                 var hidden = sidebar.querySelectorAll('.mobile__item__hidden');

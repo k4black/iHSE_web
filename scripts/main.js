@@ -5,6 +5,39 @@
 
 
 
+
+/**
+ * Cashed sql tables
+ * ('users', 'events', ... etc)
+ * Each of table groupedUnique by Id value in that group
+ */
+var cache = {};
+
+/**
+ * Current user or undefined if not login
+ */
+var user;
+
+
+
+function checkLoading(foo, waiting_list) {
+    let loaded = true;
+    for (let res of waiting_list) {
+        if (!(res in cache) || cache[res] === undefined) {
+            loaded = false;
+        }
+    }
+
+    if (loaded) {
+        foo();
+    }
+}
+
+
+
+/** ===============  AUXILIARY FUNCTIONS  =============== */
+
+
 /**
  * Remove loading class on shadow-skeleton elements
  */
@@ -59,36 +92,33 @@ function groupByUnique(arr, property) {
 
 
 
-
-function processNames(names_raw) {
-    names_raw.sort(function(first, second) {
-        return first.id - second.id;
-    });
-
-    let names_rawGroups = groupBy(names_raw, 'id');
-
-    let names = {};
-
-    for (let user_id in names_rawGroups) {
-        names[user_id] = names_rawGroups[user_id][0];
-    }
-
-    return names;
-}
+/** ===============  SERVER REQUESTS  =============== */
 
 
-function processEnrolls(enrolls_raw) {
-    enrolls_raw.sort(function(first, second) {
-        return first.id - second.id;
-    });
 
-    let enrolls_rawGroups = groupBy(enrolls_raw, 'id');
+/**
+ * Get account information from server
+ * Send http GET request and get user bio (or guest bio if cookie does not exist)
+ * Save user dict to global 'var user'
+ *
+ * Run func on OK status
+ */
+function loadUser(func) {
+    let xhttp = new XMLHttpRequest();
 
-    let enrolls = {};
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) {  // Ok
+                user = JSON.parse(this.responseText);
 
-    for (let user_id in enrolls_rawGroups) {
-        enrolls[user_id] = enrolls_rawGroups[user_id][0];
-    }
+                func();
+            } else if (this.status === 401) {  // Unauthorized
 
-    return enrolls;
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/user", true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
 }

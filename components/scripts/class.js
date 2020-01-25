@@ -175,7 +175,8 @@ function loadEnrolls(class_id) {
                 // loadingEventEnd();
 
                 let enrolls_raw = JSON.parse(this.responseText);
-                enrolls = processEnrolls(enrolls_raw);
+                enrolls = groupByUnique(enrolls_raw, 'id');
+                cache['enrolls'] = enrolls;
 
 
                 setupEnrollButtons();
@@ -250,7 +251,7 @@ function loadNames() {
                 // loadingEventEnd();
 
                 let names_raw = JSON.parse(this.responseText);
-                names = processNames(names_raw);
+                names = groupByUnique(names_raw, 'id');
             }
         }
     };
