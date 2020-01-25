@@ -123,25 +123,22 @@ var current_events;
 function setDay() {
     loadingEnd(); // TODO: Check
 
-    var day_data = JSON.parse( this.responseText );
-    current_events = {};
-    for (let time of day_data) {
-        for (let event of time.events) {
-            current_events[event.id] = event;
-        }
+    let events = [];
+    for (let i in cache['events']) {
+        events.push(cache['events'][i]);
     }
 
     var day_html = "";
     var time_html;
     var event_html;
 
-    for (let time of day_data) {
-
+    let times = groupBy(events, 'time');
+    for (let time in times) {
         time_html = '<div class="time">' +
-                        '<div class="bar">' + time.time + '</div>' +
+                        '<div class="bar">' + times[time].time + '</div>' +
                             '<div class="events">';
 
-        for (let event of time.events) {
+        for (let event of times[time]) {
             event_html =
                 '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
                     // '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
