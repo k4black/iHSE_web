@@ -1,6 +1,6 @@
 /**
  * @fileoverview Event page logic
- * File providing all functions which are used to control event.html page
+ * File providing all functions which are used to control class.html page
  * Including animations and http requests if that are sending by NOT nav elements
  */
 

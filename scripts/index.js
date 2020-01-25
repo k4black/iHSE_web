@@ -362,7 +362,7 @@ function loadDay(day) {
                 for (let event of time.events) {
                     event_html =
                         '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
-                            // (event.type === 0 || event.type === '0' ? '' : '<a href="event.html?id=' + event.id + '">') +
+                            // (event.type === 0 || event.type === '0' ? '' : '<a href="class.html?id=' + event.id + '">') +
                                 '<p class="event__title">' + event.title + '</p>' +
 
                                 (event.description === undefined ? "" : '<p class="event__desc">' + event.description + '</p>') +
