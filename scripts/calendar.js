@@ -11,6 +11,29 @@
 
 
 
+
+/**
+ * Get day information from server (first time)
+ * Send http GET request and get today json schedule
+ * than parse of json data and create html
+ */
+const urlParams = new URLSearchParams(window.location.search);
+var dayNum = urlParams.get('day');
+
+let today_date = new Date();  //January is 0!
+let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
+
+if (days_list.includes(dd_mm)) {
+    today = dd + '.' + mm;
+} else {
+    today = days_list[0];
+}
+loadDay((dayNum != null ? dayNum : today), setDay);
+
+
+
+
+
 var days;
 
 function addDay() {
@@ -80,42 +103,6 @@ function setupDays() {
     xhttp.open("GET", "http://ihse.tk:50000/days", true);
     xhttp.send();
 }
-
-
-var today_date = new Date();
-var dd = String(today_date.getDate()).padStart(2, '0');
-// var dd = String(today_date.getDate());
-var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
-
-
-if (today_date.getDate() < 5 || today_date.getMonth() + 1 < 6)
-    today = '05.06';
-else
-    today = dd + '.' + mm;
-
-
-startDay = 5;
-startMonth = 6;
-numOfDays = 14;
-
-topbar_html = "";
-
-for (var i = 0; i < numOfDays; ++i) {
-    let day_text = ('' + (startDay + i)).padStart(2, '0') + '.' + ('' + startMonth).padStart(2, '0');
-    if ( day_text === today) {  // TODO: Today
-        topbar_html += '<div class="day today selected">'
-    } else {
-        topbar_html += '<div class="day">'
-    }
-
-    topbar_html += '<div class="day__num">' + i + '</div>' +
-        '<div class="day__name">' + day_text + '</div>' +
-        '</div>';
-}
-
-document.querySelector('.topbar').innerHTML = topbar_html;
-
-
 
 
 var current_events;
@@ -189,40 +176,9 @@ function setDay() {
 
 
 
-/**
- * Get day information from server (first time)
- * Send http GET request and get today json schedule
- * than parse of json data and create html
- */
-const urlParams = new URLSearchParams(window.location.search);
-var dayNum = urlParams.get('day');
-
-loadDay((dayNum != null ? dayNum : today), setDay);
 
 
 
-
-
-
-/**
- * Add button event - press topbar
- * Set up day feedback form. GET request to get day data
- */
-var days = document.querySelectorAll('.day');
-for (let i = 0; i < days.length; i++) {
-
-    days[i].addEventListener('click', function() {
-
-
-        document.querySelector('.selected').classList.remove('selected');
-        this.classList.add('selected');
-
-        loadDay(this.lastElementChild.textContent, setDay);
-
-
-        // TODO: set today
-    });
-}
 
 
 /** ===============  ADMIN EDITING  =============== */

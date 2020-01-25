@@ -236,7 +236,7 @@ function loadDay(day, func) {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
             let day_data = JSON.parse( this.responseText );
 
-            current_events = {};
+            let current_events = {};
             for (let time of day_data) {
                 for (let event of time.events) {
                     current_events[event.id] = event;
