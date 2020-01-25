@@ -66,7 +66,8 @@ function setupClasses() {
 
             current_event = class_events[i].getAttribute('data-id');
 
-            loadEnrolls(class_events[i].getAttribute('data-id'));
+            // loadEnrolls(class_events[i].getAttribute('data-id'));
+            loadEnrollsByClassId(class_events[i].getAttribute('data-id'), setEnrolls);
 
             // document.querySelector('#class_popup').style.display = 'block';
             showClass();
@@ -171,7 +172,67 @@ function loadClass(class_id) {
 let enrolls;
 var names;
 
-function loadEnrolls(class_id) {
+
+
+
+function setEnrolls() {
+    let enrolls = cache['enrolls'];
+
+    setupEnrollButtons();
+
+    // Count number of attendance
+    let attendance = 0;
+    for (let i in enrolls_raw) {
+        attendance += enrolls_raw[i].attendance;
+    }
+
+    setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + enrolls_raw.length + ' записалсь');
+
+    // Check current user's attendance
+    let check_user = false;
+    for (let id in enrolls) {
+        try {
+            if (enrolls[id].user_id === user.id) {
+                check_user = true;
+                break;
+            }
+        } catch (e) {
+
+        }
+    }
+
+    console.log((check_user ? 'Current user enrolled' : 'Current user NOT enrolled'));
+    setupData(document.querySelector('#class_popup .status').firstElementChild, (check_user ? 'Вы записаны на мероприятие!' : ''));
+
+    // Set up enrolls on this event
+    let users_list = '';
+    for (let i in enrolls_raw) {
+        let name = names[enrolls_raw[i].user_id];
+        let close = '<button class="danger_button"><i class="mobile__item__icon large material-icons">clear</i></button>';
+        let checkbox = '<input type="checkbox" ' + (enrolls_raw[i].attendance === 0 || enrolls_raw[i].attendance === '0' ? '' : 'checked') + '>';
+
+        users_list += '<div class="enrolled_user" data-id="'+ enrolls_raw[i].id +'" user-id="' + name.id + '">';
+
+        users_list += '<p>'+ name.name +'</p>' + '<div>' + checkbox + close + '</div>';
+
+        users_list += '</div>';
+    }
+
+    document.querySelector('#users_list').innerHTML = users_list;
+
+    let close_list = document.querySelectorAll('#users_list button');
+    for (let i = 0; i < close_list.length; ++i) {
+        close_list[i].onclick = function (val) {
+            if (confirm('You really want to remove user <'+ close_list[i].parentElement.parentElement.firstElementChild.innerText +'> from this event?')) {
+                removeEnroll(close_list[i].parentElement.parentElement.getAttribute('data-id'));
+            }
+        }
+    }
+}
+
+
+
+function _loadEnrolls(class_id) {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
@@ -276,7 +337,8 @@ function createEnroll() {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
                 loadClass(current_event);
-                loadEnrolls(current_event);
+                // loadEnrolls(current_event);
+                loadEnrollsByClassId(current_event, setEnrolls);
             } else if (this.status === 401) {
                 alert('Невозможно записаться. Нет свободных мест!')
             }
@@ -317,7 +379,8 @@ function removeEnroll(enroll_id) {
                 // loadingEventEnd();
 
                 loadClass(current_event);
-                loadEnrolls(current_event);
+                // loadEnrolls(current_event);
+                loadEnrollsByClassId(current_event, setEnrolls);
             }
         }
     };
@@ -336,7 +399,8 @@ function saveEnrolls() {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
                 // loadClass(current_event);
-                loadEnrolls(current_event);
+                // loadEnrolls(current_event);
+                loadEnrollsByClassId(current_event, setEnrolls);
             }
         }
     };

@@ -136,6 +136,31 @@ function loadUser(func) {
 }
 
 
+/**
+ * Get enrolls information from server according to event_id
+ * Send http GET request and loist of enrolls by event_id  TODO: rename in class_id
+ * Save enrolls list to global 'cache'
+ *
+ * Run func on OK status
+ */
+function loadEnrollsByClassId(class_id, func) {
+    var xhttp = new XMLHttpRequest();
 
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                let enrolls_raw = JSON.parse(this.responseText);
+                enrolls = groupByUnique(enrolls_raw, 'id');
+                cache['enrolls'] = enrolls;
+
+                func();
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/enrolls?event_id=" + class_id, true);
+    // xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
 
 
