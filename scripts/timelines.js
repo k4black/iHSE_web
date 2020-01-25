@@ -93,13 +93,24 @@ var current_events;
 
 
 
-function loadAndCreateTimeline(timeline) {
+function loadAndCreateTimeline(timeline) {  // TODO: refactor
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
 
             var day_data = JSON.parse( this.responseText );
+
+
+            let current_events = {};
+            for (let time of day_data) {
+                for (let event of time.events) {
+                    current_events[event.id] = event;
+                }
+            }
+            cache['events'] = current_events;
+
+
 
             current_events = {};
             let locations_set = new Set();
