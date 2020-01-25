@@ -70,7 +70,7 @@ function loadUser() {
                 let sidebar = document.querySelector('.mobile__sidebar');
                 sidebar.querySelector('.mobile__sidebar__name').innerText = user.name;
                 let phone = user.phone;
-                phone = '+' + phone[0] + ' (' + phone.slice(1, 4) + ') ' + phone.slice(4,7) + '-' + phone.slice(7);
+                phone = '+' + phone[0] + ' (' + phone.slice(1, 4) + ') ' + phone.slice(4, 7) + '-' + phone.slice(7);
                 sidebar.querySelector('.mobile__sidebar__phone').innerText = phone;
 
                 isLogin = true;
@@ -81,9 +81,13 @@ function loadUser() {
                     hidden[i].classList.remove('mobile__item__hidden');
                 }
 
-                // Add admin tag
-                if (user.type >= 2) {
-                    document.querySelectorAll('body')[0].classList.add('admin');
+                // Add admin/moderator tag
+                if (user.type >= 1) {
+                    document.querySelectorAll('body')[0].classList.add('moderator');
+
+                    if (user.type >= 2) {
+                        document.querySelectorAll('body')[0].classList.add('admin');
+                    }
                 }
 
                 // Show sidebar items

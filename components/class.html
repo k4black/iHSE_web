@@ -2,22 +2,22 @@
 
 
 <div class="overlay" id="class_popup">
-    <div class="popup_body">
-        <div class="class_popup_header">
-            <p class="title">Title</p>
+    <div class="class__popup__body">
+        <div class="class_popup__header">
+            <p class="class_popup__header__title">Title</p>
 <!--                <i class="close" onclick="document.getElementById('class_popup').style.display = 'none'">Close</i>-->
             <i class="mobile__item__icon large material-icons" onclick="hideClass()">clear</i>
         </div>
-        <div class="class_popup_wrapper">
-            <div class="class_popup_container">
-                <div class="description loading__resource">
+        <div class="class_popup__wrapper">
+            <div class="class_popup__container">
+                <div class="class_popup__block loading__resource">
                     <i class="mobile__item__icon large material-icons">label_important</i>
                     <div class="desc">
                         <p>Some description of the event in several lines lines lines lines lines.</p>
                     </div>
                 </div>
 
-                <div class="description loading__resource">
+                <div class="class_popup__block loading__resource">
                     <i class="mobile__item__icon large material-icons">access_time</i>
                     <div class="time">
                         <p>4 april 2110</p>
@@ -25,21 +25,21 @@
                     </div>
                 </div>
 
-                <div class="description loading__resource">
+                <div class="class_popup__block loading__resource">
                     <i class="mobile__item__icon large material-icons">place</i>
                     <div class="location">
                         <p>Some location</p>
                     </div>
                 </div>
 
-                <div class="description loading__resource">
+                <div class="class_popup__block loading__resource">
                     <i class="mobile__item__icon large material-icons">person</i>
                     <div class="host">
                         <p>Host of the event</p>
                     </div>
                 </div>
 
-                <div class="admin_element description loading__resource">
+                <div class="moderator_element class_popup__block loading__resource">
                     <i class="mobile__item__icon large material-icons">group</i>
                     <div class="total">
     <!--                        <p>1001</p>-->
@@ -47,7 +47,7 @@
                     </div>
                 </div>
 
-    <!--                <div class="description loading__resource">-->
+    <!--                <div class="class_popup__block loading__resource">-->
     <!--                    <i class="mobile__item__icon large material-icons">bookmark</i>-->
     <!--                    <div class="anno">-->
     <!--                        <p>Some description of the event in several lines lines lines lines lines.</p>-->
@@ -58,21 +58,21 @@
                     <hr class="border_line">
                     <button id="enroll" class="enroll__button"><i class="mobile__item__icon large material-icons">person_add</i></button>
                     <button id="deenroll" class="enroll__button"><i class="mobile__item__icon large material-icons">person_add_disabled</i></button>
-                    <button id="save" class="admin_element enroll__button"><i class="mobile__item__icon large material-icons">save</i></button>
+                    <button id="save" class="moderator_element enroll__button"><i class="mobile__item__icon large material-icons">save</i></button>
                 </div>
     <!--                <div id="container"></div>-->
 
 
-                <div class="enroll_section loading__resource" style="visibility: visible">
+                <div class="class_popup__enroll_section loading__resource" style="visibility: visible">
 
-                    <div class="description loading__resource">
+                    <div class="class_popup__block loading__resource">
                         <i class="mobile__item__icon large material-icons ok_status">done</i>
                         <div class="status">
                             <p>Вы записаны на мероприятие!</p>
                         </div>
                     </div>
 
-                    <div class="description loading__resource">
+                    <div class="class_popup__block loading__resource">
                         <i class="mobile__item__icon large material-icons">group</i>
                         <div class="count">
                             <p>14/44</p>
@@ -80,11 +80,11 @@
                         </div>
                     </div>
 
-                    <div id="container"></div>
+                    <div id="users_progress_bar"></div>
 
 
                     <!--       TODO: Choose bonus for person             -->
-                    <div class="admin_element users_list" id="users_list"></div>
+                    <div class="moderator_element users_list" id="users_list"></div>
                 </div>
             </div>
         </div>

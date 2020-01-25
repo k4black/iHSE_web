@@ -22,9 +22,9 @@ function hideClass() {
 // https://kimmobrunfeldt.github.io/progressbar.js/
 // var ProgressBar = require('scripts/progressbar.js');
 function setupBar(val) {
-    document.querySelector('#container').innerHTML = '';
+    document.querySelector('#users_progress_bar').innerHTML = '';
 
-    bar = new ProgressBar.Line('#container', {
+    bar = new ProgressBar.Line('#users_progress_bar', {
         strokeWidth: 4,
         easing: 'easeInOut',
         duration: 1400,
@@ -116,7 +116,7 @@ function loadClass(class_id) {
                 let event_class = JSON.parse( this.responseText );
                 console.log(event_class, current_events[class_id]);
 
-                document.querySelector('#class_popup .title').innerText = current_events[class_id].title;
+                document.querySelector('#class_popup .class_popup__header__title').innerText = current_events[class_id].title;
 
                 setupData(document.querySelector('#class_popup .desc').firstElementChild, current_events[class_id].description);
                 setupData(document.querySelector('#class_popup .time').firstElementChild, current_events[class_id].time.replace('\n', ' - '));
@@ -134,7 +134,6 @@ function loadClass(class_id) {
 
                 // setupData(document.querySelector('#class_popup .count').lastElementChild, '2 было; 6 записалсь');
 
-                document.querySelector('#credits').value = event_class.credits;
                 document.querySelector('#total').value = event_class.total;
 
                 current_class = event_class;
@@ -213,7 +212,7 @@ function loadEnrolls(class_id) {
                     let close = '<button class="danger_button"><i class="mobile__item__icon large material-icons">clear</i></button>';
                     let checkbox = '<input type="checkbox" ' + (enrolls_raw[i].attendance === 0 || enrolls_raw[i].attendance === '0' ? '' : 'checked') + '>';
 
-                    users_list += '<div class="user" data-id="'+ enrolls_raw[i].id +'" user-id="' + name.id + '">';
+                    users_list += '<div class="enrolled_user" data-id="'+ enrolls_raw[i].id +'" user-id="' + name.id + '">';
 
                     users_list += '<p>'+ name.name +'</p>' + '<div>' + checkbox + close + '</div>';
 

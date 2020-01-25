@@ -472,6 +472,11 @@ body:not(.admin) .admin_element  {
 }
 
 
+body:not(.moderator) .moderator_element  {
+    display: none;
+}
+
+
 
 
 
