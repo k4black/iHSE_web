@@ -10,8 +10,10 @@
 window.addEventListener('load', function () {
     createBar();
     // loadAccount();
-    loadUser(setAccount);
-    loadCredits(setCredits);
+    
+    // loadDays();
+    loadUser(checkLoading(function () {setAccount(); setCredits()}, ['user', 'credits']));
+    loadCredits(checkLoading(function () {setAccount(); setCredits()}, ['user', 'credits']));
 });
 
 

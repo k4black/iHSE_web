@@ -48,6 +48,7 @@ function loadDays() {
             if (this.status === 200) { // If ok set up fields name and phone
                 days = JSON.parse(this.responseText);
 
+
                 tabs = ['vacations'];
                 for (let day of days) {
                     tabs.push(day.date);
