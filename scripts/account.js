@@ -13,8 +13,8 @@ window.addEventListener('load', function () {
 
     // loadDays();
 
-    loadUser(function () {checkLoading(setAccount, ['user', 'credits']);});
-    loadCredits(function () {checkLoading(setAccount, ['user', 'credits']);});
+    loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['user', 'credits']);});
+    loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['user', 'credits']);});
 });
 
 
