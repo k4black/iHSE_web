@@ -9,7 +9,8 @@
 
 window.addEventListener('load', function () {
     createBar();
-    loadAccount();
+    // loadAccount();
+    loadUser(setAccount);
     loadCredits(setCredits);
 });
 
@@ -40,69 +41,49 @@ window.addEventListener('load', function () {
  * Get account information from server
  * Send http GET request and get user bio (or guest bio if cookie does not exist)
  */
-function loadAccount() {
+function setAccount() {
     let topbar = document.querySelector('.topbar');
 
-    var xhttp = new XMLHttpRequest();
+    loadingEnd(); // TODO: Check
+    // console.log(this.responseText);
 
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields name and phone
+    let user = cache['user'];
 
-                loadingEnd(); // TODO: Check
-                // console.log(this.responseText);
+    // Setup user bio
+    topbar.querySelector('.topbar__name').innerText = user.name;
+    topbar.querySelector('.topbar__phone').innerText = user.phone;
 
-                let user = JSON.parse(this.responseText);
-                topbar.querySelector('.topbar__name').innerText = user.name;
-                topbar.querySelector('.topbar__phone').innerText = user.phone;
+    // switch (user.type) {
+    //     case 0:
+    //         title.innerText = 'User';
+    //         break;
+    //     case 1:
+    //         title.innerText = 'Host';
+    //         break;
+    //     case 2:
+    //         title.innerText = 'Admin';
+    //         break;
+    // }
 
-                // switch (user.type) {
-                //     case 0:
-                //         title.innerText = 'User';
-                //         break;
-                //     case 1:
-                //         title.innerText = 'Host';
-                //         break;
-                //     case 2:
-                //         title.innerText = 'Admin';
-                //         break;
-                // }
+    //setup avatar
+    if (user.avatar != null && user.avatar != undefined && user.avatar != '')
+        topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
-                //setup avatar
-                if (user.avatar != null && user.avatar != undefined && user.avatar != '')
-                    topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
+    // Setup user type label
+    switch (user.type) {
+        case 0:  // User
+            // pass
+            break;
 
+        case 1:  // Host
+            topbar.querySelector('.topbar__type').innerText = 'Host';
+            break;
 
-                console.log(user.credits +" - "+ user.total);
-                bar.animate( user.credits / user.total );  // Number from 0.0 to 1.0
+        case 2:  // Admin
+            topbar.querySelector('.topbar__type').innerText = 'Admin';
+            break;
+    }
 
-
-                document.querySelector('.credits__title').innerText = user.credits + ' / ' + user.total;
-
-                switch (user.type) {
-                    case 0:  // User
-
-                        break;
-
-                    case 1:  // Host
-                        topbar.querySelector('.topbar__type').innerText = 'Host';
-                        break;
-
-                    case 2:  // Admin
-                        topbar.querySelector('.topbar__type').innerText = 'Admin';
-                        break;
-                }
-            }
-
-            else if (this.status === 401) {  // No account data
-                alert('Требуется авторизация!');
-            }
-        }
-    };
-
-    xhttp.open("GET", "http://ihse.tk:50000/account", true);
-    xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
 }
 
 
@@ -322,20 +303,12 @@ function setupCreditsChart(days, data, dataShort) {
 function setCredits() {
     let credits_by_id = cache['credits'];
 
-
-    console.log('credits_by_id', credits_by_id);
-
     let credits_list = [];
     for (let id in credits_by_id) {
         credits_list.push(credits_by_id[id]);
     }
 
-
     let credits = groupBy(credits_list, 'date');  // TODO: sql join add date field
-
-
-    console.log('credits', credits);
-
 
     // Count sum for each date
     let data_pre = {};
@@ -354,6 +327,12 @@ function setCredits() {
         data_pre[date] = sum;
         total_sum += sum;
     }
+
+    // Setup progress bar
+    console.log(total_sum +" - "+ cache['user'].total);
+    bar.animate(total_sum / cache['user'].total );  // Number from 0.0 to 1.0
+
+    document.querySelector('.credits__title').innerText = total_sum + ' / ' + cache['user'].total;
 
     // Correct setup of zeros values (future days)
     data = [];

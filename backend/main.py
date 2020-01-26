@@ -840,6 +840,8 @@ def get_user(env, query, cookie):
 
     data['avatar'] = user_obj[7]
 
+    data['total'] = CREDITS_TOTAL
+
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
 
