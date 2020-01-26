@@ -11,156 +11,178 @@
 
 
 
-
-var today_date = new Date();
-var dd = String(today_date.getDate()).padStart(2, '0');
-// var dd = String(today_date.getDate());
-var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
-
-
-if (today_date.getDate() < 5 || today_date.getMonth() + 1 < 6)
-    today = '05.06';
-else
-    today = dd + '.' + mm;
-
-
-startDay = 5;
-startMonth = 6;
-numOfDays = 14;
-
-topbar_html = "";
-
-for (var i = 0; i < numOfDays; ++i) {
-    let day_text = ('' + (startDay + i)).padStart(2, '0') + '.' + ('' + startMonth).padStart(2, '0');
-    if ( day_text === today) {  // TODO: Today
-        topbar_html += '<div class="day today selected">'
-    } else {
-        topbar_html += '<div class="day">'
-    }
-
-    topbar_html +=          '<div class="day__num">' + i + '</div>' +
-        '<div class="day__name">' + day_text + '</div>' +
-        '</div>';
-}
-
-document.querySelector('.topbar').innerHTML = topbar_html;
-
-
-
-
-
-
-/**
- * Get day information from server by day num
- * Send http GET request and get today json schedule
- * than parse of json data and create html
- */
-function getDay(dayNum) {
-
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            loadingEnd(); // TODO: Check
-
-            var day_data = JSON.parse( this.responseText );
-
-
-            var day_html = "";
-            var time_html;
-            var event_html;
-
-            for (let time of day_data) {
-
-                time_html = '<div class="time">' +
-                                '<div class="bar">' + time.time + '</div>' +
-                                    '<div class="events">';
-
-                for (let event of time.events) {
-                    event_html =
-                        '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
-                            // '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
-                            '<button class="admin_element remove_event"><i class="material-icons">close</i></button>' +
-                            // '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
-                            '<button class="admin_element edit_event"><i class="material-icons" style="font-size:20px">build</i></button>' +
-
-                            (event.type === 0 || event.type === '0' ? '' : '<a href="event.html?id=' + event.id + '">') +
-                                '<p class="event__title">' + event.title + '</p>' +
-
-                                (event.description === undefined ? "" : '<p class="event__desc">' + event.description + '</p>') +
-
-                                ((event.host === undefined || event.host === '') && (event.place === undefined || event.place === '') ? "" : '<div class="event__last_line">' +
-                                    '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
-                                    '<span class="event__loc">' + (event.place === undefined ? "" : event.place) + '</span>' +
-                                '</div>') +
-                            (event.type === 0 || event.type === '0' ? '' : '</a>') +
-                        '</div>';
-
-                    
-                    time_html += event_html;
-                }
-
-                time_html += '<button class="admin_element add_event_button"><i class="material-icons">add</i></button>';
-                time_html += '</div>' + '</div>';
-
-                time_html += '<div class="border_wrapper">' + '<hr class="border_line">' + '<button class="admin_element add_time_button"><i class="material-icons">add</i></button>' + '</div>';
-
-                day_html += time_html;
-            }
-
-            if (day_data.length === 0) {
-                day_html = '<div class="border_wrapper">' + '<hr class="border_line">' + '<button class="admin_element add_time_button"><i class="material-icons">add</i></button>' + '</div>';
-            }
-
-            document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
-
-            setupAdminButtons();
-        }
-    };
-
-
-    xhttp.open("GET", "http://ihse.tk:50000/day?day=" + dayNum, true);
-    xhttp.send();
-}
-
-
-
-
 /**
  * Get day information from server (first time)
  * Send http GET request and get today json schedule
  * than parse of json data and create html
  */
-const urlParams = new URLSearchParams(window.location.search);
-var dayNum = urlParams.get('day');
 
-getDay( (dayNum != null ? dayNum : today) );
+function loadDayFirstTime(days_list) {
+    let urlParams = new URLSearchParams(window.location.search);
+    var dayNum = urlParams.get('day');
+
+    let today_date = new Date();  //January is 0!
+    let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
+
+    if (days_list.includes(dd_mm)) {
+        today = dd + '.' + mm;
+    } else {
+        today = days_list[0];
+    }
+    loadDay((dayNum != null ? dayNum : today), setDay);
+}
 
 
 
+
+
+
+var days;
+
+function addDay() {
+    console.log('adding day');
+}
+
+
+setupDays();
+function setupDays() {   // TODO: Refactor
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+            days = JSON.parse( this.responseText );
+            sortBy(days, 'date');
+
+            let days_list = [];
+            for (let day of days) {
+                days_list.push(day.date);
+            }
+
+            let today_date = new Date();  //January is 0!
+            let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
+
+            if (days_list.includes(dd_mm)) {
+                today = dd + '.' + mm;
+            } else {
+                today = days_list[0];
+            }
+
+            let topbar_html = '';
+            for (var i = 0; i < days.length; ++i) {
+                if (days[i].date === today) {  // TODO: Today
+                    topbar_html += '<div class="day today selected">'
+                } else {
+                    topbar_html += '<div class="day">'
+                }
+
+                topbar_html += '<div class="day__num">' + i + '</div>' +
+                    '<div class="day__name">' + days[i].date + '</div>' +
+                    '</div>';
+            }
+
+            topbar_html += '<div class="admin_element day add_day"> <div class="day__num">' +
+                '<i class="mobile__item__icon large material-icons">add</i>' + '</div>' +
+                    '<div class="day__name">' + 'add_day' + '</div>' +
+                    '</div>';
+
+            document.querySelector('.topbar').innerHTML = topbar_html;
+
+
+            // Set onclick loading other day
+            var days = document.querySelectorAll('.day');
+            for (let i = 0; i < days.length; i++) {
+                days[i].addEventListener('click', function() {
+                    if (this.classList.contains('add_day')) {
+                        addDay();
+                    } else {
+                        document.querySelector('.selected').classList.remove('selected');
+                        this.classList.add('selected');
+
+                        loadDay(this.lastElementChild.textContent, setDay);
+                    }
+                });
+            }
+
+            loadDayFirstTime(days_list);
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/days", true);
+    xhttp.send();
+}
+
+
+var current_events;
 
 
 
 /**
- * Add button event - press topbar
- * Set up day feedback form. GET request to get day data
+ * Read day data from cache and create html schedule
  */
-var days = document.querySelectorAll('.day');
-for (let i = 0; i < days.length; i++) {
+function setDay() {
+    loadingEnd(); // TODO: Check
 
-    days[i].addEventListener('click', function() {
+    let events = [];
+    for (let i in cache['events']) {
+        events.push(cache['events'][i]);
+    }
+
+    var day_html = "";
+    var time_html;
+    var event_html;
+
+    let times = groupBy(events, 'time');
+    for (let time in times) {
+        time_html = '<div class="time">' +
+                        '<div class="bar">' + times[time].time + '</div>' +
+                            '<div class="events">';
+
+        for (let event of times[time]) {
+            event_html =
+                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
+                    // '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
+                    '<button class="admin_element remove_event"><i class="material-icons">close</i></button>' +
+                    // '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
+                    '<button class="admin_element edit_event"><i class="material-icons" style="font-size:20px">build</i></button>' +
+
+                    '<p class="event__title">' + event.title + '</p>' +
+
+                    (event.description === undefined ? "" : '<p class="event__desc">' + event.description + '</p>') +
+
+                    ((event.host === undefined || event.host === '') && (event.place === undefined || event.place === '') ? "" : '<div class="event__last_line">' +
+                        '<span class="event__names">' + (event.host === undefined ? "" : event.host) + '</span>' +
+                        '<span class="event__loc">' + (event.place === undefined ? "" : event.place) + '</span>' +
+                    '</div>') +
+                '</div>';
 
 
-        document.querySelector('.selected').classList.remove('selected');
-        this.classList.add('selected');
+            time_html += event_html;
+        }
 
-        getDay(this.lastElementChild.textContent);
+        time_html += '<button class="admin_element add_event_button"><i class="material-icons">add</i></button>';
+        time_html += '</div>' + '</div>';
 
+        time_html += '<div class="border_wrapper">' + '<hr class="border_line">' + '<button class="admin_element add_time_button"><i class="material-icons">add</i></button>' + '</div>';
 
-        // TODO: set today
-    });
+        day_html += time_html;
+    }
 
+    if (Object.keys(cache['events']).length === 0) {
+        day_html = '<div class="border_wrapper">' + '<hr class="border_line">' + '<button class="admin_element add_time_button"><i class="material-icons">add</i></button>' + '</div>';
+    }
+
+    document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
+
+    setupAdminButtons();
+    setupClasses();
 }
+
+
+
+
+
+
+
 
 
 /** ===============  ADMIN EDITING  =============== */
@@ -318,7 +340,7 @@ function saveEvent() {
                 alert("Cannot save event! NO PERMISSIONS");  // TODO: show Html error message
             }
 
-            getDay(selectedDay);
+            loadDay(selectedDay, setDay);
         }
     };
 
@@ -358,7 +380,7 @@ function removeEvent(id) {
                 alert("Cannot remove event! NO PERMISSIONS");  // TODO: show Html error message
             }
 
-            getDay(selectedDay);
+            loadDay(selectedDay, setDay);
         }
     };
 

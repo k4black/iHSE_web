@@ -11,36 +11,23 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/admin.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <!--   bootstrap-table dependencies    -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css">
-
-
     <script src="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.15.5/dist/extensions/toolbar/bootstrap-table-toolbar.min.js"></script>
-
 <!--    <script src="extensions/editable/bootstrap-table-editable.js"></script>-->
-
 </head>
 <body>
 
-<header class="header">
 
-    <div class="header__left">
-        <nav class="arrow">
-            <button class="arrow__button">
-                <i class="mobile__item__icon large material-icons">arrow_back</i>
+<!--# set var="title" value="Админ-панель" -->
+<!--#include virtual="/components/header.html" -->
 
-            </button>
-        </nav>
-
-        <div class="title">Админ-Панель</div>
-    </div>
-
-</header>
 
 <div class="wrapper">
 
@@ -120,14 +107,6 @@
        data-search="true"
        data-show-refresh="true"
        data-toolbar="#toolbar">
-<!--    <thead>-->
-<!--        <tr>-->
-<!--            <th data-field="id" data-sortable="true" class="th-sm">Item123 ID</th>-->
-<!--            <th data-field="name" data-sortable="true" class="th-sm">Item123 Name</th>-->
-<!--            <th data-field="price">Item123 Price</th>-->
-<!--            <th data-field="operate" data-formatter="operateFormatter" data-events="operateEvents" data-width="200">Actions123</th>-->
-<!--        </tr>-->
-<!--    </thead>-->
 </table>
 
 
@@ -144,8 +123,6 @@
 
 <!--Onpage logic -->
 <script defer async src="scripts/admin.js"></script>
-<!--STD nav logic -->
-<script defer async src="scripts/nav.js"></script>
 
 </body>
 </html>

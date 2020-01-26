@@ -1,26 +1,5 @@
 
 
-function setupClasses() {
-    // console.log('setuping classes');
-    // let class_events = document.querySelectorAll('.class');
-    // for (let i in class_events) {
-    //     class_events[i].onclick = function (val) {
-    //         console.log('clicked event with id: ', class_events[i].getAttribute('data-id'));
-    //
-    //         loadClass(class_events[i].getAttribute('data-id'));
-    //         // TODO: Smooth visible
-    //
-    //         current_event = class_events[i].getAttribute('data-id');
-    //
-    //         loadEnrolls(class_events[i].getAttribute('data-id'));
-    //         document.querySelector('#class_popup').style.display = 'block';
-    //     }
-    // }
-}
-
-
-var current_events;
-
 
 
 
@@ -114,13 +93,24 @@ var current_events;
 
 
 
-function loadAndCreateTimeline(timeline) {
+function loadAndCreateTimeline(timeline) {  // TODO: refactor
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
 
             var day_data = JSON.parse( this.responseText );
+
+
+            let current_events = {};
+            for (let time of day_data) {
+                for (let event of time.events) {
+                    current_events[event.id] = event;
+                }
+            }
+            cache['events'] = current_events;
+
+
 
             current_events = {};
             let locations_set = new Set();
@@ -219,15 +209,20 @@ function buildTimeline(locations, events) {
                 if (events[i].type === 1) {
                     console.log('clicked event with id: ', events[i].id);
 
-                    loadClass(events[i].id);
+                    // loadClass(events[i].id);
+                    loadClass(events[i].id, setClass);
+
                     // TODO: Smooth visible
 
                     current_event = events[i].id;
 
-                    loadEnrolls(events[i].id);
-                    document.querySelector('#class_popup').style.display = 'block';
+                    // loadEnrolls(events[i].id);
+                    loadEnrollsByClassId(events[i].id, setEnrolls);
 
                     alert('You clicked on the ' + events[i].id + '=' + events[i].title + ' event in ' + events[i].place + '. This is an example of a click handler');
+
+                    // document.querySelector('#class_popup').style.display = 'block';
+                    showClass();
                 }
             },
             data: {

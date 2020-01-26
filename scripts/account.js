@@ -7,6 +7,15 @@
 
 
 
+window.addEventListener('load', function () {
+    createBar();
+    loadAccount();
+    loadCredits(setCredits);
+});
+
+
+
+
 
 
 // TODO: chart when 2-3 credits only
@@ -31,7 +40,6 @@
  * Get account information from server
  * Send http GET request and get user bio (or guest bio if cookie does not exist)
  */
-window.addEventListener('load', loadAccount);
 function loadAccount() {
     let topbar = document.querySelector('.topbar');
 
@@ -182,15 +190,6 @@ document.querySelector('.header__button').addEventListener('click', function () 
  */
 // var ProgressBar = require('scripts/progressbar.js');
 var bar;
-if(window.checkLoaded()) {
-    createBar();
-    loadCredits();
-} else {
-    window.addEventListener('load', function () {
-        createBar();
-        loadCredits();
-    })
-}
 function createBar() {
     bar = new ProgressBar.Circle('.progress', {
         color: '#aaaaaa',
@@ -316,85 +315,63 @@ function setupCreditsChart(days, data, dataShort) {
 
 
 
-function groupBy(arr, property) {
-    return arr.reduce(function(memo, x) {
-        if (!memo[x[property]]) {
-            memo[x[property]] = [];
-        }
-        memo[x[property]].push(x);
-        return memo;
-    }, {});
-}
+
+/**
+ * Read credits data from cache and create html graph
+ */
+function setCredits() {
+    let credits_by_id = cache['credits'];
 
 
-function processCredits(credits_raw) {
-    credits_raw.sort(function(first, second) {
-        return first.date - second.date;
-    });
+    console.log('credits_by_id', credits_by_id);
 
-    let credits_rawGroups = groupBy(credits_raw, 'date');
-
-    let credits = {};
-
-    for (let date in credits_rawGroups) {
-        credits[date] = credits_rawGroups[date];
+    let credits_list = [];
+    for (let id in credits_by_id) {
+        credits_list.push(credits_by_id[id]);
     }
 
-    return credits;
-}
+
+    let credits = groupBy(credits_list, 'date');  // TODO: sql join add date field
 
 
-
-function loadCredits() {
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {  // When request is done
-
-            if (this.status === 200) {  // Authorized
-                let credits_raw = JSON.parse(this.responseText);
-                let credits = processCredits(credits_raw);
-
-                let data_pre = {};
-                for (let date in days) {
-                    data_pre[date] = 0;
-                }
+    console.log('credits', credits);
 
 
-                for (let date in credits) {
-                    let sum = 0;
+    // Count sum for each date
+    let data_pre = {};
+    for (let date in days) {  // TODO: load days
+        data_pre[date] = 0;
+    }
 
-                    for (let i in credits[date]) {
-                        sum += (credits[date][i].value === undefined ? 0 : credits[date][i].value);
-                    }
+    let total_sum = 0;
+    for (let date in credits) {
+        let sum = 0;
 
-                    data_pre[date] = sum;
-                }
-
-
-                data = [];
-                dataShort = [];
-                let flag = false;
-                for (let i = days.length - 1; i >= 0; --i) {
-                    if (data_pre[days[i]] !== 0) {
-                        flag = true;
-                    }
-
-                    if (flag) {
-                        dataShort.unshift(data_pre[days[i]]);
-                    }
-                    data.unshift(data_pre[days[i]]);
-                }
-
-
-                setupCreditsChart(days, data, dataShort);
-            }
+        for (let i in credits[date]) {
+            sum += (credits[date][i].value === undefined ? 0 : credits[date][i].value);
         }
-    };
 
-    xhttp.open("GET", "http://ihse.tk:50000/credits", true);
-    xhttp.withCredentials = true;  // To receive cookie
-    xhttp.send();
+        data_pre[date] = sum;
+        total_sum += sum;
+    }
+
+    // Correct setup of zeros values (future days)
+    data = [];
+    dataShort = [];
+    let flag = false;
+    for (let i = days.length - 1; i >= 0; --i) {
+        if (data_pre[days[i]] !== 0) {
+            flag = true;
+        }
+
+        if (flag) {
+            dataShort.unshift(data_pre[days[i]]);
+        }
+        data.unshift(data_pre[days[i]]);
+    }
+
+
+    setupCreditsChart(days, data, dataShort);
 }
 
 

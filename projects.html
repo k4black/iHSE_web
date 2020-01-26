@@ -14,133 +14,34 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 </head>
-<body>
+<body onload="setupNav('projects')">
+<!-- TODO: Think how make better -->
+
+<!--# set var="title" value="Проекты" -->
+<!--# set var="enable_menu" value="true" -->
+<!--#include virtual="/components/header.html" -->
+
+<!--<header class="header">-->
+<!--    <div class="header__left">-->
+<!--        <nav class="hamburger">-->
+<!--            <button class="hamburger__button">-->
+<!--                <span class="hamburger__button-bar"></span>-->
+<!--                <span class="hamburger__button-bar"></span>-->
+<!--                <span class="hamburger__button-bar"></span>-->
+<!--            </button>-->
+<!--        </nav>-->
+<!--        <div class="title">Проекты</div>-->
+<!--    </div>-->
+
+<!--    <div class="header__right">-->
+<!--        <div class="header__button header__item__hidden"><a href="create.html">+</a></div>-->
+<!--    </div>-->
+<!--</header>-->
+
+<!-- TODO: create add button -->
 
 
-<header class="header">
-
-    <div class="header__left">
-        <nav class="hamburger">
-            <button class="hamburger__button">
-                <span class="hamburger__button-bar"></span>
-                <span class="hamburger__button-bar"></span>
-                <span class="hamburger__button-bar"></span>
-            </button>
-        </nav>
-
-
-        <div class="title">Проекты</div>
-    </div>
-
-    <div class="header__right">
-        <div class="header__button header__item__hidden"><a href="create.html">+</a></div>
-    </div>
-</header>
-
-
-
-<nav class="mobile">
-
-    <!--Background for the sidebar-->
-    <div class="mobile__background"></div>
-
-    <!--Sidebar appear by button-->
-    <div class="mobile__sidebar">
-
-        <div class="mobile__sidebar__account">
-            <!--<a href="#">-->
-            <div class="mobile__sidebar__avatar"></div>
-
-            <p class="mobile__sidebar__name">Гость</p>
-            <p class="mobile__sidebar__phone">+X (XXX) XXX-XXXX</p>
-            <!--</a>-->
-        </div>
-
-        <div class="mobile__sidebar__group">
-            <a class="mobile__item" href="index.html">
-                <!--                <img class="mobile__item__icon" src="">-->
-                <i class="mobile__item__icon large material-icons">home</i>
-                <p class="mobile__item__name">Главная</p>
-                <div id="nt__home" class="mobile__item__notification"></div>
-            </a>
-
-            <a class="mobile__item mobile__item__hidden" href="account.html">
-                <!--                <img class="mobile__item__icon" src="">-->
-                <i class="mobile__item__icon large material-icons">school</i>
-                <p class="mobile__item__name">Аккаунт</p>
-            </a>
-
-            <a class="mobile__item" href="calendar.html">
-                <!--                <img class="mobile__item__icon" src="">-->
-                <i class="mobile__item__icon large material-icons">today</i>
-                <p class="mobile__item__name">Календарь</p>
-                <!--<div id="nt__cal" class="mobile__item__notification"></div>-->
-            </a>
-
-            <a class="mobile__item mobile__item__hidden" href="feedback.html">
-                <!--                <img class="mobile__item__icon" src="">-->
-                <i class="mobile__item__icon large material-icons">feedback</i>
-                <p class="mobile__item__name">Отзывы</p>
-                <div id="nt__feed" class="mobile__item__notification"></div>
-            </a>
-
-            <a class="mobile__item mobile__item__active" href="projects.html">
-                <!--                <img class="mobile__item__icon" src="">-->
-                <i class="mobile__item__icon large material-icons">apps</i>
-                <p class="mobile__item__name">Проекты</p>
-                <div id="nt__prj" class="mobile__item__notification"></div>
-            </a>
-        </div>
-
-        <!--<div class="mobile__sidebar__line"></div>-->
-        <hr class="border_line">
-
-        <div class="mobile__sidebar__group">
-
-            <a class="mobile__item admin_element" href="credits.html">
-                <!--                <img class="mobile__item__icon" src="">-->
-                <i class="mobile__item__icon large material-icons">timeline</i>
-                <p class="mobile__item__name">Credits</p>
-            </a>
-
-            <a class="mobile__item admin_element" href="admin.html">
-                <!--                <img class="mobile__item__icon" src="">-->
-                <i class="mobile__item__icon large material-icons">storage</i>
-                <p class="mobile__item__name">Admin</p>
-            </a>
-
-            <a class="mobile__item admin_element" href="config.html">
-                <!--                <img class="mobile__item__icon" src="">-->
-                <i class="mobile__item__icon large material-icons">settings</i>
-                <p class="mobile__item__name">Config</p>
-            </a>
-
-            <a class="mobile__item" href="about.html">
-                <!--                <img class="mobile__item__icon" src="">-->
-                <i class="mobile__item__icon large material-icons">info</i>
-                <p class="mobile__item__name">О сайте</p>
-            </a>
-
-        </div>
-
-        <hr class="border_line mobile__hidden" style="display: none">
-
-        <div class="mobile__sidebar__group mobile__hidden" style="display: none">
-
-            <a class=" mobile__item mobile__item__hidden mobile__item__logout">
-<!--                <img class="mobile__item__icon" src="">-->
-                <i class="mobile__item__icon large material-icons">exit_to_app</i>
-                <p class="mobile__item__name">Выйти</p>
-            </a>
-
-        </div>
-
-    </div>
-</nav>
-
-<!--<div class="mobile__floating__button">-->
-<!--    <p class="mobile__floating__button__icon">+</p>-->
-<!--</div>-->
+<!--#include virtual="/components/nav.html" -->
 
 
 <div class="wrapper data__loading">
@@ -272,8 +173,8 @@
 
 <!--Onpage logic -->
 <script defer async src="scripts/projects.js"></script>
-<!--STD nav logic -->
-<script defer async src="scripts/nav.js"></script>
+<!--STD logic -->
+<script defer async src="scripts/main.js"></script>
 
 </body>
 </html>

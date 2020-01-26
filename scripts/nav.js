@@ -144,7 +144,6 @@ logout.addEventListener('click', function () {
     xhttp.open("POST", "http://ihse.tk:50000/logout", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
-
 });
 
 
