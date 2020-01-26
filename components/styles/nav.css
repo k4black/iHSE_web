@@ -90,7 +90,7 @@
 .mobile__sidebar__avatar {
     width: 80px;
     height: 80px;
-    background-image: url('../images/avatar.png');
+    background-image: url('/images/avatar.png');
     border-radius: 50%;
     background-size: cover;
 
