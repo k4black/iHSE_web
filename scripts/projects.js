@@ -10,9 +10,13 @@
 /** ===============  LOGIC and REQUESTS  =============== */
 
 
+// TODO: Create wrapper in main.js
+window.addEventListener('load', function () {
+    console.log('Load');
+    loadProjects(setProjects);
+});
 
 
-loadProjects(setProjects);
 
 
 
