@@ -290,7 +290,7 @@ function loadCredits(func) {
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
             let credits_raw = JSON.parse(this.responseText);
-            let credits = groupBy(credits_raw, 'id');
+            let credits = groupByUnique(credits_raw, 'id');
 
             cache['credits'] = credits;
 
