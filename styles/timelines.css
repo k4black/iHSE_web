@@ -1,5 +1,7 @@
 
-
+.wrapper {
+    padding-top: 0;
+}
 
 .class {
     background-color: #cc333b !important;

@@ -249,9 +249,9 @@ function getTableData(credits, users, days) {
         row['id'] = user_id;
         row['name'] = users[user_id].name;
         row['group'] = users[user_id].team;
-        row['total'] = users[user_id].credits;
 
         // To avoid undef
+        row['total'] = 0;
         for (let date in days) {
             for (let k of days[date]) {
                 row['date' + date + 'id' + k] = 0;
@@ -267,6 +267,7 @@ function getTableData(credits, users, days) {
             }
 
             row['date' + date + 'total'] = sum;
+            row['total'] += sum;
         }
 
         data.push(row);

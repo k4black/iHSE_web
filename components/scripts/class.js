@@ -128,6 +128,7 @@ function setClass() {
     document.querySelector('#class_popup .class_popup__header__title').innerText = current_events[class_id].title;
 
     setupData(document.querySelector('#class_popup .desc').firstElementChild, current_events[class_id].description);
+    setupData(document.querySelector('#class_popup .anno').firstElementChild, event_class.annotation);
     setupData(document.querySelector('#class_popup .time').firstElementChild, current_events[class_id].time.replace('\n', ' - '));
     setupData(document.querySelector('#class_popup .time').lastElementChild, current_events[class_id].date);
     setupData(document.querySelector('#class_popup .location').firstElementChild, current_events[class_id].place);
