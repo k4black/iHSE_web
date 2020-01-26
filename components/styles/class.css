@@ -79,6 +79,10 @@
 }
 
 .class_popup__block:first-child {
+    margin: 5px 0 0 0;
+}
+
+.class_popup__block:first-child div {
     margin: 0;
 }
 
