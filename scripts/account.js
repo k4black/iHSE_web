@@ -322,6 +322,9 @@ function setupCreditsChart(days, data, dataShort) {
 function setCredits() {
     let credits_by_id = cache['credits'];
 
+
+    console.log('credits_by_id', credits_by_id);
+
     let credits_list = [];
     for (let id in credits_by_id) {
         credits_list.push(credits_by_id[id]);
@@ -329,6 +332,9 @@ function setCredits() {
 
 
     let credits = groupBy(credits_list, 'date');  // TODO: sql join add date field
+
+
+    console.log('credits', credits);
 
 
     // Count sum for each date
