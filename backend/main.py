@@ -4,6 +4,7 @@ import sys
 import string
 from itertools import groupby
 from operator import itemgetter
+import typing as tp
 
 # Threading for sync
 from threading import Timer
@@ -25,7 +26,6 @@ TODAY = datetime.today().strftime('%d.%m')
 
 # Timeout of updating objects (from gsheets)
 TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s TODO: Couple of hours
-CREDITS = 300  # Max credits # TODO: Get from table?
 
 
 """ ---===---==========================================---===--- """
@@ -33,7 +33,7 @@ CREDITS = 300  # Max credits # TODO: Get from table?
 """ ---===---==========================================---===--- """
 
 
-def application(env, start_response):
+def application(env: tp.Dict[str, tp.Any], start_response: tp.Callable[..., None]) -> tp.List[tp.Any]:
     """ uWSGI entry point
     Manages HTTP request and calls specific functions for [GET, POST]
 
@@ -43,12 +43,10 @@ def application(env, start_response):
 
     Returns:
         data: which will be transmitted
-
     """
 
     # Parse query string
     query = dict(urllib.parse.parse_qsl(env['QUERY_STRING']))
-
 
     # Parse cookie
     raw_json = env.get('HTTP_COOKIE', '')
@@ -61,17 +59,15 @@ def application(env, start_response):
     for key, morsel in cookie_obj.items():
         cookie[key] = morsel.value
 
-
     status = '200 OK'
     headers = []
     data = []
-
 
     # Manage admin actions
     if env['PATH_INFO'][:6] == '/admin':
         status, headers, data = admin_panel(env, query, cookie)
 
-
+    # Main methods
     elif env['REQUEST_METHOD'] == 'GET':
         status, headers, data = get(env, query, cookie)
 
@@ -87,6 +83,7 @@ def application(env, start_response):
                        ('Allow', 'GET, POST, HEAD, OPTIONS')  # TODO: Add content application/json
                    ]
 
+    # Setup request status and headers
     start_response(status, headers)
     return data
 
@@ -971,7 +968,7 @@ def get_account(env, query, cookie):
     data['group'] = user_obj[5]
 
     data['credits'] = user_obj[6]
-    data['total'] = CREDITS
+    data['total'] = CREDITS_TOTAL
 
     data['avatar'] = user_obj[7]
 

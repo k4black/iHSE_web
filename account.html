@@ -17,24 +17,33 @@
 <!--    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>-->
 
 </head>
-<body class="data__loading">
+<body class="data__loading" onload="setupNav('calendar')">
+<!-- TODO: Think how make better -->
 
 
-<header class="header">
-    <div class="header__left">
-        <nav class="arrow">
-            <button class="arrow__button">
-                <i class="mobile__item__icon large material-icons">arrow_back</i>
-            </button>
-        </nav>
+<!-- TODO: Exit button (logout) -->
+<!--# set var="title" value="Аккаунт" -->
+<!--# set var="enable_menu" value="true" -->
+<!--#include virtual="/components/header.html" -->
 
-        <div class="title">Аккаунт</div>
-    </div>
+<!-- TODO: think: Do we need menu button? Or just back button -->
+<!--#include virtual="/components/nav.html" -->
 
-    <div class="header__right">
-        <div class="header__button"><i class="mobile__item__icon large material-icons">exit_to_app</i></div>
-    </div>
-</header>
+<!--<header class="header">-->
+<!--    <div class="header__left">-->
+<!--        <nav class="arrow">-->
+<!--            <button class="arrow__button">-->
+<!--                <i class="mobile__item__icon large material-icons">arrow_back</i>-->
+<!--            </button>-->
+<!--        </nav>-->
+
+<!--        <div class="title">Аккаунт</div>-->
+<!--    </div>-->
+
+<!--    <div class="header__right">-->
+<!--        <div class="header__button"><i class="mobile__item__icon large material-icons">exit_to_app</i></div>-->
+<!--    </div>-->
+<!--</header>-->
 
 
 <div class="topbar loading__resource">
