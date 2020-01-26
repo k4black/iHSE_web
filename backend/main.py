@@ -1219,7 +1219,7 @@ def get_feedback(env, query, cookie):
             [json_data])
 
 
-@cache
+# @cache
 def get_projects(env, query):
     """ Projects HTTP request
     Send list of projects in json format
@@ -1232,8 +1232,7 @@ def get_projects(env, query):
         Cached by TIMEOUT
 
     Returns:
-        projects: List of projects descriptions
-              [
+        projects: List of projects descriptions [  # TODO: to dicts 
                   {
                       "title": "Some title",
                       "type": "TED",
