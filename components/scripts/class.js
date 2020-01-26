@@ -93,8 +93,8 @@ function setupEnrollButtons() {
         removeEnrollByUser();
     };
 
-    for (let id in enrolls) {
-        if (enrolls[id].user_id === user.id) {
+    for (let id in cache['enrolls']) {
+        if (cache['enrolls'][id].user_id === user.id) {
             document.querySelector('#deenroll').style.display = 'block';
             document.querySelector('#enroll').style.display = 'none';
             return;
