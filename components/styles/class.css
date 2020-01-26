@@ -50,7 +50,7 @@
 }
 
 .class_popup__wrapper {
-    padding: 25px;
+    padding: 0 25px 25px 25px;
     /*height: 530px;*/
     /*overflow-y: scroll;*/
     height: calc(100% - 70px);
@@ -77,6 +77,11 @@
 
     line-height: 1.0;
 }
+
+.class_popup__block:first-child {
+    margin: 0;
+}
+
 
 .class_popup__block i {
     color: #8a8a8a;
