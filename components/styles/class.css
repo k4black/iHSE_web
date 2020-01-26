@@ -124,6 +124,15 @@
 
 
 
+.anno {
+    width: 100%;
+}
+
+.anno textarea {
+    width: inherit;
+}
+
+
 .count {
     /*align-self: left;*/
     /*margin-top: 30px;*/
