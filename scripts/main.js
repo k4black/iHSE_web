@@ -123,6 +123,8 @@ function loadUser(func) {
             if (this.status === 200) {  // Ok
                 user = JSON.parse(this.responseText);
 
+                cache['user'] = user;
+
                 func();
             } else if (this.status === 401) {  // Unauthorized
 
