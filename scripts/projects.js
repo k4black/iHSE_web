@@ -43,10 +43,10 @@ function setProjects() { // If ok set up day field
 
         for (let user_id in cache['names']) {  // TODO: optimize O notation?
             let name = cache['names'][user_id];
-            console.log('proj_id=' + id, name);
-            if (id === name['project_id']) {
+            // console.log('proj_id=', id, name, name['project_id']);
+            if (id == name['project_id']) {
                 // Current project has that user
-                console.log('ok');
+                // console.log('ok');
 
                 names += name.name.split(' ')[0] + ' ' + name.name.split(' ')[1][0] + '. ';
             }
