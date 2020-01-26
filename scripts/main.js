@@ -283,7 +283,7 @@ function loadProjects(func) {
  * Save enrolls list to global 'cache['projects']'
  *
  * Run func on OK status
- */
+ */ 
 function loadCredits(func) {
     let xhttp = new XMLHttpRequest();
 
