@@ -1232,7 +1232,7 @@ def get_projects(env, query):
         Cached by TIMEOUT
 
     Returns:
-        projects: List of projects descriptions [  # TODO: to dicts 
+        projects: List of projects descriptions [  # TODO: to dicts
                   {
                       "title": "Some title",
                       "type": "TED",

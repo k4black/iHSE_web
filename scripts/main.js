@@ -234,7 +234,7 @@ function loadDay(day, func) {
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let day_data = JSON.parse( this.responseText );
+            let day_data = JSON.parse(this.responseText);
 
             let current_events = {};
             for (let time of day_data) {
@@ -249,5 +249,30 @@ function loadDay(day, func) {
     };
 
     xhttp.open("GET", "http://ihse.tk:50000/day?day=" + day, true);
+    xhttp.send();
+}
+
+/**
+ * Get projects information from server
+ * Send http GET request and get projects json schedule
+ * Save enrolls list to global 'cache['projects']'
+ *
+ * Run func on OK status
+ */
+function loadProjects(func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+            let projects_data = JSON.parse(this.responseText);
+            let projects = groupByUnique(projects_data, 'id');
+
+            cache['projects'] = projects;
+
+            func();
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/projects", true);
     xhttp.send();
 }

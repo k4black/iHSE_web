@@ -11,69 +11,62 @@
 
 
 
+
+loadProjects(setProjects);
+
+
+
 /**
- * Get day information from server
- * Send http GET request and get list of projects
- * than parse of json data and create html
+ * Parse of cached projects data and create html
  */
-var projects = document.querySelector('.wrapper');
+function setProjects() { // If ok set up day field
+    loadingEnd(); // TODO: Check
+    let projects = document.querySelector('.wrapper');
 
-var xhttp = new XMLHttpRequest();
+    var projects_html = "";
+    var project_html;
 
-xhttp.onreadystatechange = function() {
-    if (this.readyState === 4) {
-        if (this.status === 200) { // If ok set up day field
-            loadingEnd(); // TODO: Check
+    for (let id in cache['projects']) {
+        let project = cache['projects'][id];
 
-            var projects_data = JSON.parse( this.responseText );
-
-            var projects_html = "";
-            var project_html;
-
-            for (var project of projects_data) {
-                // var names = project.name.split(',');
-                var names = 'Names TODO remove';
-                // var rez = '';
-                // for (var i of names) {
-                //     if (i == [])
-                //         continue;
-                //
-                //     var tmp_name = i.split(' ').filter(word => word != '');
-                //     //console.log(tmp_name);
-                //
-                //     if (tmp_name == [] || tmp_name.length <= 0)
-                //         continue;
-                //
-                //     if (rez != '') {
-                //         rez += ', '
-                //     }
-                //
-                //     rez += tmp_name[0] + ' ' + tmp_name[1][0] + '.';
-                // }
+        // var names = project.name.split(',');
+        var names = 'Names TODO remove';  // TODO: get names from names request
+        // var rez = '';
+        // for (var i of names) {
+        //     if (i == [])
+        //         continue;
+        //
+        //     var tmp_name = i.split(' ').filter(word => word != '');
+        //     //console.log(tmp_name);
+        //
+        //     if (tmp_name == [] || tmp_name.length <= 0)
+        //         continue;
+        //
+        //     if (rez != '') {
+        //         rez += ', '
+        //     }
+        //
+        //     rez += tmp_name[0] + ' ' + tmp_name[1][0] + '.';
+        // }
 
 
-                project_html = '<div class="project">'+
-                                   '<img src="images/rocket.jpeg">' +
-                                   '<div class="description">' +
+        project_html = '<div class="project">' +
+            '<img src="images/rocket.jpeg">' +
+            '<div class="description">' +
 
-                                       '<div class="project__top_line">' +
-                                           '<span>' + project.title + '</span>' +
-                                           '<span style="text-align:right">' + project.type + '</span>' +
-                                       '</div>' +
+            '<div class="project__top_line">' +
+            '<span>' + project.title + '</span>' +
+            '<span style="text-align:right">' + project.type + '</span>' +
+            '</div>' +
 
-                                       '<p class="project__names">' + names + '</p>' +
+            '<p class="project__names">' + names + '</p>' +
 
-                                       '<p class="project__desc">' + project.desc + '</p>' +
+            '<p class="project__desc">' + project.desc + '</p>' +
 
-                                   '</div>' +
-                               '</div>';
-                projects_html += project_html + '<hr class="border_line">';
-            }
-
-            projects.innerHTML = projects_html;
-        }
+            '</div>' +
+            '</div>';
+        projects_html += project_html + '<hr class="border_line">';
     }
-};
 
-xhttp.open("GET", "http://ihse.tk:50000/projects", true);
-xhttp.send();
+    projects.innerHTML = projects_html;
+}
