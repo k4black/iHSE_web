@@ -45,6 +45,8 @@ window.addEventListener('load', function () {
  * Send http GET request and get user bio (or guest bio if cookie does not exist)
  */
 function setAccount() {
+    console.log('check setAccount ', cache);
+
     let topbar = document.querySelector('.topbar');
 
     loadingEnd(); // TODO: Check
@@ -306,6 +308,7 @@ function setupCreditsChart(days, data, dataShort) {
  * Read credits data from cache and create html graph
  */
 function setCredits() {
+    console.log('check setCredits ', cache);
     let credits_by_id = cache['credits'];
 
     let credits_list = [];
