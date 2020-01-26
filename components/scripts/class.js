@@ -139,7 +139,7 @@ function setClass() {
     document.querySelector('#anno').value = event_class.annotation;  // Admin editable field
 
     if (cache['user'].type >= 1) {
-        document.querySelector('.anno').parentElement.parentElement.style.display = 'none';
+        document.querySelector('.anno').parentElement.style.display = 'none';
     }
 
 
