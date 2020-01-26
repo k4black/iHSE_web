@@ -10,10 +10,11 @@
 window.addEventListener('load', function () {
     createBar();
     // loadAccount();
-    
+
     // loadDays();
-    loadUser(checkLoading(function () {setAccount(); setCredits()}, ['user', 'credits']));
-    loadCredits(checkLoading(function () {setAccount(); setCredits()}, ['user', 'credits']));
+
+    loadUser(function () {checkLoading(setAccount, ['user', 'credits']);});
+    loadCredits(function () {checkLoading(setAccount, ['user', 'credits']);});
 });
 
 
@@ -86,6 +87,8 @@ function setAccount() {
             break;
     }
 
+
+    setCredits();
 }
 
 
