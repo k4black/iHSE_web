@@ -8,6 +8,7 @@
 
 
 window.addEventListener('load', function () {
+    createBar();
     loadAccount();
     loadCredits(setCredits);
 });
@@ -189,15 +190,6 @@ document.querySelector('.header__button').addEventListener('click', function () 
  */
 // var ProgressBar = require('scripts/progressbar.js');
 var bar;
-if(window.checkLoaded()) {
-    createBar();
-    loadCredits();
-} else {
-    window.addEventListener('load', function () {
-        createBar();
-        loadCredits();
-    })
-}
 function createBar() {
     bar = new ProgressBar.Circle('.progress', {
         color: '#aaaaaa',
