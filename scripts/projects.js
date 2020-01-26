@@ -14,6 +14,7 @@
 window.addEventListener('load', function () {
     console.log('Load');
     // loadProjects(setProjects);
+    // Run 'setProjects' when both Projects and Names are loaded
     loadProjects(function () {checkLoading(setProjects, ['names', 'projects']);})
     loadNames(function () {checkLoading(setProjects, ['names', 'projects']);})
 });
@@ -26,7 +27,7 @@ window.addEventListener('load', function () {
  * Parse of cached projects data and create html
  */
 function setProjects() { // If ok set up day field
-    console.log('setProjects run with cache: ' + cache);
+    console.log('setProjects run with cache: ', cache);
 
     loadingEnd(); // TODO: Check
     let projects = document.querySelector('.wrapper');
@@ -38,7 +39,16 @@ function setProjects() { // If ok set up day field
         let project = cache['projects'][id];
 
         // var names = project.name.split(',');
-        var names = 'Names TODO remove';  // TODO: get names from names request
+        let names = '';
+
+        for (let user_id in cache['names']) {
+            let name = cache['names'][user_id];
+            if (id === name.project_id) {
+                // Current project has that user
+
+                names += name.name.split(' ')[0] + ' ' + name.name.split(' ')[1][0] + '. ';
+            }
+        }
         // var rez = '';
         // for (var i of names) {
         //     if (i == [])
