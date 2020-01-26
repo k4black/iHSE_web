@@ -134,7 +134,7 @@ function setDay() {
     let times = groupBy(events, 'time');
     for (let time in times) {
         time_html = '<div class="time">' +
-                        '<div class="bar">' + times[time].time + '</div>' +
+                        '<div class="bar">' + time + '</div>' +
                             '<div class="events">';
 
         for (let event of times[time]) {
