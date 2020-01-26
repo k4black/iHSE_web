@@ -919,7 +919,7 @@ def get_names(env, query, cookie):
 
     # Names
     # data = [{'name': i[3], 'id': i[0]} for i in sql.get_users() if i[1] == 0]  # TODO: Move in sql.py
-    data = [{'name': i[3], 'id': i[0]} for i in sql.get_users()]  # TODO: Add if on i[1] == 0 (regular user)
+    data = [{'name': i[3], 'id': i[0], 'project_id': i[8]} for i in sql.get_users()]  # TODO: Add if on i[1] == 0 (regular user)
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')

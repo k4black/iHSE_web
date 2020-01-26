@@ -13,7 +13,9 @@
 // TODO: Create wrapper in main.js
 window.addEventListener('load', function () {
     console.log('Load');
-    loadProjects(setProjects);
+    // loadProjects(setProjects);
+    loadProjects(function () {checkLoading(setProjects, ['names', 'projects']);})
+    loadNames(function () {checkLoading(setProjects, ['names', 'projects']);})
 });
 
 
@@ -24,6 +26,8 @@ window.addEventListener('load', function () {
  * Parse of cached projects data and create html
  */
 function setProjects() { // If ok set up day field
+    console.log('setProjects run with cache: ' + cache);
+
     loadingEnd(); // TODO: Check
     let projects = document.querySelector('.wrapper');
 
