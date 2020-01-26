@@ -136,6 +136,11 @@ function setClass() {
 
     setupData(document.querySelector('#class_popup .count').firstElementChild, event_class.count + ' / ' + event_class.total);
     document.querySelector('#total').value = event_class.total;  // Admin editable field
+    document.querySelector('#anno').value = event_class.annotation;  // Admin editable field
+
+    if (cache['user'].type >= 1) {
+        document.querySelector('.anno').parentElement.parentElement.style.display = 'none';
+    }
 
 
     // // TODO: Hide when there is no enrollment
@@ -356,13 +361,16 @@ function saveClass() {
     };
 
     let total = document.querySelector('#total').value;
+    let anno = document.querySelector('#anno').value;
 
-    if (cache['class'].total === total) {
+    if (cache['class'].annotation === anno && cache['class'].total === total) {
         return;
     }
 
     if (total !== '')
         cache['class'].total = total;
+    if (total !== '')
+        cache['class'].annotation = anno;
     let data = JSON.stringify(cache['class']);
 
     xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+'classes', true);
