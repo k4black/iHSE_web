@@ -276,3 +276,29 @@ function loadProjects(func) {
     xhttp.open("GET", "http://ihse.tk:50000/projects", true);
     xhttp.send();
 }
+
+/**
+ * Get credits information from server by user cookies
+ * Send http GET request and get projects json schedule
+ * Save enrolls list to global 'cache['projects']'
+ *
+ * Run func on OK status
+ */
+function loadCredits(func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+            let credits_raw = JSON.parse(this.responseText);
+            let credits = groupBy(credits_raw, 'id');
+
+            cache['credits'] = credits;
+
+            func();
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/credits", true);
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}

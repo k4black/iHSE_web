@@ -41,33 +41,16 @@ function setProjects() { // If ok set up day field
         // var names = project.name.split(',');
         let names = '';
 
-        for (let user_id in cache['names']) {  // TODO: optimize O notation?
+        for (let user_id in cache['names']) {  // TODO: optimize O notation? Now O(n^2)
             let name = cache['names'][user_id];
             // console.log('proj_id=', id, name, name['project_id']);
-            if (id == name['project_id']) {
+            if (id == name['project_id']) {  // Can be string
                 // Current project has that user
                 // console.log('ok');
 
                 names += name.name.split(' ')[0] + ' ' + name.name.split(' ')[1][0] + '. ';
             }
         }
-        // var rez = '';
-        // for (var i of names) {
-        //     if (i == [])
-        //         continue;
-        //
-        //     var tmp_name = i.split(' ').filter(word => word != '');
-        //     //console.log(tmp_name);
-        //
-        //     if (tmp_name == [] || tmp_name.length <= 0)
-        //         continue;
-        //
-        //     if (rez != '') {
-        //         rez += ', '
-        //     }
-        //
-        //     rez += tmp_name[0] + ' ' + tmp_name[1][0] + '.';
-        // }
 
 
         project_html = '<div class="project">' +
