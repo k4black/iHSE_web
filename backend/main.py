@@ -1116,6 +1116,8 @@ def get_class(env, query, cookie):
 
     class_event = sql.get_class(query['id'])
 
+    print(f"got class: {class_event}")
+
     # Json event data
     data = sql.tuple_to_dict(class_event, 'classes')
 
