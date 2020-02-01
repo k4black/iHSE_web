@@ -99,7 +99,7 @@ let fields = {
     'credits': ['id', 'user_id', 'event_id', 'date', 'value'],
     'codes': ['code', 'type', 'used'],
     'days': ['id', 'date', 'title', 'feedback'],
-    'vacations': ['id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to', 'type'],
+    'vacations': ['id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'],
 };
 
 
