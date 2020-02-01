@@ -236,9 +236,9 @@ def recount_credits():
 
     print('user_credits_counter ', user_credits_counter)
 
-    for user_id, credits_total in user_credits_counter.items():
-        cursor.execute(f'update users set credits = {credits_total} where id = {user_id}')
-    conn.commit()
+    # for user_id, credits_total in user_credits_counter.items():
+    #     cursor.execute(f'update users set credits = {credits_total} where id = {user_id}')
+    # conn.commit()
 
 
 table_fields = {
