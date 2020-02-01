@@ -1258,7 +1258,7 @@ def get_enrolls_by_event_id(event_id):
         enroll_objs: [(id, event_id, users_id, time, attendance), ...]
     """
 
-    cursor.execute(f'select * from enrolls where event_id = {event_id};')
+    cursor.execute(f'select * from enrolls where class_id = {event_id};')
     enrolls = cursor.fetchall()
 
     if len(enrolls) == 0:  # No such enrolls
