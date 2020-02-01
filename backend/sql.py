@@ -960,8 +960,10 @@ def get_day(date: str):
         event objects: list of event objects - [ (id, type, title, description, host, place, time, date), ...]
 
     """
-    cursor.execute(f'select * from events where date = \'{date}\';')
-    events_list = cursor.fetchall()
+    cursor.execute(f"select (id) from days where date = '{date}'")
+    day_id = int(cursor.fetchone()[0])
+    cursor.execute(f"select * from events where day_id = {day_id};")
+    events_list = cursor.fetchone()
 
     return events_list
 
