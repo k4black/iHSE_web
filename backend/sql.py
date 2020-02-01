@@ -243,7 +243,7 @@ def recount_credits():
 
 table_fields = {
     'projects': ('id', 'title', 'type', 'def_type', 'direction', 'description'),
-    'users': ('id', 'user_type', 'phone', 'name', 'pass', 'team', 'credits', 'avatar', 'project_id'),
+    'users': ('id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'),
     'sessions': ('id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'),
     'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', 'date'),
     'classes': ('id', 'credits', 'count', 'total'),
