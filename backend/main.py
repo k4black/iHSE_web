@@ -1286,6 +1286,7 @@ def get_day(env, query):
     print('get data days for ', day)
 
     data = sql.get_day(day)
+    print(f"data: {data}")
 
     data = sorted(data, key=itemgetter(6))
     groups = groupby(data, key=itemgetter(6))
