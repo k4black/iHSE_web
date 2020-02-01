@@ -121,7 +121,7 @@ cursor.execute("""
 
 # Events
 cursor.execute("""
-    create table events (
+    create table if not exists events (
         id serial not null primary key unique,
         type int,
         title text default '',
