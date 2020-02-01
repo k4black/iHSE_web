@@ -963,7 +963,7 @@ def get_day(date: str):
     cursor.execute(f"select (id) from days where date = '{date}'")
     day_id = int(cursor.fetchone()[0])
     cursor.execute(f"select * from events where day_id = {day_id};")
-    events_list = cursor.fetchone()
+    events_list = cursor.fetchall()
 
     return events_list
 
