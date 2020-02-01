@@ -2,12 +2,11 @@ import time
 import string
 import typing as tp
 
-import sqlite3
 import psycopg2
 
 
 """ ---===---==========================================---===--- """
-"""                    SQLite database creation                  """
+"""                 PostgreSQL database creation                 """
 """ ---===---==========================================---===--- """
 
 # initializing connection to database
@@ -19,6 +18,7 @@ cursor = conn.cursor()
 def checkpoint():
     # TODO: do we need checkpoint now? Maybe same flags should be set somehow in the PostgreSQL (need to check that)?
     # TODO: I dont f_ing know. Did you found where db file located?
+    # TODO: yup, work on a container with automatic backup in progress
 
     pass
     # conn_sqlite.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # WAL
@@ -28,157 +28,180 @@ def checkpoint():
 checkpoint()
 
 # Projects
-cursor.execute('''
-                    create table if not exists projects (
-                        id serial not null primary key unique,
-                        title text,
-                        type int,
-                        def_type int,
-                        direction text,
-                        description text
-                    ); 
-                    ''')
+cursor.execute("""
+    create table if not exists projects (
+        id serial not null primary key,
+        title text default '',
+        type int,
+        def_type int,
+        direction text default '',
+        description text default '',
+        annotation text default ''
+    ); 
+""")
 
 # Users
-cursor.execute('''
-                    create table if not exists users (
-                        id serial not null primary key unique,
-                        user_type int,
-                        phone text,
-                        name text,
-                        pass int,
-                        team int,
-                        credits int default 0,
-                        avatar text default '',
-                        project_id serial default 0,
-                        foreign key (project_id) references projects(id)
-                    ); 
-                    ''')
+cursor.execute("""
+    create table if not exists users (
+        id serial not null primary key unique,
+        user_type int default 0,
+        phone text default '',
+        name text default '',
+        pass int,
+        team int,
+        project_id int default 0,
+        foreign key (project_id) references projects(id),
+        avatar text default ''
+    ); 
+""")
 
 # Sessions
-cursor.execute("""CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
-                  RETURNS bytea AS $$
-                  SELECT decode(string_agg(lpad(to_hex(width_bucket(random(), 0, 1, 256)-1),2,'0') ,''), 'hex')
-                  FROM generate_series(1, $1);
-                  $$
-                  LANGUAGE 'sql';""")
-cursor.execute('''create table if not exists sessions (
-                        id bytea not null primary key unique default random_bytea(16),
-                        user_id int,
-                        user_type int,
-                        user_agent text,
-                        last_ip text,
-                        time text,
-                        foreign key (user_id) references users(id)
-                    );
-                    ''')
+cursor.execute("""
+    CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
+    RETURNS bytea AS $$
+    SELECT decode(string_agg(lpad(to_hex(width_bucket(random(), 0, 1, 256)-1),2,'0') ,''), 'hex')
+    FROM generate_series(1, $1);
+    $$
+    LANGUAGE 'sql';
+""")
+cursor.execute("""
+    create table if not exists sessions (
+        id bytea not null primary key unique default random_bytea(16),
+        user_id int,
+        foreign key (user_id) references users(id),
+        user_type int,
+        user_agent text default '',
+        last_ip text default '',
+        time text default ''
+    );
+""")
+
+# Days
+cursor.execute("""
+    create table if not exists days (
+        id serial not null primary key unique,
+        date text default '',
+        title text default '',
+        feedback bool
+    );
+""")
+
+# Top
+cursor.execute("""
+    create table if not exists top (
+        id serial not null primary key unique,
+        user_id int,
+        foreign key (user_id) references users(id),
+        day_id int,
+        foreign key (day_id) references days(id),
+        chosen_1 int,
+        foreign key (chosen_1) references users(id),
+        chosen_2 int,
+        foreign key (chosen_2) references users(id),
+        chosen_3 int,
+        foreign key (chosen_3) references users(id)
+    );
+""")
 
 # Feedback
 cursor.execute("""
-                    create table if not exists feedback (
-                        id serial not null primary key,
-                        user_id serial,
-                        data text,
-                        time text default 'datetime(''now'', ''localtime'')',
-                        main_message text,
-                        main_score int,
-                        foreign key (user_id) references users(id)
-                    );
-                    """)
+    create table if not exists feedback (
+        id serial not null primary key,
+        user_id int,
+        foreign key (user_id) references users(id),
+        event_id int,
+        foreign key (event_id) references events(id),
+        score int,
+        entertain int, -- assuming
+        useful int,
+        understand int, -- accessibly
+        comment text default ''
+    );
+""")
 
 # Events
-cursor.execute('''
-                    create table if not exists events (
-                        id serial not null primary key unique,
-                        type int,
-                        title text,
-                        description text,
-                        host text,
-                        place text,
-                        time text,
-                        date text
-                    );
-                    ''')
+cursor.execute("""
+    create table events (
+        id serial not null primary key unique,
+        type int,
+        title text default '',
+        description text default '',
+        host text default '',
+        place text default '',
+        time text default '',
+        day_id int,
+        foreign key (day_id) references days(id)
+    );
+""")
 
 # Classes
-cursor.execute('''
-                    create table if not exists classes (
-                        id serial not null primary key unique,
-                        credits int,
-                        count int default 0,
-                        total int,
-                        foreign key (id) references events(id)
-                    );
-                    ''')
-
+cursor.execute("""
+    create table if not exists classes (
+        id int primary key,
+        foreign key (id) references events(id),
+        count int default 0,
+        total int,
+        annotation text default ''
+    );
+""")
 
 # Enrolls
-cursor.execute('''
-                    create table if not exists enrolls (
-                        id serial not null primary key unique,
-                        event_id serial,
-                        user_id serial,
-                        time text default 'datetime(''now'', ''localtime'')',
-                        attendance int default 0,
-                        foreign key (user_id) references users(id),
-                        foreign key (event_id) references classes(id)
-                    );
-                    ''')
+cursor.execute("""
+    create table if not exists enrolls (
+        id serial not null primary key,
+        class_id int,
+        foreign key (class_id) references classes(id),
+        user_id int,
+        foreign key (user_id) references users(id),
+        time text default '',
+        attendance bool default false,
+        bonus int default 0
+    );
+""")
 
 # Credits
-cursor.execute('''
-                    create table if not exists credits (
-                        id serial not null primary key unique,
-                        user_id serial,
-                        event_id serial,
-                        date text,
-                        value int default 0,
-                        foreign key (user_id) references users(id),
-                        foreign key (event_id) references classes(id)
-                    ); 
-                    ''')
+cursor.execute("""
+    create table if not exists credits (
+        id serial not null primary key,
+        user_id int,
+        foreign key (user_id) references users(id),
+        event_id int,
+        foreign key (event_id) references events(id),
+        time text default '',
+        value int default 0
+    );
+""")
 
 # Codes
-cursor.execute('''
-                    create table if not exists codes (
-                        code text,
-                        type int default 0,
-                        used int default 0
-                    ); 
-                    ''')
-
-# Days
-cursor.execute('''
-                    create table if not exists days (
-                        id serial not null primary key unique,
-                        date text,
-                        title text default '',
-                        feedback int default 0
-                    ); 
-                    ''')
+cursor.execute("""
+    create table if not exists codes (
+        code text,
+        type int default 0,
+        used int default 0
+    );
+""")
 
 # Vacations
-cursor.execute('''
-                    create table if not exists vacations (
-                        id serial not null primary key unique,
-                        user_id serial,
-                        date_from text,
-                        date_to text,
-                        time_from text,
-                        time_to text,
-                        type int default 0,
-                        foreign key (user_id) references users(id)
-                    ); 
-                    ''')
+cursor.execute("""
+    create table if not exists vacations (
+        id serial not null primary key unique,
+        user_id int,
+        foreign key (user_id) references users(id),
+        date_from text default '',
+        date_to text default '',
+        time_from text default '',
+        time_to text default ''
+    );
+""")
 
-# cursor.execute('''
+# cursor.execute("""
 #                     create table if not exists project_users (
 #                         user_id serial,
 #                         project_id serial,
 #                         foreign key (user_id) references users(id)
 #                         foreign key (project_id) references projects(id)
 #                     );
-#                     ''')
+#                     """)
 
 conn.commit()
 
