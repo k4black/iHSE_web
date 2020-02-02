@@ -173,12 +173,13 @@ cursor.execute("""
     );
 """)
 
+# TODO: check if codes were created in a right way, just to make sure
 # Codes
 cursor.execute("""
     create table if not exists codes (
         code text,
         type int default 0,
-        used int default 0
+        used bool default false
     );
 """)
 
@@ -980,27 +981,30 @@ def get_event(event_id):
     return cursor.fetchone()
 
 
-def insert_event(event_obj):
+def insert_event(event_obj) -> int:
     """ Insert event
 
     Args:
         event_obj: event obj (None, type, title, description, host, place, time, date)
 
     Returns:
+        id: id of the created event
     """
 
-    cursor.execute(f'insert into events (id, type, title, description, host, place, time, date) values (default, {event_obj[1]}, \'{event_obj[2]}\', \'{event_obj[3]}\', \'{event_obj[4]}\', \'{event_obj[5]}\', \'{event_obj[6]}\', \'{event_obj[7]}\') RETURNING id;')
+    cursor.execute(f"select (id) from days where date = {event_obj[7]}")
+    day_id = cursor.fetchone()
+    cursor.execute(f"insert into events (type, title, description, host, place, time, day_id) values ({event_obj[1]}, '{event_obj[2]}', '{event_obj[3]}', '{event_obj[4]}', '{event_obj[5]}', '{event_obj[6]}', {day_id}) returning id;")
     id_of_new_event = cursor.fetchone()[0]
     print('Added event ID=', id_of_new_event, 'type', event_obj[1])
 
     if int(event_obj[1]) == 1:
         # class
-        cursor.execute(f'insert into classes (id, credits, count, total) values ({id_of_new_event}, 100, 0, 10);')
+        cursor.execute(f'insert into classes (id, total, annotation) values ({id_of_new_event}, 10, '');')
     else:
         # regular
         pass
-
     conn.commit()
+    return id_of_new_event
 
 
 def edit_event(event_obj):
@@ -1011,17 +1015,17 @@ def edit_event(event_obj):
 
     Returns:
     """
-    cursor.execute(f'''
+    cursor.execute(f"""
         update events set
             type = {event_obj[1]},
-            title = \'{event_obj[2]}\',
-            description = \'{event_obj[3]}\',
-            host = \'{event_obj[4]}\',
-            place = \'{event_obj[5]}\',
-            time = \'{event_obj[6]}\',
-            day_id = \'{event_obj[7]}\'
+            title = '{event_obj[2]}',
+            description = '{event_obj[3]}',
+            host = '{event_obj[4]}',
+            place = '{event_obj[5]}',
+            time = '{event_obj[6]}',
+            day_id = {event_obj[7]}
         where id = {event_obj[0]};
-    ''')
+    """)
     conn.commit()
 
 
@@ -1042,7 +1046,7 @@ def remove_event(event_id):
         cursor.execute(f'update credits set event_id = 0 where event_id = {event_id};')
         cursor.execute(f'delete from classes where id = {event_id};')
         cursor.execute(f'delete from events where id = {event_id};')
-    except (psycopg2.InternalError, psycopg2.IntegrityError) as error:
+    except (IntegrityError, DataError, ProgrammingError, OperationalError) as error:
         print(error)
         cursor.execute('rollback;')
     conn.commit()
@@ -1054,7 +1058,7 @@ def clear_events():
     Args:
     Returns:
     """
-    cursor.execute('delete from events where id != 0;;')
+    cursor.execute('delete from events where id != 0;')
     conn.commit()
 
 
@@ -1085,16 +1089,11 @@ def get_class(event_id):
     """
 
     cursor.execute(f'select * from classes where id = {event_id};')
-    events = cursor.fetchall()
-
-    if len(events) == 0:  # No such event
-        return None
-    else:
-        return events[0]
+    return cursor.fetchone()
 
 
 def check_class(class_id):
-    """ Chack class have empty places
+    """ Check class have empty places
 
     Args:
         class_id: class id (event id) from bd
@@ -1103,46 +1102,51 @@ def check_class(class_id):
         bool - True - has places
     """
 
+    cursor.execute(f"select count(*) from enrolls where class_id = {class_id};")
+    enrolled = cursor.fetchone()[0]
+
     cursor.execute(f'select * from classes where id = {class_id};')
     class_obj = cursor.fetchone()
 
     if class_obj is None:
         return False
 
-    return class_obj[2] < class_obj[3]
+    return enrolled < class_obj[1]
 
 
 def insert_class(class_obj):
     """ Insert project
 
     Args:
-        class_obj: class obj (None, credits, count, total)
+        # TODO: check for this new signature (previous was (None, credits, count, total))
+        class_obj: class obj (None, id, total, annotation)
 
     Returns:
-        # TODO: Return id
+        id: id of the class added
     """
-    cursor.execute(f'insert into classes (credits, count, total) values ({class_obj[1]}, {class_obj[2]}, {class_obj[3]}); ')
+    cursor.execute(f"insert into classes (id, total, annotation) values ({class_obj[1]}, {class_obj[2]}, '{class_obj[3]}');")
     conn.commit()
+    return class_obj[0]
 
 
 def edit_class(class_obj):
     """ Update project
 
     Args:
-        class_obj: class obj (id, credits, count, total)
+        class_obj: class obj (id, total, annotation)
 
     Returns:
     """
-    cursor.execute(f'''update classes set
-                                credits = {class_obj[1]},
-                                count = {class_obj[2]},
-                                total = {class_obj[3]}
-                            where id = {class_obj[0]};
-                        ''')
+    cursor.execute(f"""
+        update classes set
+            total = {class_obj[1]},
+            annotation = '{class_obj[2]}'
+        where id = {class_obj[0]};
+    """)
     conn.commit()
 
 
-def enroll_user(class_id, user_obj):  # TODO
+def enroll_user(class_id, user_obj):  # TODO?
     """ Enroll user in event
 
     Args:
@@ -1154,19 +1158,17 @@ def enroll_user(class_id, user_obj):  # TODO
     """
 
     cursor.execute(f'select * from class where id = {class_id};')
-    events = cursor.fetchall()
-    # cursor.execute("SELECT * FROM events WHERE id=?", (event_id, ))
-    # events = cursor.fetchall()
+    class_ = cursor.fetchone()
 
-    if len(events) == 0 or events[0][4] >= events[0][5]:  # No such event or too many people
+    cursor.execute(f"select count(*) from enrolls where class_id = {class_id};")
+    enrolled = cursor.fetchone()[0]
+
+    if not class_ or enrolled >= class_[1]:  # No such event or too many people
         return False
-
-    event = events[0]
-
-    cursor.execute(f'update class set count = {event[4] + 1} where id = {class_id};')
-    conn.commit()
-
-    return True
+    else:
+        cursor.execute(f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({class_id}, {user_obj[0]}, 'time', false, 0);")
+        conn.commit()
+        return True
 
 
 def remove_class(class_id):
@@ -1209,12 +1211,7 @@ def get_enroll(enroll_id):
     """
 
     cursor.execute(f'select * from enrolls where id = {enroll_id};')
-    enrolls = cursor.fetchall()
-
-    if len(enrolls) == 0:  # No such enrolls
-        return None
-    else:
-        return enrolls[0]
+    return cursor.fetchone()
 
 
 def get_enrolls_by_event_id(event_id):
@@ -1255,55 +1252,54 @@ def get_enrolls_by_user_id(user_id):
         return enrolls
 
 
-def insert_enroll(enroll_obj):
+def insert_enroll(enroll_obj) -> int:
     """ Insert enroll
 
     Args:
         enroll_obj: class obj (None, event_id, user_id, time, attendance)
 
     Returns:
-        # TODO: Return id
+        id: id of the enroll created
     """
-    # TODO: Remove credits?
-
-    cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
-    event = cursor.fetchone()
-    cursor.execute(f'update classes set count = {event[2] + 1} where id = {event[0]};')
-
-    cursor.execute(f'insert into enrolls (event_id, user_id, time, attendance) values ({enroll_obj[1]}, {enroll_obj[2]}, \'{enroll_obj[3]}\', {enroll_obj[4]});')
-    conn.commit()
+    # cursor.execute(f"insert into enrolls (event_id, user_id, time, attendance) values ({enroll_obj[1]}, {enroll_obj[2]}, \'{enroll_obj[3]}\', {enroll_obj[4]}) returning id;")
+    cursor.execute(f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({enroll_obj[1]}, {enroll_obj[2]}, 'time', false, 0) returning id;")
+    id_ = cursor.fetchone()[0]
+    cursor.commit()
+    return id_
 
 
 def edit_enroll(enroll_obj):
     """ Update enroll
 
     Args:
-        enroll_obj: enroll obj (id, event_id, user_id, time, attendance)
+        enroll_obj: enroll obj (id, class_id, user_id, time, attendance, bonus)
 
     Returns:
     """
 
-    cursor.execute(f'select * from enrolls where id = {enroll_obj[0]};')
-    enroll = cursor.fetchone()
+    # cursor.execute(f'select * from enrolls where id = {enroll_obj[0]};')
+    # enroll = cursor.fetchone()
 
-    if enroll[1] != enroll_obj[1]:
+    # if enroll[1] != enroll_obj[1]:
         # Change old event
-        cursor.execute(f'select * from classes where id = {enroll[1]};')
-        current_event = cursor.fetchone()
-        cursor.execute(f'update classes set count = {current_event[2] - 1} where id = {current_event[0]};')
+        # cursor.execute(f'select * from classes where id = {enroll[1]};')
+        # current_event = cursor.fetchone()
+        # cursor.execute(f'update classes set count = {current_event[2] - 1} where id = {current_event[0]};')
 
         # Change new event
-        cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
-        new_event = cursor.fetchone()
-        cursor.execute(f'update classes set count = {new_event[2] + 1} where id = {new_event[1]};')
+        # cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
+        # new_event = cursor.fetchone()
+        # cursor.execute(f'update classes set count = {new_event[2] + 1} where id = {new_event[1]};')
 
-    cursor.execute(f'''update enrolls set
-                                event_id = {enroll_obj[1]},
-                                user_id = {enroll_obj[2]},
-                                time = \'{enroll_obj[3]}\',
-                                attendance = {enroll_obj[4]}
-                            where id = {enroll_obj[0]};
-                        ''')
+    cursor.execute(f"""
+        update enrolls set
+            class_id = {enroll_obj[1]},
+            user_id = {enroll_obj[2]},
+            time = '{enroll_obj[3]}',
+            attendance = {enroll_obj[4]},
+            bonus = {enroll_obj[5]}
+        where id = {enroll_obj[0]};
+    """)
     conn.commit()
 
 
@@ -1320,14 +1316,17 @@ def remove_enroll(enroll_id):
     cursor.execute(f'select * from enrolls where id = {enroll_id};')
     enroll = cursor.fetchone()
 
-    event_id = enroll[1]
+    # event_id = enroll[1]
 
-    cursor.execute(f'select * from classes where id = {event_id};')
-    event = cursor.fetchone()
-    cursor.execute(f'update classes set count = {event[2] - 1} where id = {event_id};')
+    # cursor.execute(f'select * from classes where id = {event_id};')
+    # event = cursor.fetchone()
+    # cursor.execute(f'update classes set count = {event[2] - 1} where id = {event_id};')
 
     cursor.execute(f'delete from enrolls where id = {enroll_id};')
-    conn.commit()  # TODO: Check (and think) if theteare credtis according this event. delete it
+    cursor.execute(f"delete from credits where user_id = {enroll[2]} and class_id = {enroll[1]};")
+    conn.commit()
+    # TODO: Check (and think) if there are credits according this event. delete it
+    # TODO: done, check it out
 
 
 # Credits
@@ -1362,16 +1361,19 @@ def get_credits_by_id(user_id):  # TODO: Hm.. Rename to get_credits(user_id)
     return credits_list
 
 
-def insert_credit(credit_obj):
+def insert_credit(credit_obj) -> int:
     """ Insert credit
 
     Args:
         credit_obj: credit obj (None, user_id, event_id, date, value)
 
     Returns:
+        id: id of the record created
     """
-    cursor.execute(f'insert into credits (id, user_id, event_id, date, value) values (default, {credit_obj[1]}, {credit_obj[2]}, \'{credit_obj[3]}\', {credit_obj[4]}); ')
+    cursor.execute(f"insert into credits (user_id, event_id, time, value) values ({credit_obj[1]}, {credit_obj[2]}, '{credit_obj[3]}', {credit_obj[4]}) returning id;")
+    id_ = cursor.fetchone()[0]
     conn.commit()
+    return id_
 
 
 def pay_credit(user_id, event_id):
@@ -1389,13 +1391,15 @@ def pay_credit(user_id, event_id):
     event = cursor.fetchone()
     cursor.execute(f'select * from classes where id = {event_id};')
     class_ = cursor.fetchone()
+    cursor.execute(f"select (date) from days where id = event[7];")
+    date_ = cursor.fetchone()[0]
 
     cursor.execute(f'select * from credits where event_id = {event_id} and user_id = {user_id};')
     credits = cursor.fetchall()
     if len(credits) == 0:
-        cursor.execute(f'insert into credits (id, user_id, event_id, date, value) values (default, {user_id}, {event_id}, \'{event[7]}\', {class_[1]}); ')
+        cursor.execute(f"insert into credits (id, user_id, event_id, time, value) values (default, {user_id}, {event_id}, '{date_}', {class_[1]});")
     else:
-        cursor.execute(f'update credits set value = {class_[1]} where id = {credits[0][0]};')
+        cursor.execute(f"update credits set value = {class_[1]} where id = {credits[0][0]};")
 
     conn.commit()
 
@@ -1404,42 +1408,53 @@ def edit_credit(credit_obj):
     """ Update credit
 
     Args:
-        credit_obj: credit obj (id, user_id, event_id, date, value)
+        credit_obj: credit obj (id, user_id, event_id, time, value)
 
     Returns:
     """
-    cursor.execute(f'''update credits set
-                                user_id = {credit_obj[1]},
-                                event_id = {credit_obj[2]},
-                                date = \'{credit_obj[3]}\',
-                                value = {credit_obj[4]}
-                            where id = {credit_obj[0]};
-                        ''')
+    cursor.execute(f"""
+        update credits set
+            user_id = {credit_obj[1]},
+            event_id = {credit_obj[2]},
+            time = '{credit_obj[3]}',
+            value = {credit_obj[4]}
+        where id = {credit_obj[0]};
+    """)
     conn.commit()
 
 
-def remove_credit(credit_id):
+def remove_credit(credit_id) -> bool:
     """ Delete credit by id
 
     Args:
         credit_id: projects id from bd
 
     Returns:
-        # Success delete or not
-
+        bool: successful call do DB or not
     """
-    cursor.execute(f'delete from credits where id = {credit_id};')
-    conn.commit()
+    try:
+        cursor.execute(f'delete from credits where id = {credit_id};')
+        conn.commit()
+        return True
+    except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
+        print(f"error: {err}")
+        return False
 
 
-def clear_credits():
+def clear_credits() -> bool:
     """ Clear all credits from sql table
 
     Args:
     Returns:
+        bool: successful call do DB or not
     """
-    cursor.execute('delete from credits;')
-    conn.commit()
+    try:
+        cursor.execute('delete from credits;')
+        conn.commit()
+        return True
+    except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
+        print(f"error: {err}")
+        return False
 
 
 # Codes
@@ -1452,28 +1467,31 @@ def get_codes():
         project objects: list of project objects - [ (code, type, used), ...]
 
     """
-    cursor.execute('select * from code;')
+    cursor.execute('select * from codes;')
     codes_list = cursor.fetchall()
 
     return codes_list
 
 
-def load_codes(codes):
+def load_codes(codes) -> bool:
     """ Cleat codes table and setup from codes
 
     Args:
         codes: codes list - [(str, int), (str, int), ... ]
 
     Returns:
-
+        bool: successful call to DB or not
     """
+    try:
+        for code in codes:
+            cursor.execute(f"insert into codes (code, type, used) values ('{code[0]}', {code[1]}, false);")
+        conn.commit()
+    except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
+        print(f"error: {err}")
+        return False
 
-    for code in codes:
-        cursor.execute(f'insert into codes (code, type, used) values ({code[0]}, \'{code[1]}\', 0);')
-    conn.commit()
 
-
-def use_code(code):
+def use_code(code: str) -> bool:
     """ Set code used
 
     Args:
@@ -1483,14 +1501,13 @@ def use_code(code):
         Success delete or not
 
     """
+    cursor.execute(f"elect * from codes where code = '{code}';")
+    code = cursor.fetchone()
 
-    cursor.execute(f'select * from codes where code = {code};')
-    codes_list = cursor.fetchall()
-
-    if len(codes_list) == 0 or codes_list[0][2]:
+    if not code or code[2]:
         return False
 
-    cursor.execute(f'update codes set used = {1} where code = {code};')
+    cursor.execute(f"update codes set used = true where code = '{code}';")
     conn.commit()
 
 
