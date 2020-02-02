@@ -3,6 +3,7 @@ import string
 import typing as tp
 
 import psycopg2
+from psycopg2 import IntegrityError, DataError, ProgrammingError, OperationalError
 
 
 """ ---===---==========================================---===--- """
@@ -242,16 +243,16 @@ def recount_credits():
 
 
 table_fields = {
-    'projects': ('id', 'title', 'type', 'def_type', 'direction', 'description'),
+    'projects': ('id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'),
     'users': ('id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'),
     'sessions': ('id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'),
-    'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', 'date'),
-    'classes': ('id', 'credits', 'count', 'total'),
-    'enrolls': ('id', 'event_id', 'user_id', 'time', 'attendance'),
+    'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'),
+    'classes': ('id', 'total', 'annotation'),
+    'enrolls': ('id', 'class_id', 'user_id', 'time', 'attendance', 'bonus'),
     'credits': ('id', 'user_id', 'event_id', 'date', 'value'),
     'codes': ('code', 'type', 'used'),
     'days': ('id', 'date', 'title', 'feedback'),
-    'vacations': ('id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to')
+    'vacations': ('id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'),
 }
 
 
@@ -265,7 +266,7 @@ def process_sql(data_raw: tp.List[tp.Tuple[tp.Any]], table: str) -> tp.List[tp.D
 
 
 def dict_to_tuple(data_raw: tp.Dict[str, tp.Any], table: str) -> tp.Tuple[tp.Any]:
-    data = []  # type: tp.List[tp.Any]
+    data: tp.List[tp.Any] = []
 
     for field in table_fields[table]:
         try:
@@ -280,7 +281,7 @@ def dict_to_tuple(data_raw: tp.Dict[str, tp.Any], table: str) -> tp.Tuple[tp.Any
 
 
 def tuple_to_dict(data_raw: tp.Tuple[tp.Any], table: str) -> tp.Dict[str, tp.Any]:
-    data = {}  # type: tp.Dict[str, tp.Any]
+    data: tp.Dict[str, tp.Any] = {}
 
     for i in range(len(table_fields[table])):
         data[table_fields[table][i]] = data_raw[i]
@@ -340,18 +341,20 @@ def get_projects():
     return projects_list
 
 
-def insert_project(project_obj):
+def insert_project(project_obj) -> int:
     """ Insert project
 
     Args:
         project_obj: project obj (None, title, type, def_type, direction, description)
 
     Returns:
-        # TODO: Return id
+        # id: id of the created project in the database
     """
     cursor.execute(
-        f'insert into projects (title, type, def_type, direction, description) values (\'{project_obj[1]}\', \'{project_obj[2]}\', \'{project_obj[3]}\', \'{project_obj[4]}\', \'{project_obj[5]}\'); ')
+        f"insert into projects (title, type, def_type, direction, description, annotation) values ('{project_obj[1]}', '{project_obj[2]}', '{project_obj[3]}', '{project_obj[4]}', '{project_obj[5]}', '{project_obj[6]}');")
     conn.commit()
+    cursor.execute(f"select (id) from projects where title = '{project_obj[1]}' and direction = '{project_obj[4]}' and annotation = '{project_obj[5]}';")
+    return int(cursor.fetchone())
 
 
 def edit_project(project_obj):
@@ -362,14 +365,16 @@ def edit_project(project_obj):
 
     Returns:
     """
-    cursor.execute(f'''update projects set
-                                title = \'{project_obj[1]}\',
-                                type = \'{project_obj[2]}\',
-                                def_type = \'{project_obj[3]}\',
-                                direction = \'{project_obj[4]}\',
-                                description = \'{project_obj[5]}\'
-                            where id = {project_obj[0]};
-                        ''')
+    cursor.execute(f"""
+        update projects set
+            title = '{project_obj[1]}',
+            type = '{project_obj[2]}',
+            def_type = '{project_obj[3]}',
+            direction = '{project_obj[4]}',
+            description = '{project_obj[5]}',
+            annotation = '{project_obj[6]}'
+        where id = {project_obj[0]};
+    """)
     conn.commit()
 
 
@@ -418,17 +423,19 @@ def get_days():
     return days_list
 
 
-def insert_day(day_obj):
+def insert_day(day_obj) -> int:
     """ Insert day
 
     Args:
         day_obj: day obj (None, date, title, feedback)
 
     Returns:
-        # TODO: Return id
+        # id: id of the day created in the database
     """
-    cursor.execute(f'insert into days (date, title, feedback) values (\'{day_obj[1]}\', \'{day_obj[2]}\', {day_obj[3]}); ')
+    cursor.execute(f"insert into days (date, title, feedback) values ('{day_obj[1]}', '{day_obj[2]}', {day_obj[3]});")
     conn.commit()
+    cursor.execute(f"select (id) from days where date = '{day_obj[1]}';")
+    return int(cursor.fetchone())
 
 
 def edit_day(day_obj):
@@ -439,12 +446,13 @@ def edit_day(day_obj):
 
     Returns:
     """
-    cursor.execute(f'''update days set
-                                date = \'{day_obj[1]}\',
-                                title = \'{day_obj[2]}\',
-                                feedback = {day_obj[3]}
-                            where id = {day_obj[0]};
-                        ''')
+    cursor.execute(f"""
+        update days set
+            date = '{day_obj[1]}',
+            title = '{day_obj[2]}',
+            feedback = {day_obj[3]}
+        where id = {day_obj[0]};
+    """)
     conn.commit()
 
 
@@ -469,7 +477,7 @@ def clear_days():
     Returns:
     """
 
-    cursor.execute('delete from days')
+    cursor.execute('delete from days;')
     conn.commit()
 
 
@@ -498,7 +506,7 @@ def insert_vacation(vacation_obj):
     Returns:
         # TODO: Return id
     """
-    cursor.execute(f'insert into vacations (user_id, date_from, date_to, time_from, time_to, type) values ({vacation_obj[1]}, \'{vacation_obj[2]}\', \'{vacation_obj[3]}\', \'{vacation_obj[4]}\', \'{vacation_obj[5]}\', {vacation_obj[6]}); ')
+    cursor.execute(f"insert into vacations (user_id, date_from, date_to, time_from, time_to) values ({vacation_obj[1]}, '{vacation_obj[2]}', '{vacation_obj[3]}', '{vacation_obj[4]}', '{vacation_obj[5]}');")
     conn.commit()
 
 
@@ -511,15 +519,15 @@ def edit_vacation(vacation_obj):
     Returns:
     """
 
-    cursor.execute(f'''update vacations set
-                                user_id = {vacation_obj[1]},
-                                date_from = \'{vacation_obj[2]}\',
-                                date_to = \'{vacation_obj[3]}\',
-                                time_from = \'{vacation_obj[4]}\',
-                                time_to = \'{vacation_obj[5]}\',
-                                type = {vacation_obj[6]}
-                            where id = {vacation_obj[0]};
-                        ''')
+    cursor.execute(f"""
+        update vacations set
+            user_id = {vacation_obj[1]},
+            date_from = '{vacation_obj[2]}',
+            date_to = '{vacation_obj[3]}',
+            time_from = '{vacation_obj[4]}',
+            time_to = '{vacation_obj[5]}'
+        where id = {vacation_obj[0]};
+    """)
     conn.commit()
 
 
@@ -544,7 +552,7 @@ def clear_vacations():
     Returns:
     """
 
-    cursor.execute('delete from vacations')
+    cursor.execute('delete from vacations;')
     conn.commit()
 
 
@@ -606,14 +614,7 @@ def get_user(user_id):
 
     """
     cursor.execute(f'select * from users where id = {user_id};')
-    users = cursor.fetchall()
-    # cursor.execute("SELECT * FROM users WHERE id=?", (user_id, ))
-    # users = cursor.fetchall()
-
-    if len(users) == 0:    # No such user
-        return None
-    else:
-        return users[0]
+    return cursor.fetchone()
 
 
 def get_user_by_phone(phone):
@@ -627,15 +628,8 @@ def get_user_by_phone(phone):
                      or None if there is no such user
 
     """
-    cursor.execute(f'select * from users where phone = \'{phone}\';')
-    users = cursor.fetchall()
-    # cursor.execute("SELECT * FROM users WHERE phone=?", (phone, ))
-    # users = cursor.fetchall()
-
-    if len(users) == 0:    # No such user
-        return None
-    else:
-        return users[0]
+    cursor.execute(f"select * from users where phone = '{phone}';")
+    return cursor.fetchone()
 
 
 def insert_user(user_obj):
@@ -646,7 +640,7 @@ def insert_user(user_obj):
 
     Returns:
     """
-    cursor.execute(f'insert into users (user_type, phone, name, pass, team, credits, avatar, project_id) values ({user_obj[1]}, \'{user_obj[2]}\', \'{user_obj[3]}\', {user_obj[4]}, {user_obj[5]}, {user_obj[6]}, \'{user_obj[7]}\', {user_obj[8]}); ')
+    cursor.execute(f"insert into users (user_type, phone, name, pass, team, project_id, avatar) values ({user_obj[1]}, '{user_obj[2]}', '{user_obj[3]}', {user_obj[4]}, {user_obj[5]}, {user_obj[6]}, '{user_obj[7]}');")
     conn.commit()
 
 
@@ -658,18 +652,17 @@ def edit_user(user_obj):
 
     Returns:
     """
-    # test_cursor.execute(f'call CreateOrModifyUser({user_obj[0]}, {user_obj[1]}, {user_obj[2]}, {user_obj[3]}, {user_obj[4]}, {user_obj[5]}, {user_obj[6]});')
-    cursor.execute(f'''update users set
-                                user_type = {user_obj[1]},
-                                phone = \'{user_obj[2]}\',
-                                name = \'{user_obj[3]}\',
-                                pass = {user_obj[4]},
-                                team = {user_obj[5]},
-                                credits = {user_obj[6]},
-                                avatar = \'{user_obj[7]}\',
-                                project_id = {user_obj[8]}
-                            where id = {user_obj[0]};
-                        ''')
+    cursor.execute(f"""
+        update users set
+            user_type = {user_obj[1]},
+            phone = '{user_obj[2]}',
+            name = '{user_obj[3]}',
+            pass = {user_obj[4]},
+            team = {user_obj[5]},
+            project_id = {user_obj[6]},
+            avatar = '{user_obj[7]}'
+        where id = {user_obj[0]};
+    """)
     conn.commit()
 
 
@@ -714,13 +707,13 @@ def checkin_user(user_obj, event_obj):
 
     Returns:
     """
-    cursor.execute(f'update users set credits = {event_obj[3] + user_obj[6]} where id = {user_obj[0]};')
-    conn.commit()
-    # cursor.execute("UPDATE users SET credits=? WHERE id=?", (user_obj[6] + event_obj[3], user_obj[0], ))
+    # TODO: ?
+    pass
+    # cursor.execute(f'update users set credits = {event_obj[3] + user_obj[6]} where id = {user_obj[0]};')
     # conn.commit()
 
 
-def remove_user(user_id):
+def remove_user(user_id) -> bool:
     """ Delete user by id
 
     Args:
@@ -730,13 +723,18 @@ def remove_user(user_id):
         # Success delete or not
 
     """
-    cursor.execute(f'delete from sessions where user_id = {user_id};')
-    cursor.execute(f'delete from feedback where user_id = {user_id};')
-    cursor.execute(f'delete from credits where user_id = {user_id};')
-    cursor.execute(f'delete from users where id = {user_id};')
-    conn.commit()
-    # cursor.execute("DELETE FROM users WHERE id=?", (user_id, ))
-    # conn.commit()
+    try:
+        cursor.execute(f'delete from sessions where user_id = {user_id};')
+        cursor.execute(f'delete from feedback where user_id = {user_id};')
+        cursor.execute(f'delete from credits where user_id = {user_id};')
+        cursor.execute(f'delete from top where user_id = {user_id};')
+        cursor.execute(f'delete from enrolls where user_id = {user_id};')
+        cursor.execute(f'delete from users where id = {user_id};')
+        conn.commit()
+        return True
+    except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
+        print(f"Encountered error: {err}")
+        return False
 
 
 def clear_users():
@@ -745,6 +743,7 @@ def clear_users():
     Args:
     Returns:
     """
+    # TODO: probably won't succeed due to ForeignKeyViolation error, see the method above
     cursor.execute('delete from users;')
     conn.commit()
 
@@ -761,8 +760,6 @@ def get_sessions():
     """
     cursor.execute('select * from sessions;')
     sessions_list = cursor.fetchall()
-    # cursor.execute("SELECT * FROM sessions")
-    # sessions_list = cursor.fetchall()
 
     for i in range(len(sessions_list)):
         sessions_list[i] = ((sessions_list[i][0]).hex(), *sessions_list[i][1:])
@@ -782,14 +779,7 @@ def get_session(sess_id):
 
     """
     cursor.execute(f"select * from sessions where id = bytea \'\\x{sess_id}\';")
-    sessions = cursor.fetchall()
-    # cursor.execute("SELECT * FROM sessions WHERE id=?", (sess_id, ))
-    # sessions = cursor.fetchall()
-
-    if len(sessions) == 0:  # No such session
-        return None
-    else:
-        return sessions[0]
+    return cursor.fetchone()
 
 
 def insert_session(sess_obj):
@@ -800,7 +790,7 @@ def insert_session(sess_obj):
 
     Returns:
     """
-    cursor.execute(f'insert into sessions (user_id, user_type, user_agent, last_ip, time) values ({sess_obj[1]}, {sess_obj[2]}, \'{sess_obj[3]}\', \'{sess_obj[4]}\', \'{sess_obj[5]}\');')
+    cursor.execute(f"insert into sessions (user_id, user_type, user_agent, last_ip, time) values ({sess_obj[1]}, {sess_obj[2]}, '{sess_obj[3]}', '{sess_obj[4]}', '{sess_obj[5]}');")
     conn.commit()
 
 
@@ -812,14 +802,15 @@ def edit_session(sess_obj):
 
     Returns:
     """
-    cursor.execute(f'''update sessions set
-                                user_id = {sess_obj[1]},
-                                user_type = {sess_obj[2]},
-                                user_agent = \'{sess_obj[3]}\',
-                                last_ip = \'{sess_obj[4]}\',
-                                time = \'{sess_obj[5]}\'
-                            where id = {sess_obj[0]};
-                        ''')
+    cursor.execute(f"""
+        update sessions set
+                user_id = {sess_obj[1]},
+                user_type = {sess_obj[2]},
+                user_agent = '{sess_obj[3]}',
+                last_ip = '{sess_obj[4]}',
+                time = '{sess_obj[5]}'
+            where id = {sess_obj[0]};
+        """)
     conn.commit()
 
 
@@ -844,10 +835,8 @@ def login(phone, passw, agent, ip, time='0'):
     """
 
     # Check user with name and pass exist and got it
-    cursor.execute(f'select * from users where phone = \'{phone}\' and pass = {passw};')
+    cursor.execute(f"select * from users where phone = '{phone}' and pass = {passw};")
     users = cursor.fetchall()
-    # cursor.execute("SELECT * FROM users WHERE phone=? AND pass=?", (phone, passw))
-    # users = cursor.fetchall()
 
     if len(users) == 0:    # No such user
         return None
@@ -855,26 +844,17 @@ def login(phone, passw, agent, ip, time='0'):
     user = users[0]
 
     # Create new session if there is no session with user_id and user_agent
-    cursor.execute(f'select * from sessions where user_id = {user[0]} and user_agent = \'{agent}\';')
+    cursor.execute(f"select * from sessions where user_id = {user[0]} and user_agent = '{agent}';")
     existing_sessions = cursor.fetchall()
     if len(existing_sessions) == 0:
         cursor.execute(f"""
-                            insert into sessions (user_id, user_type, user_agent, last_ip, time)
-                                values ({user[0]}, {user[1]}, \'{agent}\', \'{ip}\', \'{time}\');             ;
-                            """)
+            insert into sessions (user_id, user_type, user_agent, last_ip, time) values ({user[0]}, {user[1]}, '{agent}', '{ip}', '{time}');
+        """)
         conn.commit()
-    # cursor.execute("""INSERT INTO sessions(user_id, user_type, user_agent, last_ip, time)
-    #                   SELECT ?, ?, ?, ?, ?
-    #                   WHERE NOT EXISTS(SELECT 1 FROM sessions WHERE user_id=? AND user_agent=?)""",
-    #                (user[0], user[1], agent, ip, time, user[0], agent))
-    # conn.commit()
-
 
     # Get session corresponding to user_id and user_agent
-    cursor.execute(f'select * from sessions where user_id = {user[0]} and user_agent = \'{agent}\';')
+    cursor.execute(f"select * from sessions where user_id = {user[0]} and user_agent = '{agent}';")
     result = cursor.fetchone()
-    # cursor.execute("SELECT * FROM sessions WHERE user_id=? AND user_agent=?", (user[0], agent))
-    # result = cursor.fetchone()
 
     print(f'session got by login:{result}')
     return result
@@ -890,7 +870,7 @@ def remove_session(sess_id):
 
 
 # TODO: both remove_session() and logout() needed?
-def logout(sess_id):
+def logout(sess_id) -> bool:
     """ Delete current session by sessid
 
     Args:
@@ -902,16 +882,12 @@ def logout(sess_id):
     """
     cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
     sessions = cursor.fetchall()
-    # cursor.execute("SELECT * FROM sessions WHERE id=?", (sess_id, ))
-    # sessions = cursor.fetchall()
 
     if len(sessions) == 0:    # No such session
         return False
 
     cursor.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
     conn.commit()
-    # cursor.execute("DELETE FROM sessions WHERE id=?", (sess_id, ))
-    # conn.commit()
     return True
 
 
@@ -923,13 +899,11 @@ def clear_sessions():
     """
     cursor.execute('delete from sessions;')
     conn.commit()
-    # cursor.execute("DELETE FROM sessions")
-    # conn.commit()
 
 
 # Feedback
 # TODO: do we handle feedback at all!?
-# TODO: Yeeeees. Somehow. Now i have some ideas, but you are welcome with any thoughts
+# TODO: Yeeeees. Somehow. Now I have some ideas, but you are welcome with any thoughts
 
 
 # Events
@@ -944,8 +918,6 @@ def get_events():
     """
     cursor.execute('select * from events;')
     events_list = cursor.fetchall()
-    # cursor.execute("SELECT * FROM events")
-    # events_list = cursor.fetchall()
 
     return events_list
 
@@ -961,6 +933,7 @@ def get_day(date: str):
 
     """
     cursor.execute(f"select (id) from days where date = '{date}'")
+    # TODO: maybe [0] is not needed
     day_id = int(cursor.fetchone()[0])
     cursor.execute(f"select * from events where day_id = {day_id};")
     events_list = cursor.fetchall()
@@ -968,7 +941,7 @@ def get_day(date: str):
     return events_list
 
 
-# TODO: Both het_events() and load_events() needed?
+# TODO: Both get_events() and load_events() needed? Or is is GSheets legacy and should be removed?
 def load_events(events_list):
     """ Load all events to sql table
     Clear events and insert all events in events table
@@ -1003,13 +976,8 @@ def get_event(event_id):
     Returns:
         event_obj: (id, type, title, description, host, place, time, date)
     """
-    cursor.execute(f'select * from events where id = {event_id};')
-    events = cursor.fetchall()
-
-    if len(events) == 0:  # No such event
-        return None
-    else:
-        return events[0]
+    cursor.execute(f"select * from events where id = {event_id};")
+    return cursor.fetchone()
 
 
 def insert_event(event_obj):
@@ -1043,16 +1011,17 @@ def edit_event(event_obj):
 
     Returns:
     """
-    cursor.execute(f'''update events set
-                                type = {event_obj[1]},
-                                title = \'{event_obj[2]}\',
-                                description = \'{event_obj[3]}\',
-                                host = \'{event_obj[4]}\',
-                                place = \'{event_obj[5]}\',
-                                time = \'{event_obj[6]}\',
-                                date = \'{event_obj[7]}\'
-                            where id = {event_obj[0]};
-                        ''')
+    cursor.execute(f'''
+        update events set
+            type = {event_obj[1]},
+            title = \'{event_obj[2]}\',
+            description = \'{event_obj[3]}\',
+            host = \'{event_obj[4]}\',
+            place = \'{event_obj[5]}\',
+            time = \'{event_obj[6]}\',
+            day_id = \'{event_obj[7]}\'
+        where id = {event_obj[0]};
+    ''')
     conn.commit()
 
 
