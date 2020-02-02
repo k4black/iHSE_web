@@ -247,14 +247,13 @@ table_fields = {
     'projects': ('id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'),
     'users': ('id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'),
     'sessions': ('id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'),
-    'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', ('day_id', 'date')),
+    'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'),
     'classes': ('id', 'total', 'annotation'),
     'enrolls': ('id', 'class_id', 'user_id', 'time', 'attendance', 'bonus'),
-    'credits': ('id', 'user_id', 'event_id', 'time', 'value'),
+    'credits': ('id', 'user_id', 'event_id', 'date', 'value'),
     'codes': ('code', 'type', 'used'),
     'days': ('id', 'date', 'title', 'feedback'),
     'vacations': ('id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'),
-    'top': ('id', 'user_id', 'chosen_1', 'chosen_2', 'chosen_3', 'day_id'),
 }
 
 
@@ -272,16 +271,10 @@ def dict_to_tuple(data_raw: tp.Dict[str, tp.Any], table: str) -> tp.Tuple[tp.Any
 
     for field in table_fields[table]:
         try:
-            if type(field) is tuple:
-                if field[0] in data_raw:
-                    data.append(data_raw[field[0]])
-                else:
-                    data.append(data_raw[field[1]])
+            if field == 'id' and data_raw[field] == '':
+                data.append(None)  # No id. Replace by None
             else:
-                if field == 'id' and data_raw[field] == '':
-                    data.append(None)  # No id. Replace by None
-                else:
-                    data.append(data_raw[field])
+                data.append(data_raw[field])
         except KeyError:
             data.append(None)  # if no field
 
@@ -343,7 +336,7 @@ def get_projects():
         project objects: list of project objects - [ (id, title, type, def_type, direction, description), ...]
 
     """
-    cursor.execute('select (id, title, type, def_type, direction, description, annotation) from projects;')
+    cursor.execute('select * from projects;')
     projects_list = cursor.fetchall()
 
     return projects_list
@@ -425,7 +418,7 @@ def get_days():
         day objects: list of day objects - [ (id, date, title, feedback), ...]
 
     """
-    cursor.execute('select (id, date, title, feedback) from days;')
+    cursor.execute('select * from days;')
     days_list = cursor.fetchall()
 
     return days_list
@@ -499,7 +492,7 @@ def get_vacations():
         day objects: list of day objects - [ (id, user_id, date_from, date_to, time_from, time_to, type), ...]
     """
 
-    cursor.execute('select (id, user_id, date_from, date_to, time_from, time_to) from vacations;')
+    cursor.execute('select * from vacations;')
     days_list = cursor.fetchall()
 
     return days_list
@@ -604,7 +597,7 @@ def get_users():
     Returns:
         user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar, project_id), ...]
     """
-    cursor.execute('select (id, user_type, phone, name, pass, team, project_id, avatar) from users;')
+    cursor.execute('select * from users;')
     users_list = cursor.fetchall()
 
     return users_list
@@ -621,7 +614,7 @@ def get_user(user_id):
                      or None if there is no such user
 
     """
-    cursor.execute(f'select (id, user_type, phone, name, pass, team, project_id, avatar) from users where id = {user_id};')
+    cursor.execute(f'select * from users where id = {user_id};')
     return cursor.fetchone()
 
 
@@ -636,7 +629,7 @@ def get_user_by_phone(phone):
                      or None if there is no such user
 
     """
-    cursor.execute(f"select (id, user_type, phone, name, pass, team, project_id, avatar) from users where phone = '{phone}';")
+    cursor.execute(f"select * from users where phone = '{phone}';")
     return cursor.fetchone()
 
 
@@ -691,7 +684,7 @@ def register(name, passw, type, phone, team):
     Returns:
     """
     # TODO: change to PostgreSQL
-    cursor.execute(f'select (id, user_type, phone, name, pass, team, project_id, avatar) from users where name = \'{name}\' and pass = {passw};')
+    cursor.execute(f'select * from users where name = \'{name}\' and pass = {passw};')
     existing_users = cursor.fetchall()
     if len(existing_users) == 0:
         cursor.execute(f'insert into users (user_type, phone, name, pass, team) values ({type}, \'{phone}\', \'{name}\', {passw}, {team});')
@@ -766,7 +759,7 @@ def get_sessions():
         session objects: list of sess objects - [ (id, user_id, user_type, user_agent, last_ip, time), ...]
 
     """
-    cursor.execute('select (id, user_id, user_type, user_agent, last_ip, time) from sessions;')
+    cursor.execute('select * from sessions;')
     sessions_list = cursor.fetchall()
 
     for i in range(len(sessions_list)):
@@ -786,7 +779,7 @@ def get_session(sess_id):
                      or None if there is no such session
 
     """
-    cursor.execute(f"select (id, user_id, user_type, user_agent, last_ip, time) from sessions where id = bytea \'\\x{sess_id}\';")
+    cursor.execute(f"select * from sessions where id = bytea \'\\x{sess_id}\';")
     return cursor.fetchone()
 
 
@@ -843,7 +836,7 @@ def login(phone, passw, agent, ip, time='0'):
     """
 
     # Check user with name and pass exist and got it
-    cursor.execute(f"select (id, user_type, phone, name, pass, team, project_id, avatar) from users where phone = '{phone}' and pass = {passw};")
+    cursor.execute(f"select * from users where phone = '{phone}' and pass = {passw};")
     users = cursor.fetchall()
 
     if len(users) == 0:    # No such user
@@ -852,7 +845,7 @@ def login(phone, passw, agent, ip, time='0'):
     user = users[0]
 
     # Create new session if there is no session with user_id and user_agent
-    cursor.execute(f"select (id, user_id, user_type, user_agent, last_ip, time) from sessions where user_id = {user[0]} and user_agent = '{agent}';")
+    cursor.execute(f"select * from sessions where user_id = {user[0]} and user_agent = '{agent}';")
     existing_sessions = cursor.fetchall()
     if len(existing_sessions) == 0:
         cursor.execute(f"""
@@ -861,7 +854,7 @@ def login(phone, passw, agent, ip, time='0'):
         conn.commit()
 
     # Get session corresponding to user_id and user_agent
-    cursor.execute(f"select (id, user_id, user_type, user_agent, last_ip, time) from sessions where user_id = {user[0]} and user_agent = '{agent}';")
+    cursor.execute(f"select * from sessions where user_id = {user[0]} and user_agent = '{agent}';")
     result = cursor.fetchone()
 
     print(f'session got by login:{result}')
@@ -888,7 +881,7 @@ def logout(sess_id) -> bool:
         Success delete or not
 
     """
-    cursor.execute(f'select (id, user_id, user_type, user_agent, last_ip, time) from sessions where id = bytea \'\\x{sess_id}\';')
+    cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
     sessions = cursor.fetchall()
 
     if len(sessions) == 0:    # No such session
@@ -924,7 +917,7 @@ def get_events():
         event objects: list of event objects - [ (id, type, title, description, host, place, time, date), ...]
 
     """
-    cursor.execute('select (id, type, title, description, host, place, time, day_id) from events;')
+    cursor.execute('select * from events;')
     events_list = cursor.fetchall()
 
     return events_list
@@ -943,7 +936,7 @@ def get_day(date: str):
     cursor.execute(f"select (id) from days where date = '{date}'")
     # TODO: maybe [0] is not needed
     day_id = int(cursor.fetchone()[0])
-    cursor.execute(f"select (id, type, title, description, host, place, time, day_id) from events where day_id = {day_id};")
+    cursor.execute(f"select * from events where day_id = {day_id};")
     events_list = cursor.fetchall()
 
     return events_list
@@ -984,7 +977,7 @@ def get_event(event_id):
     Returns:
         event_obj: (id, type, title, description, host, place, time, date)
     """
-    cursor.execute(f"select (id, type, title, description, host, place, time, day_id) from events where id = {event_id};")
+    cursor.execute(f"select * from events where id = {event_id};")
     return cursor.fetchone()
 
 
@@ -1082,7 +1075,7 @@ def get_classes():
         class objects: list of event objects - [ (id, credits, count, total), ...]
 
     """
-    cursor.execute('select (id, total, annotation) from classes;')
+    cursor.execute('select * from classes;')
     classes_list = cursor.fetchall()
 
     return classes_list
@@ -1098,7 +1091,7 @@ def get_class(event_id):
         class_obj: (id, credits, count, total)
     """
 
-    cursor.execute(f'select (id, total, annotation) from classes where id = {event_id};')
+    cursor.execute(f'select * from classes where id = {event_id};')
     return cursor.fetchone()
 
 
@@ -1115,7 +1108,7 @@ def check_class(class_id):
     cursor.execute(f"select count(*) from enrolls where class_id = {class_id};")
     enrolled = cursor.fetchone()[0]
 
-    cursor.execute(f'select (id, total, annotation) from classes where id = {class_id};')
+    cursor.execute(f'select * from classes where id = {class_id};')
     class_obj = cursor.fetchone()
 
     if class_obj is None:
@@ -1204,7 +1197,7 @@ def get_enrolls():
         enroll_obj: list of enroll objects - [ (id, event_id, user_id, time), ...]
 
     """
-    cursor.execute('select (id, class_id, user_id, time, attendance, bonus) from enrolls;')
+    cursor.execute('select * from enrolls;')
     enrolls_list = cursor.fetchall()
 
     return enrolls_list
@@ -1220,7 +1213,7 @@ def get_enroll(enroll_id):
         enroll_obj: (id, event_id, user_id, time, attendance)
     """
 
-    cursor.execute(f'select (id, class_id, user_id, time, attendance, bonus) from enrolls where id = {enroll_id};')
+    cursor.execute(f'select * from enrolls where id = {enroll_id};')
     return cursor.fetchone()
 
 
@@ -1234,7 +1227,7 @@ def get_enrolls_by_event_id(event_id):
         enroll_objs: [(id, event_id, users_id, time, attendance), ...]
     """
 
-    cursor.execute(f'select (id, class_id, user_id, time, attendance, bonus) from enrolls where class_id = {event_id};')
+    cursor.execute(f'select * from enrolls where class_id = {event_id};')
     enrolls = cursor.fetchall()
 
     if len(enrolls) == 0:  # No such enrolls
@@ -1253,7 +1246,7 @@ def get_enrolls_by_user_id(user_id):
         enroll_objs: [(id, event_id, users_id, time, attendance), ...]
     """
 
-    cursor.execute(f'select (id, class_id, user_id, time, attendance, bonus) from enrolls where user_id = {user_id};')
+    cursor.execute(f'select * from enrolls where user_id = {user_id};')
     enrolls = cursor.fetchall()
 
     if len(enrolls) == 0:  # No such enrolls
@@ -1287,17 +1280,17 @@ def edit_enroll(enroll_obj):
     Returns:
     """
 
-    # cursor.execute(f'select (id, class_id, user_id, time, attendance, bonus) from enrolls where id = {enroll_obj[0]};')
+    # cursor.execute(f'select * from enrolls where id = {enroll_obj[0]};')
     # enroll = cursor.fetchone()
 
     # if enroll[1] != enroll_obj[1]:
         # Change old event
-        # cursor.execute(f'select (id, total, annotation) from classes where id = {enroll[1]};')
+        # cursor.execute(f'select * from classes where id = {enroll[1]};')
         # current_event = cursor.fetchone()
         # cursor.execute(f'update classes set count = {current_event[2] - 1} where id = {current_event[0]};')
 
         # Change new event
-        # cursor.execute(f'select (id, total, annotation) from classes where id = {enroll_obj[1]};')
+        # cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
         # new_event = cursor.fetchone()
         # cursor.execute(f'update classes set count = {new_event[2] + 1} where id = {new_event[1]};')
 
@@ -1323,12 +1316,12 @@ def remove_enroll(enroll_id):
         # Success delete or not
     """
 
-    cursor.execute(f'select (id, class_id, user_id, time, attendance, bonus) from enrolls where id = {enroll_id};')
+    cursor.execute(f'select * from enrolls where id = {enroll_id};')
     enroll = cursor.fetchone()
 
     # event_id = enroll[1]
 
-    # cursor.execute(f'select (id, total, annotation) from classes where id = {event_id};')
+    # cursor.execute(f'select * from classes where id = {event_id};')
     # event = cursor.fetchone()
     # cursor.execute(f'update classes set count = {event[2] - 1} where id = {event_id};')
 
@@ -1349,7 +1342,7 @@ def get_credits():
         credits objects: list of credits objects - [ (id, user_id, event_id, date, value), ...]
 
     """
-    cursor.execute('select (id, user_id, event_id, time, value) from credits;')
+    cursor.execute('select * from credits;')
     credits_list = cursor.fetchall()
 
     return credits_list
@@ -1365,7 +1358,7 @@ def get_credits_by_id(user_id):  # TODO: Hm.. Rename to get_credits(user_id)
         credits objects: list of credits objects - [ (id, user_id, event_id, date, value), ...]
     """
 
-    cursor.execute(f'select (id, user_id, event_id, time, value) from credits where user_id = {user_id};')
+    cursor.execute(f'select * from credits where user_id = {user_id};')
     credits_list = cursor.fetchall()
 
     return credits_list
@@ -1397,14 +1390,14 @@ def pay_credit(user_id, event_id):
     """
 
     # TODO: Make all of this in the sql
-    cursor.execute(f'select (id, type, title, description, host, place, time, day_id) from events where id = {event_id};')
+    cursor.execute(f'select * from events where id = {event_id};')
     event = cursor.fetchone()
-    cursor.execute(f'select (id, total, annotation) from classes where id = {event_id};')
+    cursor.execute(f'select * from classes where id = {event_id};')
     class_ = cursor.fetchone()
     cursor.execute(f"select (date) from days where id = event[7];")
     date_ = cursor.fetchone()[0]
 
-    cursor.execute(f'select (id, user_id, event_id, time, value) from credits where event_id = {event_id} and user_id = {user_id};')
+    cursor.execute(f'select * from credits where event_id = {event_id} and user_id = {user_id};')
     credits = cursor.fetchall()
     if len(credits) == 0:
         cursor.execute(f"insert into credits (id, user_id, event_id, time, value) values (default, {user_id}, {event_id}, '{date_}', {class_[1]});")
@@ -1477,7 +1470,7 @@ def get_codes():
         project objects: list of project objects - [ (code, type, used), ...]
 
     """
-    cursor.execute('select (code, type, used) from codes;')
+    cursor.execute('select * from codes;')
     codes_list = cursor.fetchall()
 
     return codes_list
