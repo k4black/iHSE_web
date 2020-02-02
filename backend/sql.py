@@ -19,7 +19,7 @@ cursor = conn.cursor()
 def checkpoint():
     # TODO: do we need checkpoint now? Maybe same flags should be set somehow in the PostgreSQL (need to check that)?
     # TODO: I dont f_ing know. Did you found where db file located?
-    # TODO: yup, work on a container with automatic backup in progress
+    # TODO: yup, working on a container with automatic backup
 
     pass
     # conn_sqlite.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # WAL
@@ -1015,6 +1015,8 @@ def edit_event(event_obj):
 
     Returns:
     """
+    cursor.execute(f"select (id) from days where date = '{event_obj[7]}'")
+    day_id = cursor.fetchone()[0]
     cursor.execute(f"""
         update events set
             type = {event_obj[1]},
@@ -1023,7 +1025,7 @@ def edit_event(event_obj):
             host = '{event_obj[4]}',
             place = '{event_obj[5]}',
             time = '{event_obj[6]}',
-            day_id = {event_obj[7]}
+            day_id = {day_id}
         where id = {event_obj[0]};
     """)
     conn.commit()
