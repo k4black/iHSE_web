@@ -247,14 +247,13 @@ table_fields = {
     'projects': ('id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'),
     'users': ('id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'),
     'sessions': ('id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'),
-    'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', ('day_id', 'date')),
+    'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'),
     'classes': ('id', 'total', 'annotation'),
     'enrolls': ('id', 'class_id', 'user_id', 'time', 'attendance', 'bonus'),
-    'credits': ('id', 'user_id', 'event_id', 'time', 'value'),
+    'credits': ('id', 'user_id', 'event_id', 'date', 'value'),
     'codes': ('code', 'type', 'used'),
     'days': ('id', 'date', 'title', 'feedback'),
     'vacations': ('id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'),
-    'top': ('id', 'user_id', 'chosen_1', 'chosen_2', 'chosen_3', 'day_id'),
 }
 
 
@@ -272,16 +271,10 @@ def dict_to_tuple(data_raw: tp.Dict[str, tp.Any], table: str) -> tp.Tuple[tp.Any
 
     for field in table_fields[table]:
         try:
-            if type(field) is tuple:
-                if field[0] in data_raw:
-                    data.append(data_raw[field[0]])
-                else:
-                    data.append(data_raw[field[1]])
+            if field == 'id' and data_raw[field] == '':
+                data.append(None)  # No id. Replace by None
             else:
-                if field == 'id' and data_raw[field] == '':
-                    data.append(None)  # No id. Replace by None
-                else:
-                    data.append(data_raw[field])
+                data.append(data_raw[field])
         except KeyError:
             data.append(None)  # if no field
 
