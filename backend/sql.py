@@ -1015,6 +1015,7 @@ def edit_event(event_obj):
 
     Returns:
     """
+    print(f"got object {event_obj}")
     cursor.execute(f"select (id) from days where date = '{event_obj[7]}'")
     day_id = cursor.fetchone()[0]
     cursor.execute(f"""
