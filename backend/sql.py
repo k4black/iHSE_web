@@ -1016,13 +1016,11 @@ def edit_event(event_obj):
     """ Update event
 
     Args:
-        event_obj: event obj (id, type, title, description, host, place, time, date)
+        event_obj: event obj (id, type, title, description, host, place, time, day_id)
 
     Returns:
     """
     print(f"got object {event_obj}")
-    cursor.execute(f"select (id) from days where date = '{event_obj[7]}'")
-    day_id = cursor.fetchone()[0]
     cursor.execute(f"""
         update events set
             type = {event_obj[1]},
@@ -1031,7 +1029,7 @@ def edit_event(event_obj):
             host = '{event_obj[4]}',
             place = '{event_obj[5]}',
             time = '{event_obj[6]}',
-            day_id = {day_id}
+            day_id = {event_obj[7]}
         where id = {event_obj[0]};
     """)
     conn.commit()
