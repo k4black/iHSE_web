@@ -276,7 +276,12 @@ def dict_to_tuple(data_raw: tp.Dict[str, tp.Any], table: str) -> tp.Tuple[tp.Any
             else:
                 data.append(data_raw[field])
         except KeyError:
-            data.append(None)  # if no field
+            if table == 'events':
+                cursor.execute(f"select (id) from days where date = '{data_raw['date']}'")
+                id_ = cursor.fetchone()[0]
+                data.append(id)
+            else:
+                data.append(None)  # if no field
 
     return tuple(data)
 
