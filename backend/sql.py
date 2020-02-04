@@ -1,3 +1,4 @@
+"""Module for basic PostgreSQL interaction via psycopg2"""
 import time
 import string
 import typing as tp
@@ -312,10 +313,10 @@ def safety_injections(param):
 
     """
 
-    if type(param) == int:
+    if isinstance(param, int):
         return param
 
-    if type(param) == str:
+    if isinstance(param, str):
         param.replace('"', '')
         param.replace('\'', '')
         param.replace(',', '')
@@ -394,7 +395,7 @@ def remove_project(project_id):
         # Success delete or not
     """
 
-    if project_id == 0 or project_id == '0':
+    if project_id in (0, '0'):
         return
 
     cursor.execute(f'update users set project_id = 0 where project_id = {project_id};')
@@ -672,14 +673,14 @@ def edit_user(user_obj):
     conn.commit()
 
 
-def register(name, passw, type, phone, team):
+def register(name, passw, type_, phone, team):
     """ Register new user
     There is no verification - create anywhere
 
     Args:
         name: User name - string
         passw: Password hash - int
-        type: User type - int  [0 - USER, 1 - HOST, 2 - ADMIN]
+        type_: User type - int  [0 - USER, 1 - HOST, 2 - ADMIN]
         phone: phone - string
         team: number of group - int
 
@@ -692,7 +693,7 @@ def register(name, passw, type, phone, team):
     cursor.execute(f'select * from users where name = \'{name}\' and pass = {passw};')
     existing_users = cursor.fetchall()
     if len(existing_users) == 0:
-        cursor.execute(f'insert into users (user_type, phone, name, pass, team) values ({type}, \'{phone}\', \'{name}\', {passw}, {team});')
+        cursor.execute(f'insert into users (user_type, phone, name, pass, team) values ({type_}, \'{phone}\', \'{name}\', {passw}, {team});')
         conn.commit()
         # Register new user if there is no user with name and pass
         # cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
@@ -726,7 +727,7 @@ def remove_user(user_id) -> bool:
         user_id: user id from db
 
     Returns:
-        # Success delete or not
+        # Successful delete or not
 
     """
     try:
@@ -767,8 +768,8 @@ def get_sessions():
     cursor.execute('select * from sessions;')
     sessions_list = cursor.fetchall()
 
-    for i in range(len(sessions_list)):
-        sessions_list[i] = ((sessions_list[i][0]).hex(), *sessions_list[i][1:])
+    for index, element in enumerate(sessions_list):
+        sessions_list[index] = ((element[0]).hex(), *element[1:])
 
     return sessions_list
 
@@ -821,7 +822,7 @@ def edit_session(sess_obj):
 
 
 # TODO: Update time in sessions
-def login(phone, passw, agent, ip, time='0'):
+def login(phone, passw, agent, ip, time_='0'):
     """ Login user
     Create new session if it does not exist and return sess id
 
@@ -830,7 +831,7 @@ def login(phone, passw, agent, ip, time='0'):
         passw: Password hash - int
         agent: User agent - string
         ip: ip - string
-        time: time of session creation
+        time_: time of session creation
 
     Note:
         session id is automatically generated
@@ -854,7 +855,7 @@ def login(phone, passw, agent, ip, time='0'):
     existing_sessions = cursor.fetchall()
     if len(existing_sessions) == 0:
         cursor.execute(f"""
-            insert into sessions (user_id, user_type, user_agent, last_ip, time) values ({user[0]}, {user[1]}, '{agent}', '{ip}', '{time}');
+            insert into sessions (user_id, user_type, user_agent, last_ip, time) values ({user[0]}, {user[1]}, '{agent}', '{ip}', '{time_}');
         """)
         conn.commit()
 
@@ -948,7 +949,7 @@ def get_day(date: str):
 
 
 # TODO: Both get_events() and load_events() needed? Or is is GSheets legacy and should be removed?
-def load_events(events_list):
+def load_events(events_list) -> bool:
     """ Load all events to sql table
     Clear events and insert all events in events table
 
@@ -956,21 +957,24 @@ def load_events(events_list):
         events_list: list of event objects - [ (id, type, title, description, host, place, time, date), ...]
 
     Returns:
-
+        bool: successful database call or not
     """
 
     # Safe update events - save count of people
-    for event_obj in events_list:
-        cursor.execute("""
-                          INSERT OR IGNORE INTO events(id, type, title, credits, total, date)
-                          VALUES (?, ?, ?, ?, ?, ?); 
-                        """, (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[5],))
-        cursor.execute("""
-                          UPDATE events SET type=?, title=?, credits=?, total=? WHERE id=?; 
-                        """, (event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[0]))
-    conn.commit()
-
-    return
+    try:
+        for event_obj in events_list:
+            cursor.execute("""
+                              INSERT OR IGNORE INTO events(id, type, title, credits, total, date)
+                              VALUES (?, ?, ?, ?, ?, ?); 
+                            """, (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[5],))
+            cursor.execute("""
+                              UPDATE events SET type=?, title=?, credits=?, total=? WHERE id=?; 
+                            """, (event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[0]))
+        conn.commit()
+        return True
+    except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
+        print(f"error: {err}")
+        return False
 
 
 def get_event(event_id):
@@ -1045,7 +1049,7 @@ def remove_event(event_id):
         # Success delete or not
 
     """
-    if event_id == 0 or event_id == '0':
+    if event_id in (0, '0'):
         return
 
     try:
@@ -1171,10 +1175,10 @@ def enroll_user(class_id, user_obj):  # TODO?
 
     if not class_ or enrolled >= class_[1]:  # No such event or too many people
         return False
-    else:
-        cursor.execute(f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({class_id}, {user_obj[0]}, 'time', false, 0);")
-        conn.commit()
-        return True
+
+    cursor.execute(f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({class_id}, {user_obj[0]}, 'time', false, 0);")
+    conn.commit()
+    return True
 
 
 def remove_class(class_id):
@@ -1235,8 +1239,8 @@ def get_enrolls_by_event_id(event_id):
 
     if len(enrolls) == 0:  # No such enrolls
         return []
-    else:
-        return enrolls
+
+    return enrolls
 
 
 def get_enrolls_by_user_id(user_id):
@@ -1254,8 +1258,8 @@ def get_enrolls_by_user_id(user_id):
 
     if len(enrolls) == 0:  # No such enrolls
         return []
-    else:
-        return enrolls
+
+    return enrolls
 
 
 def insert_enroll(enroll_obj) -> int:
@@ -1393,6 +1397,7 @@ def pay_credit(user_id, event_id):
     """
 
     # TODO: Make all of this in the sql
+    # TODO: does this even work? Looks like it shouldn't ...
     cursor.execute(f'select * from events where id = {event_id};')
     event = cursor.fetchone()
     cursor.execute(f'select * from classes where id = {event_id};')
@@ -1401,11 +1406,11 @@ def pay_credit(user_id, event_id):
     date_ = cursor.fetchone()[0]
 
     cursor.execute(f'select * from credits where event_id = {event_id} and user_id = {user_id};')
-    credits = cursor.fetchall()
-    if len(credits) == 0:
+    credits_ = cursor.fetchall()
+    if len(credits_) == 0:
         cursor.execute(f"insert into credits (id, user_id, event_id, time, value) values (default, {user_id}, {event_id}, '{date_}', {class_[1]});")
     else:
-        cursor.execute(f"update credits set value = {class_[1]} where id = {credits[0][0]};")
+        cursor.execute(f"update credits set value = {class_[1]} where id = {credits_[0][0]};")
 
     conn.commit()
 
@@ -1492,6 +1497,7 @@ def load_codes(codes) -> bool:
         for code in codes:
             cursor.execute(f"insert into codes (code, type, used) values ('{code[0]}', {code[1]}, false);")
         conn.commit()
+        return True
     except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
         print(f"error: {err}")
         return False
@@ -1515,6 +1521,7 @@ def use_code(code: str) -> bool:
 
     cursor.execute(f"update codes set used = true where code = '{code}';")
     conn.commit()
+    return True
 
 
 def clear_codes():
