@@ -91,16 +91,19 @@ function processEvents(events_raw) {
 }
 
 
-function getDays(credits, days, events) {
+function getDaysEvents(credits, days, events) {
+    console.log('credits, days, events', credits, days, events);
+
     let processed_days = {};
 
-    for (let id in days) {
-        processed_days[id] = new Set();
+    for (let day_id in days) {
+        processed_days[day_id] = new Set();
     }
 
     for (let id in credits) {
         let event_id = credits[id]['event_id'];
         let day_id = events[event_id]['day_id'];
+
         processed_days[day_id].add(event_id);
     }
 
@@ -108,47 +111,6 @@ function getDays(credits, days, events) {
 }
 
 
-events_raw = [
-    {'id': 0, 'type': 1, 'title': 'Some title 0', 'date': '06.10'},
-    {'id': 1, 'type': 1, 'title': 'Some title 1', 'date': '06.10'},
-    {'id': 2, 'type': 1, 'title': 'Some title 2', 'date': '07.10'},
-    {'id': 3, 'type': 1, 'title': 'Some title 3', 'date': '07.10'},
-    {'id': 4, 'type': 1, 'title': 'Some title 4', 'date': '07.10'},
-    {'id': 5, 'type': 1, 'title': 'Some title 5', 'date': '07.10'},
-    {'id': 6, 'type': 1, 'title': 'Some title 6', 'date': '08.10'},
-    {'id': 7, 'type': 1, 'title': 'Some title 7', 'date': '09.10'},
-    {'id': 8, 'type': 1, 'title': 'Some title 8', 'date': '09.10'},
-    {'id': 9, 'type': 1, 'title': 'Some title 9', 'date': '06.10'},
-];
-
-
-credits_raw = [
-    {'id': 0, 'user_id': 3, 'event_id': 0, 'date': '06.10', 'value': 100},
-    {'id': 1, 'user_id': 3, 'event_id': 1, 'date': '06.10', 'value': 200},
-    {'id': 2, 'user_id': 3, 'event_id': 3, 'date': '07.10', 'value': 300},
-    {'id': 3, 'user_id': 3, 'event_id': 4, 'date': '07.10', 'value': 100},
-    {'id': 4, 'user_id': 3, 'event_id': 5, 'date': '07.10', 'value': 50},
-    {'id': 5, 'user_id': 3, 'event_id': 6, 'date': '08.10', 'value': 311},
-
-    {'id': 6, 'user_id': 1, 'event_id': 0, 'date': '06.10', 'value': 311},
-    {'id': 7, 'user_id': 1, 'event_id': 2, 'date': '07.10', 'value': 30},
-    {'id': 8, 'user_id': 1, 'event_id': 5, 'date': '07.10', 'value': 50},
-    {'id': 9, 'user_id': 1, 'event_id': 6, 'date': '08.10', 'value': 64},
-    {'id': 10, 'user_id': 1, 'event_id': 7, 'date': '09.10', 'value': 45},
-
-    {'id': 11, 'user_id': 4, 'event_id': 1, 'date': '06.10', 'value': 311},
-    {'id': 12, 'user_id': 4, 'event_id': 2, 'date': '07.10', 'value': 30},
-    {'id': 13, 'user_id': 4, 'event_id': 5, 'date': '07.10', 'value': 50},
-    {'id': 14, 'user_id': 4, 'event_id': 7, 'date': '09.10', 'value': 64},
-    {'id': 15, 'user_id': 4, 'event_id': 8, 'date': '09.10', 'value': 45},
-];
-
-
-users_raw = [
-    {'id': 4, 'name': 'Boiko Tcar', 'team': 2, 'credits': 777},
-    {'id': 3, 'name': 'Inav Petrovich', 'team': 0, 'credits': 666},
-    {'id': 1, 'name': 'Max Pedroviv', 'team': 1, 'credits': 999},
-];
 
 
 
@@ -180,7 +142,7 @@ function getTableColumns(credits, days, events) {
     }
 
 
-    processed_days = getDays(credits, events, credits);  // Dict of Sets {day_id: {event_id's, ....} , ..}
+    processed_days = getDaysEvents(credits, events, credits);  // Dict of Sets {day_id: {event_id's, ....} , ..}
 
 
     for (let day_id in processed_days) {
