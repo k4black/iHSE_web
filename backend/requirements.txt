@@ -1,0 +1,11 @@
+###### Requirements without Version Specifiers ######
+
+# Testing req
+pytest
+coverage
+
+# main req
+configparser
+
+# SQL req
+psycopg2
