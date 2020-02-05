@@ -180,7 +180,7 @@ function getTableColumns(tableName, fields) {
                     }
                 },
             });
-        } else if (field === 'user_type' || (tableName === 'events' && field === 'type') || (tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback')) {
+        } else if (field === 'user_type' || (tableName === 'events' && field === 'type') || (tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback') || (tableName === 'codes' && field === 'used')) {
             columns.push({
                 title: field,
                 field: field,
@@ -208,7 +208,7 @@ function getTableColumns(tableName, fields) {
                                 return '<div class="event_type class_event" event_type=' + val + ' title="event_type: ' + val + '">class</div>'
                             }
                         }
-                        if ((tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback')) {
+                        if ((tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback') || (tableName === 'codes' && field === 'used')) {
                             if (val === true || val === 'true') {
                                 // True value
                                 return '<div class="bool_type true_bool" bool_type=' + val + ' title="bool_type: ' + val + '">true</div>'
@@ -510,7 +510,7 @@ function editRow(row) {
         let current_inputs_html = '<label for=' + field + '>' + field + '</label>';
 
         let disabled = (field === 'id' ? 'disabled' : '');
-        let list = (field === 'user_id' || field === 'event_id' || field === 'project_id' ? 'list=' + field + '_list' : '');
+        let list = (field === 'user_id' || field === 'event_id' || field === 'project_id' || field === 'day_id' ? 'list=' + field + '_list' : '');
         let placeholder = (field.slice(0, 4) === 'date' ? 'placeholder="dd.mm"' : '');
         placeholder = (field.slice(0, 4) === 'time' ? 'placeholder="hh.mm"' : '');
         placeholder = (current_table === 'events' && field === 'time' ? 'placeholder="hh.mm-hh.mm"' : '');
@@ -520,7 +520,7 @@ function editRow(row) {
             current_inputs_html += '<input name=' + field + ' value="' + row[field] + '" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         }
 
-        if (field === 'user_id' || field === 'event_id' || field === 'project_id') {
+        if (field === 'user_id' || field === 'event_id' || field === 'project_id' || field === 'day_id') {
             current_inputs_html += '<datalist id="' + field + '_list" name="' + field + '_list">';
 
             if (field === 'user_id') {
@@ -534,6 +534,10 @@ function editRow(row) {
             } else if (field === 'project_id') {
                 for (let id in projects) {
                     current_inputs_html += '<option value="' + id + '">' + projects[id].title + '</option>';
+                }
+            } else if (field === 'day_id') {
+                for (let id in days) {
+                    current_inputs_html += '<option value="' + id + '">' + days[id].date + '</option>';
                 }
             }
 
@@ -563,74 +567,6 @@ function setupTabs() {
             $('#tab_' + tab_name).addClass('active_tab');
         };
     }
-    //
-    // // TODO: Optimize
-    // $('#tab_users')[0].onclick = function () {
-    //     current_table = 'users';
-    //     loadAndCreateTable(current_table);
-    //     $('.tabs button').removeClass('active_tab');
-    //     $('#tab_users').addClass('active_tab');
-    // };
-    // $('#tab_sessions')[0].onclick = function () {
-    //     current_table = 'sessions';
-    //     $('.tabs button').removeClass('active_tab');
-    //     $('#tab_sessions').addClass('active_tab');
-    //     loadAndCreateTable(current_table);
-    // };
-    // $('#tab_credits')[0].onclick = function () {
-    //     current_table = 'credits';
-    //     $('.tabs button').removeClass('active_tab');
-    //     $('#tab_credits').addClass('active_tab');
-    //     loadAndCreateTable(current_table);
-    // };
-    // $('#tab_codes')[0].onclick = function () {
-    //     current_table = 'codes';
-    //     $('.tabs button').removeClass('active_tab');
-    //     $('#tab_codes').addClass('active_tab');
-    //     loadAndCreateTable(current_table);
-    // };
-    // $('#tab_feedback')[0].onclick = function () {
-    //     current_table = 'feedback';
-    //     loadAndCreateTable(current_table);
-    //     $('.tabs button').removeClass('active_tab');
-    //     $('#tab_feedback').addClass('active_tab');
-    // };
-    // $('#tab_projects')[0].onclick = function () {
-    //     current_table = 'projects';
-    //     loadAndCreateTable(current_table);
-    //     $('.tabs button').removeClass('active_tab');
-    //     $('#tab_projects').addClass('active_tab');
-    // };
-    // $('#tab_events')[0].onclick = function () {
-    //     current_table = 'events';
-    //     loadAndCreateTable(current_table);
-    //     $('.tabs button').removeClass('active_tab');
-    //     $('#tab_events').addClass('active_tab');
-    // };
-    // $('#tab_classes')[0].onclick = function () {
-    //     current_table = 'classes';
-    //     loadAndCreateTable(current_table);
-    //     $('.tabs button').removeClass('active_tab');
-    //     $('#tab_classes').addClass('active_tab');
-    // };
-    // $('#tab_enrolls')[0].onclick = function () {
-    //     current_table = 'enrolls';
-    //     loadAndCreateTable(current_table);
-    //     $('.tabs button').removeClass('active_tab');
-    //     $('#tab_enrolls').addClass('active_tab');
-    // };
-    // $('#tab_days')[0].onclick = function () {
-    //     current_table = 'days';
-    //     loadAndCreateTable(current_table);
-    //     $('.tabs button').removeClass('active_tab');
-    //     $('#tab_days').addClass('active_tab');
-    // };
-    // $('#tab_vacations')[0].onclick = function () {
-    //     current_table = 'vacations';
-    //     loadAndCreateTable(current_table);
-    //     $('.tabs button').removeClass('active_tab');
-    //     $('#tab_vacations').addClass('active_tab');
-    // };
 }
 
 function setupToolbar() {
