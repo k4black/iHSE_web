@@ -216,7 +216,10 @@ function getTableData(credits, users, days, events) {
         }
 
 
+        console.log('credits: ', credits);
         for (let credit_id in credits) {
+            console.log('credit: ', credit_id);
+
             if (user_id != credits[credit_id]['user_id']) {  // Only for current user
                 console.log(user_id, '!=', credits[credit_id]['user_id'], '  for credit: ', credit_id);
                 return;
@@ -231,6 +234,9 @@ function getTableData(credits, users, days, events) {
             row['date' + days[day_id].date + 'id' + event_id] = value;
             row['date' + days[day_id].date + 'total'] += value;
             row['total'] += value;
+
+            console.log('row', row);
+            console.log('data', data);
         }
 
         data.push(row);
