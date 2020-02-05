@@ -243,7 +243,9 @@ function buildTable($el, credits, users, days, events) {
     let [columnsTop, columnsBottom] = getTableColumns(credits, days, events);
     let data = getTableData(credits, users, days, events);
 
-    // console.log('data', data);
+    console.log('data', data);
+    console.log('columnsTop', columnsTop);
+    console.log('columnsBottom', columnsBottom);
 
     $el.bootstrapTable('destroy').bootstrapTable({
         // responseHandler(res) {
