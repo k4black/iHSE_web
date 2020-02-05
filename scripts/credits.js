@@ -14,9 +14,19 @@ var $table = $('#table');
 var $popup = $('#popup')[0];
 
 
+function foundCreditsId(user_id, event_id) {
+    for (let credits_id in credits) {
+        if (credits[credits_id].user_id == user_id && credits[credits_id].event_id == event_id) {
+            return credits[credits_id].id;
+        }
+    }
+
+    return '';
+}
+
 
 function creditsFormatter(value, row, index) {
-    return '<div class="item" id="' + row.id + '">' + '<p>' + value + '</p></div>'
+    return '<div class="item" id="' + foundCreditsId(row.id, ) + '">' + '<p>' + value + '</p></div>'
 }
 
 
@@ -158,10 +168,10 @@ function getTableColumns(credits, days, events) {
                 sortable: true,
                 align: 'center',
                 valign: 'middle',
-                formatter: creditsFormatter,
-                // formatter: function (val) {
-                //     return '<div class="item">' + val + '</div>'
-                // },
+                // formatter: creditsFormatter,
+                formatter: function (value, row, index) {
+                    return '<div class="item" id="' + foundCreditsId(row.id, event_id) + '">' + '<p>' + value + '</p></div>'
+                },
                 events: {
                     'click .item': function (event) {
                         console.log('click ' + event.currentTarget)
@@ -288,7 +298,7 @@ function setTable() {
         }
 
         console.log(name, args);
-        let id = args[2].id;
+        let id = args[3][0]['children'][0].id;
         let value = args[1];
         let time = credits[id]['time'];
         let event_id = args[0].slice(11);
