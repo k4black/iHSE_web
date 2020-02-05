@@ -89,20 +89,21 @@ let projects;
 let data = [
     {'id': 'NONE', 'title': 'NONE', 'type': 'NONE', 'def_type': 'NONE', 'direction': 'NONE', 'description': 'NONE'}
 ];
+
 let fields = {
-    'projects': ['id', 'title', 'type', 'def_type', 'direction', 'description'],
-    'users': ['id', 'user_type', 'phone', 'name', 'pass', 'team', 'credits', 'avatar', 'project_id'],
+    'users': ['id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'],
     'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
-    'events': ['id', 'type', 'title', 'description', 'host', 'place', 'time', 'date'],
-    'classes': ['id', 'credits', 'count', 'total'],
-    'enrolls': ['id', 'event_id', 'user_id', 'time', 'attendance'],
-    'credits': ['id', 'user_id', 'event_id', 'date', 'value'],
+    'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
     'codes': ['code', 'type', 'used'],
+    'feedback': ['id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'],
+    'top': ['id', 'user_id', 'chosen_1', 'chosen_2', 'chosen_3', 'day_id'],
+    'projects': ['id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'],
+    'events': ['id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'],
+    'classes': ['id', 'total', 'annotation'],
+    'enrolls': ['id', 'class_id', 'user_id', 'time', 'attendance', 'bonus'],
     'days': ['id', 'date', 'title', 'feedback'],
     'vacations': ['id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'],
 };
-
-
 
 
 
@@ -568,6 +569,8 @@ function editRow(row) {
 
 function setupTabs() {
     console.log('setup-ing tabs');
+
+
 
     for (let tab_name in fields) {
         $('#tab_' + tab_name)[0].onclick = function () {

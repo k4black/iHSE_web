@@ -245,14 +245,16 @@ def recount_credits():
 
 
 table_fields = {
-    'projects': ('id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'),
     'users': ('id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'),
     'sessions': ('id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'),
+    'credits': ('id', 'user_id', 'event_id', 'time', 'value'),
+    'codes': ('code', 'type', 'used'),
+    'feedback': ('id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'),
+    'top': ('id', 'user_id', 'chosen_1', 'chosen_2', 'chosen_3', 'day_id'),
+    'projects': ('id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'),
     'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'),
     'classes': ('id', 'total', 'annotation'),
     'enrolls': ('id', 'class_id', 'user_id', 'time', 'attendance', 'bonus'),
-    'credits': ('id', 'user_id', 'event_id', 'date', 'value'),
-    'codes': ('code', 'type', 'used'),
     'days': ('id', 'date', 'title', 'feedback'),
     'vacations': ('id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'),
 }
