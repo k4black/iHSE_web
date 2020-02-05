@@ -285,7 +285,10 @@ function setTable() {
     days = cache['days'];
 
 
-    data = cache[current_table];
+    data = [];
+    for (let id in cache[current_table]) {
+        data.push(cache[current_table][id]);
+    }
 
     buildTable($table, current_table, fields, data);
 }
