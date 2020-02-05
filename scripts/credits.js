@@ -309,7 +309,7 @@ function setTable() {
         } else {
             // edit some
             if (value === 0 || value === '0') {
-                console.log(credit_id, user_id, event_id, time, event_id === 'tal');
+                console.log('-', user_id, event_id, '-', event_id === 'tal');
 
                 editCredit('', user_id, event_id, '', value);
             } else {
