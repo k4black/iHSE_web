@@ -298,12 +298,9 @@ function setTable() {
         }
 
         console.log(name, args);
-        let credit_id = args[3][0]['children'][0].id;
         let user_id = args[2].id;
         let value = args[1];
-        let time = credits[credit_id]['time'];
         let event_id = args[0].slice(11);
-        console.log(credit_id, user_id, event_id, time, event_id === 'tal');
 
         if (event_id === 'tal') {
             // Total
@@ -312,8 +309,15 @@ function setTable() {
         } else {
             // edit some
             if (value === 0 || value === '0') {
+                console.log(credit_id, user_id, event_id, time, event_id === 'tal');
+
                 editCredit('', user_id, event_id, '', value);
             } else {
+                let credit_id = args[3][0]['children'][0].id;
+                let time = credits[credit_id]['time'];
+
+                console.log(credit_id, user_id, event_id, time, event_id === 'tal');
+
                 editCredit(credit_id, user_id, event_id, time, value);
             }
         }
