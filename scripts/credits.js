@@ -218,33 +218,29 @@ function getTableData(credits, users, days, events) {
 
         console.log('credits: ', credits);
         for (let credit_id in credits) {
-            console.log('credit: ', credit_id);
+            // console.log('credit: ', credit_id);
 
-            if (user_id != credits[credit_id]['user_id']) {  // Only for current user
-                console.log(user_id, '!=', credits[credit_id]['user_id'], '  for credit: ', credit_id);
-                return;
+            if (user_id == credits[credit_id]['user_id']) {  // Only for current user
+                let event_id = credits[credit_id]['event_id'];
+                let day_id = events[event_id]['day_id'];
+                let value = credits[credit_id]['value'];
+
+                // console.log(event_id, day_id, value, '  for credit: ', credit_id);
+
+                row['date' + days[day_id].date + 'id' + event_id] = value;
+                row['date' + days[day_id].date + 'total'] += value;
+                row['total'] += value;
             }
-
-            let event_id = credits[credit_id]['event_id'];
-            let day_id = events[event_id]['day_id'];
-            let value = credits[credit_id]['value'];
-
-            console.log(event_id, day_id, value, '  for credit: ', credit_id);
-
-            row['date' + days[day_id].date + 'id' + event_id] = value;
-            row['date' + days[day_id].date + 'total'] += value;
-            row['total'] += value;
-
         }
 
-        console.log('AND row', row);
+        // console.log('AND row', row);
 
         data.push(row);
 
-        console.log('data', data);
+        // console.log('data', data);
     }
-
-    console.log('AND data', data);
+    //
+    // console.log('AND data', data);
 
     return data;
 }
