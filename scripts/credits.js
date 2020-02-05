@@ -218,14 +218,11 @@ function getTableData(credits, users, days, events) {
 
         console.log('credits: ', credits);
         for (let credit_id in credits) {
-            // console.log('credit: ', credit_id);
 
             if (user_id == credits[credit_id]['user_id']) {  // Only for current user
                 let event_id = credits[credit_id]['event_id'];
                 let day_id = events[event_id]['day_id'];
                 let value = credits[credit_id]['value'];
-
-                // console.log(event_id, day_id, value, '  for credit: ', credit_id);
 
                 row['date' + days[day_id].date + 'id' + event_id] = value;
                 row['date' + days[day_id].date + 'total'] += value;
@@ -233,15 +230,8 @@ function getTableData(credits, users, days, events) {
             }
         }
 
-        // console.log('AND row', row);
-
         data.push(row);
-
-        // console.log('data', data);
     }
-    //
-    // console.log('AND data', data);
-
     return data;
 }
 
@@ -313,10 +303,7 @@ function setTable() {
             if (value === 0 || value === '0') {
                 editCredit('', id, event_id, date, value);
             } else {
-                let filtered = credits[id][date].filter(function(credit) {return credit.event_id == event_id});
-                // console.log('credits', credits);
-                // console.log('id/date', id, date, event_id);
-                // console.log('filtered', filtered);
+                let filtered = Object.values(credits).filter(function(credit) {return credit.event_id == event_id});
                 let credit_id = '';
                 if (filtered.length !== 0) {
                     credit_id = filtered[0].id;
