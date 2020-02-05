@@ -1,0 +1,26 @@
+
+# Add 'docker' label to any docker files changes
+docker:
+- 'docker/*'
+
+# Add 'documentation' label to any .md file changes (readme and ect)
+documentation:
+- '*.md'
+
+# Add 'workflow' label to any .github changes
+workflow:
+  - .github/*
+  
+# Add 'frontend' label to any change within the frontend userd files
+frontend:
+  - '*.js'
+  - '*.css'
+  - '*.html'
+  
+# Add 'backend' label to any change within the backend userd files (python files)
+backend:
+  - '*.py'
+
+# Add 'testing' label to any change to travis conf and tests itself
+testing:
+  - tests/*
