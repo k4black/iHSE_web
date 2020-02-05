@@ -210,7 +210,7 @@ function getTableData(credits, users, days, events) {
         // To avoid undef
         row['total'] = 0;
         for (let day_id in days) {
-            for (let event_id of events) {
+            for (let event_id in events) {
                 row['date' + days[day_id].date + 'id' + event_id] = 0;
             }
             row['date' + days[day_id].date + 'total'] = 0;
