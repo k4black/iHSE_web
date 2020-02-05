@@ -290,18 +290,18 @@ function setTable() {
         console.log(name, args);
         let id = args[2].id;
         let value = args[1];
-        let date = args[0].slice(4, 9);
+        let time = credits[id]['time'];
         let event_id = args[0].slice(11);
-        console.log(id, date, event_id, event_id === 'tal');
+        console.log(id, time, event_id, event_id === 'tal');
 
         if (event_id === 'tal') {
             // Total
             return;
-            addCredit(id, date, 0);
+            addCredit(id, 0);
         } else {
             // edit some
             if (value === 0 || value === '0') {
-                editCredit('', id, event_id, date, value);
+                editCredit('', id, event_id, time, value);
             } else {
                 let filtered = Object.values(credits).filter(function(credit) {return credit.event_id == event_id});
                 let credit_id = '';
@@ -309,7 +309,7 @@ function setTable() {
                     credit_id = filtered[0].id;
                 }
 
-                editCredit(credit_id, id, event_id, date, value);
+                editCredit(credit_id, id, event_id, time, value);
             }
         }
     })
@@ -371,15 +371,17 @@ $(function() {
 
 
 
-function addCredit(user_id, date, value) {
-    editCredit('', user_id,'', date,value)
+function addCredit(user_id, value) {
+    let time = '01.11.20 13:12';  // TODO: Current time
+
+    editCredit('', user_id,'', time, value)
 }
 
-function editCredit(id, user_id, event_id, date, value) {
+function editCredit(id, user_id, event_id, time, value) {
     document.getElementById('id').value = id;
     document.getElementById('user_id').value = user_id;
     document.getElementById('event_id').value = event_id;
-    document.getElementById('date').value = date;
+    document.getElementById('time').value = time;
     document.getElementById('value').value = value;
 
     $popup.style.display = 'block';
@@ -391,13 +393,13 @@ function saveCredit() {
     let id = document.getElementById('id').value;
     let user_id = document.getElementById('user_id').value;
     let event_id = document.getElementById('event_id').value;
-    let date = document.getElementById('date').value;
+    let time = document.getElementById('time').value;
     let value = document.getElementById('value').value;
 
-    alert('Saving credit: ' + id + ' ' + user_id + ' ' + event_id + ' ' + date + ' ' + value);
+    alert('Saving credit: ' + id + ' ' + user_id + ' ' + event_id + ' ' + time + ' ' + value);
 
-    if (date === '' || event_id === '' || value === '') {
-        alert('Cannot save with empty EVENT_ID or DATE or VALUE');
+    if (event_id === '' || value === '') {
+        alert('Cannot save with empty EVENT_ID or VALUE');
         return;
     }
 
@@ -407,7 +409,7 @@ function saveCredit() {
                                 "id": id,
                                 "user_id": user_id,
                                 "event_id": event_id,
-                                "date": date,
+                                "time": time,
                                 "value": value,
                                 });
 
