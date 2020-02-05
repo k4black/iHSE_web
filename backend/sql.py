@@ -334,6 +334,36 @@ def safety_injections(param):
 # TODO: yep. I know. Temporary commented this code for checking and testing
 
 
+# Overall
+def get_table(table_name: str) -> tp.List[tp.Tuple[tp.Any]]:
+    """ Get all objects from sql table
+
+    Args:
+        table_name: name of db table
+
+    Returns:
+        objects: list of tuples - objects - [ (obj), (obj), ...]
+    """
+
+    cursor.execute(f'select * from {table_name};')  # TODO: try catch
+    objects_list = cursor.fetchall()
+
+    return objects_list
+
+
+def clear_table(table_name: str) -> None:
+    """ Remove all objects from sql table (EXCEPT id==0)
+
+    Args:
+        table_name: name of db table
+
+    Returns:
+    """
+
+    cursor.execute(f'delete from {table_name} where id != 0;')  # TODO: try catch
+    conn.commit()
+
+
 # Projects
 def get_projects():
     """ Get all projects from sql table

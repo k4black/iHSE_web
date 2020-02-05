@@ -512,30 +512,9 @@ def admin_panel(env, query, cookie):
         table_name = query['table']
         print(f'Got get_table {table_name}')
 
-        if table_name == 'users':
-            data = sql.process_sql(sql.get_users(), 'users')
-        elif table_name == 'credits':
-            data = sql.process_sql(sql.get_credits(), 'credits')
-            print('credits', data)
-        elif table_name == 'sessions':
-            data = sql.process_sql(sql.get_sessions(), 'sessions')
-            print('sessions', data)
-        elif table_name == 'codes':
-            data = sql.process_sql(sql.get_codes(), 'codes')
-        # elif table_name == 'feedback':
-        #     data = sql.process_sql(sql.get_feedback(), 'feedback')
-        elif table_name == 'projects':
-            data = sql.process_sql(sql.get_projects(), 'projects')
-        elif table_name == 'events':
-            data = sql.process_sql(sql.get_events(), 'events')
-        elif table_name == 'classes':
-            data = sql.process_sql(sql.get_classes(), 'classes')
-        elif table_name == 'enrolls':
-            data = sql.process_sql(sql.get_enrolls(), 'enrolls')
-        elif table_name == 'days':
-            data = sql.process_sql(sql.get_days(), 'days')
-        elif table_name == 'vacations':
-            data = sql.process_sql(sql.get_vacations(), 'vacations')
+        if table_name in sql.table_fields.keys():
+            objects_list = sql.get_table(table_name)
+            data = sql.process_sql(objects_list, table_name)
         else:
             print(' ========  400 Bad Request by admin  ======== ')
             return ('400 Bad Request',
@@ -566,28 +545,8 @@ def admin_panel(env, query, cookie):
         table_name = query['table']
         print(f'Clearing {table_name}')
 
-        if table_name == 'users':
-            sql.clear_users()
-        elif table_name == 'credits':
-            sql.clear_credits()
-        elif table_name == 'sessions':
-            sql.clear_sessions()
-        elif table_name == 'codes':
-            sql.clear_codes()
-        # elif table_name == 'feedback':
-        #     sql.clear_feedback()
-        elif table_name == 'projects':
-            sql.clear_projects()
-        elif table_name == 'events':
-            sql.clear_events()
-        elif table_name == 'classes':
-            sql.clear_classes()
-        elif table_name == 'enrolls':
-            sql.clear_enrolls()
-        elif table_name == 'days':
-            sql.clear_days()
-        elif table_name == 'vacations':
-            sql.clear_vacations()
+        if table_name in sql.table_fields.keys():
+            sql.clear_table(table_name)
         else:
             return ('400 Bad Request',
                     [
@@ -633,7 +592,7 @@ def admin_panel(env, query, cookie):
 
                 # elif table_name == 'feedback':
                 #     data = sql.dict_to_tuple(obj, 'users')
-                #     sql.insert_feedback(data)
+                #     sql.insert_feedback(data)  # TODO: Common edit and insert 
 
             elif table_name == 'projects':
                 data = sql.dict_to_tuple(obj, 'projects')
