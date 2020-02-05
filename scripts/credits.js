@@ -235,12 +235,16 @@ function getTableData(credits, users, days, events) {
             row['date' + days[day_id].date + 'total'] += value;
             row['total'] += value;
 
-            console.log('row', row);
-            console.log('data', data);
         }
 
+        console.log('AND row', row);
+
         data.push(row);
+
+        console.log('data', data);
     }
+
+    console.log('AND data', data);
 
     return data;
 }
