@@ -298,28 +298,23 @@ function setTable() {
         }
 
         console.log(name, args);
-        let id = args[3][0]['children'][0].id;
+        let credit_id = args[3][0]['children'][0].id;
+        let user_id = args[2].id;
         let value = args[1];
-        let time = credits[id]['time'];
+        let time = credits[credit_id]['time'];
         let event_id = args[0].slice(11);
-        console.log(id, time, event_id, event_id === 'tal');
+        console.log(credit_id, user_id, event_id, time, event_id === 'tal');
 
         if (event_id === 'tal') {
             // Total
             return;
-            addCredit(id, 0);
+            addCredit(event_id, user_id, 0);
         } else {
             // edit some
             if (value === 0 || value === '0') {
-                editCredit('', id, event_id, '', value);
+                editCredit('', user_id, event_id, '', value);
             } else {
-                let filtered = Object.values(credits).filter(function(credit) {return credit.event_id == event_id});
-                let credit_id = '';
-                if (filtered.length !== 0) {
-                    credit_id = filtered[0].id;
-                }
-
-                editCredit(credit_id, id, event_id, time, value);
+                editCredit(credit_id, user_id, event_id, time, value);
             }
         }
     })
