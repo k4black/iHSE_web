@@ -92,24 +92,15 @@ function processEvents(events_raw) {
 
 
 function getDaysEvents(credits, days, events) {
-    console.log('credits, days, events', credits, days, events);
-
     let processed_days = {};
 
     for (let day_id in days) {
         processed_days[day_id] = new Set();
     }
 
-    console.log('processed_days', processed_days);
-
     for (let id in credits) {
         let event_id = credits[id]['event_id'];
-
-        console.log('event_id', event_id);
-
         let day_id = events[event_id]['day_id'];
-
-        console.log('day_id', day_id);
 
         processed_days[day_id].add(event_id);
     }
@@ -149,7 +140,7 @@ function getTableColumns(credits, days, events) {
     }
 
 
-    processed_days = getDaysEvents(credits, events, credits);  // Dict of Sets {day_id: {event_id's, ....} , ..}
+    processed_days = getDaysEvents(credits, days, events);  // Dict of Sets {day_id: {event_id's, ....} , ..}
 
 
     for (let day_id in processed_days) {
