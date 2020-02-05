@@ -1412,7 +1412,14 @@ def insert_credit(credit_obj) -> int:
     Returns:
         id: id of the record created
     """
-    cursor.execute(f"insert into credits (user_id, event_id, time, value) values ({credit_obj[1]}, {credit_obj[2]}, '{credit_obj[3]}', {credit_obj[4]}) returning id;")
+
+    # If time = ''
+    if credit_obj[3] == '':
+        time = '34:12'  # TODO: get current time
+    else:
+        time = credit_obj[3]
+
+    cursor.execute(f"insert into credits (user_id, event_id, time, value) values ({credit_obj[1]}, {credit_obj[2]}, '{time}', {credit_obj[4]}) returning id;")
     id_ = cursor.fetchone()[0]
     conn.commit()
     return id_

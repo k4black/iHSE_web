@@ -301,7 +301,7 @@ function setTable() {
         } else {
             // edit some
             if (value === 0 || value === '0') {
-                editCredit('', id, event_id, time, value);
+                editCredit('', id, event_id, '', value);
             } else {
                 let filtered = Object.values(credits).filter(function(credit) {return credit.event_id == event_id});
                 let credit_id = '';
@@ -372,9 +372,7 @@ $(function() {
 
 
 function addCredit(user_id, value) {
-    let time = '01.11.20 13:12';  // TODO: Current time
-
-    editCredit('', user_id,'', time, value)
+    editCredit('', user_id,'', '', value)
 }
 
 function editCredit(id, user_id, event_id, time, value) {
