@@ -217,8 +217,8 @@ function getTableData(credits, users, days, events) {
 
 
         for (let credit_id in credits) {
-            if (user_id !== credits[credit_id]['user_id']) {  // Only for current user
-                console.log(user_id, '!=', credits[credit_id]['user_id'], '  for credit: ', credit_id);
+            if (user_id != credits[credit_id]['user_id']) {  // Only for current user
+            //     console.log(user_id, '!=', credits[credit_id]['user_id'], '  for credit: ', credit_id);
                 return;
             }
 
