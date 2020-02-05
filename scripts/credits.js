@@ -104,6 +104,9 @@ function getDaysEvents(credits, days, events) {
 
     for (let id in credits) {
         let event_id = credits[id]['event_id'];
+
+        console.log('event_id', event_id);
+
         let day_id = events[event_id]['day_id'];
 
         console.log('day_id', day_id);
