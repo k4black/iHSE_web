@@ -83,6 +83,7 @@ function processProjects(projects_raw) {
 let users;
 let events;
 let projects;
+let days;
 
 
 
@@ -272,101 +273,54 @@ function checkCreateTable(events_raw, users_raw, projects_raw) {
 
 
 /**
- * Get table information from server
- * Send http GET request and get table data (or send error if cookie does not exist)
+ * setup table by current_table from global 'cache'
  */
-function loadTable(table_name) {
-    var xhttp = new XMLHttpRequest();
+function setTable() {
+    console.log('setting Table: ', current_table);
+
+
+    events = cache['events'];
+    users = cache['users'];
+    projects = cache['projects'];
+    days = cache['days'];
+
+
+    data = cache[current_table];
+
+    buildTable($table, current_table, fields, data);
+}
+
+
+
+
+/**
+ * Get ALL obj information from server (ADMIN rights)
+ * Save obj list to global 'cache'
+ *
+ * Run func on OK status
+ */
+function loadTable(tableName, func) {
+    let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields name and phone
-                data = JSON.parse(this.responseText);
-                readyStatus++;
-                checkCreateTable(events_raw, users_raw, projects_raw);
-            }
-            else if (this.status === 401) {  // No account data
-                alert('Требуется авторизация!');
-            } else {
-                alert('Требуется авторизация!');
+            if (this.status === 200) { // If ok set up fields
+                // loadingEventEnd();
+
+                let obj_raw = JSON.parse(this.responseText);
+                objs = groupByUnique(obj_raw, 'id');
+                cache[tableName] = objs;
+
+                func();
             }
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + table_name, true);
+    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + tableName, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
 
-
-function loadEvents() {
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields name and phone
-                events_raw = JSON.parse(this.responseText);
-                readyStatus++;
-                checkCreateTable(events_raw, users_raw, projects_raw);
-            }
-            else if (this.status === 401) {  // No account data
-                alert('Требуется авторизация!');
-            } else {
-                alert('Требуется авторизация!');
-            }
-        }
-    };
-
-    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + 'events', true);
-    xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
-}
-
-function loadUsers() {
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields name and phone
-                users_raw = JSON.parse(this.responseText);
-                readyStatus++;
-                checkCreateTable(events_raw, users_raw, projects_raw);
-            }
-            else if (this.status === 401) {  // No account data
-                alert('Требуется авторизация!');
-            } else {
-                alert('Требуется авторизация!');
-            }
-        }
-    };
-
-    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + 'users', true);
-    xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
-}
-
-function loadProjects() {
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields name and phone
-                projects_raw = JSON.parse(this.responseText);
-                readyStatus++;
-                checkCreateTable(events_raw, users_raw, projects_raw);
-            }
-            else if (this.status === 401) {  // No account data
-                alert('Требуется авторизация!');
-            } else {
-                alert('Требуется авторизация!');
-            }
-        }
-    };
-
-    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + 'projects', true);
-    xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
-}
 
 
 
@@ -374,23 +328,37 @@ function loadProjects() {
 
 
 function loadAndCreateTable(table_name) {
-    readyStatus = 0;
+    current_table = table_name;
 
-    // Loading of tables (users, events, projects, and Main one)
-    loadEvents();
-    loadUsers();
-    loadProjects();
-    loadTable(table_name);  // TODO: Optimize
+
+    if (!(table_name in ['users', 'events', 'projects', 'days'])) {
+        loadTable(table_name, function () {
+            console.log('checkLoading', cache);
+            checkLoading(setTable, ['users', 'events', 'projects', 'days', table_name]);
+        });
+    } else {
+        loadTable(table_name, function () {
+            console.log('checkLoading', cache);
+            checkLoading(setTable, ['users', 'events', 'projects', 'days']);
+        });
+    }
 }
 
 
 $(function() {
     current_table = 'users';
-    loadAndCreateTable(current_table);
+
+    loadTable('users', function () {console.log('checkLoading', cache); checkLoading(setTable, ['users', 'events', 'projects', 'days']);});
+    loadTable('events', function () {console.log('checkLoading', cache); checkLoading(setTable, ['users', 'events', 'projects', 'days']);});
+    loadTable('projects', function () {console.log('checkLoading', cache); checkLoading(setTable, ['users', 'events', 'projects', 'days']);});
+    loadTable('days', function () {console.log('checkLoading', cache); checkLoading(setTable, ['users', 'events', 'projects', 'days']);});
+
+    // loadAndCreateTable(current_table);
 
     setupToolbar();
     setupTabs();
 });
+
 
 
 
