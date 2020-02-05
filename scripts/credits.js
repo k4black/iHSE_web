@@ -199,9 +199,8 @@ function getTableColumns(credits, days, events) {
 function getTableData(credits, users, days, events) {
     let data = [];
 
-    // for (let user_id in credits) {
     for (let user_id in users) {
-        row = {};
+        let row = {};
 
         row['id'] = user_id;
         row['name'] = users[user_id].name;
@@ -219,6 +218,7 @@ function getTableData(credits, users, days, events) {
 
         for (let credit_id in credits) {
             if (user_id !== credits[credit_id]['user_id']) {  // Only for current user
+                console.log(user_id, '!=', credits[credit_id]['user_id'], '  for credit: ', credit_id);
                 return;
             }
 
