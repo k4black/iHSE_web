@@ -153,7 +153,7 @@ function getTableColumns(tableName, fields) {
     let columns = [];
 
     for (let field of fields[tableName]) {
-        if (field === 'user_id' || field === 'event_id' || field === 'project_id' || field === 'day_id' || (tableName === 'classes' && field === 'id')) {
+        if (field === 'user_id' || field === 'event_id' || field === 'class_id' || field === 'project_id' || field === 'day_id' || (tableName === 'classes' && field === 'id')) {
             columns.push({
                 title: field,
                 field: field,
@@ -163,8 +163,12 @@ function getTableColumns(tableName, fields) {
                         if (field === 'user_id') {
                             return '<div class="replaced_cell" user_id=' + val + ' title="user_id: ' + val + '">' + users[val].name + '</div>'
                         }
-                        if (field === 'event_id') {
-                            return '<div class="replaced_cell" event_id=' + val + ' title="event_id: ' + val + '">' + events[val].title + '</div>'
+                        if (field === 'event_id' || field === 'class_id') {
+                            if (field === 'event_id') {
+                                return '<div class="replaced_cell" event_id=' + val + ' title="event_id: ' + val + '">' + events[val].title + '</div>'
+                            } else if (field === 'class_id') {
+                                return '<div class="replaced_cell" class_id=' + val + ' title="class_id: ' + val + '">' + events[val].title + '</div>'
+                            }
                         }
                         if (field === 'project_id') {
                             return '<div class="replaced_cell" project_id=' + val + ' title="project_id: ' + val + '">' + projects[val].title + '</div>'

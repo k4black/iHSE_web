@@ -100,9 +100,13 @@ function getDaysEvents(credits, days, events) {
         processed_days[day_id] = new Set();
     }
 
+    console.log('processed_days', processed_days);
+
     for (let id in credits) {
         let event_id = credits[id]['event_id'];
         let day_id = events[event_id]['day_id'];
+
+        console.log('day_id', day_id);
 
         processed_days[day_id].add(event_id);
     }
