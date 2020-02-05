@@ -153,7 +153,7 @@ function getTableColumns(tableName, fields) {
     let columns = [];
 
     for (let field of fields[tableName]) {
-        if (field === 'user_id' || field === 'event_id' || field === 'project_id' || (tableName === 'classes' && field === 'id')) {
+        if (field === 'user_id' || field === 'event_id' || field === 'project_id' || field === 'day_id' || (tableName === 'classes' && field === 'id')) {
             columns.push({
                 title: field,
                 field: field,
@@ -169,6 +169,9 @@ function getTableColumns(tableName, fields) {
                         if (field === 'project_id') {
                             return '<div class="replaced_cell" project_id=' + val + ' title="project_id: ' + val + '">' + projects[val].title + '</div>'
                         }
+                        if (field === 'day_id') {
+                            return '<div class="replaced_cell" day_id=' + val + ' title="day_id: ' + val + '">' + days[val].date + '</div>'
+                        }
                         if (tableName === 'classes' && field === 'id') {
                             return '<div class="replaced_cell" event_id=' + val + ' title="event_id: ' + val + '">' + events[val].title + '</div>'
                         }
@@ -177,7 +180,7 @@ function getTableColumns(tableName, fields) {
                     }
                 },
             });
-        } else if (field === 'user_type' || (tableName === 'events' && field === 'type')) {
+        } else if (field === 'user_type' || (tableName === 'events' && field === 'type') || (tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback')) {
             columns.push({
                 title: field,
                 field: field,
@@ -203,6 +206,15 @@ function getTableColumns(tableName, fields) {
                             } else if (val === 1 || val === '1') {
                                 // Class
                                 return '<div class="event_type class_event" event_type=' + val + ' title="event_type: ' + val + '">class</div>'
+                            }
+                        }
+                        if ((tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback')) {
+                            if (val === true || val === 'true') {
+                                // True value
+                                return '<div class="bool_type true_bool" bool_type=' + val + ' title="bool_type: ' + val + '">true</div>'
+                            } else if (val === false || val === 'false') {
+                                // Falce value
+                                return '<div class="bool_type false_bool" bool_type=' + val + ' title="bool_type: ' + val + '">false</div>'
                             }
                         }
                     } catch (err) {

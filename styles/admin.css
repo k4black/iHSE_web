@@ -1,7 +1,7 @@
 
 
 
-.user_type, .event_type {
+.user_type, .event_type, .bool_type {
     width: 85px;
     height: 30px;
 
@@ -14,7 +14,7 @@
 }
 
 
-.regular_user, .regular_event {
+.regular_user, .regular_event, .true_bool {
     background-color: #307bbb;
 }
 
@@ -22,7 +22,7 @@
     background-color: #fd8817;
 }
 
-.admin_user {
+.admin_user, .false_bool {
     background-color: #DB2828;
 }
 

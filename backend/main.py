@@ -592,7 +592,7 @@ def admin_panel(env, query, cookie):
 
                 # elif table_name == 'feedback':
                 #     data = sql.dict_to_tuple(obj, 'users')
-                #     sql.insert_feedback(data)  # TODO: Common edit and insert 
+                #     sql.insert_feedback(data)  # TODO: Common edit and insert
 
             elif table_name == 'projects':
                 data = sql.dict_to_tuple(obj, 'projects')
