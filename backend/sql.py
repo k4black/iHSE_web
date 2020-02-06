@@ -141,8 +141,7 @@ cursor.execute("""
     create table if not exists classes (
         id int primary key,
         foreign key (id) references events(id),
-        count int default 0,
-        total int,
+        total int default 0,
         annotation text default ''
     );
 """)
@@ -1182,8 +1181,9 @@ def insert_class(class_obj):
     Returns:
         id: id of the class added
     """
-    cursor.execute(
-        f"insert into classes (total, annotation) values ({class_obj[1]}, '{class_obj[2]}');")
+    print('insert_class ', class_obj)
+    
+    cursor.execute(f"insert into classes (total, annotation) values ({class_obj[1]}, '{class_obj[2]}');")
     conn.commit()
 
 
