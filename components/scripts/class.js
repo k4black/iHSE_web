@@ -141,21 +141,6 @@ function setClass() {
     if (cache['user'].type >= 1) {
         document.querySelector('.anno').parentElement.style.display = 'none';
     }
-
-
-    // // TODO: Hide when there is no enrollment
-    // if (event_class.total == undefined || event_class.total == "" || event_class.total === '0' || event_class.total === '0') {
-    //     document.querySelector('.enroll_section').style.visibility = 'hidden';
-    // } else {
-    //     document.querySelector('#class_popup .count').innerText = event_class.count + ' / ' + event_class.total;
-    //
-    console.log(event_class.count , event_class.total, event_class.count / event_class.total);
-    setupBar(event_class.count / event_class.total);  // Number from 0.0 to 1.0
-
-    //     if (event_class.count >= event_class.total) {
-    //         document.querySelector('#btn').classList.add('inactive');
-    //     }
-    // }
 }
 
 
@@ -185,6 +170,11 @@ function setEnrolls() {
     console.log('enrolls ', enrolls);
 
     setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + Object.keys(enrolls).length + ' записалсь');
+
+
+    // TODO: Hide when there is no enrollment
+    console.log(Object.keys(enrolls).length , cache['class'].total, Object.keys(enrolls).length / cache['class'].total);
+    setupBar(Object.keys(enrolls).length / cache['class'].total);  // Number from 0.0 to 1.0
 
     // Check current user's attendance
     let check_user = false;
