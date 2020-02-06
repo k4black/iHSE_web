@@ -1824,8 +1824,7 @@ def post_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
 
     # TODO:
 
-
-    if sql.enroll_user(event_id, user_obj):
+    if sql.enroll_user(event_id, user_obj, get_time_str()):
 
         event = sql.get_event(event_id)
 

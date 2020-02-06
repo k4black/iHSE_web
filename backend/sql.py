@@ -1197,21 +1197,17 @@ def edit_class(class_obj):
     """
     print('edit_class ', class_obj)
 
-    cursor.execute(f"""
-        update classes set
-            total = {class_obj[1]},
-            annotation = '{class_obj[2]}'
-        where id = {class_obj[0]};
-    """)
+    cursor.execute(f"update classes set total = {class_obj[1]}, annotation = '{class_obj[2]}' where id = {class_obj[0]};")
     conn.commit()
 
 
-def enroll_user(class_id, user_obj):  # TODO?
+def enroll_user(class_id, user_obj, time_: str = '0'):  # TODO?
     """ Enroll user in event
 
     Args:
         class_id: class id (event id) from bd
         user_obj: (id, user_type, phone, name, pass, team, credits)
+        time_: time str
 
     Returns:
         True/False: Success or not
@@ -1227,7 +1223,7 @@ def enroll_user(class_id, user_obj):  # TODO?
         return False
 
     cursor.execute(
-        f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({class_id}, {user_obj[0]}, 'time', false, 0);")
+        f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({class_id}, {user_obj[0]}, {time_}, false, 0);")
     conn.commit()
     return True
 
@@ -1573,7 +1569,7 @@ def use_code(code: str) -> bool:
         Success delete or not
 
     """
-    cursor.execute(f"elect * from codes where code = '{code}';")
+    cursor.execute(f"select * from codes where code = '{code}';")
     code = cursor.fetchone()
 
     if not code or code[2]:
