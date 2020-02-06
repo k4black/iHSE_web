@@ -1,5 +1,6 @@
 """Module for basic PostgreSQL interaction via psycopg2"""
 import typing as tp
+import time
 
 import psycopg2
 from psycopg2 import IntegrityError, DataError, ProgrammingError, OperationalError
@@ -1437,12 +1438,13 @@ def insert_credit(credit_obj) -> int:
     return id_
 
 
-def pay_credit(user_id, event_id):
+def pay_credit(user_id, event_id, time_: str = '0'):
     """ Insert credit for user
 
     Args:
         user_id: user id from db
         event_id: event id from db
+        time_: current time str
 
     Returns:
     """
@@ -1453,14 +1455,12 @@ def pay_credit(user_id, event_id):
     event = cursor.fetchone()
     cursor.execute(f'select * from classes where id = {event_id};')
     class_ = cursor.fetchone()
-    cursor.execute(f"select (date) from days where id = event[7];")
-    date_ = cursor.fetchone()[0]
 
     cursor.execute(f'select * from credits where event_id = {event_id} and user_id = {user_id};')
     credits_ = cursor.fetchall()
     if len(credits_) == 0:
         cursor.execute(
-            f"insert into credits (id, user_id, event_id, time, value) values (default, {user_id}, {event_id}, '{date_}', {class_[1]});")
+            f"insert into credits (id, user_id, event_id, time, value) values (default, {user_id}, {event_id}, '{time_}', {class_[1]});")
     else:
         cursor.execute(f"update credits set value = {class_[1]} where id = {credits_[0][0]};")
 

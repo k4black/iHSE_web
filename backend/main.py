@@ -28,6 +28,31 @@ TODAY = datetime.today().strftime('%d.%m')
 TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s TODO: Couple of hours
 
 
+def get_time_str() -> str:
+    """ Return current time str. According to timezone
+
+    Returns:
+        time str in format %Y-%m-%d %H:%M:%S
+    """
+
+    return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+
+
+""" ---===---==========================================---===--- """
+"""                       uWSGI typing objects                   """
+""" ---===---==========================================---===--- """
+
+
+TQuery = tp.Dict[str, str]
+TEnvironment = tp.Dict[str, tp.Any]
+TCookie = tp.Dict[str, tp.Any]  # TODO: Specify
+
+TStatus = str
+THeaders = tp.List[tp.Tuple[str, str]]
+TData = tp.Optional[tp.List[tp.Any]]
+TResponse = tp.Tuple[TStatus, THeaders, TData]
+
+
 """ ---===---==========================================---===--- """
 """                    uWSGI main input function                 """
 """ ---===---==========================================---===--- """
@@ -112,7 +137,6 @@ def update_cache():
     print('Today ', TODAY)
     print('sync time: ' + str(time.time()))
 
-
     return
 
     # Update gsheets cache
@@ -180,11 +204,11 @@ start_sync(0)  # Start sync
 CREDITS_TOTAL = 0
 CREDITS_MASTER = 0
 CREDITS_LECTURE = 0
-CREDITS_ADDITIONAL = 0
+CREDITS_ADDITIONAL = 0  # Maximum allowed additional credits
 
 
 def read_config() -> None:
-    """Read and save config file """
+    """Read and save config file (`config.ini`) """
 
     print('======= Read config file ======== ')
 
@@ -209,7 +233,7 @@ def read_config() -> None:
 
 
 def write_config() -> None:
-    """Write current configuration to config file"""
+    """Write current configuration to config file (`config.ini`) """
 
     global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL
 
@@ -285,7 +309,7 @@ def cache(foo):
 """ ---===---==========================================---===--- """
 
 
-def get_user_by_response(cookie):
+def get_user_by_response(cookie: TCookie):  # TODO: Refactor function behaviour (raise exception for 401)
     """ Manage get user operation
 
     Args:
@@ -296,7 +320,6 @@ def get_user_by_response(cookie):
 
     Returns:
         user_obj or None if wrong session id - (id, type, phone, name, pass, team, credits, avatar)
-
     """
 
     # Get session id or ''
@@ -342,7 +365,7 @@ def get_user_by_response(cookie):
     return user_obj
 
 
-def get_json_by_response(env):
+def get_json_by_response(env: TEnvironment) -> tp.Optional[tp.Dict[str, tp.Any]]:
     """ Get and parse json from request
 
     Args:
@@ -373,7 +396,7 @@ def get_json_by_response(env):
 """ ---===---==========================================---===--- """
 
 
-def get(env, query, cookie):
+def get(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ GET HTTP request
     Will manage and call specific function [account, registration]
 
@@ -472,7 +495,7 @@ def get(env, query, cookie):
             [message_return, message_env, request_body])
 
 
-def admin_panel(env, query, cookie):
+def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Manage admin HTTP request
     Will check session id and permissions
 
@@ -756,7 +779,7 @@ def admin_panel(env, query, cookie):
                 [])
 
 
-def get_user(env, query, cookie):
+def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ User data HTTP request
     Will check session id and return data according to user
 
@@ -813,7 +836,7 @@ def get_user(env, query, cookie):
             [json_data])
 
 
-def get_config(env, query, cookie):
+def get_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Config data HTTP request
 
     Args:
@@ -853,7 +876,7 @@ def get_config(env, query, cookie):
             [json_data])
 
 
-def get_names(env, query, cookie):
+def get_names(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Send names data HTTP request
     Will check session id and return data according to user
 
@@ -895,7 +918,7 @@ def get_names(env, query, cookie):
             [json_data])
 
 
-def get_account(env, query, cookie):
+def get_account(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Account data HTTP request
     Will check session id and return data according to user
 
@@ -946,7 +969,7 @@ def get_account(env, query, cookie):
             [json_data])
 
 
-def get_credits(env, query, cookie):
+def get_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Credits data HTTP request
     Get credits data for chart according to user
 
@@ -987,7 +1010,7 @@ def get_credits(env, query, cookie):
             [json_data])
 
 
-def get_days(env, query, cookie):
+def get_days(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Days data HTTP request
 
     Args:
@@ -1022,7 +1045,7 @@ def get_days(env, query, cookie):
 
 
 # @cache
-def get_event(env, query, cookie):
+def get_event(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Event data HTTP request
     Get event description by event id
 
@@ -1058,7 +1081,7 @@ def get_event(env, query, cookie):
 
 
 # @cache
-def get_class(env, query, cookie):
+def get_class(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Class data HTTP request
     Get class description by class id
 
@@ -1097,7 +1120,7 @@ def get_class(env, query, cookie):
 
 
 # @cache
-def get_enrolls(env, query, cookie):
+def get_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Enrolls data HTTP request
     Get enrolls list by event id or user id
 
@@ -1140,7 +1163,7 @@ def get_enrolls(env, query, cookie):
             [json_data])
 
 
-def get_feedback(env, query, cookie):
+def get_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Account data HTTP request
     Got day num and return day event for feedback
     # TODO: Get data if feedback already exist
@@ -1270,7 +1293,7 @@ def get_day(env, query):
             [json_data])
 
 
-def post(env, query, cookie):
+def post(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ POST HTTP request
     Will manage and call specific function [login, register]
 
@@ -1324,7 +1347,7 @@ def post(env, query, cookie):
         return post_enroll(env, query, cookie)
 
 
-def post_config(env, query, cookie):
+def post_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Config data HTTP request
 
     Args:
@@ -1401,7 +1424,7 @@ def post_login(env, phone, passw):
     phone = ''.join(i for i in phone if i.isdigit())
 
     # Get session obj or None
-    res = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'])
+    res = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'], get_time_str())
 
     if res is not None:
 
@@ -1428,7 +1451,7 @@ def post_login(env, phone, passw):
                 [])
 
 
-def post_logout(env, query, cookie):
+def post_logout(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Logout HTTP request
     Delete current session and send clear cookie sessid
 
@@ -1516,7 +1539,7 @@ def post_register(env, name, phone, passw, code):
                 [])
 
 
-def post_feedback(env, query, cookie):
+def post_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Login HTTP request
     By cookie create feedback for day
 
@@ -1568,7 +1591,7 @@ def post_feedback(env, query, cookie):
                 [])
 
 
-def post_credits(env, query, cookie):
+def post_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Sing in at lecture  HTTP request (by student )
     By cookie add credits to user
 
@@ -1622,7 +1645,7 @@ def post_credits(env, query, cookie):
 
 
 # TODO: think mb rename
-def post_mark_enrolls(env, query, cookie):
+def post_mark_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Sing in at lecture  HTTP request (by student )
     By cookie add credits to user
 
@@ -1639,7 +1662,6 @@ def post_mark_enrolls(env, query, cookie):
 
     Returns:
          None; Only http answer
-
     """
 
     # Safety get user_obj
@@ -1658,7 +1680,7 @@ def post_mark_enrolls(env, query, cookie):
             sql.edit_enroll(enroll_obj)
 
             if enroll['attendance'] == 1 or enroll['attendance'] == '1':
-                sql.pay_credit(enroll['user_id'], enroll['event_id'])
+                sql.pay_credit(enroll['user_id'], enroll['event_id'], get_time_str())
 
         return ('200 Ok',
                 [
@@ -1675,7 +1697,7 @@ def post_mark_enrolls(env, query, cookie):
                 [])
 
 
-def post_create_enroll(env, query, cookie):
+def post_create_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Create  HTTP request (by student )
     By cookie add enroll to user
 
@@ -1707,7 +1729,6 @@ def post_create_enroll(env, query, cookie):
         # Check class have empty places - ok
         sql.insert_enroll((None, event_id, user_obj[0], 'TODO', 0))  # TODO: time
 
-    if 'a' is not None:
         return ('200 Ok',
                 [
                     # Because in js there is xhttp.withCredentials = true;
@@ -1723,7 +1744,7 @@ def post_create_enroll(env, query, cookie):
                 [])
 
 
-def post_remove_enroll(env, query, cookie):
+def post_remove_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Remove  HTTP request (by student )
     By cookie add credits to user
 
@@ -1769,7 +1790,7 @@ def post_remove_enroll(env, query, cookie):
                 [])
 
 
-def post_enroll(env, query, cookie):
+def post_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Enroll at lecture HTTP request (by student )
     By cookie add user to this event
 
@@ -1832,7 +1853,7 @@ def post_enroll(env, query, cookie):
                 [])  # TODO: Return count and total
 
 
-def post_project(env, query, cookie):
+def post_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
     """ Post project HTTP request
     Create new project signed by cookie
 
