@@ -35,7 +35,7 @@ def get_time_str() -> str:
         time str in format %Y-%m-%d %H:%M:%S
     """
 
-    return time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+    return time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime()) + ' UTC'
 
 
 """ ---===---==========================================---===--- """
@@ -1729,7 +1729,7 @@ def post_create_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TDa
 
     if sql.check_class(event_id):
         # Check class have empty places - ok
-        sql.insert_enroll((None, event_id, user_obj[0], 'TODO', 0))  # TODO: time
+        sql.insert_enroll((None, event_id, user_obj[0], get_time_str(), 0))  # TODO: time
 
         return ('200 Ok',
                 [
