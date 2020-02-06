@@ -1045,7 +1045,7 @@ def insert_event(event_obj) -> int:
         day_id = cursor.fetchone()
     except Exception:
         day_id = event_obj[7]
-        
+
     cursor.execute(
         f"insert into events (type, title, description, host, place, time, day_id) values ({event_obj[1]}, '{event_obj[2]}', '{event_obj[3]}', '{event_obj[4]}', '{event_obj[5]}', '{event_obj[6]}', {day_id}) returning id;")
     id_of_new_event = cursor.fetchone()[0]
