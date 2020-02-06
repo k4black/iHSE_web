@@ -25,7 +25,7 @@ Master branch. So-stable version of the `ihse` site. Every commit will trigger _
 100% stable branch. Every commit will be _**automatically deployed**_ to the server.
 Each release should be taken (fork) from master branch and after hotfixes (if it necessary) commit marked with a version tag.
 
-So, develop line looks like:
+So, develop flow looks like:
 1. Developing in `develop` branch
 2. Merge to `master` and do style and tests corrections. 
 start again or 
