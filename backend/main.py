@@ -549,6 +549,8 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
                      ],
                     [])
 
+        print('Sending data table', data)
+
         # Send req data tables
         json_data = json.dumps(data)
         json_data = json_data.encode('utf-8')
