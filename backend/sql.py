@@ -1274,7 +1274,7 @@ def get_enrolls_by_event_id(event_id):
         event_id: event id from bd
 
     Returns:
-        enroll_objs: [(id, event_id, users_id, time, attendance), ...]
+        enroll_objs: [(id, class_id, users_id, time, attendance), ...]
     """
 
     cursor.execute(f'select * from enrolls where class_id = {event_id};')

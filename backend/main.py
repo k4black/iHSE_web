@@ -1140,7 +1140,7 @@ def get_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TData:
         enrolls = sql.get_enrolls_by_event_id(query['event_id'])
         print('enrolls by event_id ', enrolls)
     elif 'user_id' in query.keys():
-        enrolls = sql.get_enrolls_by_event_id(query['user_id'])
+        enrolls = sql.get_enrolls_by_user_id(query['user_id'])
         print('enrolls by user_id ', enrolls)
 
 
