@@ -1040,8 +1040,12 @@ def insert_event(event_obj) -> int:
         id: id of the created event
     """
 
-    cursor.execute(f"select (id) from days where date = {event_obj[7]}")
-    day_id = cursor.fetchone()
+    try:
+        cursor.execute(f"select (id) from days where date = {event_obj[7]}")
+        day_id = cursor.fetchone()
+    except Exception:
+        day_id = event_obj[7]
+        
     cursor.execute(
         f"insert into events (type, title, description, host, place, time, day_id) values ({event_obj[1]}, '{event_obj[2]}', '{event_obj[3]}', '{event_obj[4]}', '{event_obj[5]}', '{event_obj[6]}', {day_id}) returning id;")
     id_of_new_event = cursor.fetchone()[0]
@@ -1049,7 +1053,7 @@ def insert_event(event_obj) -> int:
 
     if int(event_obj[1]) == 1:
         # class
-        cursor.execute(f'insert into classes (id, total, annotation) values ({id_of_new_event}, 10, '');')
+        cursor.execute(f'insert into classes (id, total, annotation) values ({id_of_new_event}, 0, '');')
     else:
         # regular
         pass
