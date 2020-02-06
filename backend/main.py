@@ -1740,19 +1740,19 @@ def post_remove_enroll(env, query, cookie):
 
     Returns:
          None; Only http answer
-
     """
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
 
-    if user_obj[2] is None:  # No User  # TODO: Check admin or user remove himself
+    if user_obj[2] is None:  # No User
         return user_obj
 
     enroll_id = query['id']
-    sql.remove_enroll(enroll_id)
+    enroll = sql.get_enroll(enroll_id)
 
-    if 'a' is not None:
+    if user_obj[1] == 0 and enroll[2] == user_obj[0] or user_obj[1] >= 1:  # TODO: Check admin or user remove himself
+        sql.remove_enroll(enroll_id)
 
         return ('200 Ok',
                 [

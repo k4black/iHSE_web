@@ -1,6 +1,4 @@
 """Module for basic PostgreSQL interaction via psycopg2"""
-import time
-import string
 import typing as tp
 
 import psycopg2
@@ -10,6 +8,7 @@ from psycopg2 import IntegrityError, DataError, ProgrammingError, OperationalErr
 """ ---===---==========================================---===--- """
 """                 PostgreSQL database creation                 """
 """ ---===---==========================================---===--- """
+
 
 # initializing connection to database
 # TODO: plain text user & password, great
@@ -330,6 +329,8 @@ def safety_injections(param):
 """ ---===---==========================================---===--- """
 """         PostgreSQL database interaction via psycopg2         """
 """ ---===---==========================================---===--- """
+
+
 # TODO: on the higher level we need to prompt admin before every remove_<smth>() is performed
 # TODO: yep. I know. Temporary commented this code for checking and testing
 
@@ -386,13 +387,14 @@ def insert_project(project_obj) -> int:
     Args:
         project_obj: project obj (None, title, type, def_type, direction, description)
 
-    Returns:
+    # Returns:
         # id: id of the created project in the database
     """
     cursor.execute(
         f"insert into projects (title, type, def_type, direction, description, annotation) values ('{project_obj[1]}', '{project_obj[2]}', '{project_obj[3]}', '{project_obj[4]}', '{project_obj[5]}', '{project_obj[6]}');")
     conn.commit()
-    cursor.execute(f"select (id) from projects where title = '{project_obj[1]}' and direction = '{project_obj[4]}' and annotation = '{project_obj[5]}';")
+    cursor.execute(
+        f"select (id) from projects where title = '{project_obj[1]}' and direction = '{project_obj[4]}' and annotation = '{project_obj[5]}';")
     return int(cursor.fetchone())
 
 
@@ -545,7 +547,8 @@ def insert_vacation(vacation_obj):
     Returns:
         # TODO: Return id
     """
-    cursor.execute(f"insert into vacations (user_id, date_from, date_to, time_from, time_to) values ({vacation_obj[1]}, '{vacation_obj[2]}', '{vacation_obj[3]}', '{vacation_obj[4]}', '{vacation_obj[5]}');")
+    cursor.execute(
+        f"insert into vacations (user_id, date_from, date_to, time_from, time_to) values ({vacation_obj[1]}, '{vacation_obj[2]}', '{vacation_obj[3]}', '{vacation_obj[4]}', '{vacation_obj[5]}');")
     conn.commit()
 
 
@@ -623,7 +626,8 @@ def load_users(users_list):
         cursor.execute("""INSERT INTO users(id, user_type, phone, name, pass, team, credits, avatar)
                           SELECT ?, ?, ?, ?, ?, ?, ?, ?
                           WHERE NOT EXISTS(SELECT 1 FROM users WHERE name=? AND pass=?)""",
-                       (user_obj[0], user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[6], avatar, user_obj[3], user_obj[4]))
+                       (user_obj[0], user_obj[1], user_obj[2], user_obj[3], user_obj[4], user_obj[5], user_obj[6],
+                        avatar, user_obj[3], user_obj[4]))
     conn.commit()
 
 
@@ -679,7 +683,8 @@ def insert_user(user_obj):
 
     Returns:
     """
-    cursor.execute(f"insert into users (user_type, phone, name, pass, team, project_id, avatar) values ({user_obj[1]}, '{user_obj[2]}', '{user_obj[3]}', {user_obj[4]}, {user_obj[5]}, {user_obj[6]}, '{user_obj[7]}');")
+    cursor.execute(
+        f"insert into users (user_type, phone, name, pass, team, project_id, avatar) values ({user_obj[1]}, '{user_obj[2]}', '{user_obj[3]}', {user_obj[4]}, {user_obj[5]}, {user_obj[6]}, '{user_obj[7]}');")
     conn.commit()
 
 
@@ -725,7 +730,8 @@ def register(name, passw, type_, phone, team):
     cursor.execute(f'select * from users where name = \'{name}\' and pass = {passw};')
     existing_users = cursor.fetchall()
     if len(existing_users) == 0:
-        cursor.execute(f'insert into users (user_type, phone, name, pass, team) values ({type_}, \'{phone}\', \'{name}\', {passw}, {team});')
+        cursor.execute(
+            f'insert into users (user_type, phone, name, pass, team) values ({type_}, \'{phone}\', \'{name}\', {passw}, {team});')
         conn.commit()
         # Register new user if there is no user with name and pass
         # cursor.execute("""INSERT INTO users(user_type, phone, name, pass, team)
@@ -829,7 +835,8 @@ def insert_session(sess_obj):
 
     Returns:
     """
-    cursor.execute(f"insert into sessions (user_id, user_type, user_agent, last_ip, time) values ({sess_obj[1]}, {sess_obj[2]}, '{sess_obj[3]}', '{sess_obj[4]}', '{sess_obj[5]}');")
+    cursor.execute(
+        f"insert into sessions (user_id, user_type, user_agent, last_ip, time) values ({sess_obj[1]}, {sess_obj[2]}, '{sess_obj[3]}', '{sess_obj[4]}', '{sess_obj[5]}');")
     conn.commit()
 
 
@@ -877,7 +884,7 @@ def login(phone, passw, agent, ip, time_='0'):
     cursor.execute(f"select * from users where phone = '{phone}' and pass = {passw};")
     users = cursor.fetchall()
 
-    if len(users) == 0:    # No such user
+    if len(users) == 0:  # No such user
         return None
 
     user = users[0]
@@ -922,7 +929,7 @@ def logout(sess_id) -> bool:
     cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
     sessions = cursor.fetchall()
 
-    if len(sessions) == 0:    # No such session
+    if len(sessions) == 0:  # No such session
         return False
 
     cursor.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
@@ -1034,7 +1041,8 @@ def insert_event(event_obj) -> int:
 
     cursor.execute(f"select (id) from days where date = {event_obj[7]}")
     day_id = cursor.fetchone()
-    cursor.execute(f"insert into events (type, title, description, host, place, time, day_id) values ({event_obj[1]}, '{event_obj[2]}', '{event_obj[3]}', '{event_obj[4]}', '{event_obj[5]}', '{event_obj[6]}', {day_id}) returning id;")
+    cursor.execute(
+        f"insert into events (type, title, description, host, place, time, day_id) values ({event_obj[1]}, '{event_obj[2]}', '{event_obj[3]}', '{event_obj[4]}', '{event_obj[5]}', '{event_obj[6]}', {day_id}) returning id;")
     id_of_new_event = cursor.fetchone()[0]
     print('Added event ID=', id_of_new_event, 'type', event_obj[1])
 
@@ -1166,7 +1174,8 @@ def insert_class(class_obj):
     Returns:
         id: id of the class added
     """
-    cursor.execute(f"insert into classes (id, total, annotation) values ({class_obj[1]}, {class_obj[2]}, '{class_obj[3]}');")
+    cursor.execute(
+        f"insert into classes (id, total, annotation) values ({class_obj[1]}, {class_obj[2]}, '{class_obj[3]}');")
     conn.commit()
     return class_obj[0]
 
@@ -1208,7 +1217,8 @@ def enroll_user(class_id, user_obj):  # TODO?
     if not class_ or enrolled >= class_[1]:  # No such event or too many people
         return False
 
-    cursor.execute(f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({class_id}, {user_obj[0]}, 'time', false, 0);")
+    cursor.execute(
+        f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({class_id}, {user_obj[0]}, 'time', false, 0);")
     conn.commit()
     return True
 
@@ -1304,7 +1314,8 @@ def insert_enroll(enroll_obj) -> int:
         id: id of the enroll created
     """
     # cursor.execute(f"insert into enrolls (event_id, user_id, time, attendance) values ({enroll_obj[1]}, {enroll_obj[2]}, \'{enroll_obj[3]}\', {enroll_obj[4]}) returning id;")
-    cursor.execute(f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({enroll_obj[1]}, {enroll_obj[2]}, 'time', false, 0) returning id;")
+    cursor.execute(
+        f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({enroll_obj[1]}, {enroll_obj[2]}, 'time', false, 0) returning id;")
     id_ = cursor.fetchone()[0]
     cursor.commit()
     return id_
@@ -1323,15 +1334,15 @@ def edit_enroll(enroll_obj):
     # enroll = cursor.fetchone()
 
     # if enroll[1] != enroll_obj[1]:
-        # Change old event
-        # cursor.execute(f'select * from classes where id = {enroll[1]};')
-        # current_event = cursor.fetchone()
-        # cursor.execute(f'update classes set count = {current_event[2] - 1} where id = {current_event[0]};')
+    # Change old event
+    # cursor.execute(f'select * from classes where id = {enroll[1]};')
+    # current_event = cursor.fetchone()
+    # cursor.execute(f'update classes set count = {current_event[2] - 1} where id = {current_event[0]};')
 
-        # Change new event
-        # cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
-        # new_event = cursor.fetchone()
-        # cursor.execute(f'update classes set count = {new_event[2] + 1} where id = {new_event[1]};')
+    # Change new event
+    # cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
+    # new_event = cursor.fetchone()
+    # cursor.execute(f'update classes set count = {new_event[2] + 1} where id = {new_event[1]};')
 
     cursor.execute(f"""
         update enrolls set
@@ -1419,7 +1430,8 @@ def insert_credit(credit_obj) -> int:
     else:
         time = credit_obj[3]
 
-    cursor.execute(f"insert into credits (user_id, event_id, time, value) values ({credit_obj[1]}, {credit_obj[2]}, '{time}', {credit_obj[4]}) returning id;")
+    cursor.execute(
+        f"insert into credits (user_id, event_id, time, value) values ({credit_obj[1]}, {credit_obj[2]}, '{time}', {credit_obj[4]}) returning id;")
     id_ = cursor.fetchone()[0]
     conn.commit()
     return id_
@@ -1447,7 +1459,8 @@ def pay_credit(user_id, event_id):
     cursor.execute(f'select * from credits where event_id = {event_id} and user_id = {user_id};')
     credits_ = cursor.fetchall()
     if len(credits_) == 0:
-        cursor.execute(f"insert into credits (id, user_id, event_id, time, value) values (default, {user_id}, {event_id}, '{date_}', {class_[1]});")
+        cursor.execute(
+            f"insert into credits (id, user_id, event_id, time, value) values (default, {user_id}, {event_id}, '{date_}', {class_[1]});")
     else:
         cursor.execute(f"update credits set value = {class_[1]} where id = {credits_[0][0]};")
 
