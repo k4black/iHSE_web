@@ -1182,7 +1182,7 @@ def insert_class(class_obj):
         id: id of the class added
     """
     print('insert_class ', class_obj)
-    
+
     cursor.execute(f"insert into classes (total, annotation) values ({class_obj[1]}, '{class_obj[2]}');")
     conn.commit()
 
@@ -1195,6 +1195,8 @@ def edit_class(class_obj):
 
     Returns:
     """
+    print('edit_class ', class_obj)
+
     cursor.execute(f"""
         update classes set
             total = {class_obj[1]},
