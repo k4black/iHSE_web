@@ -20,6 +20,7 @@ jobs:
         pip install -r backend/requirements.txt
         
     - name: Lint with flake8
+      continue-on-error: true
       run: |
         pip install flake8
         # stop the build if there are Python syntax errors or undefined names
