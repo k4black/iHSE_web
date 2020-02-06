@@ -347,6 +347,9 @@ def get_table(table_name: str) -> tp.List[tp.Tuple[tp.Any]]:
         objects: list of tuples - objects - [ (obj), (obj), ...]
     """
 
+    if table_name == 'sessions':
+        return get_sessions()
+
     cursor.execute(f'select * from {table_name};')  # TODO: try catch
     objects_list = cursor.fetchall()
 
