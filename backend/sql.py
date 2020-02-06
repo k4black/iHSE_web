@@ -1177,15 +1177,14 @@ def insert_class(class_obj):
 
     Args:
         # TODO: check for this new signature (previous was (None, credits, count, total))
-        class_obj: class obj (None, id, total, annotation)
+        class_obj: class obj (None, total, annotation)
 
     Returns:
         id: id of the class added
     """
     cursor.execute(
-        f"insert into classes (id, total, annotation) values ({class_obj[1]}, {class_obj[2]}, '{class_obj[3]}');")
+        f"insert into classes (total, annotation) values ({class_obj[1]}, '{class_obj[2]}');")
     conn.commit()
-    return class_obj[0]
 
 
 def edit_class(class_obj):

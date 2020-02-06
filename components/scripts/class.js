@@ -134,7 +134,6 @@ function setClass() {
     setupData(document.querySelector('#class_popup .location').firstElementChild, current_events[class_id].place);
     setupData(document.querySelector('#class_popup .host').firstElementChild, current_events[class_id].host);
 
-    setupData(document.querySelector('#class_popup .count').firstElementChild, event_class.count + ' / ' + event_class.total);
     document.querySelector('#total').value = event_class.total;  // Admin editable field
     document.querySelector('#anno').value = event_class.annotation;  // Admin editable field
 
@@ -172,9 +171,12 @@ function setEnrolls() {
     setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + Object.keys(enrolls).length + ' записалсь');
 
 
-    // TODO: Hide when there is no enrollment
+    // TODO: Hide when there is no enrollment (total === 0)
+    setupData(document.querySelector('#class_popup .count').firstElementChild, Object.keys(enrolls).length + ' / ' + cache['class'].total);
+
     console.log(Object.keys(enrolls).length , cache['class'].total, Object.keys(enrolls).length / cache['class'].total);
     setupBar(Object.keys(enrolls).length / cache['class'].total);  // Number from 0.0 to 1.0
+
 
     // Check current user's attendance
     let check_user = false;
