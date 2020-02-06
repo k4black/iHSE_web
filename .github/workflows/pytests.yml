@@ -22,9 +22,12 @@ jobs:
 
             # Install requirements
             - name: Install requirements
-              run: pip install -r backend/requirements.txt && pip install pytest, coverage
+              run: pip install -r backend/requirements.txt
 
             - name: Run tests
-              run: coverage run tests/test_tmp.py
+              run: |
+                pip install pytest
+                pip install coverage
+                coverage run tests/test_tmp.py
             - name: Tests report
               run: coverage report
