@@ -58,18 +58,6 @@ function setAccount() {
     topbar.querySelector('.topbar__name').innerText = user.name;
     topbar.querySelector('.topbar__phone').innerText = user.phone;
 
-    // switch (user.type) {
-    //     case 0:
-    //         title.innerText = 'User';
-    //         break;
-    //     case 1:
-    //         title.innerText = 'Host';
-    //         break;
-    //     case 2:
-    //         title.innerText = 'Admin';
-    //         break;
-    // }
-
     //setup avatar
     if (user.avatar != null && user.avatar != undefined && user.avatar != '')
         topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
@@ -81,7 +69,7 @@ function setAccount() {
             break;
 
         case 1:  // Host
-            topbar.querySelector('.topbar__type').innerText = 'Host';
+            topbar.querySelector('.topbar__type').innerText = 'Moderator';
             break;
 
         case 2:  // Admin
