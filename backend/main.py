@@ -791,7 +791,7 @@ def get_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if user_obj is None or type(user_obj) is tuple:
         return user_obj
 
-    data = sql.get_credits_by_id(user_obj[0])
+    data = sql.get_credits_by_user_id(user_obj[0])
     processes_data = sql.tuples_to_dicts(data, 'credits')
 
     json_data = json.dumps(processes_data)

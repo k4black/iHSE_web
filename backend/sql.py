@@ -7,7 +7,7 @@ from psycopg2 import IntegrityError, DataError, ProgrammingError, OperationalErr
 
 
 """ ---===---==========================================---===--- """
-"""                 PostgreSQL database creation                 """
+"""         PostgreSQL database interaction via psycopg2         """
 """ ---===---==========================================---===--- """
 
 
@@ -34,8 +34,8 @@ cursor.execute("""
     create table if not exists projects (
         id serial not null primary key,
         title text default '',
-        type int,
-        def_type int,
+        type int default 0,
+        def_type int default 0,
         direction text default '',
         description text default '',
         annotation text default ''
@@ -50,7 +50,7 @@ cursor.execute("""
         phone text default '',
         name text default '',
         pass int,
-        team int,
+        team int default 0,
         project_id int default 0,
         foreign key (project_id) references projects(id),
         avatar text default ''
@@ -84,7 +84,7 @@ cursor.execute("""
         id serial not null primary key unique,
         date text default '',
         title text default '',
-        feedback bool
+        feedback bool default false
     );
 """)
 
@@ -177,6 +177,7 @@ cursor.execute("""
 # Codes
 cursor.execute("""
     create table if not exists codes (
+        id serial not null primary key,
         code text,
         type int default 0,
         used bool default false
@@ -210,7 +211,7 @@ conn.commit()
 
 TTableObject = tp.Dict[str, tp.Any]
 
-
+# TODO: Remove ?
 TUser = tp.Dict[str, tp.Any]
 TSession = tp.Dict[str, tp.Any]
 TCredit = tp.Dict[str, tp.Any]
@@ -284,6 +285,11 @@ def tuple_to_dict(data_raw: tp.Tuple[tp.Any], table: str) -> TTableObject:
     return data
 
 
+""" ---===---==========================================---===--- """
+"""            Overall functions for sql interactions            """
+""" ---===---==========================================---===--- """
+
+
 def insert_to_table(data: TTableObject, table_name: str) -> int:
     """ Insert some object in some db table
 
@@ -342,6 +348,7 @@ def get_in_table(data_id: int, table_name: str) -> TTableObject:
 
     Args:
         data_id: obj id from bd
+        table_name: name of current table to insert
 
     Returns:
         obj dictionary
@@ -433,75 +440,11 @@ def clear_table(table_name: str) -> None:
 
 
 """ ---===---==========================================---===--- """
-"""         PostgreSQL database interaction via psycopg2         """
+"""            Special functions for sql interactions            """
 """ ---===---==========================================---===--- """
 
 
 # Projects
-# TODO: Remove in next iteration
-def get_projects() -> tp.List[TTableObject]:
-    """ Get all projects from sql table
-
-    Returns:
-        project objects: list of project objects - [ (id, title, type, def_type, direction, description), ...]
-    """
-
-    cursor.execute('select * from projects;')
-    projects_list = cursor.fetchall()
-
-    return tuples_to_dicts(projects_list, 'projects')
-
-
-# TODO: Remove in next iteration
-def insert_project(project_obj: TTableObject) -> int:
-    """ Insert project
-
-    Args:
-        project_obj: project obj (None, title, type, def_type, direction, description)
-
-    Returns:
-        id: id of the created project in the database
-    """
-
-    cursor.execute(f"""
-        insert into projects (title, type, def_type, direction, description, annotation) values 
-        ('{project_obj['title']}', 
-          {project_obj['type']}, 
-          {project_obj['def_type']}, 
-         '{project_obj['direction']}', 
-         '{project_obj['description']}', 
-         '{project_obj['annotation']}');
-    """)
-    conn.commit()
-
-    return 0
-    # # TODO: postgres return id statment
-    # cursor.execute(
-    #     f"select (id) from projects where title = '{project_obj[1]}' and direction = '{project_obj[4]}' and annotation = '{project_obj[5]}';")
-    # return int(cursor.fetchone())
-
-
-# TODO: Remove in next iteration
-def edit_project(project_obj: TTableObject) -> None:
-    """ Update project
-
-    Args:
-        project_obj: project obj (id, title, type, def_type, direction, description)
-    """
-
-    cursor.execute(f"""
-        update projects set
-            title = '{project_obj['title']}',
-            type = {project_obj['type']},
-            def_type = {project_obj['def_type']},
-            direction = '{project_obj['direction']}',
-            description = '{project_obj['description']}',
-            annotation = '{project_obj['annotation']}'
-        where id = {project_obj['id']};
-    """)
-    conn.commit()
-
-
 def remove_project(project_id: int) -> None:
     """ Delete project by id
 
@@ -519,196 +462,13 @@ def remove_project(project_id: int) -> None:
     cursor.execute(f'delete from projects where id = {project_id};')
     conn.commit()
 
-
-# TODO: Remove in next iteration
-def clear_projects() -> None:
-    """ Clear all projects from sql table"""
-
-    cursor.execute('delete from projects where id != 0;')
-    conn.commit()
-
-
 # Days
-# TODO: Remove in next iteration
-def get_days() -> tp.List[TTableObject]:
-    """ Get all projects from sql table
-
-    Returns:
-        day objects: list of day objects - [ (id, date, title, feedback), ...]
-    """
-
-    cursor.execute('select * from days;')
-    days_list = cursor.fetchall()
-
-    return tuples_to_dicts(days_list, 'days')
-
-
-# TODO: Remove in next iteration
-def insert_day(day_obj: TTableObject) -> int:
-    """ Insert day
-
-    Args:
-        day_obj: day obj (None, date, title, feedback)
-
-    Returns:
-        # id: id of the day created in the database
-    """
-
-    cursor.execute(f"""
-        insert into days (date, title, feedback) 
-        values ('{day_obj['date']}', 
-                '{day_obj['title']}', 
-                 {day_obj['feedback']});
-    """)
-    conn.commit()
-
-    return 0
-    # TODO: Return id using postgre return
-    # cursor.execute(f"select (id) from days where date = '{day_obj[1]}';")
-    # return int(cursor.fetchone())
-
-
-# TODO: Remove in next iteration
-def edit_day(day_obj: TTableObject) -> None:
-    """ Update day
-
-    Args:
-        day_obj: day obj (id, date, title, feedback)
-    """
-
-    cursor.execute(f"""
-        update days set
-            date = '{day_obj['date']}',
-            title = '{day_obj['title']}',
-            feedback = {day_obj['feedback']}
-        where id = {day_obj['id']};
-    """)
-    conn.commit()
-
-
-# TODO: Remove in next iteration
-def remove_day(day_id: int) -> None:
-    """ Delete project by id
-
-    Args:
-        day_id: day id from bd
-
-    Returns:
-        # Success delete or not
-    """
-
-    cursor.execute(f'delete from days where id = {day_id};')
-    conn.commit()
-
-
-# TODO: Remove in next iteration
-def clear_days() -> None:
-    """ Clear all days from sql table"""
-
-    cursor.execute('delete from days;')
-    conn.commit()
 
 
 # Vacations
-# TODO: Remove in next iteration
-def get_vacations() -> tp.List[TTableObject]:
-    """ Get all projects from sql table
-
-    Args:
-
-    Returns:
-        day objects: list of day objects - [ (id, user_id, date_from, date_to, time_from, time_to, type), ...]
-    """
-
-    cursor.execute('select * from vacations;')
-    days_list = cursor.fetchall()
-
-    return tuples_to_dicts(days_list, 'vacations')
-
-
-# TODO: Remove in next iteration
-def insert_vacation(vacation_obj: TTableObject) -> None:
-    """ Insert vacation
-
-    Args:
-        vacation_obj: vacation obj (None, user_id, date_from, date_to, time_from, time_to, type)
-
-    Returns:
-        # TODO: Return id
-    """
-
-    cursor.execute(f"""
-        insert into vacations (user_id, date_from, date_to, time_from, time_to) 
-        values ({vacation_obj['user_id']}, 
-                '{vacation_obj['date_from']}', 
-                '{vacation_obj['date_to']}', 
-                '{vacation_obj['time_from']}', 
-                '{vacation_obj['time_to']}');
-    """)
-    conn.commit()
-
-
-# TODO: Remove in next iteration
-def edit_vacation(vacation_obj):
-    """ Update day
-
-    Args:
-        vacation_obj: vacation obj (id, user_id, date_from, date_to, time_from, time_to, type)
-
-    """
-
-    cursor.execute(f"""
-        update vacations set
-            user_id = {vacation_obj[1]},
-            date_from = '{vacation_obj[2]}',
-            date_to = '{vacation_obj[3]}',
-            time_from = '{vacation_obj[4]}',
-            time_to = '{vacation_obj[5]}'
-        where id = {vacation_obj[0]};
-    """)
-    conn.commit()
-
-
-# TODO: Remove in next iteration
-def remove_vacation(vacation_id: int) -> None:
-    """ Delete project by id
-
-    Args:
-        vacation_id: vacation id from bd
-
-    Returns:
-        # Success delete or not
-    """
-
-    cursor.execute(f'delete from vacations where id = {vacation_id};')
-    conn.commit()
-
-
-# TODO: Remove in next iteration
-def clear_vacations() -> None:
-    """ Clear all vacations from sql table"""
-
-    cursor.execute('delete from vacations;')
-    conn.commit()
 
 
 # Users
-# TODO: Remove in next iteration
-def get_users() -> tp.List[TTableObject]:
-    """ Get all users from sql table
-
-    Args:
-
-    Returns:
-        user objects: list of user objects - [(id, user_type, phone, name, pass, team, credits, avatar, project_id), ...]
-    """
-
-    cursor.execute('select * from users;')
-    users_list = cursor.fetchall()
-
-    return tuples_to_dicts(users_list, 'users')
-
-
 def get_names() -> tp.List[TTableObject]:
     """ Get all users short list from sql table
 
@@ -722,24 +482,6 @@ def get_names() -> tp.List[TTableObject]:
     users_list = cursor.fetchall()
 
     return [{'id': user[0], 'name': user[3], 'team': user[5], 'project_id': user[7]} for user in users_list]  # TODO: only if type == 0
-
-
-# TODO: Remove in next iteration
-def get_user(user_id: int) -> tp.Optional[TTableObject]:
-    """ Get user obj by id
-
-    Args:
-        user_id: user id from bd
-
-    Returns:
-        user_obj: (id, user_type, phone, name, pass, team, credits, avatar, project_id)
-                     or None if there is no such user
-    """
-
-    cursor.execute(f'select * from users where id = {user_id};')
-    user = cursor.fetchone()
-
-    return tuple_to_dict(user, 'users')
 
 
 def get_user_by_phone(phone: str) -> tp.Optional[TTableObject]:
@@ -756,49 +498,6 @@ def get_user_by_phone(phone: str) -> tp.Optional[TTableObject]:
     cursor.execute(f"select * from users where phone = '{phone}';")
     user = cursor.fetchone()
     return tuple_to_dict(user, 'users')
-
-
-# TODO: Remove in next iteration
-def insert_user(user_obj: TTableObject) -> None:
-    """ Insert user
-
-    Args:
-        user_obj: user obj (None, user_type, phone, name, pass, team, credits, avatar, project_id)
-    """
-
-    cursor.execute(f"""
-        insert into users (user_type, phone, name, pass, team, project_id, avatar) 
-        values ({user_obj['user_type']}, 
-               '{user_obj['phone']}', 
-               '{user_obj['name']}', 
-                {user_obj['pass']}, 
-                {user_obj['team']}, 
-                {user_obj['project_id']}, 
-               '{user_obj['avatar']}');
-    """)
-    conn.commit()
-
-
-# TODO: Remove in next iteration
-def edit_user(user_obj: TTableObject) -> None:
-    """ Update user
-
-    Args:
-        user_obj: user obj (id, user_type, phone, name, pass, team, credits, avatar, project_id)
-    """
-
-    cursor.execute(f"""
-        update users set
-            user_type = {user_obj['user_type']},
-            phone = '{user_obj['phone']}',
-            name = '{user_obj['name']}',
-            pass = {user_obj['pass']},
-            team = {user_obj['team']},
-            project_id = {user_obj['project_id']},
-            avatar = '{user_obj['avatar']}'
-        where id = {user_obj['id']};
-    """)
-    conn.commit()
 
 
 def register(name, passw, type_, phone, team) -> bool:
@@ -838,7 +537,7 @@ def register(name, passw, type_, phone, team) -> bool:
 
 
 # TODO: ?
-def checkin_user(user_obj, event_obj):
+def checkin_user(user_obj: int, event_obj: int) -> None:
     """ Checkin user in event
     Add user credits for the event
 
@@ -918,44 +617,8 @@ def get_session(sess_id: int) -> tp.Optional[TTableObject]:
     return tuple_to_dict(sess, 'sessions')
 
 
-# TODO: Remove in next iteration
-def insert_session(sess_obj: TTableObject) -> None:
-    """ Insert session
-
-    Args:
-        sess_obj: sess obj (None, user_id, user_type, user_agent, last_ip, time)
-    """
-
-    cursor.execute(f"""
-        insert into sessions (user_id, user_type, user_agent, last_ip, time) 
-        values ({sess_obj[1]}, {sess_obj[2]}, '{sess_obj[3]}', '{sess_obj[4]}', '{sess_obj[5]}');
-    """)
-    conn.commit()
-
-
-# TODO: Remove in next iteration
-def edit_session(sess_obj):
-    """ Update session
-
-    Args:
-        sess_obj: sess obj (id, user_id, user_type, user_agent, last_ip, time)
-
-    Returns:
-    """
-    cursor.execute(f"""
-        update sessions set
-                user_id = {sess_obj[1]},
-                user_type = {sess_obj[2]},
-                user_agent = '{sess_obj[3]}',
-                last_ip = '{sess_obj[4]}',
-                time = '{sess_obj[5]}'
-            where id = {sess_obj[0]};
-        """)
-    conn.commit()
-
-
 # TODO: Update time in sessions
-def login(phone, passw, agent, ip, time_='0'):
+def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0'):
     """ Login user
     Create new session if it does not exist and return sess id
 
@@ -1000,17 +663,18 @@ def login(phone, passw, agent, ip, time_='0'):
     return result
 
 
-def remove_session(sess_id):
+def remove_session(sess_id: int) -> bool:
     """ Remove session by id
 
     See:
         logout
     """
-    logout(sess_id)
+
+    return logout(sess_id)
 
 
 # TODO: both remove_session() and logout() needed?
-def logout(sess_id) -> bool:
+def logout(sess_id: int) -> bool:
     """ Delete current session by sessid
 
     Args:
@@ -1018,8 +682,8 @@ def logout(sess_id) -> bool:
 
     Returns:
         Success delete or not
-
     """
+
     cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
     sessions = cursor.fetchall()
 
@@ -1031,34 +695,7 @@ def logout(sess_id) -> bool:
     return True
 
 
-# TODO: Remove in next iteration
-def clear_sessions():
-    """ Clear all sessions from sql table
-
-    Args:
-    Returns:
-    """
-    cursor.execute('delete from sessions;')
-    conn.commit()
-
-
 # Events
-# TODO: Remove in next iteration
-def get_events():
-    """ Get all events from sql table
-
-    Args:
-
-    Returns:
-        event objects: list of event objects - [ (id, type, title, description, host, place, time, date), ...]
-
-    """
-    cursor.execute('select * from events;')
-    events_list = cursor.fetchall()
-
-    return events_list
-
-
 def get_day(date: str) -> tp.List[TTableObject]:
     """ Get all events for some day from sql table
 
@@ -1079,50 +716,7 @@ def get_day(date: str) -> tp.List[TTableObject]:
     return tuples_to_dicts(events_list, 'events')
 
 
-# TODO: Both get_events() and load_events() needed? Or is is GSheets legacy and should be removed?
-def load_events(events_list) -> bool:
-    """ Load all events to sql table
-    Clear events and insert all events in events table
-
-    Args:
-        events_list: list of event objects - [ (id, type, title, description, host, place, time, date), ...]
-
-    Returns:
-        bool: successful database call or not
-    """
-
-    # Safe update events - save count of people
-    try:
-        for event_obj in events_list:
-            cursor.execute("""
-                              INSERT OR IGNORE INTO events(id, type, title, credits, total, date)
-                              VALUES (?, ?, ?, ?, ?, ?); 
-                            """, (event_obj[0], event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[5],))
-            cursor.execute("""
-                              UPDATE events SET type=?, title=?, credits=?, total=? WHERE id=?; 
-                            """, (event_obj[1], event_obj[2], event_obj[3], event_obj[4], event_obj[0]))
-        conn.commit()
-        return True
-    except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
-        print(f"error: {err}")
-        return False
-
-
-# TODO: Remove in next iteration
-def get_event(event_id):
-    """ Get event obj by id
-
-    Args:
-        event_id: event id from bd
-
-    Returns:
-        event_obj: (id, type, title, description, host, place, time, date)
-    """
-    cursor.execute(f"select * from events where id = {event_id};")
-    return cursor.fetchone()
-
-
-def insert_event(event_obj) -> int:
+def insert_event(event_obj: TTableObject) -> int:
     """ Insert event
 
     Args:
@@ -1153,7 +747,7 @@ def insert_event(event_obj) -> int:
     return id_of_new_event
 
 
-def edit_event(event_obj) -> None:
+def edit_event(event_obj: TTableObject) -> None:
     """ Update event
 
     Args:
@@ -1176,7 +770,7 @@ def edit_event(event_obj) -> None:
     conn.commit()
 
 
-def remove_event(event_id):
+def remove_event(event_id: int) -> None:
     """ Delete event by id
 
     Args:
@@ -1199,7 +793,7 @@ def remove_event(event_id):
     conn.commit()
 
 
-def clear_events():
+def clear_events() -> None:
     """ Clear all events from sql table """
     cursor.execute('delete from classes where id != 0;')
     cursor.execute('delete from events where id != 0;')
@@ -1207,38 +801,7 @@ def clear_events():
 
 
 # Classes
-# TODO: Remove in next iteration
-def get_classes():
-    """ Get all classes (events type) from sql table
-
-    Args:
-
-    Returns:
-        class objects: list of event objects - [ (id, credits, count, total), ...]
-
-    """
-    cursor.execute('select * from classes;')
-    classes_list = cursor.fetchall()
-
-    return classes_list
-
-
-# TODO: Remove in next iteration
-def get_class(event_id):
-    """ Get event obj by id
-
-    Args:
-        event_id: event id from bd
-
-    Returns:
-        class_obj: (id, credits, count, total)
-    """
-
-    cursor.execute(f'select * from classes where id = {event_id};')
-    return cursor.fetchone()
-
-
-def check_class(class_id):
+def check_class(class_id: int) -> bool:
     """ Check class have empty places
 
     Args:
@@ -1260,39 +823,7 @@ def check_class(class_id):
     return enrolled < class_obj[1]
 
 
-# TODO: Remove in next iteration
-def insert_class(class_obj):
-    """ Insert project
-
-    Args:
-        # TODO: check for this new signature (previous was (None, credits, count, total))
-        class_obj: class obj (None, total, annotation)
-
-    Returns:
-        id: id of the class added
-    """
-    print('insert_class ', class_obj)
-
-    cursor.execute(f"insert into classes (total, annotation) values ({class_obj[1]}, '{class_obj[2]}');")
-    conn.commit()
-
-
-# TODO: Remove in next iteration
-def edit_class(class_obj):
-    """ Update project
-
-    Args:
-        class_obj: class obj (id, total, annotation)
-
-    Returns:
-    """
-    print('edit_class ', class_obj)
-
-    cursor.execute(f"update classes set total = {class_obj[1]}, annotation = '{class_obj[2]}' where id = {class_obj[0]};")
-    conn.commit()
-
-
-def enroll_user(class_id, user_obj, time_: str = '0'):  # TODO?
+def enroll_user(class_id: int, user_obj: TTableObject, time_: str = '0') -> bool:  # TODO?
     """ Enroll user in event
 
     Args:
@@ -1319,7 +850,7 @@ def enroll_user(class_id, user_obj, time_: str = '0'):  # TODO?
     return True
 
 
-def remove_class(class_id):
+def remove_class(class_id: int) -> None:
     """ Delete class by id
 
     Args:
@@ -1327,44 +858,13 @@ def remove_class(class_id):
 
     Returns:
         # Success delete or not
-
     """
+
     remove_event(class_id)
 
 
 # Enrolls
-# TODO: Remove in next iteration
-def get_enrolls():
-    """ Get all enrolls from sql table
-
-    Args:
-
-    Returns:
-        enroll_obj: list of enroll objects - [ (id, event_id, user_id, time), ...]
-
-    """
-    cursor.execute('select * from enrolls;')
-    enrolls_list = cursor.fetchall()
-
-    return enrolls_list
-
-
-# TODO: Remove in next iteration
-def get_enroll(enroll_id):
-    """ Get enrolls obj by id
-
-    Args:
-        enroll_id: enroll id from bd
-
-    Returns:
-        enroll_obj: (id, event_id, user_id, time, attendance)
-    """
-
-    cursor.execute(f'select * from enrolls where id = {enroll_id};')
-    return cursor.fetchone()
-
-
-def get_enrolls_by_event_id(event_id):
+def get_enrolls_by_event_id(event_id: int) -> tp.List[TTableObject]:
     """ Get enrolls obj by id
 
     Args:
@@ -1383,7 +883,7 @@ def get_enrolls_by_event_id(event_id):
     return enrolls
 
 
-def get_enrolls_by_user_id(user_id):
+def get_enrolls_by_user_id(user_id: int) -> tp.List[TTableObject]:
     """ Get enrolls obj by id
 
     Args:
@@ -1402,61 +902,7 @@ def get_enrolls_by_user_id(user_id):
     return enrolls
 
 
-# TODO: Remove in next iteration
-def insert_enroll(enroll_obj) -> int:
-    """ Insert enroll
-
-    Args:
-        enroll_obj: class obj (None, event_id, user_id, time, attendance)
-
-    Returns:
-        id: id of the enroll created
-    """
-    # cursor.execute(f"insert into enrolls (event_id, user_id, time, attendance) values ({enroll_obj[1]}, {enroll_obj[2]}, \'{enroll_obj[3]}\', {enroll_obj[4]}) returning id;")
-    cursor.execute(
-        f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({enroll_obj[1]}, {enroll_obj[2]}, 'time', false, 0) returning id;")
-    id_ = cursor.fetchone()[0]
-    cursor.commit()
-    return id_
-
-
-# TODO: Remove in next iteration
-def edit_enroll(enroll_obj):
-    """ Update enroll
-
-    Args:
-        enroll_obj: enroll obj (id, class_id, user_id, time, attendance, bonus)
-
-    Returns:
-    """
-
-    # cursor.execute(f'select * from enrolls where id = {enroll_obj[0]};')
-    # enroll = cursor.fetchone()
-
-    # if enroll[1] != enroll_obj[1]:
-    # Change old event
-    # cursor.execute(f'select * from classes where id = {enroll[1]};')
-    # current_event = cursor.fetchone()
-    # cursor.execute(f'update classes set count = {current_event[2] - 1} where id = {current_event[0]};')
-
-    # Change new event
-    # cursor.execute(f'select * from classes where id = {enroll_obj[1]};')
-    # new_event = cursor.fetchone()
-    # cursor.execute(f'update classes set count = {new_event[2] + 1} where id = {new_event[1]};')
-
-    cursor.execute(f"""
-        update enrolls set
-            class_id = {enroll_obj[1]},
-            user_id = {enroll_obj[2]},
-            time = '{enroll_obj[3]}',
-            attendance = {enroll_obj[4]},
-            bonus = {enroll_obj[5]}
-        where id = {enroll_obj[0]};
-    """)
-    conn.commit()
-
-
-def remove_enroll(enroll_id):
+def remove_enroll(enroll_id: int) -> None:
     """ Delete enroll by id
 
     Args:
@@ -1483,23 +929,7 @@ def remove_enroll(enroll_id):
 
 
 # Credits
-# TODO: Remove in next iteration
-def get_credits():
-    """ Get all credits from sql table
-
-    Args:
-
-    Returns:
-        credits objects: list of credits objects - [ (id, user_id, event_id, date, value), ...]
-
-    """
-    cursor.execute('select * from credits;')
-    credits_list = cursor.fetchall()
-
-    return credits_list
-
-
-def get_credits_by_id(user_id):  # TODO: Hm.. Rename to get_credits(user_id)
+def get_credits_by_user_id(user_id: int) -> tp.List[TTableObject]:
     """ Get all credits of user from sql table
 
     Args:
@@ -1515,31 +945,7 @@ def get_credits_by_id(user_id):  # TODO: Hm.. Rename to get_credits(user_id)
     return credits_list
 
 
-# TODO: Remove in next iteration
-def insert_credit(credit_obj) -> int:
-    """ Insert credit
-
-    Args:
-        credit_obj: credit obj (None, user_id, event_id, date, value)
-
-    Returns:
-        id: id of the record created
-    """
-
-    # If time = ''
-    if credit_obj[3] == '':
-        time = '34:12'  # TODO: get current time
-    else:
-        time = credit_obj[3]
-
-    cursor.execute(
-        f"insert into credits (user_id, event_id, time, value) values ({credit_obj[1]}, {credit_obj[2]}, '{time}', {credit_obj[4]}) returning id;")
-    id_ = cursor.fetchone()[0]
-    conn.commit()
-    return id_
-
-
-def pay_credit(user_id, event_id, value: int = 0, time_: str = '0'):
+def pay_credit(user_id: int, event_id: int, value: int = 0, time_: str = '0') -> None:
     """ Insert credit for user
 
     Args:
@@ -1547,8 +953,6 @@ def pay_credit(user_id, event_id, value: int = 0, time_: str = '0'):
         event_id: event id from db
         value: int number of credits
         time_: current time str
-
-    Returns:
     """
 
     cursor.execute(f'select * from credits where event_id = {event_id} and user_id = {user_id};')
@@ -1561,80 +965,8 @@ def pay_credit(user_id, event_id, value: int = 0, time_: str = '0'):
     conn.commit()
 
 
-# TODO: Remove in next iteration
-def edit_credit(credit_obj):
-    """ Update credit
-
-    Args:
-        credit_obj: credit obj (id, user_id, event_id, time, value)
-
-    Returns:
-    """
-    cursor.execute(f"""
-        update credits set
-            user_id = {credit_obj[1]},
-            event_id = {credit_obj[2]},
-            time = '{credit_obj[3]}',
-            value = {credit_obj[4]}
-        where id = {credit_obj[0]};
-    """)
-    conn.commit()
-
-
-# TODO: Remove in next iteration
-def remove_credit(credit_id) -> bool:
-    """ Delete credit by id
-
-    Args:
-        credit_id: projects id from bd
-
-    Returns:
-        bool: successful call do DB or not
-    """
-    try:
-        cursor.execute(f'delete from credits where id = {credit_id};')
-        conn.commit()
-        return True
-    except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
-        print(f"error: {err}")
-        return False
-
-
-# TODO: Remove in next iteration
-def clear_credits() -> bool:
-    """ Clear all credits from sql table
-
-    Args:
-    Returns:
-        bool: successful call do DB or not
-    """
-    try:
-        cursor.execute('delete from credits;')
-        conn.commit()
-        return True
-    except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
-        print(f"error: {err}")
-        return False
-
-
 # Codes
-# TODO: Remove in next iteration
-def get_codes():
-    """ Get all codes from sql table
-
-    Args:
-
-    Returns:
-        project objects: list of project objects - [ (code, type, used), ...]
-
-    """
-    cursor.execute('select * from codes;')
-    codes_list = cursor.fetchall()
-
-    return codes_list
-
-
-def load_codes(codes) -> bool:
+def load_codes(codes: tp.List[TTableObject]) -> bool:
     """ Cleat codes table and setup from codes
 
     Args:
@@ -1672,14 +1004,3 @@ def use_code(code: str) -> bool:
     cursor.execute(f"update codes set used = true where code = '{code}';")
     conn.commit()
     return True
-
-
-# TODO: Remove in next iteration
-def clear_codes():
-    """ Clear all codes from sql table
-
-    Args:
-    Returns:
-    """
-    cursor.execute('delete from codes;')
-    conn.commit()
