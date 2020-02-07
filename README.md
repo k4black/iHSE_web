@@ -3,6 +3,7 @@
 Master:  
 ![pystyle](https://github.com/k4black/iHSE_web/workflows/pystyle/badge.svg)
 ![pytests](https://github.com/k4black/iHSE_web/workflows/pytests/badge.svg)
+![codecov](https://codecov.io/gh/k4black/iHSE_web/branch/master/graph/badge.svg)
 
 Release:  
 TODO
