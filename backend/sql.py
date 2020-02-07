@@ -222,19 +222,19 @@ TDay = tp.Dict[str, tp.Any]
 TVacation = tp.Dict[str, tp.Any]
 
 table_fields = {
-    'users': ('id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'),
-    'sessions': ('id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'),
-    'credits': ('id', 'user_id', 'event_id', 'time', 'value'),
-    'codes': ('code', 'type', 'used'),
-    'feedback': ('id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'),
-    'top': ('id', 'user_id', 'chosen_1', 'chosen_2', 'chosen_3', 'day_id'),
-    'projects': ('id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'),
-    'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'),
-    'classes': ('id', 'total', 'annotation'),
-    'enrolls': ('id', 'class_id', 'user_id', 'time', 'attendance', 'bonus'),
-    'days': ('id', 'date', 'title', 'feedback'),
-    'vacations': ('id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'),
-}
+    'users': ['id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'],
+    'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
+    'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
+    'codes': ['code', 'type', 'used'],
+    'feedback': ['id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'],
+    'top': ['id', 'user_id', 'chosen_1', 'chosen_2', 'chosen_3', 'day_id'],
+    'projects': ['id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'],
+    'events': ['id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'],
+    'classes': ['id', 'total', 'annotation'],
+    'enrolls': ['id', 'class_id', 'user_id', 'time', 'attendance', 'bonus'],
+    'days': ['id', 'date', 'title', 'feedback'],
+    'vacations': ['id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'],
+}  # type: tp.Dict[str, tp.List[str]]
 
 """ ---===---==========================================---===--- """
 """           Auxiliary functions for sql interactions           """
@@ -242,16 +242,20 @@ table_fields = {
 
 
 def tuples_to_dicts(data_raw: tp.List[tp.Tuple[tp.Any]], table: str) -> tp.List[TTableObject]:
-    data = []
+    global table_fields
+
+    data = []  # type: tp.List[TTableObject]
 
     for line in data_raw:
-        data.append({table_fields[table][i]: line[i] for i in range(len(table_fields[table]))})
+        data.append({table_fields[table][i]: line[i] for i, _ in enumerate(table_fields[table])})
 
     return data
 
 
-def dict_to_tuple(data_raw: TTableObject, table: str) -> tp.Tuple[tp.Any]:
-    data: tp.List[tp.Any] = []
+def dict_to_tuple(data_raw: TTableObject, table: str) -> tp.Tuple[tp.Any, ...]:
+    global table_fields
+
+    data = []  # type: tp.List[tp.Any]
 
     for field in table_fields[table]:
         try:
@@ -271,7 +275,9 @@ def dict_to_tuple(data_raw: TTableObject, table: str) -> tp.Tuple[tp.Any]:
 
 
 def tuple_to_dict(data_raw: tp.Tuple[tp.Any], table: str) -> TTableObject:
-    data: tp.Dict[str, tp.Any] = {}
+    global table_fields
+
+    data = {}  # type: tp.Dict[str, tp.Any]
 
     for i in range(len(table_fields[table])):
         data[table_fields[table][i]] = data_raw[i]
@@ -336,7 +342,7 @@ def update_in_table(data: TTableObject, table_name: str) -> None:
     conn.commit()
 
 
-def get_in_table(data_id: int, table_name: str) -> TTableObject:
+def get_in_table(data_id: int, table_name: str) -> tp.Optional[TTableObject]:
     """ Get some db object from table by id
 
     Args:
@@ -847,7 +853,7 @@ def enroll_user(class_id: int, user_obj: TTableObject, time_: str = '0') -> bool
 
     cursor.execute(
         f"insert into enrolls (class_id, user_id, time, attendance, bonus) "
-        f"values ({class_id}, {user_obj[0]}, {time_}, false, 0);")
+        f"values ({class_id}, {user_obj['id']}, {time_}, false, 0);")
     conn.commit()
     return True
 
@@ -980,7 +986,7 @@ def load_codes(codes: tp.List[TTableObject]) -> bool:
     """
     try:
         for code in codes:
-            cursor.execute(f"insert into codes (code, type, used) values ('{code[0]}', {code[1]}, false);")
+            cursor.execute(f"insert into codes (code, type, used) values ('{code['code']}', {code['type']}, false);")
         conn.commit()
         return True
     except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
