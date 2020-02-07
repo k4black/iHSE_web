@@ -308,7 +308,7 @@ document.querySelector('#btn').addEventListener('click', function() {
             setLoaded();
 
             if (this.status === 200) {  // Got it
-                location = "http://ihse.tk/index.html"
+                location = "../index.html"
             }
 
             if (this.status === 302) {  // Ok - redir
