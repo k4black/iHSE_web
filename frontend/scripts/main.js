@@ -18,10 +18,10 @@ var user;
  * Setup admin/moderator tag
  */
 loadUser(function () {
-    if (user.type >= 1) {
+    if (user['user_type'] >= 1) {
         document.querySelector('body').classList.add('moderator');
 
-        if (user.type >= 2) {
+        if (user['user_type'] >= 2) {
             document.querySelector('body').classList.add('admin');
         }
     }
