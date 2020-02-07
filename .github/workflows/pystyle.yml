@@ -2,10 +2,9 @@ name: pystyle
 
 on:
     push:
-        tags:
-            - '!refs/tags/*'
         branches:
-            - '*'
+            - master
+            - release
 
 jobs:
   build:

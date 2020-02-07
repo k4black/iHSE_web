@@ -110,7 +110,7 @@ function logout() {
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4) {
             if (this.status === 200) {
-                location = 'http://ihse.tk/index.html';  // Refer to start page
+                location = '../../index.html';  // Refer to start page
             }
 
             if (this.status === 302) {  // Ok - redir

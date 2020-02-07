@@ -61,16 +61,26 @@ function setupClasses() {
     let class_events = document.querySelectorAll('[active-event]');
     for (let i in class_events) {
         class_events[i].onclick = function (val) {
+            cache['class'] = undefined;
+            cache['enrolls'] = undefined;
+
             console.log('clicked event with id: ', class_events[i].getAttribute('data-id'));
 
             // loadClass(class_events[i].getAttribute('data-id'));
-            loadClass(class_events[i].getAttribute('data-id'), setClass);
+            loadClass(class_events[i].getAttribute('data-id'), function () {checkLoading(function () {
+                setEnrolls();
+                setClass();
+            }, ['class', 'enrolls'])});
+
             // TODO: Smooth visible
 
             current_event = class_events[i].getAttribute('data-id');
 
             // loadEnrolls(class_events[i].getAttribute('data-id'));
-            loadEnrollsByClassId(class_events[i].getAttribute('data-id'), setEnrolls);
+            loadEnrollsByClassId(class_events[i].getAttribute('data-id'), function () {checkLoading(function () {
+                setEnrolls();
+                setClass();
+            }, ['class', 'enrolls'])});
 
             // document.querySelector('#class_popup').style.display = 'block';
             showClass();
@@ -134,28 +144,12 @@ function setClass() {
     setupData(document.querySelector('#class_popup .location').firstElementChild, current_events[class_id].place);
     setupData(document.querySelector('#class_popup .host').firstElementChild, current_events[class_id].host);
 
-    setupData(document.querySelector('#class_popup .count').firstElementChild, event_class.count + ' / ' + event_class.total);
     document.querySelector('#total').value = event_class.total;  // Admin editable field
     document.querySelector('#anno').value = event_class.annotation;  // Admin editable field
 
     if (cache['user'].type >= 1) {
         document.querySelector('.anno').parentElement.style.display = 'none';
     }
-
-
-    // // TODO: Hide when there is no enrollment
-    // if (event_class.total == undefined || event_class.total == "" || event_class.total === '0' || event_class.total === '0') {
-    //     document.querySelector('.enroll_section').style.visibility = 'hidden';
-    // } else {
-    //     document.querySelector('#class_popup .count').innerText = event_class.count + ' / ' + event_class.total;
-    //
-    console.log(event_class.count , event_class.total, event_class.count / event_class.total);
-    setupBar(event_class.count / event_class.total);  // Number from 0.0 to 1.0
-
-    //     if (event_class.count >= event_class.total) {
-    //         document.querySelector('#btn').classList.add('inactive');
-    //     }
-    // }
 }
 
 
@@ -185,6 +179,14 @@ function setEnrolls() {
     console.log('enrolls ', enrolls);
 
     setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + Object.keys(enrolls).length + ' записалсь');
+
+
+    // TODO: Hide when there is no enrollment (total === 0)
+    setupData(document.querySelector('#class_popup .count').firstElementChild, Object.keys(enrolls).length + ' / ' + cache['class'].total);
+
+    console.log(Object.keys(enrolls).length , cache['class'].total, Object.keys(enrolls).length / cache['class'].total);
+    setupBar(Object.keys(enrolls).length / cache['class'].total);  // Number from 0.0 to 1.0
+
 
     // Check current user's attendance
     let check_user = false;
