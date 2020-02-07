@@ -849,7 +849,7 @@ def get_class(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         Response - result of request
     """
 
-    data = sql.get_in_table(query['id'], 'class')
+    data = sql.get_in_table(query['id'], 'classes')
 
     print(f"got class: {data}")
 

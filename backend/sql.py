@@ -306,8 +306,7 @@ def insert_to_table(data: TTableObject, table_name: str) -> int:
 
     if table_name == 'events':
         # Class event
-        insert_event(data)
-        return
+        return insert_event(data)
 
     fields = ', '.join(table_fields[table_name])
     values_placeholder = ', '.join(['%s' for _ in fields])
@@ -727,24 +726,28 @@ def insert_event(event_obj: TTableObject) -> int:
     """
 
     try:
-        cursor.execute(f"select (id) from days where date = {event_obj[7]}")
+        cursor.execute(f"select (id) from days where date = {event_obj['date']}")
         day_id = cursor.fetchone()
-    except Exception:
-        day_id = event_obj[7]
+        event_obj['day_id'] = day_id
+    except KeyError:
+        pass
 
-    cursor.execute(
-        f"insert into events (type, title, description, host, place, time, day_id) values ({event_obj[1]}, '{event_obj[2]}', '{event_obj[3]}', '{event_obj[4]}', '{event_obj[5]}', '{event_obj[6]}', {day_id}) returning id;")
-    id_of_new_event = cursor.fetchone()[0]
-    print('Added event ID=', id_of_new_event, 'type', event_obj[1])
+    values_placeholder = ', '.join(['%s' for _ in table_fields['events']])
 
-    if int(event_obj[1]) == 1:
+    sql_string = f"INSERT INTO events (type, title, description, host, place, time, day_id) VALUES ({values_placeholder}) RETURNING id;"
+
+    cursor.execute(sql_string, dict_to_tuple(event_obj, 'events'))  # TODO: try catch
+    event_id = cursor.fetchone()[0]
+
+    if int(event_obj['type']) != 0:
         # class
-        cursor.execute(f'insert into classes (id, total, annotation) values ({id_of_new_event}, 0, '');')
+        cursor.execute(f'INSERT INTO classes (id, total, annotation) VALUES ({event_id}, 0, '');')
     else:
         # regular
         pass
+
     conn.commit()
-    return id_of_new_event
+    return event_id
 
 
 def edit_event(event_obj: TTableObject) -> None:
