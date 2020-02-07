@@ -67,22 +67,22 @@ function setupClasses() {
             console.log('clicked event with id: ', class_events[i].getAttribute('data-id'));
 
             // loadClass(class_events[i].getAttribute('data-id'));
-            loadClass(class_events[i].getAttribute('data-id'), checkLoading(function () {
+            loadClass(class_events[i].getAttribute('data-id'), function () {checkLoading(function () {
                 setEnrolls();
                 setClass();
                 showClass();
-            }, ['class', 'enrolls']));
+            }, ['class', 'enrolls'])});
 
             // TODO: Smooth visible
 
             current_event = class_events[i].getAttribute('data-id');
 
             // loadEnrolls(class_events[i].getAttribute('data-id'));
-            loadEnrollsByClassId(class_events[i].getAttribute('data-id'), checkLoading(function () {
+            loadEnrollsByClassId(class_events[i].getAttribute('data-id'), function () {checkLoading(function () {
                 setEnrolls();
                 setClass();
                 showClass();
-            }, ['class', 'enrolls']));
+            }, ['class', 'enrolls'])});
 
             // document.querySelector('#class_popup').style.display = 'block';
         }
