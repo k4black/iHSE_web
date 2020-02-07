@@ -70,7 +70,6 @@ function setupClasses() {
             loadClass(class_events[i].getAttribute('data-id'), function () {checkLoading(function () {
                 setEnrolls();
                 setClass();
-                showClass();
             }, ['class', 'enrolls'])});
 
             // TODO: Smooth visible
@@ -81,10 +80,10 @@ function setupClasses() {
             loadEnrollsByClassId(class_events[i].getAttribute('data-id'), function () {checkLoading(function () {
                 setEnrolls();
                 setClass();
-                showClass();
             }, ['class', 'enrolls'])});
 
             // document.querySelector('#class_popup').style.display = 'block';
+            showClass();
         }
     }
 }

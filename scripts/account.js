@@ -75,7 +75,7 @@ function setAccount() {
         topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
     // Setup user type label
-    switch (user.type) {
+    switch (user['user_type']) {
         case 0:  // User
             // pass
             break;
