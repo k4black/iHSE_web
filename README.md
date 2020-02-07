@@ -6,7 +6,9 @@ Master:
 ![codecov](https://codecov.io/gh/k4black/iHSE_web/branch/master/graph/badge.svg)
 
 Release:  
-TODO
+TODO  
+![codecov](https://codecov.io/gh/k4black/iHSE_web/branch/release/graph/badge.svg)
+
 
 
 
