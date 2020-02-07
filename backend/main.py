@@ -1021,8 +1021,8 @@ def get_day(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     data = sql.get_day(day)
 
-    data = sorted(data, key=itemgetter(6))
-    groups = groupby(data, key=itemgetter(6))
+    data = sorted(data, key=lambda x: x['time'])
+    groups = groupby(data, key=lambda x: x['time'])
 
     processed_data = [{'time': time_, 'events': [event for event in group_]} for time_, group_ in groups]
 
