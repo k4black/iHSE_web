@@ -1,9 +1,7 @@
 import json
 import time
 import sys
-import string
 from itertools import groupby
-from operator import itemgetter
 import typing as tp
 import random
 
@@ -32,7 +30,7 @@ TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s TODO: Couple of hours
 
 def get_time_str() -> str:
     """ Return current time str. According to timezone
-    
+
     Returns:
         time str in format %Y-%m-%d %H:%M:%S
     """
@@ -450,7 +448,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     Will check session id and permissions
 
     Note:
-        If there is no cookie or it is incorrect - 
+        If there is no cookie or it is incorrect - Error
 
     Args:
         env: HTTP request environment
@@ -963,7 +961,7 @@ def get_projects(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
 
     Returns:
         Response - result of request
-    
+
         projects: List of projects descriptions [  # TODO: to dicts
                   {
                       "title": "Some title",
@@ -994,7 +992,7 @@ def get_projects(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
 def get_day(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     """ Day schedule data HTTP request
     Get day num and return html
-    
+
     Args:
         env: HTTP request environment
         query: url query parameters
@@ -1006,14 +1004,14 @@ def get_day(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     Returns:
         Response - result of request
-        
+
         html data: day schedule
     """
 
     # format is "dd.mm"
     day = query['day']
-    if day not in ['Template', '05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06', '13.06', '14.06',
-                   '15.06', '16.06', '17.06', '18.06']:
+    if day not in ['Template', '05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06',
+                   '13.06', '14.06', '15.06', '16.06', '17.06', '18.06']:
         print('day overflow, falling back to the last day available')
         day = '18.06'
 
@@ -1442,8 +1440,10 @@ def post_mark_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
         for enroll in enrolls:
             sql.update_in_table(enroll, 'enrolls')
 
-            if enroll['attendance'] == True or enroll['attendance'] == 'true':
-                sql.pay_credit(enroll['user_id'], enroll['event_id'], CREDITS_MASTER + min(CREDITS_ADDITIONAL, enroll['bonus']), get_time_str())
+            if enroll['attendance'] is True or enroll['attendance'] == 'true':
+                sql.pay_credit(enroll['user_id'], enroll['event_id'],
+                               CREDITS_MASTER + min(CREDITS_ADDITIONAL, enroll['bonus']),
+                               get_time_str())
                 # TODO: CREDITS_MASTER CREDITS_LECTURE check
 
         return ('200 Ok',
