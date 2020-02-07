@@ -21,11 +21,12 @@ from backend import sql
 # GSheetsAPI imports
 from backend import gsheets
 
+
 sys.path.append('/home/ubuntu/iHSE_web')
 
 TODAY = datetime.today().strftime('%d.%m')
 
-# Timeout of updating objects (from gsheets)
+# Timeout of updating objects
 TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s TODO: Couple of hours
 
 
@@ -43,6 +44,7 @@ def get_time_str() -> str:
 """                       uWSGI typing objects                   """
 """ ---===---==========================================---===--- """
 
+
 TQuery = tp.Dict[str, str]
 TEnvironment = tp.Dict[str, tp.Any]
 TCookie = tp.Dict[str, tp.Any]  # TODO: Specify
@@ -51,6 +53,7 @@ TStatus = str
 THeaders = tp.List[tp.Tuple[str, str]]
 TData = tp.Optional[tp.List[tp.Any]]
 TResponse = tp.Tuple[TStatus, THeaders, TData]
+
 
 """ ---===---==========================================---===--- """
 """                    uWSGI main input function                 """
@@ -116,24 +119,23 @@ def application(env: tp.Dict[str, tp.Any], start_response: tp.Callable[..., None
 """                 Sync functions to update data                """
 """ ---===---==========================================---===--- """
 
+
 cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
 
 
-def update_cache():
+def update_cache() -> None:
     """ Update cache and sync events, projects and etc
 
     Note:
         Run every TIMEOUT seconds
-
-    Returns:
-
     """
+
     global TODAY
 
     # Update today
     TODAY = datetime.today().strftime('%d.%m')
     print('Today ', TODAY)
-    print('sync time: ' + str(time.time()))
+    print('sync time: ' + get_time_str())
 
     return
 
@@ -151,23 +153,21 @@ def update_cache():
     sql.checkpoint()
 
 
-def sync():
+def sync() -> None:
     """ Update cache and sync events, projects and etc
 
     Note:
         Run every TIMEOUT seconds
-
     """
 
     print('============ sync_start ============')
-
     # update_cache()  # Sync itself
     print('============= sync_end =============')
 
     start_sync(TIMEOUT)  # Update - to call again
 
 
-def start_sync(delay):
+def start_sync(delay: int) -> None:
     """ Start sync() in new thread
     This function will run every TIMEOUT seconds
 
@@ -176,9 +176,6 @@ def start_sync(delay):
 
     See:
         sync()
-
-    Returns:
-
     """
 
     th = Timer(delay, sync)  # Run foo() through TIMEOUT seconds
@@ -186,8 +183,6 @@ def start_sync(delay):
     th.start()
 
 
-# sql.recount_attendance()  # TODO: Remove move in sync
-# sql.recount_credits()
 start_sync(0)  # Start sync
 
 
@@ -206,7 +201,7 @@ NUMBER_TEAMS = 0
 def read_config() -> None:
     """Read and save config file (`config.ini`) """
 
-    print('======= Read config file ======== ')
+    print('========= Read config file =========')
 
     global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
 
@@ -228,8 +223,7 @@ def read_config() -> None:
         CREDITS_ADDITIONAL = 5
         NUMBER_TEAMS = 5
 
-
-    print('===== End config file reading ===== ')
+    print('===== End config file reading ======')
 
 
 def write_config() -> None:
@@ -258,7 +252,7 @@ read_config()
 
 
 """ ---===---==========================================---===--- """
-"""          f         """
+"""                  Cache function and methods                  """
 """ ---===---==========================================---===--- """
 
 
@@ -313,7 +307,18 @@ def cache(foo):
 """ ---===---==========================================---===--- """
 
 
-def get_user_by_response(cookie: TCookie) -> tp.Optional[sql.TTableObject]:  # TODO: Refactor function behaviour (raise exception for 401)
+RESPONSE_WRONG_COOKIE = ('401 Unauthorized',
+                         [  # Because in js there is xhttp.withCredentials = true;
+                             ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                             # To receive cookie
+                             ('Access-Control-Allow-Credentials', 'true'),
+                             # Clear user sessid cookie
+                             ('Set-Cookie', 'sessid=none; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
+                         ],
+                         [])
+
+
+def get_user_by_response(cookie: TCookie) -> tp.Optional[sql.TTableObject]:
     """ Manage get user operation
 
     Args:
@@ -333,38 +338,17 @@ def get_user_by_response(cookie: TCookie) -> tp.Optional[sql.TTableObject]:  # T
     sessid = cookie.get('sessid', '')
 
     if sessid == '':  # No cookie
-
-        return ('401 Unauthorized',
-                [('Access-Control-Allow-Origin', '*')],
-                [])
+        return None
 
     sess = sql.get_session(sessid)  # Get session object
 
     if sess is None:  # No such session - wrong cookie
-
-        return ('401 Unauthorized',
-                [  # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
-                    # To receive cookie
-                    ('Access-Control-Allow-Credentials', 'true'),
-                    # Clear user sessid cookie
-                    ('Set-Cookie', 'sessid=none; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
-                ],
-                [])
+        return None
 
     user_obj = sql.get_in_table(sess['user_id'], 'users')  # Get user by user id
 
     if user_obj is None:  # No such user - wrong cookie or smth wrong
-
-        return ('401 Unauthorized',
-                [  # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', 'http://ihse.tk'),
-                    # To receive cookie
-                    ('Access-Control-Allow-Credentials', 'true'),
-                    # Clear user sessid cookie
-                    ('Set-Cookie', 'sessid=none; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
-                ],
-                [])
+        return None
 
     return user_obj
 
@@ -481,17 +465,14 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
-
-    print("Admin try with user: ", user_obj)
-
-    # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-    if user_obj is None or type(user_obj) is tuple:
-        return user_obj
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
     if user_obj['user_type'] == 0:
         return ('401 Unauthorized',
                 [('Access-Control-Allow-Origin', '*')],
                 [])
 
+    print("Admin try with user: ", user_obj)
     # TODO: ADMIN!
 
     print(f'Admin want to {env["PATH_INFO"]}')
@@ -625,10 +606,8 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
-
-    # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-    if user_obj is None or type(user_obj) is tuple:
-        return user_obj
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
 
     print(f'Got user :{user_obj}')
 
@@ -738,23 +717,12 @@ def get_account(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
-
-    # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-    if user_obj is None or type(user_obj) is tuple:
-        return user_obj
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
 
     # Json account data
-    data = {}
-
-    data['name'] = user_obj[3]
-    data['phone'] = user_obj[2]
-    data['type'] = user_obj[1]
-    data['group'] = user_obj[5]
-
-    data['credits'] = user_obj[6]
+    data = user_obj
     data['total'] = CREDITS_TOTAL
-
-    data['avatar'] = user_obj[7]
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
@@ -786,15 +754,12 @@ def get_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
 
-    # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-    if user_obj is None or type(user_obj) is tuple:
-        return user_obj
+    data = sql.get_credits_by_user_id(user_obj['id'])
 
-    data = sql.get_credits_by_user_id(user_obj[0])
-    processes_data = sql.tuples_to_dicts(data, 'credits')
-
-    json_data = json.dumps(processes_data)
+    json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
 
     return ('200 OK',
@@ -1116,9 +1081,8 @@ def post(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/enroll':
         # TODO: Remove on release - admin
         user_obj = get_user_by_response(cookie)
-        # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-        if user_obj is None or type(user_obj) is tuple:
-            return user_obj
+        if user_obj is None:
+            return RESPONSE_WRONG_COOKIE
         if user_obj['user_type'] == 0:
             return ('401 Unauthorized',
                     [('Access-Control-Allow-Origin', '*')],
@@ -1370,10 +1334,8 @@ def post_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
-
-    # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-    if user_obj is None or type(user_obj) is tuple:
-        return user_obj
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
 
     if gsheets.save_feedback(user_obj, day, feedback_obj):
 
@@ -1423,10 +1385,8 @@ def post_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
-
-    # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-    if user_obj is None or type(user_obj) is tuple:
-        return user_obj
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
 
     event_obj = sql.get_event(event_id)
     if event_obj is not None:
@@ -1471,10 +1431,8 @@ def post_mark_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
-
-    # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-    if user_obj is None or type(user_obj) is tuple:
-        return user_obj
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
 
     enrolls = get_json_by_response(env)
 
@@ -1525,10 +1483,8 @@ def post_create_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
-
-    # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-    if user_obj is None or type(user_obj) is tuple:
-        return user_obj
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
 
     event_id = query['event_id']
 
@@ -1573,10 +1529,8 @@ def post_remove_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
-
-    # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-    if user_obj is None or type(user_obj) is tuple:
-        return user_obj
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
 
     enroll_id = query['id']
     enroll = sql.get_in_table(enroll_id, 'enrolls')
@@ -1625,10 +1579,8 @@ def post_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
-
-    # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-    if user_obj is None or type(user_obj) is tuple:
-        return user_obj
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
 
     # TODO:
 
@@ -1686,10 +1638,8 @@ def post_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
-
-    # TODO: Refactor. Change signature. Dont use type(user_obj) is tuple
-    if user_obj is None or type(user_obj) is tuple:
-        return user_obj
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
 
     if gsheets.save_project(user_obj, project_obj):  # If user exist
 
