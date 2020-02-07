@@ -1,15 +1,12 @@
 """Module for basic PostgreSQL interaction via psycopg2"""
 import typing as tp
-import time
 
 import psycopg2
 from psycopg2 import IntegrityError, DataError, ProgrammingError, OperationalError
 
-
 """ ---===---==========================================---===--- """
 """         PostgreSQL database interaction via psycopg2         """
 """ ---===---==========================================---===--- """
-
 
 # initializing connection to database
 # TODO: plain text user & password, great
@@ -39,7 +36,7 @@ cursor.execute("""
         direction text default '',
         description text default '',
         annotation text default ''
-    ); 
+    );
 """)
 
 # Users
@@ -54,7 +51,7 @@ cursor.execute("""
         project_id int default 0,
         foreign key (project_id) references projects(id),
         avatar text default ''
-    ); 
+    );
 """)
 
 # Sessions
@@ -208,7 +205,6 @@ cursor.execute("""
 
 conn.commit()
 
-
 TTableObject = tp.Dict[str, tp.Any]
 
 # TODO: Remove ?
@@ -225,22 +221,20 @@ TEnroll = tp.Dict[str, tp.Any]
 TDay = tp.Dict[str, tp.Any]
 TVacation = tp.Dict[str, tp.Any]
 
-
 table_fields = {
-    'users': ('id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'),
-    'sessions': ('id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'),
-    'credits': ('id', 'user_id', 'event_id', 'time', 'value'),
-    'codes': ('code', 'type', 'used'),
-    'feedback': ('id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'),
-    'top': ('id', 'user_id', 'chosen_1', 'chosen_2', 'chosen_3', 'day_id'),
-    'projects': ('id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'),
-    'events': ('id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'),
-    'classes': ('id', 'total', 'annotation'),
-    'enrolls': ('id', 'class_id', 'user_id', 'time', 'attendance', 'bonus'),
-    'days': ('id', 'date', 'title', 'feedback'),
-    'vacations': ('id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'),
-}
-
+    'users': ['id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'],
+    'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
+    'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
+    'codes': ['code', 'type', 'used'],
+    'feedback': ['id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'],
+    'top': ['id', 'user_id', 'chosen_1', 'chosen_2', 'chosen_3', 'day_id'],
+    'projects': ['id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'],
+    'events': ['id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'],
+    'classes': ['id', 'total', 'annotation'],
+    'enrolls': ['id', 'class_id', 'user_id', 'time', 'attendance', 'bonus'],
+    'days': ['id', 'date', 'title', 'feedback'],
+    'vacations': ['id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'],
+}  # type: tp.Dict[str, tp.List[str]]
 
 """ ---===---==========================================---===--- """
 """           Auxiliary functions for sql interactions           """
@@ -248,16 +242,20 @@ table_fields = {
 
 
 def tuples_to_dicts(data_raw: tp.List[tp.Tuple[tp.Any]], table: str) -> tp.List[TTableObject]:
-    data = []
+    global table_fields
+
+    data = []  # type: tp.List[TTableObject]
 
     for line in data_raw:
-        data.append({table_fields[table][i]: line[i] for i in range(len(table_fields[table]))})
+        data.append({table_fields[table][i]: line[i] for i, _ in enumerate(table_fields[table])})
 
     return data
 
 
-def dict_to_tuple(data_raw: TTableObject, table: str) -> tp.Tuple[tp.Any]:
-    data: tp.List[tp.Any] = []
+def dict_to_tuple(data_raw: TTableObject, table: str) -> tp.Tuple[tp.Any, ...]:
+    global table_fields
+
+    data = []  # type: tp.List[tp.Any]
 
     for field in table_fields[table]:
         try:
@@ -277,7 +275,9 @@ def dict_to_tuple(data_raw: TTableObject, table: str) -> tp.Tuple[tp.Any]:
 
 
 def tuple_to_dict(data_raw: tp.Tuple[tp.Any], table: str) -> TTableObject:
-    data: tp.Dict[str, tp.Any] = {}
+    global table_fields
+
+    data = {}  # type: tp.Dict[str, tp.Any]
 
     for i in range(len(table_fields[table])):
         data[table_fields[table][i]] = data_raw[i]
@@ -342,7 +342,7 @@ def update_in_table(data: TTableObject, table_name: str) -> None:
     conn.commit()
 
 
-def get_in_table(data_id: int, table_name: str) -> TTableObject:
+def get_in_table(data_id: int, table_name: str) -> tp.Optional[TTableObject]:
     """ Get some db object from table by id
 
     Args:
@@ -358,7 +358,7 @@ def get_in_table(data_id: int, table_name: str) -> TTableObject:
 
     sql_string = f'select * from {table_name} where id = %s;'
 
-    cursor.execute(sql_string, (data_id, ))
+    cursor.execute(sql_string, (data_id,))
     obj = cursor.fetchone()
 
     return tuple_to_dict(obj, table_name)
@@ -461,6 +461,7 @@ def remove_project(project_id: int) -> None:
     cursor.execute(f'delete from projects where id = {project_id};')
     conn.commit()
 
+
 # Days
 
 
@@ -480,7 +481,8 @@ def get_names() -> tp.List[TTableObject]:
     cursor.execute('select * from users;')
     users_list = cursor.fetchall()
 
-    return [{'id': user[0], 'name': user[3], 'team': user[5], 'project_id': user[7]} for user in users_list]  # TODO: only if type == 0
+    return [{'id': user[0], 'name': user[3], 'team': user[5], 'project_id': user[7]} for user in users_list]
+    # TODO: only if type == 0
 
 
 def get_user_by_phone(phone: str) -> tp.Optional[TTableObject]:
@@ -524,11 +526,11 @@ def register(name, passw, type_, phone, team) -> bool:
         return False
 
     cursor.execute(f"""
-        insert into users (user_type, phone, name, pass, team) 
-        values ({type_}, 
-               '{phone}', 
-               '{name}', 
-                {passw}, 
+        insert into users (user_type, phone, name, pass, team)
+        values ({type_},
+               '{phone}',
+               '{name}',
+                {passw},
                 {team});
     """)
     conn.commit()
@@ -650,7 +652,8 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0'):
     existing_sessions = cursor.fetchall()
     if len(existing_sessions) == 0:
         cursor.execute(f"""
-            insert into sessions (user_id, user_type, user_agent, last_ip, time) values ({user[0]}, {user[1]}, '{agent}', '{ip}', '{time_}');
+            insert into sessions (user_id, user_type, user_agent, last_ip, time)
+            values ({user[0]}, {user[1]}, '{agent}', '{ip}', '{time_}');
         """)
         conn.commit()
 
@@ -734,7 +737,8 @@ def insert_event(event_obj: TTableObject) -> int:
 
     values_placeholder = ', '.join(['%s' for _ in table_fields['events']])
 
-    sql_string = f"INSERT INTO events (type, title, description, host, place, time, day_id) VALUES ({values_placeholder}) RETURNING id;"
+    sql_string = f"INSERT INTO events (type, title, description, host, place, time, day_id) " \
+                 f"VALUES ({values_placeholder}) RETURNING id;"
 
     cursor.execute(sql_string, dict_to_tuple(event_obj, 'events'))  # TODO: try catch
     event_id = cursor.fetchone()[0]
@@ -848,7 +852,8 @@ def enroll_user(class_id: int, user_obj: TTableObject, time_: str = '0') -> bool
         return False
 
     cursor.execute(
-        f"insert into enrolls (class_id, user_id, time, attendance, bonus) values ({class_id}, {user_obj[0]}, {time_}, false, 0);")
+        f"insert into enrolls (class_id, user_id, time, attendance, bonus) "
+        f"values ({class_id}, {user_obj['id']}, {time_}, false, 0);")
     conn.commit()
     return True
 
@@ -961,7 +966,8 @@ def pay_credit(user_id: int, event_id: int, value: int = 0, time_: str = '0') ->
     cursor.execute(f'select * from credits where event_id = {event_id} and user_id = {user_id};')
     credits_ = cursor.fetchall()
     if len(credits_) == 0:
-        cursor.execute(f"insert into credits (id, user_id, event_id, time, value) values (default, {user_id}, {event_id}, '{time_}', {value});")
+        cursor.execute(f"insert into credits (id, user_id, event_id, time, value) "
+                       f"values (default, {user_id}, {event_id}, '{time_}', {value});")
     else:
         cursor.execute(f"update credits set value = {value} where id = {credits_[0][0]};")
     # TODO: Make execute params
@@ -980,7 +986,7 @@ def load_codes(codes: tp.List[TTableObject]) -> bool:
     """
     try:
         for code in codes:
-            cursor.execute(f"insert into codes (code, type, used) values ('{code[0]}', {code[1]}, false);")
+            cursor.execute(f"insert into codes (code, type, used) values ('{code['code']}', {code['type']}, false);")
         conn.commit()
         return True
     except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
