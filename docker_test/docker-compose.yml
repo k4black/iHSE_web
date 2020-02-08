@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+    # Nginx server for static frontend 
+    nginx:        
+        build:
+            context: .
+            dockerfile: nginx.dockerfile
+        container_name: nginx_docker
+        restart: unless-stopped
+        ports:
+          - 80:80
+        volumes:
+          - ./frontend/:/var/app/frontend/
+          - ./conf/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+
+    # uWSGI server for backend 
+    uwsgi:
+        build:
+            context: .
+            dockerfile: uwsgi.dockerfile
+        container_name: uwsgi_docker
+        restart: unless-stopped
+        ports:
+          - 8001:8001
+        volumes:
+          - ./backend/:/var/app/backend/
+          - ./conf/uwsgi.ini:/var/conf/uwsgi.ini
+        depends_on:
+          - nginx
+
+    # PostgeSql server for backend 
+    # TODO 
