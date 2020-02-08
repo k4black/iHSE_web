@@ -7,6 +7,6 @@ EXPOSE 8001
 #COPY main.py /var/src/main.py
 #CMD cat /var/src/main.py
 
-CMD uwsgi /var/conf/uwsgi.ini --wsgi-file /var/app/backend/main.py --need-app
+CMD uwsgi /var/conf/uwsgi.ini --need-app
 
 WORKDIR /var/app/backend/
