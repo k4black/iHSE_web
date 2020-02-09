@@ -1,5 +1,5 @@
 FROM python:3.7
-RUN pip install uwsgi
+RUN pip install uwsgi && pip install psycopg2-binary
 
 EXPOSE 8001
 
