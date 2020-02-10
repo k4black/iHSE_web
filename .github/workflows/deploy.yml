@@ -43,7 +43,7 @@ jobs:
             with:
                 host: ihse.tk
                 username: ubuntu
-                password: ${{ secrets.SSH_PASSWORD }}
+                key: ${{ secrets.SSH_KEY }}
                 port: 22
                 script: whoami
               
