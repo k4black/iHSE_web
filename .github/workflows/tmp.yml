@@ -56,7 +56,10 @@ jobs:
               run: |
                   npm install
                   npm install html-minifier -g
-                  html-minifier --input-dir ./ --output-dir ./ --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true --output feedback.min.html
+                  html-minifier --input-dir ./scripts --output-dir ./scripts --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true --output feedback.min.html
+                  html-minifier --input-dir ./styles --output-dir ./styles --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true --output feedback.min.html
+                  html-minifier --input-dir ./libs --output-dir ./libs --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true --output feedback.min.html
+                  html-minifier --input-dir ./components --output-dir ./components --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true --output feedback.min.html
                   ls -la
                   ls -la /scripts
                   ls -la /styles
