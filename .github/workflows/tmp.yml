@@ -27,9 +27,9 @@ jobs:
               run: |
                   npm install
                   npm install uglifycss -g
-                  ls -la
-                  uglifycss styles/main.css --output builded.min.css
-                  ls -la
+                  ls -la styles/
+                  uglifycss styles/main.css --output styles/main.min.css
+                  ls -la styles/
                   cat builded.min.css
 
             - name: Min js
@@ -37,7 +37,7 @@ jobs:
               run: |
                   npm install
                   npm install uglify-es -g
-                  ls -la
-                  uglifyjs scripts/main.js --output builded.min.js  --ie8
-                  ls -la
+                  ls -la scripts/
+                  uglifyjs scripts/main.js --output scripts/main.min.js  --ie8
+                  ls -la scripts/
                   cat builded.min.js
