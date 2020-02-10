@@ -14,7 +14,7 @@ jobs:
             # Checkout to code
             - uses: actions/checkout@master
             # Setup python
-            - uses: actions/setup-python@v1
+            - uses: actions/setup.sh-python@v1
               with:
                 python-version: '3.7'
                 architecture: 'x64'
@@ -37,7 +37,7 @@ jobs:
               run: |
                 pip install pytest
                 pip install pytest-cov
-                pytest tests/ --cov=./ --cov-report=xml
+                pytest backend/tests/ --cov=./ --cov-report=xml
             - name: Upload coverage to Codecov
               uses: codecov/codecov-action@v1
               with:

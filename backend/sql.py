@@ -976,7 +976,7 @@ def pay_credit(user_id: int, event_id: int, value: int = 0, time_: str = '0') ->
 
 # Codes
 def load_codes(codes: tp.List[TTableObject]) -> bool:
-    """ Cleat codes table and setup from codes
+    """ Cleat codes table and setup.sh from codes
 
     Args:
         codes: codes list - [(str, int), (str, int), ... ]

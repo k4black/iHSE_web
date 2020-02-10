@@ -289,7 +289,7 @@ function checkCreateTable(events_raw, users_raw, projects_raw) {
 
 
 /**
- * setup table by current_table from global 'cache'
+ * setup.sh table by current_table from global 'cache'
  */
 function setTable() {
     console.log('setting Table: ', current_table);
@@ -559,7 +559,7 @@ function editRow(row) {
 
 
 function setupTabs() {
-    console.log('setup-ing tabs');
+    console.log('setup.sh-ing tabs');
 
 
 
