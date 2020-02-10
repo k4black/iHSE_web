@@ -21,15 +21,6 @@ jobs:
               uses: actions/setup-node@v1
               with:
                   node-version: ${{ matrix.node-version }}
-            - name: Min js
-              working-directory: ./frontend
-              run: |
-                  npm install
-                  npm install uglify-js -g
-                  ls -la
-                  uglifyjs scripts/main.js --output builded.min.js
-                  ls -la
-                  cat builded.min.js
 
             - name: Min css
               working-directory: ./frontend
@@ -40,3 +31,13 @@ jobs:
                   uglifyjs styles/main.css --output builded.min.css
                   ls -la
                   cat builded.min.css
+
+            - name: Min js
+              working-directory: ./frontend
+              run: |
+                  npm install
+                  npm install uglify-js -g
+                  ls -la
+                  uglifyjs scripts/main.js --output builded.min.js
+                  ls -la
+                  cat builded.min.js
