@@ -39,7 +39,7 @@ jobs:
                   npm install uglify-es -g
                   uglifyjs --help
                   ls -la scripts/
-                  uglifyjs scripts/main.js --output scripts/main.min.js  --ie8
+                  uglifyjs scripts/admin.js --output scripts/admin.min.js  --ie8
                   ls -la scripts/
 
             - name: Min html
