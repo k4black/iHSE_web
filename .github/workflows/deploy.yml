@@ -12,8 +12,8 @@ jobs:
         runs-on: [ubuntu-latest]
         steps:
           - uses: actions/checkout@v2
-              with:
-                  ref: release
+            with:
+                ref: release
 
 #           - name: Use Node.js 12.x
 #             uses: actions/setup.sh-node@v1
