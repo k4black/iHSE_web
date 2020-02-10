@@ -30,7 +30,7 @@ jobs:
                   uglifycss --help
                   ls -la styles/
 
-                  for fileName in `ls ./styles/*.css`; do
+                  for fileName in `ls ./styles/*.css` `ls ./components/styles/*.css`; do
                       uglifycss $fileName --output $fileName
                   done
 
@@ -44,7 +44,7 @@ jobs:
                   uglifyjs --help
                   ls -la scripts/
 
-                  for fileName in `ls ./scripts/*.js`; do
+                  for fileName in `ls ./scripts/*.js` `ls ./components/scripts/*.js`; do
                      uglifyjs $fileName --output $fileName
                   done
 
@@ -57,13 +57,14 @@ jobs:
                   npm install html-minifier -g
                   html-minifier --help
                   ls -la .
+                  ls -la ./components
 
-                  for fileName in `ls ./*.html`; do
+                  for fileName in `ls ./*.html` `ls ./components/*.html`; do
                      html-minifier $fileName --output $fileName --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true
                   done
 
                   ls -la .
-
+                  ls -la ./components
 
             - name: Min components
               working-directory: ./frontend
