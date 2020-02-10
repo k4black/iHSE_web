@@ -36,7 +36,7 @@ jobs:
               working-directory: ./frontend
               run: |
                   npm install
-                  npm install uglify-js -g
+                  npm install uglify-es -g
                   ls -la
                   uglifyjs scripts/main.js --output builded.min.js  --ie8
                   ls -la
