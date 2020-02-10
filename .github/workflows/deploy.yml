@@ -45,5 +45,9 @@ jobs:
                 username: ubuntu
                 key: ${{ secrets.SSH_KEY }}
                 port: 22
-                script: whoami
+                script: |
+                    whoami
+                    echo "Runing /var/app/setup.sh"
+                    sudo chmod +x /var/app/setup.sh
+                    sudo /var/app/setup.sh
               
