@@ -441,9 +441,10 @@ function editRow(row) {
         placeholder = (field.slice(0, 4) === 'time' ? 'placeholder="hh.mm"' : '');
         placeholder = (current_table === 'events' && field === 'time' ? 'placeholder="hh.mm-hh.mm"' : '');
         if (Object.keys(row).length === 0) {
-            current_inputs_html += '<input name=' + field + ' value="" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
+            let t = '<input name="asd">';
+            current_inputs_html += '<input name="' + field + '" value="" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         } else {
-            current_inputs_html += '<input name=' + field + ' value="' + row[field] + '" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
+            current_inputs_html += '<input name="' + field + '" value="' + row[field] + '" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         }
 
         if (field === 'user_id' || field === 'event_id' || field === 'project_id' || field === 'day_id') {
