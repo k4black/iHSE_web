@@ -7,9 +7,10 @@ Master:
 
 Release:  
 TODO
-![pystyle](https://github.com/k4black/iHSE_web/workflows/pystyle/badge.svg)
-![pytests](https://github.com/k4black/iHSE_web/workflows/pytests/badge.svg)
+![pystyle](https://github.com/k4black/iHSE_web/workflows/pystyle/badge.svg?branch=release)
+![pytests](https://github.com/k4black/iHSE_web/workflows/pytests/badge.svg?branch=release)
 ![codecov](https://codecov.io/gh/k4black/iHSE_web/branch/release/graph/badge.svg)
+![deploy](https://github.com/k4black/iHSE_web/workflows/deploy/badge.svg?branch=release)
 
 
 
