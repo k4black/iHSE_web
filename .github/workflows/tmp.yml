@@ -28,7 +28,7 @@ jobs:
                   npm install
                   npm install uglifycss -g
                   ls -la
-                  uglifyjs styles/main.css --output builded.min.css
+                  uglifycss styles/main.css --output builded.min.css
                   ls -la
                   cat builded.min.css
 
