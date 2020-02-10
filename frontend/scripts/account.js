@@ -58,7 +58,7 @@ function setAccount() {
     topbar.querySelector('.topbar__name').innerText = user.name;
     topbar.querySelector('.topbar__phone').innerText = user.phone;
 
-    //setup avatar
+    //setup.sh avatar
     if (user.avatar != null && user.avatar != undefined && user.avatar != '')
         topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
 
@@ -329,7 +329,7 @@ function setCredits() {
 
     document.querySelector('.credits__title').innerText = total_sum + ' / ' + cache['user'].total;
 
-    // Correct setup of zeros values (future days)
+    // Correct setup.sh of zeros values (future days)
     data = [];
     dataShort = [];
     let flag = false;
