@@ -10,43 +10,43 @@ jobs:
     deploying:
         runs-on: [ubuntu-latest]
         steps:
-            - uses: actions/checkout@v2
-              with:
-                  ref: release
+            -   uses: actions/checkout@v2
+                with:
+                    ref: release
 
-#           - name: Use Node.js 12.x
-#             uses: actions/setup.sh-node@v1
-#             with:
-#                 node-version: '12.x'
+            #           - name: Use Node.js 12.x
+            #             uses: actions/setup.sh-node@v1
+            #             with:
+            #                 node-version: '12.x'
 
-#           - name: Build Project
-#             run: |
-#               npm install
-#               npm run build --if-present
+            #           - name: Build Project
+            #             run: |
+            #               npm install
+            #               npm run build --if-present
 
-            - name: List output files
-              run: ls
+            -   name: List output files
+                run: ls
 
-            - name: FTP-Deploy-Action
-              uses: SamKirkland/FTP-Deploy-Action@2.0.0
-              env:
-                  FTP_SERVER: ihse.tk
-                  FTP_USERNAME: ubuntu-ftp
-                  FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-                  METHOD: ftp
-                  LOCAL_DIR: .
-                  ARGS: --delete
-                
-            - name: Running setup bash script
-              uses: appleboy/ssh-action@master
-              with:
-                  host: ihse.tk
-                  username: ubuntu
-                  key: ${{ secrets.SSH_KEY }}
-                  port: 22
-                  script: |
-                      whoami
-                      echo "Runing /var/app/setup.sh"
-                      sudo chmod +x /var/app/setup.sh
-                      sudo /var/app/setup.sh
+            -   name: FTP-Deploy-Action
+                uses: SamKirkland/FTP-Deploy-Action@2.0.0
+                env:
+                    FTP_SERVER: ihse.tk
+                    FTP_USERNAME: ubuntu-ftp
+                    FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+                    METHOD: ftp
+                    LOCAL_DIR: .
+                    ARGS: --delete
+
+            -   name: Running setup bash script
+                uses: appleboy/ssh-action@master
+                with:
+                    host: ihse.tk
+                    username: ubuntu
+                    key: ${{ secrets.SSH_KEY }}
+                    port: 22
+                    script: |
+                        whoami
+                        echo "Runing /var/app/setup.sh"
+                        sudo chmod +x /var/app/setup.sh
+                        sudo /var/app/setup.sh
               
