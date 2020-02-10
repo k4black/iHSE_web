@@ -7,6 +7,7 @@ EXPOSE 8001
 #COPY main.py /var/src/main.py
 #CMD cat /var/src/main.py
 
+CMD touch /var/app/uwsgi.log
 CMD cp -T /var/app/uwsgi.log /var/app/uwsgi.log.old && echo "" > /var/app/uwsgi.log
 
 CMD uwsgi /var/conf/uwsgi.ini --need-app

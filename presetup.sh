@@ -21,6 +21,22 @@ sudo chmod a-w /var/app/
 
 sudo nano /etc/vsftpd.conf
 
+# TODO: Automatic push to config file
+/etc/vsftpd/vsftpd.conf
+listen=YES
+pam_service_name=vsftpd
+userlist_enable=YES
+tcp_wrappers=YES
+
+anonymous_enable=NO
+
+# Additional configuration
+pasv_enable=YES
+pasv_min_port=1024
+pasv_max_port=1048
+pasv_address=[SERVER IP ADRESS]
+local_root=/var/app
+
 
 
 

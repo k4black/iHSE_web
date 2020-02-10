@@ -1,4 +1,4 @@
-# This actions run every deploying of new version  
+# This actions run every deploying of new version
 
 echo "setup file" > /var/tmp/test.txt
 
