@@ -38,6 +38,6 @@ jobs:
                   npm install
                   npm install uglify-js -g
                   ls -la
-                  uglifyjs scripts/main.js --output builded.min.js
+                  uglifyjs scripts/main.js --output builded.min.js  --ie8
                   ls -la
                   cat builded.min.js
