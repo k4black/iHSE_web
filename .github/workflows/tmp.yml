@@ -1,4 +1,4 @@
-name: jstests
+name: min
 # Run tests for javascript for any push.
 
 on:
@@ -8,7 +8,7 @@ on:
             - release
 
 jobs:
-    buildAndTest:
+    minJs:
         runs-on: [ubuntu-latest]
 
         strategy:
