@@ -1,20 +1,18 @@
-name: deploy
-# Build and Publish Front End Website
+name: minimization
+# Run tests for javascript for any push.
 
 on:
     push:
         branches:
+            - master
             - release
 
 jobs:
-    deploying:
+    minimization:
         runs-on: [ubuntu-latest]
+
         steps:
             -   uses: actions/checkout@v2
-                with:
-                    ref: release
-
-            # MINIMIZATION STEPS
             -   name: Use Node.js 12.x
                 uses: actions/setup-node@v1
                 with:
@@ -68,31 +66,3 @@ jobs:
                     ls -la .
                     ls -la components/
 
-            # FTP DEPLOY STEPS
-            -   name: List output files
-                run: ls
-
-            -   name: FTP-Deploy-Action
-                uses: SamKirkland/FTP-Deploy-Action@2.0.0
-                env:
-                    FTP_SERVER: ihse.tk
-                    FTP_USERNAME: ubuntu-ftp
-                    FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-                    METHOD: ftp
-                    LOCAL_DIR: .
-                    ARGS: --delete
-
-            # SSH DEPLOY STEPS
-            -   name: Running setup bash script
-                uses: appleboy/ssh-action@master
-                with:
-                    host: ihse.tk
-                    username: ubuntu
-                    key: ${{ secrets.SSH_KEY }}
-                    port: 22
-                    script: |
-                        whoami
-                        echo "Runing /var/app/setup.sh"
-                        sudo chmod +x /var/app/setup.sh
-                        sudo /var/app/setup.sh
-              

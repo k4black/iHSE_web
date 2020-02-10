@@ -13,69 +13,7 @@ console.log($popup_inputs);
 
 
 
-current_table = 'users';
-
-
-
-events_raw = [
-    {'id': 0, 'type': 1, 'title': 'Some title 0', 'date': '06.10'},
-    {'id': 1, 'type': 1, 'title': 'Some title 1', 'date': '06.10'},
-    {'id': 2, 'type': 1, 'title': 'Some title 2', 'date': '07.10'},
-    {'id': 3, 'type': 1, 'title': 'Some title 3', 'date': '07.10'},
-    {'id': 4, 'type': 1, 'title': 'Some title 4', 'date': '07.10'},
-    {'id': 5, 'type': 1, 'title': 'Some title 5', 'date': '07.10'},
-    {'id': 6, 'type': 1, 'title': 'Some title 6', 'date': '08.10'},
-    {'id': 7, 'type': 1, 'title': 'Some title 7', 'date': '09.10'},
-    {'id': 8, 'type': 1, 'title': 'Some title 8', 'date': '09.10'},
-    {'id': 9, 'type': 1, 'title': 'Some title 9', 'date': '06.10'},
-];
-
-
-users_raw = [
-    {'id': 4, 'name': 'Boiko Tcar', 'team': 2, 'credits': 777},
-    {'id': 3, 'name': 'Inav Petrovich', 'team': 0, 'credits': 666},
-    {'id': 1, 'name': 'Max Pedroviv', 'team': 1, 'credits': 999},
-];
-
-projects_raw = [
-    {'id': 4, 'title': 'Proj test'},
-    {'id': 3, 'title': 'some prj'},
-    {'id': 1, 'title': 'And other one'},
-];
-
-
-
-function processUsers(users_raw) {
-    let users = {};
-
-    for (let i in users_raw) {
-        users[users_raw[i].id] = users_raw[i];
-    }
-
-    return users;
-}
-
-
-function processEvents(events_raw) {
-    let events = {};
-
-    for (let i in events_raw) {
-        events[events_raw[i].id] = events_raw[i];
-    }
-
-    return events;
-}
-
-
-function processProjects(projects_raw) {
-    let projects = {};
-
-    for (let i in projects_raw) {
-        projects[projects_raw[i].id] = projects_raw[i];
-    }
-
-    return projects;
-}
+var current_table = 'users';
 
 
 
@@ -262,22 +200,6 @@ function buildTable($el, tableName, fields, data) {
 }
 
 
-
-
-
-let readyStatus = 0;  // loaded current table + users + events
-
-function checkCreateTable(events_raw, users_raw, projects_raw) {
-    if (readyStatus < 3) {
-        return;
-    }
-
-    events = processEvents(events_raw);
-    users = processUsers(users_raw);
-    projects = processProjects(projects_raw);
-
-    buildTable($table, current_table, fields, data);
-}
 
 
 
@@ -519,9 +441,10 @@ function editRow(row) {
         placeholder = (field.slice(0, 4) === 'time' ? 'placeholder="hh.mm"' : '');
         placeholder = (current_table === 'events' && field === 'time' ? 'placeholder="hh.mm-hh.mm"' : '');
         if (Object.keys(row).length === 0) {
-            current_inputs_html += '<input name=' + field + ' value="" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
+            let t = '<input name="asd">';
+            current_inputs_html += '<input name="' + field + '" value="" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         } else {
-            current_inputs_html += '<input name=' + field + ' value="' + row[field] + '" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
+            current_inputs_html += '<input name="' + field + '" value="' + row[field] + '" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         }
 
         if (field === 'user_id' || field === 'event_id' || field === 'project_id' || field === 'day_id') {
