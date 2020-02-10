@@ -1,0 +1,32 @@
+name: jstests
+# Run tests for javascript for any push.
+
+on:
+    push:
+        branches:
+            - master
+            - release
+
+jobs:
+    buildAndTest:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                node-version: [8.x, 10.x, 12.x]
+
+        steps:
+            - uses: actions/checkout@v1
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - name: Install, build, test
+              run: |
+                  npm install
+                  npm run build
+                  ls -la
+                  ls -la ./build
+                  npm test
+              env:
+                  CI: true

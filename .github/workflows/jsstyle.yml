@@ -1,0 +1,24 @@
+name: jsstyle
+# Run codestype cechs for javascript for any push.
+
+on:
+    push:
+        branches:
+            - master
+            - release
+
+jobs:
+    checkCodestyle:
+        runs-on: [ubuntu-latest]
+        steps:
+            - uses: actions/checkout@v1
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: '8.x'
+            - name: Install and check codestyle
+              run: |
+                  npm install
+                  npm run codestyle
+              env:
+                  CI: true
