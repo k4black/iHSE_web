@@ -49,3 +49,14 @@ jobs:
                   ls -la
                   html-minifier feedback.html --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true --output feedback.min.html
                   ls -la
+
+
+            - name: Min all
+              working-directory: ./frontend
+              run: |
+                  npm install
+                  npm install html-minifier -g
+                  html-minifier --input-dir ./ --output-dir ./ --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true --output feedback.min.html
+                  ls -la
+                  ls -la /scripts
+                  ls -la /styles
