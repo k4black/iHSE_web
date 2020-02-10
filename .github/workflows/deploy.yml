@@ -11,7 +11,7 @@ jobs:
         name: FTP-Deploy-Action
         runs-on: [ubuntu-latest]
         steps:
-          - uses: actions/checkout@master
+          - uses: actions/checkout@release
 
 #           - name: Use Node.js 12.x
 #             uses: actions/setup-node@v1
@@ -35,3 +35,13 @@ jobs:
                 METHOD: ftp
                 LOCAL_DIR: .
                 ARGS: --delete
+                
+          - name: Running setup bash script 
+            uses: appleboy/ssh-action@master
+            with:
+                host: ihse.tk
+                username: ubuntu
+                password: ${{ secrets.SSH_PASSWORD }}
+                port: 22
+                script: whoami
+              
