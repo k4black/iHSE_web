@@ -29,11 +29,10 @@ jobs:
                   npm install uglifycss -g
                   uglifycss --help
                   ls -la styles/
-                  uglifycss styles/main.css --output styles/main.min.css
 
                   for fileName in `ls ./styles/*.css`
                   do
-                     echo $fileName
+                      uglifycss $fileName --output $fileName
                   done
 
                   ls -la styles/
@@ -45,11 +44,9 @@ jobs:
                   npm install uglify-es -g
                   uglifyjs --help
                   ls -la scripts/
-                  uglifyjs scripts/admin.js --output scripts/admin.min.js  --ie8
-
-                  for fileName in `ls ./scripts/*.js`
-                  do
-                     echo $fileName
+                  
+                  for fileName in `ls ./scripts/*.js`; do
+                     uglifyjs $fileName --output $fileName
                   done
 
                   ls -la scripts/
