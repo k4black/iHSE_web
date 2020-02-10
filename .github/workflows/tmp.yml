@@ -39,3 +39,13 @@ jobs:
                   ls -la scripts/
                   uglifyjs scripts/main.js --output scripts/main.min.js  --ie8
                   ls -la scripts/
+
+            - name: Min html
+              working-directory: ./frontend
+              run: |
+                  npm install
+                  npm install html-minifier -g
+                  html-minifier --help
+                  ls -la
+                  html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true
+                  ls -la
