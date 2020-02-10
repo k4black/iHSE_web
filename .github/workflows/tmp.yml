@@ -30,6 +30,13 @@ jobs:
                   uglifycss --help
                   ls -la styles/
                   uglifycss styles/main.css --output styles/main.min.css
+
+                  filesToMinimize = `ls ./styles/*.css`
+                  for fileName in $filesToMinimize
+                  do
+                     echo $fileName
+                  done
+
                   ls -la styles/
 
             - name: Min js
@@ -40,6 +47,13 @@ jobs:
                   uglifyjs --help
                   ls -la scripts/
                   uglifyjs scripts/admin.js --output scripts/admin.min.js  --ie8
+
+                  filesToMinimize = `ls ./scripts/*.js`
+                  for fileName in $filesToMinimize
+                  do
+                     echo $fileName
+                  done
+
                   ls -la scripts/
 
             - name: Min html
@@ -50,6 +64,13 @@ jobs:
                   html-minifier --help
                   ls -la
                   html-minifier feedback.html --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true --output feedback.min.html
+
+                  filesToMinimize = `ls ./*.html`
+                  for fileName in $filesToMinimize
+                  do
+                     echo $fileName
+                  done
+
                   ls -la
 
 
