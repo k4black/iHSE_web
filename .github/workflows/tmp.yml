@@ -30,7 +30,6 @@ jobs:
                   ls -la styles/
                   uglifycss styles/main.css --output styles/main.min.css
                   ls -la styles/
-                  cat builded.min.css
 
             - name: Min js
               working-directory: ./frontend
@@ -40,4 +39,3 @@ jobs:
                   ls -la scripts/
                   uglifyjs scripts/main.js --output scripts/main.min.js  --ie8
                   ls -la scripts/
-                  cat builded.min.js
