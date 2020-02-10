@@ -8,7 +8,7 @@ on:
             - release
 
 jobs:
-    run_tests:
+    runTests:
         runs-on: [ubuntu-latest]
         steps:
             # Checkout to code

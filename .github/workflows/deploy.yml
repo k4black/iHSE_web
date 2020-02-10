@@ -7,8 +7,7 @@ on:
             - release
 
 jobs:
-    FTP-Deploy-Action:
-        name: FTP-Deploy-Action
+    deploying:
         runs-on: [ubuntu-latest]
         steps:
             - uses: actions/checkout@v2

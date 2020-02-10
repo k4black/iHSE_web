@@ -1,4 +1,4 @@
-name: min
+name: minimization
 # Run tests for javascript for any push.
 
 on:
@@ -8,7 +8,7 @@ on:
             - release
 
 jobs:
-    minJs:
+    minimization:
         runs-on: [ubuntu-latest]
 
         strategy:
@@ -22,66 +22,50 @@ jobs:
               with:
                   node-version: ${{ matrix.node-version }}
 
-            - name: Min css
+            - name: CSS minimization
               working-directory: ./frontend
               run: |
                   npm install
                   npm install uglifycss -g
-                  uglifycss --help
+
                   ls -la styles/
+                  ls -la components/styles/
 
                   for fileName in `ls ./styles/*.css` `ls ./components/styles/*.css`; do
                       uglifycss $fileName --output $fileName
                   done
 
                   ls -la styles/
+                  ls -la components/styles/
 
-            - name: Min js
+            - name: JS minimization
               working-directory: ./frontend
               run: |
                   npm install
                   npm install uglify-es -g
-                  uglifyjs --help
+
                   ls -la scripts/
+                  ls -la components/scripts/
 
                   for fileName in `ls ./scripts/*.js` `ls ./components/scripts/*.js`; do
                      uglifyjs $fileName --output $fileName
                   done
 
                   ls -la scripts/
+                  ls -la components/scripts/
 
-            - name: Min html
+            - name: HTML minimization
               working-directory: ./frontend
               run: |
                   npm install
                   npm install html-minifier -g
-                  html-minifier --help
+
                   ls -la .
-                  ls -la ./components
+                  ls -la components/
 
                   for fileName in `ls ./*.html` `ls ./components/*.html`; do
                      html-minifier $fileName --output $fileName --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true
                   done
 
                   ls -la .
-                  ls -la ./components
-
-            - name: Min components
-              working-directory: ./frontend
-              run: |
-                  npm install
-                  npm install html-minifier -g
                   ls -la components/
-                  html-minifier --input-dir ./components --output-dir ./components --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true --output feedback.min.html
-                  ls -la components/
-
-
-
-            - name: Min components
-              working-directory: ./frontend
-              run: |
-                  npm install
-                  npm install html-minifier -g
-                  ls -la libs/
-                  html-minifier --input-dir ./libs --output-dir ./libs --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true --output feedback.min.html
-                  ls -la libs/
