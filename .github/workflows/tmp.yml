@@ -27,6 +27,7 @@ jobs:
               run: |
                   npm install
                   npm install uglifycss -g
+                  uglifycss --help
                   ls -la styles/
                   uglifycss styles/main.css --output styles/main.min.css
                   ls -la styles/
@@ -36,6 +37,7 @@ jobs:
               run: |
                   npm install
                   npm install uglify-es -g
+                  uglifyjs --help
                   ls -la scripts/
                   uglifyjs scripts/main.js --output scripts/main.min.js  --ie8
                   ls -la scripts/
