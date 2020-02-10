@@ -12,9 +12,9 @@ jobs:
         runs-on: [ubuntu-latest]
         steps:
             # Checkout to code
-            - uses: actions/checkout@master
+            - uses: actions/checkout@v2
             # Setup python
-            - uses: actions/setup.sh-python@v1
+            - uses: actions/setup-python@v1
               with:
                 python-version: '3.7'
                 architecture: 'x64'
