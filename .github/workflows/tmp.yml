@@ -31,8 +31,7 @@ jobs:
                   ls -la styles/
                   uglifycss styles/main.css --output styles/main.min.css
 
-                  filesToMinimize = `ls ./styles/*.css`
-                  for fileName in $filesToMinimize
+                  for fileName in `ls ./styles/*.css`
                   do
                      echo $fileName
                   done
@@ -48,8 +47,7 @@ jobs:
                   ls -la scripts/
                   uglifyjs scripts/admin.js --output scripts/admin.min.js  --ie8
 
-                  filesToMinimize = `ls ./scripts/*.js`
-                  for fileName in $filesToMinimize
+                  for fileName in `ls ./scripts/*.js`
                   do
                      echo $fileName
                   done
@@ -65,8 +63,7 @@ jobs:
                   ls -la
                   html-minifier feedback.html --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true --output feedback.min.html
 
-                  filesToMinimize = `ls ./*.html`
-                  for fileName in $filesToMinimize
+                  for fileName in `ls ./*.html`
                   do
                      echo $fileName
                   done
