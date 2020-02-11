@@ -3,10 +3,10 @@
 echo "setup file" > /var/tmp/test.txt
 
 cd /var/app/docker
-echo "Building docker containers."
+echo "Building docker containers. "
 sudo docker-compose build
-echo "Stopping old docker containers."
+echo "Stopping old docker containers. "
 sudo docker-compose down
 sudo docker-compose stop
-echo "Running docker containers."
+echo "Running docker containers. "
 sudo docker-compose up -d
