@@ -11,7 +11,7 @@ from psycopg2 import IntegrityError, DataError, ProgrammingError, OperationalErr
 # initializing connection to database
 # TODO: plain text user & password, great
 # conn = psycopg2.connect('dbname=root user=root password=root')
-conn = psycopg2.connect(database="root", user="root", password="root", host="database_docker", port="5432")
+conn = psycopg2.connect(database="root", user="root", password="root", host="database_docker", port="5431")
 
 cursor = conn.cursor()
 
