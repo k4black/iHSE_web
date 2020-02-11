@@ -226,6 +226,33 @@ function loadClass(class_id, func) {
 
 
 /**
+ * Get event information from server by event_id
+ * Save to global 'cache['event']'
+ *
+ * Run func on OK status
+ */
+function loadEvent(event_id, func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields
+                let event = JSON.parse(this.responseText);
+
+                cache['events'] = event;
+
+                func();
+            }
+        }
+    };
+
+    xhttp.open("GET", "http://ihse.tk:50000/event?id=" + event_id, true);
+    // xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+
+/**
  * Get day information from server
  * Send http GET request and get today json schedule
  * Save enrolls list to global 'cache['events']'
