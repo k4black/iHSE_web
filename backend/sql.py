@@ -26,184 +26,188 @@ def checkpoint():
 
 checkpoint()
 
-# Projects
-cursor.execute("""
-    create table if not exists projects (
-        id serial not null primary key,
-        title text default '',
-        type int default 0,
-        def_type int default 0,
-        direction text default '',
-        description text default '',
-        annotation text default ''
-    );
-""")
+try:
+    # Projects
+    cursor.execute("""
+        create table if not exists projects (
+            id serial not null primary key,
+            title text default '',
+            type int default 0,
+            def_type int default 0,
+            direction text default '',
+            description text default '',
+            annotation text default ''
+        );
+    """)
 
-# Users
-cursor.execute("""
-    create table if not exists users (
-        id serial not null primary key unique,
-        user_type int default 0,
-        phone text default '',
-        name text default '',
-        pass int,
-        team int default 0,
-        project_id int default 0,
-        foreign key (project_id) references projects(id),
-        avatar text default ''
-    );
-""")
+    # Users
+    cursor.execute("""
+        create table if not exists users (
+            id serial not null primary key unique,
+            user_type int default 0,
+            phone text default '',
+            name text default '',
+            pass int,
+            team int default 0,
+            project_id int default 0,
+            foreign key (project_id) references projects(id),
+            avatar text default ''
+        );
+    """)
 
-# Sessions
-cursor.execute("""
-    CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
-    RETURNS bytea AS $$
-    SELECT decode(string_agg(lpad(to_hex(width_bucket(random(), 0, 1, 256)-1),2,'0') ,''), 'hex')
-    FROM generate_series(1, $1);
-    $$
-    LANGUAGE 'sql';
-""")
-cursor.execute("""
-    create table if not exists sessions (
-        id bytea not null primary key unique default random_bytea(16),
-        user_id int,
-        foreign key (user_id) references users(id),
-        user_type int,
-        user_agent text default '',
-        last_ip text default '',
-        time text default ''
-    );
-""")
+    # Sessions
+    cursor.execute("""
+        CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
+        RETURNS bytea AS $$
+        SELECT decode(string_agg(lpad(to_hex(width_bucket(random(), 0, 1, 256)-1),2,'0') ,''), 'hex')
+        FROM generate_series(1, $1);
+        $$
+        LANGUAGE 'sql';
+    """)
+    cursor.execute("""
+        create table if not exists sessions (
+            id bytea not null primary key unique default random_bytea(16),
+            user_id int,
+            foreign key (user_id) references users(id),
+            user_type int,
+            user_agent text default '',
+            last_ip text default '',
+            time text default ''
+        );
+    """)
 
-# Days
-cursor.execute("""
-    create table if not exists days (
-        id serial not null primary key unique,
-        date text default '',
-        title text default '',
-        feedback bool default false
-    );
-""")
+    # Days
+    cursor.execute("""
+        create table if not exists days (
+            id serial not null primary key unique,
+            date text default '',
+            title text default '',
+            feedback bool default false
+        );
+    """)
 
-# Top
-cursor.execute("""
-    create table if not exists top (
-        id serial not null primary key unique,
-        user_id int,
-        foreign key (user_id) references users(id),
-        day_id int,
-        foreign key (day_id) references days(id),
-        chosen_1 int,
-        foreign key (chosen_1) references users(id),
-        chosen_2 int,
-        foreign key (chosen_2) references users(id),
-        chosen_3 int,
-        foreign key (chosen_3) references users(id)
-    );
-""")
+    # Top
+    cursor.execute("""
+        create table if not exists top (
+            id serial not null primary key unique,
+            user_id int,
+            foreign key (user_id) references users(id),
+            day_id int,
+            foreign key (day_id) references days(id),
+            chosen_1 int,
+            foreign key (chosen_1) references users(id),
+            chosen_2 int,
+            foreign key (chosen_2) references users(id),
+            chosen_3 int,
+            foreign key (chosen_3) references users(id)
+        );
+    """)
 
-# Feedback
-cursor.execute("""
-    create table if not exists feedback (
-        id serial not null primary key,
-        user_id int,
-        foreign key (user_id) references users(id),
-        event_id int,
-        foreign key (event_id) references events(id),
-        score int,
-        entertain int, -- assuming
-        useful int,
-        understand int, -- accessibly
-        comment text default ''
-    );
-""")
+    # Feedback
+    cursor.execute("""
+        create table if not exists feedback (
+            id serial not null primary key,
+            user_id int,
+            foreign key (user_id) references users(id),
+            event_id int,
+            foreign key (event_id) references events(id),
+            score int,
+            entertain int, -- assuming
+            useful int,
+            understand int, -- accessibly
+            comment text default ''
+        );
+    """)
 
-# Events
-cursor.execute("""
-    create table if not exists events (
-        id serial not null primary key unique,
-        type int,
-        title text default '',
-        description text default '',
-        host text default '',
-        place text default '',
-        time text default '',
-        day_id int,
-        foreign key (day_id) references days(id)
-    );
-""")
+    # Events
+    cursor.execute("""
+        create table if not exists events (
+            id serial not null primary key unique,
+            type int,
+            title text default '',
+            description text default '',
+            host text default '',
+            place text default '',
+            time text default '',
+            day_id int,
+            foreign key (day_id) references days(id)
+        );
+    """)
 
-# Classes
-cursor.execute("""
-    create table if not exists classes (
-        id int primary key,
-        foreign key (id) references events(id),
-        total int default 0,
-        annotation text default ''
-    );
-""")
+    # Classes
+    cursor.execute("""
+        create table if not exists classes (
+            id int primary key,
+            foreign key (id) references events(id),
+            total int default 0,
+            annotation text default ''
+        );
+    """)
 
-# Enrolls
-cursor.execute("""
-    create table if not exists enrolls (
-        id serial not null primary key,
-        class_id int,
-        foreign key (class_id) references classes(id),
-        user_id int,
-        foreign key (user_id) references users(id),
-        time text default '',
-        attendance bool default false,
-        bonus int default 0
-    );
-""")
+    # Enrolls
+    cursor.execute("""
+        create table if not exists enrolls (
+            id serial not null primary key,
+            class_id int,
+            foreign key (class_id) references classes(id),
+            user_id int,
+            foreign key (user_id) references users(id),
+            time text default '',
+            attendance bool default false,
+            bonus int default 0
+        );
+    """)
 
-# Credits
-cursor.execute("""
-    create table if not exists credits (
-        id serial not null primary key,
-        user_id int,
-        foreign key (user_id) references users(id),
-        event_id int,
-        foreign key (event_id) references events(id),
-        time text default '',
-        value int default 0
-    );
-""")
+    # Credits
+    cursor.execute("""
+        create table if not exists credits (
+            id serial not null primary key,
+            user_id int,
+            foreign key (user_id) references users(id),
+            event_id int,
+            foreign key (event_id) references events(id),
+            time text default '',
+            value int default 0
+        );
+    """)
 
-# TODO: check if codes were created in a right way, just to make sure
-# Codes
-cursor.execute("""
-    create table if not exists codes (
-        id serial not null primary key,
-        code text,
-        type int default 0,
-        used bool default false
-    );
-""")
+    # TODO: check if codes were created in a right way, just to make sure
+    # Codes
+    cursor.execute("""
+        create table if not exists codes (
+            id serial not null primary key,
+            code text,
+            type int default 0,
+            used bool default false
+        );
+    """)
 
-# Vacations
-cursor.execute("""
-    create table if not exists vacations (
-        id serial not null primary key unique,
-        user_id int,
-        foreign key (user_id) references users(id),
-        date_from text default '',
-        date_to text default '',
-        time_from text default '',
-        time_to text default ''
-    );
-""")
+    # Vacations
+    cursor.execute("""
+        create table if not exists vacations (
+            id serial not null primary key unique,
+            user_id int,
+            foreign key (user_id) references users(id),
+            date_from text default '',
+            date_to text default '',
+            time_from text default '',
+            time_to text default ''
+        );
+    """)
 
-# cursor.execute("""
-#                     create table if not exists project_users (
-#                         user_id serial,
-#                         project_id serial,
-#                         foreign key (user_id) references users(id)
-#                         foreign key (project_id) references projects(id)
-#                     );
-#                     """)
+    # cursor.execute("""
+    #                     create table if not exists project_users (
+    #                         user_id serial,
+    #                         project_id serial,
+    #                         foreign key (user_id) references users(id)
+    #                         foreign key (project_id) references projects(id)
+    #                     );
+    #                     """)
 
-conn.commit()
+    conn.commit()
+except psycopg2.Error as error:
+    print(f"psycopg encountered error while startup-reinitializing the database: {error}")
+    print(f"Things may have gone terribly wrong now. Proceed at you own peril!!!!!!!!!!!!!!!!!")
 
 TTableObject = tp.Dict[str, tp.Any]
 
@@ -313,7 +317,13 @@ def insert_to_table(data: TTableObject, table_name: str) -> int:
 
     sql_string = f"INSERT INTO {table_name} ({fields}) VALUES ({values_placeholder}) RETURNING id;"
 
-    cursor.execute(sql_string, dict_to_tuple(data, table_name))  # TODO: try catch
+    try:
+        cursor.execute(sql_string, dict_to_tuple(data, table_name))
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
+
     hundred = cursor.fetchone()[0]
 
     return hundred
@@ -338,7 +348,12 @@ def update_in_table(data: TTableObject, table_name: str) -> None:
 
     sql_string = f"UPDATE {table_name} SET {values_placeholder} WHERE id={data['id']};"
 
-    cursor.execute(sql_string, dict_to_tuple(data, table_name))  # TODO: try catch
+    try:
+        cursor.execute(sql_string, dict_to_tuple(data, table_name))
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
     conn.commit()
 
 
@@ -358,10 +373,12 @@ def get_in_table(data_id: int, table_name: str) -> tp.Optional[TTableObject]:
 
     sql_string = f'select * from {table_name} where id = %s;'
 
-    cursor.execute(sql_string, (data_id,))
-    obj = cursor.fetchone()
-
-    return tuple_to_dict(obj, table_name)
+    try:
+        cursor.execute(sql_string, (data_id,))
+        obj = cursor.fetchone()
+        return tuple_to_dict(obj, table_name)
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
 
 
 def remove_in_table(data_id: int, table_name: str) -> None:
@@ -398,7 +415,12 @@ def remove_in_table(data_id: int, table_name: str) -> None:
         remove_enroll(data_id)
         return
 
-    cursor.execute(f"DELETE FROM {table_name} where id = {data_id};")  # TODO: try catch
+    try:
+        cursor.execute(f"DELETE FROM {table_name} where id = {data_id};")
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
     conn.commit()
 
 
@@ -415,10 +437,12 @@ def get_table(table_name: str) -> tp.List[TTableObject]:
     if table_name == 'sessions':
         return get_sessions()
 
-    cursor.execute(f'SELECT * FROM {table_name};')  # TODO: try catch
-    objects_list = cursor.fetchall()
-
-    return tuples_to_dicts(objects_list, table_name)
+    try:
+        cursor.execute(f'SELECT * FROM {table_name};')
+        objects_list = cursor.fetchall()
+        return tuples_to_dicts(objects_list, table_name)
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
 
 
 def clear_table(table_name: str) -> None:
@@ -434,7 +458,12 @@ def clear_table(table_name: str) -> None:
     if table_name == 'users':
         clear_users()
 
-    cursor.execute(f'DELETE FROM {table_name} WHERE id != 0;')  # TODO: try catch
+    try:
+        cursor.execute(f'DELETE FROM {table_name} WHERE id != 0;')
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
     conn.commit()
 
 
@@ -457,8 +486,13 @@ def remove_project(project_id: int) -> None:
     if project_id in (0, '0'):
         return
 
-    cursor.execute(f'update users set project_id = 0 where project_id = {project_id};')
-    cursor.execute(f'delete from projects where id = {project_id};')
+    try:
+        cursor.execute(f'update users set project_id = 0 where project_id = {project_id};')
+        cursor.execute(f'delete from projects where id = {project_id};')
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
     conn.commit()
 
 
@@ -496,9 +530,12 @@ def get_user_by_phone(phone: str) -> tp.Optional[TTableObject]:
                      or None if there is no such user
     """
 
-    cursor.execute(f"select * from users where phone = '{phone}';")
-    user = cursor.fetchone()
-    return tuple_to_dict(user, 'users')
+    try:
+        cursor.execute(f"select * from users where phone = '{phone}';")
+        user = cursor.fetchone()
+        return tuple_to_dict(user, 'users')
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
 
 
 def register(name, passw, type_, phone, team) -> bool:
@@ -525,14 +562,19 @@ def register(name, passw, type_, phone, team) -> bool:
     if len(existing_users) != 0:
         return False
 
-    cursor.execute(f"""
-        insert into users (user_type, phone, name, pass, team)
-        values ({type_},
-               '{phone}',
-               '{name}',
-                {passw},
-                {team});
-    """)
+    try:
+        cursor.execute(f"""
+            insert into users (user_type, phone, name, pass, team)
+            values ({type_},
+                   '{phone}',
+                   '{name}',
+                    {passw},
+                    {team});
+        """)
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
     conn.commit()
     return True
 
@@ -571,8 +613,8 @@ def remove_user(user_id: int) -> bool:
         cursor.execute(f'delete from users where id = {user_id};')
         conn.commit()
         return True
-    except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
-        print(f"Encountered error: {err}")
+    except psycopg2.Error as err:
+        print(f"Encountered psycopg2.Error: {err}")
         return False
 
 
@@ -580,7 +622,12 @@ def clear_users() -> None:
     """Clear all users from sql table"""
 
     # TODO: probably won't succeed due to ForeignKeyViolation error, see the method above
-    cursor.execute('delete from users;')
+    try:
+        cursor.execute('delete from users;')
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
     conn.commit()
 
 
@@ -651,18 +698,25 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0'):
     cursor.execute(f"select * from sessions where user_id = {user[0]} and user_agent = '{agent}';")
     existing_sessions = cursor.fetchall()
     if len(existing_sessions) == 0:
-        cursor.execute(f"""
-            insert into sessions (user_id, user_type, user_agent, last_ip, time)
-            values ({user[0]}, {user[1]}, '{agent}', '{ip}', '{time_}');
-        """)
+        try:
+            cursor.execute(f"""
+                insert into sessions (user_id, user_type, user_agent, last_ip, time)
+                values ({user[0]}, {user[1]}, '{agent}', '{ip}', '{time_}');
+            """)
+        except psycopg2.Error as error_:
+            print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
         conn.commit()
 
     # Get session corresponding to user_id and user_agent
-    cursor.execute(f"select * from sessions where user_id = {user[0]} and user_agent = '{agent}';")
-    result = cursor.fetchone()
-
-    print(f'session got by login:{result}')
-    return result
+    try:
+        cursor.execute(f"select * from sessions where user_id = {user[0]} and user_agent = '{agent}';")
+        result = cursor.fetchone()
+        print(f'session got by login:{result}')
+        return result
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
 
 
 def remove_session(sess_id: int) -> bool:
@@ -692,7 +746,12 @@ def logout(sess_id: int) -> bool:
     if len(sessions) == 0:  # No such session
         return False
 
-    cursor.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
+    try:
+        cursor.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
     conn.commit()
     return True
 
@@ -718,7 +777,7 @@ def get_day(date: str) -> tp.List[TTableObject]:
     return tuples_to_dicts(events_list, 'events')
 
 
-def insert_event(event_obj: TTableObject) -> int:
+def insert_event(event_obj: TTableObject) -> tp.Optional[int]:
     """ Insert event
 
     Args:
@@ -740,12 +799,23 @@ def insert_event(event_obj: TTableObject) -> int:
     sql_string = f"INSERT INTO events (type, title, description, host, place, time, day_id) " \
                  f"VALUES ({values_placeholder}) RETURNING id;"
 
-    cursor.execute(sql_string, dict_to_tuple(event_obj, 'events'))  # TODO: try catch
-    event_id = cursor.fetchone()[0]
+    try:
+        cursor.execute(sql_string, dict_to_tuple(event_obj, 'events'))
+        event_id = cursor.fetchone()[0]
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
+        return None
 
     if int(event_obj['type']) != 0:
         # class
-        cursor.execute(f'INSERT INTO classes (id, total, annotation) VALUES ({event_id}, 0, '');')
+        try:
+            cursor.execute(f'INSERT INTO classes (id, total, annotation) VALUES ({event_id}, 0, '');')
+        except psycopg2.Error as error_:
+            print(f"psycopg error: {error_}")
+            print('Rolling back changes')
+            cursor.execute('rollback;')
     else:
         # regular
         pass
@@ -763,17 +833,22 @@ def edit_event(event_obj: TTableObject) -> None:
 
     # TODO: Check Changed type -> create or delete
     # TODO: Change values to exec
-    cursor.execute(f"""
-        update events set
-            type = {event_obj['type']},
-            title = '{event_obj['title']}',
-            description = '{event_obj['description']}',
-            host = '{event_obj['host']}',
-            place = '{event_obj['place']}',
-            time = '{event_obj['time']}',
-            day_id = {event_obj['day_id']}
-        where id = {event_obj['id']};
-    """)
+    try:
+        cursor.execute(f"""
+            update events set
+                type = {event_obj['type']},
+                title = '{event_obj['title']}',
+                description = '{event_obj['description']}',
+                host = '{event_obj['host']}',
+                place = '{event_obj['place']}',
+                time = '{event_obj['time']}',
+                day_id = {event_obj['day_id']}
+            where id = {event_obj['id']};
+        """)
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
     conn.commit()
 
 
@@ -794,16 +869,22 @@ def remove_event(event_id: int) -> None:
         cursor.execute(f'update credits set event_id = 0 where event_id = {event_id};')
         cursor.execute(f'delete from classes where id = {event_id};')
         cursor.execute(f'delete from events where id = {event_id};')
-    except (IntegrityError, DataError, ProgrammingError, OperationalError) as error:
-        print(error)
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
         cursor.execute('rollback;')
     conn.commit()
 
 
 def clear_events() -> None:
     """ Clear all events from sql table """
-    cursor.execute('delete from classes where id != 0;')
-    cursor.execute('delete from events where id != 0;')
+    try:
+        cursor.execute('delete from classes where id != 0;')
+        cursor.execute('delete from events where id != 0;')
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
     conn.commit()
 
 
@@ -851,9 +932,14 @@ def enroll_user(class_id: int, user_obj: TTableObject, time_: str = '0') -> bool
     if not class_ or enrolled >= class_[1]:  # No such event or too many people
         return False
 
-    cursor.execute(
-        f"insert into enrolls (class_id, user_id, time, attendance, bonus) "
-        f"values ({class_id}, {user_obj['id']}, {time_}, false, 0);")
+    try:
+        cursor.execute(
+            f"insert into enrolls (class_id, user_id, time, attendance, bonus) "
+            f"values ({class_id}, {user_obj['id']}, {time_}, false, 0);")
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
     conn.commit()
     return True
 
@@ -929,8 +1015,13 @@ def remove_enroll(enroll_id: int) -> None:
     # event = cursor.fetchone()
     # cursor.execute(f'update classes set count = {event[2] - 1} where id = {event_id};')
 
-    cursor.execute(f'delete from enrolls where id = {enroll_id};')
-    cursor.execute(f"delete from credits where user_id = {enroll[2]} and class_id = {enroll[1]};")
+    try:
+        cursor.execute(f'delete from enrolls where id = {enroll_id};')
+        cursor.execute(f"delete from credits where user_id = {enroll[2]} and class_id = {enroll[1]};")
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
     conn.commit()
     # TODO: Check (and think) if there are credits according this event. delete it
     # TODO: done, check it out
@@ -966,10 +1057,20 @@ def pay_credit(user_id: int, event_id: int, value: int = 0, time_: str = '0') ->
     cursor.execute(f'select * from credits where event_id = {event_id} and user_id = {user_id};')
     credits_ = cursor.fetchall()
     if len(credits_) == 0:
-        cursor.execute(f"insert into credits (id, user_id, event_id, time, value) "
-                       f"values (default, {user_id}, {event_id}, '{time_}', {value});")
+        try:
+            cursor.execute(f"insert into credits (id, user_id, event_id, time, value) "
+                           f"values (default, {user_id}, {event_id}, '{time_}', {value});")
+        except psycopg2.Error as error_:
+            print(f"psycopg error: {error_}")
+            print('Rolling back changes')
+            cursor.execute('rollback;')
     else:
-        cursor.execute(f"update credits set value = {value} where id = {credits_[0][0]};")
+        try:
+            cursor.execute(f"update credits set value = {value} where id = {credits_[0][0]};")
+        except psycopg2.Error as error_:
+            print(f"psycopg error: {error_}")
+            print('Rolling back changes')
+            cursor.execute('rollback;')
     # TODO: Make execute params
     conn.commit()
 
@@ -989,8 +1090,8 @@ def load_codes(codes: tp.List[TTableObject]) -> bool:
             cursor.execute(f"insert into codes (code, type, used) values ('{code['code']}', {code['type']}, false);")
         conn.commit()
         return True
-    except (IntegrityError, DataError, ProgrammingError, OperationalError) as err:
-        print(f"error: {err}")
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
         return False
 
 
@@ -1010,6 +1111,13 @@ def use_code(code: str) -> bool:
     if not code or code[2]:
         return False
 
-    cursor.execute(f"update codes set used = true where code = '{code}';")
+    try:
+        cursor.execute(f"update codes set used = true where code = '{code}';")
+    except psycopg2.Error as error_:
+        print(f"psycopg error: {error_}")
+        print('Rolling back changes')
+        cursor.execute('rollback;')
+        conn.commit()
+        return False
     conn.commit()
     return True
