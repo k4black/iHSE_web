@@ -4,7 +4,7 @@ We are using `postgres:12.1`-based custom image with built-in `cron`-based
 automatic backup mechanism.  
 To build DB image, `cd` to this folder and run: 
 ```shell script
-docker build . -f database.dockerfile -t postgres_cron:12.1
+docker build . -f postgres.dockerfile -t postgres_cron:12.1
 ```
 To run the container, execute the following:
 ```shell script

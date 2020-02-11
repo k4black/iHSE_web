@@ -5,8 +5,8 @@ services:
     nginx:        
         build:
             context: ./nginx
-            dockerfile: nginx.dockerfile
-        container_name: nginx_docker
+            dockerfile: nginx_local.dockerfile
+        container_name: nginx_docker_local
         restart: unless-stopped
         ports:
           - 80:80

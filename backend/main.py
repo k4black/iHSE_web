@@ -15,10 +15,7 @@ from http.cookies import SimpleCookie
 import configparser
 
 # Sqlite import
-import sql
-# GSheetsAPI imports
-# import gsheets  # TODO: WRITE EXPORT
-
+from utils import sql, gsheets
 
 sys.path.append('/home/ubuntu/iHSE_web')
 
@@ -72,7 +69,7 @@ def check_enroll_time(date: str, time_: str, year: str = '2020') -> bool:
     """
 
     can_enroll = datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))) <= \
-        datetime.strptime(f'{date}.{year} {time_}', '%d.%m.%Y %M.%H') - timedelta(minutes=ENROLL_CLOSE_FOR)
+                 datetime.strptime(f'{date}.{year} {time_}', '%d.%m.%Y %M.%H') - timedelta(minutes=ENROLL_CLOSE_FOR)
 
     current_day = get_date_str() == date
 
@@ -83,7 +80,6 @@ def check_enroll_time(date: str, time_: str, year: str = '2020') -> bool:
 """                       uWSGI typing objects                   """
 """ ---===---==========================================---===--- """
 
-
 TQuery = tp.Dict[str, str]
 TEnvironment = tp.Dict[str, tp.Any]
 TCookie = tp.Dict[str, tp.Any]  # TODO: Specify
@@ -92,7 +88,6 @@ TStatus = str
 THeaders = tp.List[tp.Tuple[str, str]]
 TData = tp.Optional[tp.List[tp.Any]]
 TResponse = tp.Tuple[TStatus, THeaders, TData]
-
 
 """ ---===---==========================================---===--- """
 """                    uWSGI main input function                 """
@@ -157,7 +152,6 @@ def application(env: tp.Dict[str, tp.Any], start_response: tp.Callable[..., None
 """ ---===---==========================================---===--- """
 """                 Sync functions to update data                """
 """ ---===---==========================================---===--- """
-
 
 cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
 
@@ -224,11 +218,9 @@ def start_sync(delay: int) -> None:
 
 start_sync(0)  # Start sync
 
-
 """ ---===---==========================================---===--- """
 """                   Config file interactions                   """
 """ ---===---==========================================---===--- """
-
 
 CREDITS_TOTAL = 0
 CREDITS_MASTER = 0
@@ -289,7 +281,6 @@ def write_config() -> None:
 
 read_config()
 
-
 """ ---===---==========================================---===--- """
 """                  Cache function and methods                  """
 """ ---===---==========================================---===--- """
@@ -346,15 +337,18 @@ def cache(foo):
 """ ---===---==========================================---===--- """
 
 
-RESPONSE_WRONG_COOKIE = ('401 Unauthorized',
-                         [  # Because in js there is xhttp.withCredentials = true;
-                             ('Access-Control-Allow-Origin', '//ihse.tk'),
-                             # To receive cookie
-                             ('Access-Control-Allow-Credentials', 'true'),
-                             # Clear user sessid cookie
-                             ('Set-Cookie', 'sessid=none; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
-                         ],
-                         [])
+# TODO: switch to {env['HTTP_HOST']} in Origin
+def wrong_cookie(host: str):
+    response_wrong_cookie = ('401 Unauthorized',
+                             [  # Because in js there is xhttp.withCredentials = true;
+                                 ('Access-Control-Allow-Origin', f"//{host}"),
+                                 # To receive cookie
+                                 ('Access-Control-Allow-Credentials', 'true'),
+                                 # Clear user sessid cookie
+                                 ('Set-Cookie', f"sessid=none; Path=/; Domain={host}; HttpOnly; Max-Age=0;"),
+                             ],
+                             [])
+    return response_wrong_cookie
 
 
 def get_user_by_response(cookie: TCookie) -> tp.Optional[sql.TTableObject]:
@@ -499,7 +493,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
     if user_obj['user_type'] == 0:
         return ('401 Unauthorized',
                 [('Access-Control-Allow-Origin', '*')],
@@ -526,7 +520,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                     ('Content-type', 'application/json'),
@@ -545,7 +539,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
             return ('400 Bad Request',
                     [
                         # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Origin', '//ihse.tk'),
+                        ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                         # To receive cookie
                         ('Access-Control-Allow-Credentials', 'true')
                     ],
@@ -560,7 +554,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                     ('Content-type', 'application/json'),
@@ -578,7 +572,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
             return ('400 Bad Request',
                     [
                         # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Origin', '//ihse.tk'),
+                        ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                         # To receive cookie
                         ('Access-Control-Allow-Credentials', 'true')
                     ],
@@ -587,7 +581,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true')
                 ],
@@ -611,7 +605,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true')
                 ],
@@ -628,7 +622,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true')
                 ],
@@ -659,7 +653,7 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     print(f'Got user :{user_obj}')
 
@@ -679,7 +673,7 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                 # To receive cookie
                 ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
@@ -716,7 +710,7 @@ def get_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
             [
                 # Because in js there is xhttp.withCredentials = true;
                 # ('Access-Control-Allow-Origin', '*'),
-                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                 # To receive cookie
                 ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
@@ -770,7 +764,7 @@ def get_account(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     # Json account data
     data = user_obj
@@ -782,7 +776,7 @@ def get_account(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                 # To receive cookie
                 ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
@@ -807,7 +801,7 @@ def get_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     data = sql.get_credits_by_user_id(user_obj['id'])
 
@@ -817,7 +811,7 @@ def get_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                 # To receive cookie
                 ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
@@ -880,7 +874,7 @@ def get_event(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                 # To receive cookie
                 # ('Access-Control-Allow-Credentials', 'true'),
                 ('Content-type', 'application/json'),
@@ -914,7 +908,7 @@ def get_class(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                # ('Access-Control-Allow-Origin', '//ihse.tk'),
+                # ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                 ('Access-Control-Allow-Origin', '*'),
                 # To receive cookie
                 # ('Access-Control-Allow-Credentials', 'true'),
@@ -952,7 +946,7 @@ def get_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                # ('Access-Control-Allow-Origin', '//ihse.tk'),
+                # ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                 ('Access-Control-Allow-Origin', '*'),
                 # To receive cookie
                 # ('Access-Control-Allow-Credentials', 'true'),
@@ -981,7 +975,7 @@ def get_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     feedback_template, feedback_data = sql.get_feedback(user_obj['id'], day)
     print('feedback_template', feedback_template)
@@ -1164,7 +1158,7 @@ def post(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         # TODO: Remove on release - admin
         user_obj = get_user_by_response(cookie)
         if user_obj is None:
-            return RESPONSE_WRONG_COOKIE
+            return wrong_cookie(env['HTTP_HOST'])
         if user_obj['user_type'] == 0:
             return ('401 Unauthorized',
                     [('Access-Control-Allow-Origin', '*')],
@@ -1219,7 +1213,7 @@ def post_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                     # ('Location', '//ihse.tk/')
@@ -1277,10 +1271,11 @@ def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
-                    ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=15768000;'),
+                    ('Set-Cookie',
+                     "sessid=" + sessid + f"; Path=/; Domain={env['HTTP_HOST']}; HttpOnly; Max-Age=15768000;"),
                     # 1/2 year
                     # ('Location', '//ihse.tk/')
                 ],
@@ -1320,11 +1315,11 @@ def post_logout(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                     # Clear cookie
-                    ('Set-Cookie', 'sessid=none' + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=0;'),
+                    ('Set-Cookie', 'sessid=none' + f"; Path=/; Domain={env['HTTP_HOST']}; HttpOnly; Max-Age=0;"),
                     # ('Location', '//ihse.tk/login.html')
                 ],
                 [])
@@ -1400,10 +1395,11 @@ def post_register(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
             return ('200 OK',
                     [
                         # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Origin', '//ihse.tk'),
+                        ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                         # To receive cookie
                         ('Access-Control-Allow-Credentials', 'true'),
-                        ('Set-Cookie', 'sessid=' + sessid + '; Path=/; Domain=ihse.tk; HttpOnly; Max-Age=15768000;'),
+                        ('Set-Cookie',
+                         'sessid=' + sessid + f"; Path=/; Domain={env['HTTP_HOST']}; HttpOnly; Max-Age=15768000;"),
                         # 1/2 year
                         # ('Location', '//ihse.tk/')
                     ],
@@ -1439,7 +1435,7 @@ def post_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     # Get json from response
     feedback_obj = get_json_by_response(env)
@@ -1452,7 +1448,7 @@ def post_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                     # ('Location', '//ihse.tk/')
@@ -1496,7 +1492,7 @@ def post_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     event_obj = sql.get_event(event_id)
     if event_obj is not None:
@@ -1506,7 +1502,7 @@ def post_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         return ('200 Ok',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                 ],
@@ -1544,18 +1540,20 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     if user_obj['user_type'] == 0:
         return ('405 Method Not Allowed',
-                [('Access-Control-Allow-Origin', '//ihse.tk'), ('Access-Control-Allow-Credentials', 'true')],
+                [('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
+                 ('Access-Control-Allow-Credentials', 'true')],
                 [])
 
     event = sql.get_in_table(event_id, 'events')
 
     if event is None:  # No such event
         return ('405 Method Not Allowed',
-                [('Access-Control-Allow-Origin', '//ihse.tk'), ('Access-Control-Allow-Credentials', 'true')],
+                [('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
+                 ('Access-Control-Allow-Credentials', 'true')],
                 [])
 
     print('Checkin class. event', event)
@@ -1567,7 +1565,8 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         enrolls = sql.get_enrolls_by_event_id(event_id)
 
         users_in_enrolls = {enroll['user_id'] for enroll in enrolls if not enroll['attendance']}  # type: tp.Set[int]
-        users_in_checkins = {int(checkin['id']): min(int(checkin['bonus']), CREDITS_ADDITIONAL) for checkin in checkins}  # type: tp.Dict[int, int]
+        users_in_checkins = {int(checkin['id']): min(int(checkin['bonus']), CREDITS_ADDITIONAL) for checkin in
+                             checkins}  # type: tp.Dict[int, int]
 
         users_to_set_credits = {k for k in users_in_checkins.keys() if k in users_in_enrolls}  # type: tp.Set[int]
 
@@ -1595,12 +1594,14 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     else:
         # lecture
         enrolls = [{'class_id': event_id, 'user_id': int(checkin['id']), 'time': get_datetime_str(), 'attendance': True,
-                    'bonus': min(int(checkin['bonus']), CREDITS_ADDITIONAL)} for checkin in checkins]  # type: tp.List[sql.TTableObject]
+                    'bonus': min(int(checkin['bonus']), CREDITS_ADDITIONAL)} for checkin in
+                   checkins]  # type: tp.List[sql.TTableObject]
         for enroll in enrolls:
             sql.update_in_table(enroll, 'enrolls')
 
         credits = [{'user_id': int(checkin['id']), 'event_id': event_id,
-                    'time': get_datetime_str(), 'value': CREDITS_LECTURE + min(int(checkin['bonus']), CREDITS_ADDITIONAL)}
+                    'time': get_datetime_str(),
+                    'value': CREDITS_LECTURE + min(int(checkin['bonus']), CREDITS_ADDITIONAL)}
                    for checkin in checkins]  # type: tp.List[sql.TTableObject]
         for credit in credits:
             sql.insert_to_table(credit, 'credits')
@@ -1612,7 +1613,7 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     return ('200 Ok',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                 # To receive cookie
                 ('Access-Control-Allow-Credentials', 'true'),
             ],
@@ -1643,7 +1644,7 @@ def post_mark_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     enrolls = get_json_by_response(env)
 
@@ -1653,7 +1654,7 @@ def post_mark_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
         for enroll in enrolls:
             sql.update_in_table(enroll, 'enrolls')
 
-            if enroll['attendance'] is True or enroll['attendance'] == 'true':
+            if enroll['attendance'] in (True, 'true'):
                 sql.pay_credit(enroll['user_id'], enroll['event_id'],
                                CREDITS_MASTER + min(CREDITS_ADDITIONAL, enroll['bonus']),
                                get_datetime_str())
@@ -1662,7 +1663,7 @@ def post_mark_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
         return ('200 Ok',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                 ],
@@ -1697,7 +1698,7 @@ def post_create_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     event_id = query['event_id']
 
@@ -1713,13 +1714,12 @@ def post_create_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
                 [('Access-Control-Allow-Origin', '*')],
                 [])
 
-
     if sql.enroll_user(event_id, user_obj['id'], get_datetime_str()):
 
         return ('200 Ok',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                 ],
@@ -1754,12 +1754,13 @@ def post_remove_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     enroll_id = query['id']
     enroll = sql.get_in_table(enroll_id, 'enrolls')
 
-    if enroll is not None and (user_obj['user_type'] == 0 and enroll['user_id'] == user_obj['id'] or user_obj['user_type'] >= 1):
+    if enroll is not None and (
+            user_obj['user_type'] == 0 and enroll['user_id'] == user_obj['id'] or user_obj['user_type'] >= 1):
         # Check admin or user remove himself
 
         event = sql.get_event_with_date(enroll['event_id'])
@@ -1774,7 +1775,7 @@ def post_remove_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
         return ('200 Ok',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                 ],
@@ -1812,7 +1813,7 @@ def post_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     # TODO:
 
@@ -1829,7 +1830,7 @@ def post_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         return ('200 Ok',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                     ('Content-type', 'text/plant'),
@@ -1868,7 +1869,7 @@ def post_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     # Mb there are some project for current user?
     if user_obj['project_id'] != 0:
@@ -1884,7 +1885,7 @@ def post_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                     # ('Location', '//ihse.tk/projects.html')
@@ -1923,7 +1924,7 @@ def post_edit_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     # Check current user can edit
     if user_obj['type'] == 0 and user_obj['project_id'] != project_obj['id']:
@@ -1936,7 +1937,7 @@ def post_edit_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                 # To receive cookie
                 ('Access-Control-Allow-Credentials', 'true'),
                 # ('Location', '//ihse.tk/projects.html')
@@ -1968,7 +1969,7 @@ def post_enroll_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TR
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     # Check current user can edit
     if user_obj['project_id'] != 0:
@@ -1981,7 +1982,7 @@ def post_enroll_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TR
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                 # To receive cookie
                 ('Access-Control-Allow-Credentials', 'true'),
                 # ('Location', '//ihse.tk/projects.html')
@@ -2013,7 +2014,7 @@ def post_deenroll_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return RESPONSE_WRONG_COOKIE
+        return wrong_cookie(env['HTTP_HOST'])
 
     # Check current user can edit
     if user_obj['project_id'] == 0:
@@ -2026,14 +2027,13 @@ def post_deenroll_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> 
     return ('200 OK',
             [
                 # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
                 # To receive cookie
                 ('Access-Control-Allow-Credentials', 'true'),
                 # ('Location', '//ihse.tk/projects.html')
                 # ('Location', '//ihse.tk/')
             ],
             [])
-
 
 # """
 # Resource - iHSE.tk/path/resource?param1=value1&param2=value2
