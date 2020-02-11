@@ -34,10 +34,10 @@ services:
     # PostgeSql server for backend 
     # TODO
     database:
-        #image: postgres:12.1
-        build:
-            context: .
-            dockerfile: database.dockerfile
+        image: postgres:12.1
+#        build:
+#            context: .
+#            dockerfile: database.dockerfile
         container_name: database_docker
         restart: unless-stopped
         ports:
