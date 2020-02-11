@@ -104,6 +104,22 @@ cursor.execute("""
     );
 """)
 
+# Events
+cursor.execute("""
+    create table if not exists events (
+        id serial not null primary key unique,
+        type int,
+        title text default '',
+        description text default '',
+        host text default '',
+        place text default '',
+        time text default '',
+        day_id int,
+        foreign key (day_id) references days(id)
+    );
+""")
+
+
 # Feedback
 cursor.execute("""
     create table if not exists feedback (
@@ -117,21 +133,6 @@ cursor.execute("""
         useful int,
         understand int, -- accessibly
         comment text default ''
-    );
-""")
-
-# Events
-cursor.execute("""
-    create table if not exists events (
-        id serial not null primary key unique,
-        type int,
-        title text default '',
-        description text default '',
-        host text default '',
-        place text default '',
-        time text default '',
-        day_id int,
-        foreign key (day_id) references days(id)
     );
 """)
 
