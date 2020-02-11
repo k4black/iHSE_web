@@ -48,6 +48,7 @@ cursor.execute("""
         user_type int default 0,
         phone text default '',
         name text default '',
+        sex bool,
         pass int,
         team int default 0,
         project_id int default 0,

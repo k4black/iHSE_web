@@ -61,6 +61,8 @@ jobs:
                     ls -la .
                     ls -la components/
 
+                    # TODO --remove-comments
+
                     for fileName in `ls ./*.html` `ls ./components/*.html`; do
                        html-minifier $fileName --output $fileName --collapse-whitespace  --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true
                     done
