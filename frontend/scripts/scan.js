@@ -49,7 +49,7 @@ function loadUsers(event_id, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + 'users', true);
+    xhttp.open("GET", "//ihse.tk/admin_get_table?" + "table=" + 'users', true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -129,7 +129,7 @@ function saveScanned() {
 
     let data = JSON.stringify(users_list);
 
-    xhttp.open("POST", "http://ihse.tk:50000/checkin?" + "event="+currentEventId, true);
+    xhttp.open("POST", "//ihse.tk/checkin?" + "event="+currentEventId, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie

@@ -107,7 +107,7 @@ function setupDays() {   // TODO: Refactor
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/days", true);
+    xhttp.open("GET", "//ihse.tk/days", true);
     xhttp.send();
 }
 
@@ -344,7 +344,7 @@ function saveEvent() {
         }
     };
 
-    xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+'events', true);
+    xhttp.open("POST", "//ihse.tk/admin_send_data?" + "table="+'events', true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
@@ -385,8 +385,8 @@ function removeEvent(id) {
     };
 
 
-    xhttp.open("POST", "http://ihse.tk:50000/admin_remove_data?" + "table="+'events' + "&id=" + id, true);
-    // xhttp.open("GET", "http://ihse.tk:50000/remove_event" + "?id=" + id, true);
+    xhttp.open("POST", "//ihse.tk/admin_remove_data?" + "table="+'events' + "&id=" + id, true);
+    // xhttp.open("GET", "//ihse.tk/remove_event" + "?id=" + id, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie

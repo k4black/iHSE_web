@@ -257,7 +257,7 @@ function loadTable(tableName, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + tableName, true);
+    xhttp.open("GET", "//ihse.tk/admin_get_table?" + "table=" + tableName, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -322,7 +322,7 @@ function removeRow(table_name, row_id) {
     //     }
     // };
 
-    xhttp.open("POST", "http://ihse.tk:50000/admin_remove_data?" + "table="+table_name + "&id=" + row_id, true);
+    xhttp.open("POST", "//ihse.tk/admin_remove_data?" + "table="+table_name + "&id=" + row_id, true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 
@@ -356,7 +356,7 @@ function clearTable(table_name) {
         }
     };
 
-    xhttp.open("POST", "http://ihse.tk:50000/admin_clearTable?" + "table=" + table_name, true);
+    xhttp.open("POST", "//ihse.tk/admin_clearTable?" + "table=" + table_name, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 
@@ -400,7 +400,7 @@ function saveRow() {
     console.log('Edited row', row);
     
     let  data = JSON.stringify(row);
-    xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+current_table, true);
+    xhttp.open("POST", "//ihse.tk/admin_send_data?" + "table="+current_table, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
@@ -538,7 +538,7 @@ document.querySelector('.save').addEventListener('click', function () {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_save", true);
+    xhttp.open("GET", "//ihse.tk/admin_save", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });
@@ -555,7 +555,7 @@ document.querySelector('.update').addEventListener('click', function () {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_update", true);
+    xhttp.open("GET", "//ihse.tk/admin_update", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });
@@ -572,7 +572,7 @@ document.querySelector('.load').addEventListener('click', function () {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_load", true);
+    xhttp.open("GET", "//ihse.tk/admin_load", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });
@@ -589,7 +589,7 @@ document.querySelector('.codes').addEventListener('click', function () {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_codes", true);
+    xhttp.open("GET", "//ihse.tk/admin_codes", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });

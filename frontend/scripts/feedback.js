@@ -40,7 +40,7 @@ xhttp.onreadystatechange = function () {
     }
 };
 
-xhttp.open("GET", "http://ihse.tk:50000/names", true);
+xhttp.open("GET", "//ihse.tk/names", true);
 xhttp.withCredentials = true; // To send Cookie;
 xhttp.send();
 
@@ -137,7 +137,7 @@ function setupDays() {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/days", true);
+    xhttp.open("GET", "//ihse.tk/days", true);
     xhttp.send();
 }
 
@@ -171,7 +171,7 @@ function getDay(dayNum) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/feedback?day=" + dayNum, true);
+    xhttp.open("GET", "//ihse.tk/feedback?day=" + dayNum, true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -323,7 +323,7 @@ document.querySelector('#btn').addEventListener('click', function() {
 
 
     var query = "?day=" + document.querySelector('.today').lastElementChild.textContent;
-    xhttp.open("POST", "http://ihse.tk:50000/feedback" + query, true);
+    xhttp.open("POST", "//ihse.tk/feedback" + query, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie

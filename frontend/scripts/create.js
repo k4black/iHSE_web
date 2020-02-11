@@ -77,7 +77,7 @@ document.querySelector('#btn').addEventListener('click', function() {
     };
 
 
-    xhttp.open("POST", "http://ihse.tk:50000/project", true);
+    xhttp.open("POST", "//ihse.tk/project", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
@@ -112,7 +112,7 @@ document.querySelector('#btn').addEventListener('click', function() {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/names", true);
+    xhttp.open("GET", "//ihse.tk/names", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }

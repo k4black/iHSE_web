@@ -132,7 +132,7 @@ function loadUser(func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/user", true);
+    xhttp.open("GET", "//ihse.tk/user", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -160,7 +160,7 @@ function loadEnrollsByClassId(class_id, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/enrolls?event_id=" + class_id, true);
+    xhttp.open("GET", "//ihse.tk/enrolls?event_id=" + class_id, true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -190,7 +190,7 @@ function loadNames(func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/names", true);
+    xhttp.open("GET", "//ihse.tk/names", true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -219,7 +219,7 @@ function loadClass(class_id, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/class?id=" + class_id, true);
+    xhttp.open("GET", "//ihse.tk/class?id=" + class_id, true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -246,7 +246,7 @@ function loadEvent(event_id, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/event?id=" + event_id, true);
+    xhttp.open("GET", "//ihse.tk/event?id=" + event_id, true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -278,7 +278,7 @@ function loadDay(day, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/day?day=" + day, true);
+    xhttp.open("GET", "//ihse.tk/day?day=" + day, true);
     xhttp.send();
 }
 
@@ -303,7 +303,7 @@ function loadProjects(func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/projects", true);
+    xhttp.open("GET", "//ihse.tk/projects", true);
     xhttp.send();
 }
 
@@ -328,7 +328,7 @@ function loadCredits(func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/credits", true);
+    xhttp.open("GET", "//ihse.tk/credits", true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }

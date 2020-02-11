@@ -73,7 +73,7 @@ document.querySelector('#btn').addEventListener('click', function () {
 
     // Pass not password but hashcode of it
     var query = "?phone=" + phone.value + "&pass=" + hashCode(pass.value);
-    xhttp.open("POST", "http://ihse.tk:50000/login" + query, true);
+    xhttp.open("POST", "//ihse.tk/login" + query, true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 });
