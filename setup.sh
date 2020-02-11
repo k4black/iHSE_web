@@ -2,8 +2,9 @@
 
 echo "setup file" > /var/tmp/test.txt
 
+cd docker
 echo "Building docker containers."
-sudo docker-compose build ./docker/
+sudo docker-compose build
 echo "Stopping old docker containers."
 sudo docker-compose down
 sudo docker-compose stop
