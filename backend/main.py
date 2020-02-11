@@ -17,7 +17,7 @@ import configparser
 # Sqlite import
 from backend import sql
 # GSheetsAPI imports
-from backend import gsheets
+# from backend import gsheets
 
 
 sys.path.append('/home/ubuntu/iHSE_web')

@@ -150,6 +150,10 @@ function setClass() {
     if (cache['user'].type >= 1) {
         document.querySelector('.anno').parentElement.style.display = 'none';
     }
+
+    document.querySelector('#scan').addEventListener('click', function () {
+        window.location = '/scan.html?event=' + event_class['id'];
+    });
 }
 
 

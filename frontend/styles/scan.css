@@ -1,0 +1,165 @@
+
+
+.wrapper {
+    justify-content: start;
+}
+
+
+
+
+.description {
+    width: 100%;
+    transition: all 1.0s ease-out;
+}
+
+.description h2 {
+    margin: 0;
+}
+
+.event_type {
+    width: 85px;
+    height: 30px;
+
+    padding-top: 3px;
+
+    color: #f8f9fa;
+    font-weight: 500;
+    border-radius: 5px;
+    border: 1px solid #a1a1a1;
+}
+
+
+.master_event {
+    background-color: #307bbb;
+}
+
+.lecture_event {
+    background-color: #fd8817;
+}
+
+
+
+
+.wrapper, body {
+    transition: all 0.5s ease-out;
+}
+
+
+.scanned .qrscanner video {
+    border: solid 5px #5ec933;
+
+    transition: all 0.5s ease-out;
+}
+
+
+.scanned .wrapper, .scanned {
+    background-color: #c2f4b3;
+    transition: all 0.1s ease-out;
+}
+
+
+.wrong_scanned .qrscanner video {
+    border: solid 5px #c91e1a;
+
+    transition: all 0.5s ease-out;
+}
+
+
+.wrong_scanned .wrapper, .scanned {
+    background-color: #f4afaa;
+    transition: all 0.1s ease-out;
+}
+
+
+
+
+
+
+#save {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+    position: fixed;
+    top: 40px;
+    right: 30px;
+}
+
+
+
+
+
+
+.qrscanner video {
+    max-width: 100%;
+    max-height: 75%;
+
+    border: solid 5px #0d0d2f00;
+
+    transition: all 1.0s ease-out;
+}
+
+
+
+
+
+
+.row-element-set {
+    display: flex;
+    flex-direction: column;
+}
+
+.row-element {
+    padding: .2em 0em;
+}
+
+.row-element-set-QRScanner {
+    max-width: 30em;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+}
+
+.form-field-caption {
+    font-weight: bold;
+}
+
+.form-field-input {
+    width: 100%;
+}
+
+
+
+
+
+
+
+.user {
+    width: 100%;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.user p {
+    font-style: italic;
+}
+
+.user input {
+    width: 30px;
+}
+
+.remove_scanned {
+    width: 25px;
+    height: 25px;
+    background-color: #e08833;
+    border-radius: 50%;
+}
+
+.remove_scanned:hover {
+    background-color: #ca7a2f;
+}

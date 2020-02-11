@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, viewport-fit=cover">
+
+    <meta name="theme-color" content="#007ac5">
+
+    <meta name="description"
+          content="Оффициальный сайт для многопрофильного детского лагеря iВышка 2019. Рассписание, зачетка и отзывы.">
+
+    <title>Сканировать | iHSE</title>
+    <link rel="shortcut icon" href="images/favicon_32x32.png" type="image/x-icon">
+
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/scan.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+    <!--    <link type="text/css" rel="stylesheet" href="JsQRScanner.css">-->
+
+    <!-- This script loads your compiled module.   -->
+    <!--  https://github.com/jbialobr/JsQRScanner  -->
+    <script type="text/javascript" src="libs/qr/jsqrscanner.nocache.js"></script>
+
+</head>
+<body onload="setupNav('scan')">
+<!-- TODO: Think how make better -->
+
+
+<!--# set var="title" value="Главная" -->
+<!--#include virtual="/components/header.html" -->
+
+
+<!--#include virtual="/components/noscript.html" -->
+
+
+<button id="save" onclick="saveScanned()" class="moderator_element enroll__button"><i class="mobile__item__icon large material-icons">save</i></button>
+
+
+
+<div class="wrapper">
+
+    <div class="description">
+        <h2 class="title">Some title</h2>
+        <p class="desc">And description</p>
+        <div class="type">type</div>
+    </div>
+
+
+
+    <div class="row-element-set row-element-set-QRScanner">
+
+        <div class="row-element">
+            <div class="qrscanner" id="scanner" onclick="changeScanning()">
+            </div>
+        </div>
+
+        <div class="row-element">
+            <div class="form-field form-field-memo">
+                <div class="form-field-caption-panel">
+                    <div class="gwt-Label form-field-caption">
+                        Last scanned
+                    </div>
+                </div>
+
+                <div class="FlexPanel form-field-input-panel">
+                    <p id="scannedTextMemo" class="textInput form-memo form-field-input textInput-readonly">No scanned users</p>
+                </div>
+
+            </div>
+
+            <br class="border_line">
+
+            <div class="form-field form-field-memo">
+                <div class="form-field-caption-panel">
+                    <div class="gwt-Label form-field-caption">
+                        Scanned history
+                    </div>
+                </div>
+
+                <div class="FlexPanel form-field-input-panel">
+                    <div id="scanned_list"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!--STD logic -->
+<script defer async src="scripts/main.js"></script>
+<!--Onpage logic -->
+<script defer async src="scripts/scan.js"></script>
+
+
+</body>
+</html>
