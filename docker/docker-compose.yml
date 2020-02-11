@@ -42,12 +42,13 @@ services:
         ports:
           - 5432:5432
         volumes:
-          - ./var/lib/postgresql/data:/var/lib/postgresql/data/pgdata
-        environment:
-            POSTGRES_DB: root
-            POSTGRES_USER: root
-            POSTGRES_PASSWORD: root
-            PGDATA: /var/lib/postgresql/data/pgdata
+          - ~/db_backup:/mounted
+#          - ./var/lib/postgresql/data:/var/lib/postgresql/data/pgdata
+#        environment:
+#            POSTGRES_DB: root
+#            POSTGRES_USER: root
+#            POSTGRES_PASSWORD: root
+#            PGDATA: /var/lib/postgresql/data/pgdata
         depends_on:
           - uwsgi
 
