@@ -15,7 +15,7 @@ from http.cookies import SimpleCookie
 import configparser
 
 # Sqlite import
-from backend import sql
+import sql
 # GSheetsAPI imports
 # from backend import gsheets
 

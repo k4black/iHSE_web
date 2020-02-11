@@ -9,4 +9,4 @@ echo "Stopping old docker containers."
 sudo docker-compose down
 sudo docker-compose stop
 echo "Running docker containers."
-sudo docker-compose up
+sudo docker-compose up -d
