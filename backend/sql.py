@@ -739,8 +739,12 @@ def insert_event(event_obj: TTableObject) -> int:
 
     try:
         cursor.execute(f"select (id) from days where date = '{event_obj['date']}'")
-        day_id = cursor.fetchone()
-        event_obj['day_id'] = day_id
+        day = cursor.fetchone()
+        if day is None:
+            # Create new day
+            insert_to_table((event_obj['date'], '', False), 'days')
+            return 0
+        event_obj['day_id'] = day[0]
     except KeyError:
         pass
 
