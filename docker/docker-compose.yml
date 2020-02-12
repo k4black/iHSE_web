@@ -30,7 +30,7 @@ services:
         volumes:
           - ../backend/:/var/app/backend/
           - ./conf/uwsgi.ini:/var/conf/uwsgi.ini
-          - ./uwsgi.log:/var/app/uwsgi.log
+          - /var/log/uwsgi.log:/var/log/uwsgi.log
         depends_on:
             - database
 
