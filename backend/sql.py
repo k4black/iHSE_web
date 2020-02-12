@@ -395,7 +395,7 @@ def remove_in_table(data_id: int, table_name: str) -> None:
         remove_user(data_id)
         return
 
-    if table_name == 'session':
+    if table_name == 'sessions':
         remove_session(data_id)
         return
 
@@ -715,7 +715,12 @@ def get_day(date: str) -> tp.List[TTableObject]:
 
     cursor.execute(f"select (id) from days where date = '{date}'")
     # TODO: maybe [0] is not needed
-    day_id = int(cursor.fetchone()[0])
+    day = cursor.fetchone()
+
+    if day is None:
+        return []
+
+    day_id = int(day[0])
 
     cursor.execute(f"select * from events where day_id = {day_id};")
     events_list = cursor.fetchall()
