@@ -24,6 +24,8 @@ sys.path.append('/home/ubuntu/iHSE_web')
 
 TODAY = datetime.today().strftime('%d.%m')
 
+CONFIG_PATH = '/var/conf/ihse.ini'
+
 # Timeout of updating objects
 TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s TODO: Couple of hours
 
@@ -204,7 +206,7 @@ def read_config() -> None:
     global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
 
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    config.read(CONFIG_PATH)
 
     try:
         CREDITS_TOTAL = config['CREDITS']['total']
@@ -242,7 +244,7 @@ def write_config() -> None:
         'number': NUMBER_TEAMS
     }
 
-    with open('config.ini', 'w') as configfile:
+    with open(CONFIG_PATH, 'w') as configfile:
         config.write(configfile)
 
 
