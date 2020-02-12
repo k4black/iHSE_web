@@ -480,13 +480,13 @@ def get_names() -> tp.List[TTableObject]:
     Args:
 
     Returns:
-        user short objects: list of user objects - [(id, name, team, project_id), ...]
+        user short objects: list of user objects - [(id, code, name, team, project_id), ...]
     """
 
     cursor.execute('select * from users;')
     users_list = cursor.fetchall()
 
-    return [{'id': user[0], 'name': user[3], 'team': user[5], 'project_id': user[7]} for user in users_list]
+    return [{'id': user[0], 'name': user[4], 'team': user[6], 'project_id': user[8]} for user in users_list]
     # TODO: only if type == 0
 
 
@@ -655,14 +655,14 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0') -> tp.O
     cursor.execute(f"SELECT * FROM sessions WHERE user_id = %s AND user_agent = %s;", (user[0], agent))
     existing_session = cursor.fetchone()
 
-    # Return existing sessions 
+    # Return existing sessions
     if existing_session is not None:
         print(f'session id got by login:{existing_session[0]}')
         return existing_session[0]
 
     # Create new session
-    sql_string = f"INSERT INTO sessions (user_id, user_type, user_agent, last_ip, time) " \
-                 f"VALUES (%s, %s, %s, %s, %s) RETURNING id;"
+    sql_string = f"INSERT INTO sessions (id, user_id, user_type, user_agent, last_ip, time) " \
+                 f"VALUES (default, %s, %s, %s, %s, %s) RETURNING id;"
     session_id = cursor.execute(sql_string, (user[0], user[2], agent, ip, time_))
     conn.commit()
 
@@ -692,9 +692,9 @@ def logout(sess_id: int) -> bool:
     """
 
     cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
-    sessions = cursor.fetchall()
+    session = cursor.fetchone()
 
-    if len(sessions) == 0:  # No such session
+    if session is None:  # No such session
         return False
 
     cursor.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
