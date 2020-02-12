@@ -714,13 +714,12 @@ def get_day(date: str) -> tp.List[TTableObject]:
     """
 
     cursor.execute(f"select (id) from days where date = '{date}'")
-    # TODO: maybe [0] is not needed
     day = cursor.fetchone()
 
     if day is None:
         return []
 
-    day_id = int(day[0])
+    day_id = int(day[0])  # TODO: maybe [0] is not needed
 
     cursor.execute(f"select * from events where day_id = {day_id};")
     events_list = cursor.fetchall()
@@ -739,7 +738,7 @@ def insert_event(event_obj: TTableObject) -> int:
     """
 
     try:
-        cursor.execute(f"select (id) from days where date = {event_obj['date']}")
+        cursor.execute(f"select (id) from days where date = '{event_obj['date']}'")
         day_id = cursor.fetchone()
         event_obj['day_id'] = day_id
     except KeyError:

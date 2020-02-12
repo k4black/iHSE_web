@@ -1014,7 +1014,7 @@ def get_day(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if day not in ['Template', '05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06',
                    '13.06', '14.06', '15.06', '16.06', '17.06', '18.06']:
         print('day overflow, falling back to the last day available')
-        day = '18.06'
+        day = '05.06'
 
     print('get data days for ', day)
 
