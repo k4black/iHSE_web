@@ -73,7 +73,7 @@ $ docker-compose --version
 echo "Setup database"
 
 sudo mkdir /var/lib/postgresql/data
-sudo chmod +a /var/lib/postgresql/data  # TODO: check
+sudo chmod +rw /var/lib/postgresql/data  # TODO: check
 
 
 

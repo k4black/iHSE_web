@@ -104,7 +104,7 @@ function setAccount() {
 //         }
 //     };
 //
-//     xhttp.open("POST", "http://ihse.tk:50000/logout", true);
+//     xhttp.open("POST", "//ihse.tk/logout", true);
 //     xhttp.withCredentials = true; // To send Cookie;
 //     xhttp.send();
 // });
@@ -147,7 +147,7 @@ function setAccount() {
 //         }
 //     };
 //
-//     xhttp.open("POST", "http://ihse.tk:50000/credits?code=" + code.value, true);
+//     xhttp.open("POST", "//ihse.tk/credits?code=" + code.value, true);
 //     xhttp.withCredentials = true;  // To receive cookie
 //     xhttp.send();
 // });

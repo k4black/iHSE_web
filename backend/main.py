@@ -15,9 +15,9 @@ from http.cookies import SimpleCookie
 import configparser
 
 # Sqlite import
-from backend import sql
+import sql
 # GSheetsAPI imports
-# from backend import gsheets
+# import gsheets  # TODO: WRITE EXPORT
 
 
 sys.path.append('/home/ubuntu/iHSE_web')
@@ -413,23 +413,14 @@ def get(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/class':
         return get_class(env, query, cookie)
 
+    if env['PATH_INFO'] == '/event':
+        return get_event(env, query, cookie)
+
     if env['PATH_INFO'] == '/enrolls':
         return get_enrolls(env, query, cookie)
 
     if env['PATH_INFO'] == '/days':  # Get days list
         return get_days(env, query, cookie)
-
-    if env['PATH_INFO'] == '/event':
-        # TODO: Remove on release - admin
-        user_obj = get_user_by_response(cookie)
-        if user_obj[2] is None:  # No User
-            return user_obj  # (id, type, phone, name, pass, team, credits, avatar)
-        if user_obj[1] == 0:
-            return ('401 Unauthorized',
-                    [('Access-Control-Allow-Origin', '*')],
-                    None)
-
-        return get_event(env, query, cookie)
 
     if env['PATH_INFO'] == '/projects':
         return get_projects(env, query, cookie)
@@ -582,6 +573,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
                 [])
 
     if env['PATH_INFO'] == '/admin_codes':
+        # TODO
         gsheets.generate_codes(150, 25, 5)
 
         return ('200 OK',
@@ -785,6 +777,8 @@ def get_days(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     """
 
     data = sql.get_table('days')
+
+    data = [obj for obj in data if obj['id'] != 0]
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
@@ -1013,7 +1007,7 @@ def get_day(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if day not in ['Template', '05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06',
                    '13.06', '14.06', '15.06', '16.06', '17.06', '18.06']:
         print('day overflow, falling back to the last day available')
-        day = '18.06'
+        day = '05.06'
 
     print('get data days for ', day)
 
@@ -1175,12 +1169,11 @@ def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     phone = ''.join(i for i in phone if i.isdigit())
 
     # Get session obj or None
-    res = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'], get_time_str())
+    session_id =  sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'], get_time_str())
 
-    if res is not None:
-
+    if session_id is not None:
         # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
-        sessid = res[0].hex()
+        sessid = session_id.hex()
         # sessid = bytes.hex(res[0])
         # sessid = bytes(res[0])
         print(f'login with got:{sessid}')

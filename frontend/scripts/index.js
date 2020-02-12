@@ -73,7 +73,7 @@ function setDay() {
 
         for (let event of times[time]) {
             event_html =
-                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
+                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + ' ' + (event.type === 1 || event.type === '1' ? 'active-event-master' : '') + ' ' + (event.type === 2 || event.type === '2' ? 'active-event-lecture': '') + ' >' +
                     // (event.type === 0 || event.type === '0' ? '' : '<a href="class.html?id=' + event.id + '">') +
                         '<p class="event__title">' + event.title + '</p>' +
 

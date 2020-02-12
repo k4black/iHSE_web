@@ -8,6 +8,9 @@ var current_timeline = 'vacations';
 
 
 
+
+
+
 $(function() {
     current_timeline = 'vacations';
     // loadAndCreateTable(current_table);
@@ -59,7 +62,7 @@ function loadDays() {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/days", true);
+    xhttp.open("GET", "//ihse.tk/days", true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -135,7 +138,7 @@ function loadAndCreateTimeline(timeline) {  // TODO: refactor
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/day?day=" + timeline, true);
+    xhttp.open("GET", "//ihse.tk/day?day=" + timeline, true);
     xhttp.send();
 }
 

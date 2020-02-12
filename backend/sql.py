@@ -11,7 +11,7 @@ from psycopg2 import IntegrityError, DataError, ProgrammingError, OperationalErr
 # initializing connection to database
 # TODO: plain text user & password, great
 # conn = psycopg2.connect('dbname=root user=root password=root')
-conn = psycopg2.connect(database="root", user="root", password="root", host="database_docker", port="5432")
+conn = psycopg2.connect(database="root", user="root", password="root", host="database_docker", port="5431")
 
 cursor = conn.cursor()
 
@@ -45,9 +45,11 @@ cursor.execute("""
 cursor.execute("""
     create table if not exists users (
         id serial not null primary key unique,
+        code text not null unique,
         user_type int default 0,
         phone text default '',
         name text default '',
+        sex bool,
         pass int,
         team int default 0,
         project_id int default 0,
@@ -70,7 +72,7 @@ cursor.execute("""
         id bytea not null primary key unique default random_bytea(16),
         user_id int,
         foreign key (user_id) references users(id),
-        user_type int,
+        user_type int default 0,
         user_agent text default '',
         last_ip text default '',
         time text default ''
@@ -104,6 +106,22 @@ cursor.execute("""
     );
 """)
 
+# Events
+cursor.execute("""
+    create table if not exists events (
+        id serial not null primary key unique,
+        type int,
+        title text default '',
+        description text default '',
+        host text default '',
+        place text default '',
+        time text default '',
+        day_id int,
+        foreign key (day_id) references days(id)
+    );
+""")
+
+
 # Feedback
 cursor.execute("""
     create table if not exists feedback (
@@ -117,21 +135,6 @@ cursor.execute("""
         useful int,
         understand int, -- accessibly
         comment text default ''
-    );
-""")
-
-# Events
-cursor.execute("""
-    create table if not exists events (
-        id serial not null primary key unique,
-        type int,
-        title text default '',
-        description text default '',
-        host text default '',
-        place text default '',
-        time text default '',
-        day_id int,
-        foreign key (day_id) references days(id)
     );
 """)
 
@@ -224,7 +227,7 @@ TDay = tp.Dict[str, tp.Any]
 TVacation = tp.Dict[str, tp.Any]
 
 table_fields = {
-    'users': ['id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'],
+    'users': ['id', 'code', 'user_type', 'phone', 'name', 'sex', 'pass', 'team', 'project_id', 'avatar'],
     'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
     'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
     'codes': ['code', 'type', 'used'],
@@ -254,15 +257,18 @@ def tuples_to_dicts(data_raw: tp.List[tp.Tuple[tp.Any]], table: str) -> tp.List[
     return data
 
 
-def dict_to_tuple(data_raw: TTableObject, table: str) -> tp.Tuple[tp.Any, ...]:
+def dict_to_tuple(data_raw: TTableObject, table: str, ignore_id: bool = False, empty_placeholder: tp.Optional[tp.Any] = None) -> tp.Tuple[tp.Any, ...]:
     global table_fields
 
     data = []  # type: tp.List[tp.Any]
 
     for field in table_fields[table]:
+        if field == 'id' and ignore_id:
+            continue
+
         try:
             if field == 'id' and data_raw[field] == '':
-                data.append(None)  # No id. Replace by None
+                data.append(empty_placeholder)  # No id. Replace by None
             else:
                 data.append(data_raw[field])
         except KeyError:
@@ -271,7 +277,7 @@ def dict_to_tuple(data_raw: TTableObject, table: str) -> tp.Tuple[tp.Any, ...]:
                 id_ = cursor.fetchone()[0]
                 data.append(id_)
             else:
-                data.append(None)  # if no field
+                data.append(empty_placeholder)  # if no field
 
     return tuple(data)
 
@@ -281,8 +287,8 @@ def tuple_to_dict(data_raw: tp.Tuple[tp.Any], table: str) -> TTableObject:
 
     data = {}  # type: tp.Dict[str, tp.Any]
 
-    for i in range(len(table_fields[table])):
-        data[table_fields[table][i]] = data_raw[i]
+    for i, field in enumerate(table_fields[table]):
+        data[field] = data_raw[i]
 
     return data
 
@@ -306,16 +312,19 @@ def insert_to_table(data: TTableObject, table_name: str) -> int:
         id: return id of new element
     """
 
+    if data is None:
+        return
+
     if table_name == 'events':
         # Class event
         return insert_event(data)
 
     fields = ', '.join(table_fields[table_name])
-    values_placeholder = ', '.join(['%s' for _ in fields])
+    values_placeholder = ', '.join(['%s' for field in fields if field != 'id'])
 
-    sql_string = f"INSERT INTO {table_name} ({fields}) VALUES ({values_placeholder}) RETURNING id;"
+    sql_string = f"INSERT INTO {table_name} ({fields}) VALUES (default, {values_placeholder}) RETURNING id;"
 
-    cursor.execute(sql_string, dict_to_tuple(data, table_name))  # TODO: try catch
+    cursor.execute(sql_string, dict_to_tuple(data, table_name, ignore_id=True))  # TODO: try catch
     hundred = cursor.fetchone()[0]
 
     return hundred
@@ -363,6 +372,9 @@ def get_in_table(data_id: int, table_name: str) -> tp.Optional[TTableObject]:
     cursor.execute(sql_string, (data_id,))
     obj = cursor.fetchone()
 
+    if obj is None:
+        return obj
+
     return tuple_to_dict(obj, table_name)
 
 
@@ -392,7 +404,7 @@ def remove_in_table(data_id: int, table_name: str) -> None:
         remove_user(data_id)
         return
 
-    if table_name == 'session':
+    if table_name == 'sessions':
         remove_session(data_id)
         return
 
@@ -477,13 +489,13 @@ def get_names() -> tp.List[TTableObject]:
     Args:
 
     Returns:
-        user short objects: list of user objects - [(id, name, team, project_id), ...]
+        user short objects: list of user objects - [(id, code, name, team, project_id), ...]
     """
 
     cursor.execute('select * from users;')
     users_list = cursor.fetchall()
 
-    return [{'id': user[0], 'name': user[3], 'team': user[5], 'project_id': user[7]} for user in users_list]
+    return [{'id': user[0], 'name': user[4], 'team': user[6], 'project_id': user[8]} for user in users_list]
     # TODO: only if type == 0
 
 
@@ -621,7 +633,7 @@ def get_session(sess_id: int) -> tp.Optional[TTableObject]:
 
 
 # TODO: Update time in sessions
-def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0'):
+def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0') -> tp.Optional[bytes]:
     """ Login user
     Create new session if it does not exist and return sess id
 
@@ -641,30 +653,30 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0'):
     """
 
     # Check user with name and pass exist and got it
+    print(f'login user with phone={phone}, pass={passw}')
     cursor.execute(f"select * from users where phone = '{phone}' and pass = {passw};")
-    users = cursor.fetchall()
+    user = cursor.fetchone()
 
-    if len(users) == 0:  # No such user
+    if user is None:  # No such user
         return None
 
-    user = users[0]
-
     # Create new session if there is no session with user_id and user_agent
-    cursor.execute(f"select * from sessions where user_id = {user[0]} and user_agent = '{agent}';")
-    existing_sessions = cursor.fetchall()
-    if len(existing_sessions) == 0:
-        cursor.execute(f"""
-            insert into sessions (user_id, user_type, user_agent, last_ip, time)
-            values ({user[0]}, {user[1]}, '{agent}', '{ip}', '{time_}');
-        """)
-        conn.commit()
+    cursor.execute(f"SELECT * FROM sessions WHERE user_id = %s AND user_agent = %s;", (user[0], agent))
+    existing_session = cursor.fetchone()
 
-    # Get session corresponding to user_id and user_agent
-    cursor.execute(f"select * from sessions where user_id = {user[0]} and user_agent = '{agent}';")
-    result = cursor.fetchone()
+    # Return existing sessions
+    if existing_session is not None:
+        print(f'session id got by login:{existing_session[0]}')
+        return existing_session[0]
 
-    print(f'session got by login:{result}')
-    return result
+    # Create new session
+    sql_string = f"INSERT INTO sessions (id, user_id, user_type, user_agent, last_ip, time) " \
+                 f"VALUES (default, %s, %s, %s, %s, %s) RETURNING id;"
+    session_id = cursor.execute(sql_string, (user[0], user[2], agent, ip, time_))
+    conn.commit()
+
+    print(f'session id created by login:{session_id}')
+    return session_id
 
 
 def remove_session(sess_id: int) -> bool:
@@ -689,9 +701,9 @@ def logout(sess_id: int) -> bool:
     """
 
     cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
-    sessions = cursor.fetchall()
+    session = cursor.fetchone()
 
-    if len(sessions) == 0:  # No such session
+    if session is None:  # No such session
         return False
 
     cursor.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
@@ -711,8 +723,12 @@ def get_day(date: str) -> tp.List[TTableObject]:
     """
 
     cursor.execute(f"select (id) from days where date = '{date}'")
-    # TODO: maybe [0] is not needed
-    day_id = int(cursor.fetchone()[0])
+    day = cursor.fetchone()
+
+    if day is None:
+        return []
+
+    day_id = int(day[0])  # TODO: maybe [0] is not needed
 
     cursor.execute(f"select * from events where day_id = {day_id};")
     events_list = cursor.fetchall()
@@ -731,18 +747,22 @@ def insert_event(event_obj: TTableObject) -> int:
     """
 
     try:
-        cursor.execute(f"select (id) from days where date = {event_obj['date']}")
-        day_id = cursor.fetchone()
-        event_obj['day_id'] = day_id
+        cursor.execute(f"select (id) from days where date = '{event_obj['date']}'")
+        day = cursor.fetchone()
+        if day is None:
+            # Create new day
+            insert_to_table((event_obj['date'], '', False), 'days')
+            return 0
+        event_obj['day_id'] = day[0]
     except KeyError:
         pass
 
-    values_placeholder = ', '.join(['%s' for _ in table_fields['events']])
+    values_placeholder = ', '.join(['%s' for field in table_fields['events'] if field != 'id'])
 
-    sql_string = f"INSERT INTO events (type, title, description, host, place, time, day_id) " \
-                 f"VALUES ({values_placeholder}) RETURNING id;"
+    sql_string = f"INSERT INTO events (id, type, title, description, host, place, time, day_id) " \
+                 f"VALUES (default, {values_placeholder}) RETURNING id;"
 
-    cursor.execute(sql_string, dict_to_tuple(event_obj, 'events'))  # TODO: try catch
+    cursor.execute(sql_string, dict_to_tuple(event_obj, 'events', ignore_id=True))  # TODO: try catch
     event_id = cursor.fetchone()[0]
 
     if int(event_obj['type']) != 0:

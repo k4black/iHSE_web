@@ -14,6 +14,9 @@ services:
         volumes:
           - ../frontend/:/var/app/frontend/
           - ./conf/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+          - /etc/letsencrypt/:/etc/letsencrypt/
+        depends_on:
+          - uwsgi
 
     # uWSGI server for backend 
     uwsgi:
@@ -27,28 +30,26 @@ services:
         volumes:
           - ../backend/:/var/app/backend/
           - ./conf/uwsgi.ini:/var/conf/uwsgi.ini
-          - ./uwsgi.log:/var/app/uwsgi.log
+          - /var/log/uwsgi.log:/var/log/uwsgi.log
         depends_on:
-          - nginx
+            - database
 
     # PostgeSql server for backend 
     # TODO
     database:
-        #image: postgres:12.1
-        build:
-            context: .
-            dockerfile: database.dockerfile
+        image: postgres:12.1
+#        build:
+#            context: .
+#            dockerfile: database.dockerfile
         container_name: database_docker
         restart: unless-stopped
         ports:
-          - 5432:5432
+          - 5431:5431
         volumes:
-          - ./var/lib/postgresql/data:/var/lib/postgresql/data/pgdata
+          - /var/lib/postgresql/data:/var/lib/postgresql/data/pgdata
         environment:
             POSTGRES_DB: root
             POSTGRES_USER: root
             POSTGRES_PASSWORD: root
             PGDATA: /var/lib/postgresql/data/pgdata
-        depends_on:
-          - uwsgi
-
+        command: -p 5431

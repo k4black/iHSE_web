@@ -22,25 +22,26 @@ window.addEventListener('load', function() {
     }
 
     loadEvent(currentEventId, setEvent);
+    loadEnrollsByClassId(currentEventId, function () {});
     loadUsers(function () {});
 });
 
 
 
 /**
- * Get event information from server by event_id
- * Save list to global 'cache['event']'
+ * Get event information from server by user_id
+ * Save list to global 'cache['users']'
  *
  * Run func on OK status
  */
-function loadUsers(event_id, func) {
+function loadUsers(func) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
                 let users = JSON.parse(this.responseText);
-                let objs = groupByUnique(users, 'id');
+                let objs = groupByUnique(users, 'code');
 
                 cache['users'] = objs;
 
@@ -49,7 +50,7 @@ function loadUsers(event_id, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + 'users', true);
+    xhttp.open("GET", "//ihse.tk/admin_get_table?" + "table=" + 'users', true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -129,7 +130,7 @@ function saveScanned() {
 
     let data = JSON.stringify(users_list);
 
-    xhttp.open("POST", "http://ihse.tk:50000/checkin?" + "event="+currentEventId, true);
+    xhttp.open("POST", "//ihse.tk/checkin?" + "event="+currentEventId, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
@@ -151,7 +152,7 @@ function addScannedElem(scannedText) {
 
 
 
-    let scans_html = '<div class="user" data-id="' + scannedText + '">' +
+    let scans_html = '<div class="user" data-id="' + user['id'] + '">' +
             '<p>' + user['name'] + '</p>' +
             '<input type="number" value="0">' +
             '<div class="remove_scanned" onclick="removeScannedElem(this.parentElement)"><i class="mobile__item__icon large material-icons">close</i></div>' +
@@ -180,13 +181,22 @@ function onQRCodeScanned(scannedText) {
 
     console.log('Scanned: ', scannedText);
 
-    if (cache['users'] == undefined || !cache['users'].include(scannedText)) {
+    if (cache['users'] == undefined || !Object.keys(cache['users']).include(scannedText)) {
         console.log('No user with id: ', scannedText);
         setWrongScannedClass(); // Red blink animation
         document.getElementById("scannedTextMemo").innerText = scannedText + ' : ' + 'Wrong user!';
         return;  //TODO: uncomment
     }
 
+    if (cache['event']['type'] === 1 || cache['event']['type'] === '1') {  // Master class, not lecture
+        let user = cache['users'][scannedText];
+        let enrolls = Object.values(cache['enrolls']).filter(function (i) {return i['user_id'] == 0});
+
+        if (enrolls.length === 0) {
+            alert('User are NOT enrolled!');
+            return;
+        }
+    }
 
     scannedSet.add(scannedText);
 

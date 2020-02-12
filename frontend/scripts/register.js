@@ -101,7 +101,7 @@ document.querySelector('#btn').addEventListener('click', function () {
     // Pass not password but hashcode of it
     // code - registration code
     var query = "?name=" + name_.value + " " + surname.value + "&phone=" + phone.value + "&pass=" + hashCode(pass.value) + "&code=" + code.value;
-    xhttp.open("POST", "http://ihse.tk:50000/register" + query, true);
+    xhttp.open("POST", "//ihse.tk/register" + query, true);
     xhttp.send();
 });
 
