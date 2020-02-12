@@ -312,6 +312,9 @@ def insert_to_table(data: TTableObject, table_name: str) -> int:
         id: return id of new element
     """
 
+    if data is None:
+        return
+
     if table_name == 'events':
         # Class event
         return insert_event(data)

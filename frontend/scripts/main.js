@@ -239,7 +239,7 @@ function loadEvent(event_id, func) {
             if (this.status === 200) { // If ok set up fields
                 let event = JSON.parse(this.responseText);
 
-                cache['events'] = event;
+                cache['event'] = event;
 
                 func();
             }

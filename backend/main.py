@@ -778,6 +778,8 @@ def get_days(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     data = sql.get_table('days')
 
+    data = [obj for obj in data if data['id'] != 0]
+
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
 
