@@ -17,7 +17,7 @@ import configparser
 # Sqlite import
 import sql
 # GSheetsAPI imports
-# from backend import gsheets
+import gsheets  # TODO: WRITE EXPORT
 
 
 sys.path.append('/home/ubuntu/iHSE_web')
@@ -582,6 +582,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
                 [])
 
     if env['PATH_INFO'] == '/admin_codes':
+        # TODO
         gsheets.generate_codes(150, 25, 5)
 
         return ('200 OK',

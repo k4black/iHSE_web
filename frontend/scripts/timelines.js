@@ -8,6 +8,9 @@ var current_timeline = 'vacations';
 
 
 
+
+
+
 $(function() {
     current_timeline = 'vacations';
     // loadAndCreateTable(current_table);

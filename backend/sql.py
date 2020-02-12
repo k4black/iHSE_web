@@ -45,6 +45,7 @@ cursor.execute("""
 cursor.execute("""
     create table if not exists users (
         id serial not null primary key unique,
+        code text not null unique,
         user_type int default 0,
         phone text default '',
         name text default '',
@@ -226,7 +227,7 @@ TDay = tp.Dict[str, tp.Any]
 TVacation = tp.Dict[str, tp.Any]
 
 table_fields = {
-    'users': ['id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'],
+    'users': ['id', 'code', 'user_type', 'phone', 'name', 'sex', 'pass', 'team', 'project_id', 'avatar'],
     'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
     'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
     'codes': ['code', 'type', 'used'],

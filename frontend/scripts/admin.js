@@ -30,7 +30,7 @@ let data = [
 ];
 
 let fields = {
-    'users': ['id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'],
+    'users': ['id', 'code', 'user_type', 'phone', 'name', 'sex', 'pass', 'team', 'project_id', 'avatar'],
     'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
     'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
     'codes': ['code', 'type', 'used'],
