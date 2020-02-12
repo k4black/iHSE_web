@@ -72,7 +72,7 @@ cursor.execute("""
         id bytea not null primary key unique default random_bytea(16),
         user_id int,
         foreign key (user_id) references users(id),
-        user_type int,
+        user_type int default 0,
         user_agent text default '',
         last_ip text default '',
         time text default ''
@@ -284,8 +284,8 @@ def tuple_to_dict(data_raw: tp.Tuple[tp.Any], table: str) -> TTableObject:
 
     data = {}  # type: tp.Dict[str, tp.Any]
 
-    for i in range(len(table_fields[table])):
-        data[table_fields[table][i]] = data_raw[i]
+    for i, field in enumerate(table_fields[table]):
+        data[field] = data_raw[i]
 
     return data
 
@@ -644,6 +644,7 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0'):
     """
 
     # Check user with name and pass exist and got it
+    print(f'login user with phone={phone}, pass={passw}')
     cursor.execute(f"select * from users where phone = '{phone}' and pass = {passw};")
     users = cursor.fetchall()
 
