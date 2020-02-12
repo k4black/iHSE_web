@@ -257,15 +257,18 @@ def tuples_to_dicts(data_raw: tp.List[tp.Tuple[tp.Any]], table: str) -> tp.List[
     return data
 
 
-def dict_to_tuple(data_raw: TTableObject, table: str) -> tp.Tuple[tp.Any, ...]:
+def dict_to_tuple(data_raw: TTableObject, table: str, ignore_id: bool = False, empty_placeholder: tp.Optional[tp.Any] = None) -> tp.Tuple[tp.Any, ...]:
     global table_fields
 
     data = []  # type: tp.List[tp.Any]
 
     for field in table_fields[table]:
+        if field == 'id' and ignore_id:
+            continue
+
         try:
             if field == 'id' and data_raw[field] == '':
-                data.append(None)  # No id. Replace by None
+                data.append(empty_placeholder)  # No id. Replace by None
             else:
                 data.append(data_raw[field])
         except KeyError:
@@ -274,7 +277,7 @@ def dict_to_tuple(data_raw: TTableObject, table: str) -> tp.Tuple[tp.Any, ...]:
                 id_ = cursor.fetchone()[0]
                 data.append(id_)
             else:
-                data.append(None)  # if no field
+                data.append(empty_placeholder)  # if no field
 
     return tuple(data)
 
@@ -316,9 +319,9 @@ def insert_to_table(data: TTableObject, table_name: str) -> int:
     fields = ', '.join(table_fields[table_name])
     values_placeholder = ', '.join(['%s' for _ in fields])
 
-    sql_string = f"INSERT INTO {table_name} ({fields}) VALUES ({values_placeholder}) RETURNING id;"
+    sql_string = f"INSERT INTO {table_name} ({fields}) VALUES (default, {values_placeholder}) RETURNING id;"
 
-    cursor.execute(sql_string, dict_to_tuple(data, table_name))  # TODO: try catch
+    cursor.execute(sql_string, dict_to_tuple(data, table_name, ignore_id=True))  # TODO: try catch
     hundred = cursor.fetchone()[0]
 
     return hundred
@@ -750,10 +753,10 @@ def insert_event(event_obj: TTableObject) -> int:
 
     values_placeholder = ', '.join(['%s' for _ in table_fields['events']])
 
-    sql_string = f"INSERT INTO events (type, title, description, host, place, time, day_id) " \
-                 f"VALUES ({values_placeholder}) RETURNING id;"
+    sql_string = f"INSERT INTO events (id, type, title, description, host, place, time, day_id) " \
+                 f"VALUES (default, {values_placeholder}) RETURNING id;"
 
-    cursor.execute(sql_string, dict_to_tuple(event_obj, 'events'))  # TODO: try catch
+    cursor.execute(sql_string, dict_to_tuple(event_obj, 'events', ignore_id=True))  # TODO: try catch
     event_id = cursor.fetchone()[0]
 
     if int(event_obj['type']) != 0:
