@@ -317,7 +317,7 @@ def insert_to_table(data: TTableObject, table_name: str) -> int:
         return insert_event(data)
 
     fields = ', '.join(table_fields[table_name])
-    values_placeholder = ', '.join(['%s' for _ in fields])
+    values_placeholder = ', '.join(['%s' for field in fields if field != 'id'])
 
     sql_string = f"INSERT INTO {table_name} ({fields}) VALUES (default, {values_placeholder}) RETURNING id;"
 
@@ -368,6 +368,9 @@ def get_in_table(data_id: int, table_name: str) -> tp.Optional[TTableObject]:
 
     cursor.execute(sql_string, (data_id,))
     obj = cursor.fetchone()
+
+    if obj is None:
+        return obj
 
     return tuple_to_dict(obj, table_name)
 
@@ -751,7 +754,7 @@ def insert_event(event_obj: TTableObject) -> int:
     except KeyError:
         pass
 
-    values_placeholder = ', '.join(['%s' for _ in table_fields['events']])
+    values_placeholder = ', '.join(['%s' for field in table_fields['events'] if field != 'id'])
 
     sql_string = f"INSERT INTO events (id, type, title, description, host, place, time, day_id) " \
                  f"VALUES (default, {values_placeholder}) RETURNING id;"

@@ -413,23 +413,14 @@ def get(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/class':
         return get_class(env, query, cookie)
 
+    if env['PATH_INFO'] == '/event':
+        return get_event(env, query, cookie)
+
     if env['PATH_INFO'] == '/enrolls':
         return get_enrolls(env, query, cookie)
 
     if env['PATH_INFO'] == '/days':  # Get days list
         return get_days(env, query, cookie)
-
-    if env['PATH_INFO'] == '/event':
-        # TODO: Remove on release - admin
-        user_obj = get_user_by_response(cookie)
-        if user_obj[2] is None:  # No User
-            return user_obj  # (id, type, phone, name, pass, team, credits, avatar)
-        if user_obj[1] == 0:
-            return ('401 Unauthorized',
-                    [('Access-Control-Allow-Origin', '*')],
-                    None)
-
-        return get_event(env, query, cookie)
 
     if env['PATH_INFO'] == '/projects':
         return get_projects(env, query, cookie)
