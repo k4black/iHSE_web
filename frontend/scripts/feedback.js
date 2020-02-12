@@ -6,7 +6,57 @@
 
 
 
+window.addEventListener('load', function () {
+    loadDays(function () {});
+});
 
+
+function setDays() {
+    let today = getToday();
+
+    let days_list = Object.values(cache['days']).map(function (currentValue, index, array) {
+        return currentValue['date'];
+    });
+
+    if (days_list.includes(today)) {
+        today = today;
+    } else {
+        today = days_list[0];
+    }
+
+    let topbar_html = '';
+    for (let id in cache['days']) {
+        if (cache['days'][i].date === today) {  // TODO: Today
+            topbar_html += '<div class="day today selected">'
+        } else {
+            topbar_html += '<div class="day">'
+        }
+
+        topbar_html += '<div class="day__num">' + i + '</div>' +
+            '<div class="day__name">' + cache['days'][i].date + '</div>' +
+            '</div>';
+    }
+
+    topbar_html += '<div class="admin_element day add_day"> <div class="day__num">' +
+        '<i class="mobile__item__icon large material-icons">add</i>' + '</div>' +
+            '<div class="day__name">' + 'add_day' + '</div>' +
+            '</div>';
+
+
+    document.querySelector('.topbar').innerHTML = topbar_html;
+
+
+    // Set onclick loading other day
+    var days = document.querySelectorAll('.day');
+    for (let i = 0; i < days.length; i++) {
+        days[i].addEventListener('click', function() {
+            document.querySelector('.selected').classList.remove('selected');
+            this.classList.add('selected');
+
+            loadFeedback(this.lastElementChild.textContent, setFeedback);
+        });
+    }
+}
 
 
 

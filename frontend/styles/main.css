@@ -208,7 +208,7 @@ form {
 }
 
 
-.data__loading .loading__resource p, .data__loading .loading__resource span, .data__loading .loading__resource img, .data__loading .loading__resource .text_div, .data__loading .loading__resource .img_div  {
+.data__loading .loading__resource p, .data__loading .loading__resource h3, .data__loading .loading__resource span, .data__loading .loading__resource img, .data__loading .loading__resource .text_div, .data__loading .loading__resource .img_div  {
     border-radius: 15px;
     animation-name: bg;
     animation-duration: 4s;

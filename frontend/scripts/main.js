@@ -46,6 +46,17 @@ function checkLoading(foo, waiting_list) {
 }
 
 
+/**
+ * Get string of today date (dd.mm)
+ */
+function getToday() {
+    let today_date = new Date();  //January is 0!
+    let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');
+
+    return dd_mm;
+}
+
+
 
 /** ===============  AUXILIARY FUNCTIONS  =============== */
 
@@ -105,6 +116,36 @@ function groupByUnique(arr, property) {
 
 
 /** ===============  SERVER REQUESTS  =============== */
+
+
+
+/**
+ * Get days list information from server
+ * Send http GET request and get days list
+ * Save user dict to global 'cache['days']'
+ *
+ * Run func on OK status
+ */
+function loadDays(func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) {  // Ok
+                let days_raw = JSON.parse(this.responseText);
+                let days = groupByUnique(days_raw, 'id');
+                cache['days'] = days;
+
+                func();
+            } else if (this.status === 401) {  // Unauthorized
+
+            }
+        }
+    };
+
+    xhttp.open("GET", "//ihse.tk/days", true);
+    xhttp.send();
+}
 
 
 
@@ -220,6 +261,35 @@ function loadClass(class_id, func) {
     };
 
     xhttp.open("GET", "//ihse.tk/class?id=" + class_id, true);
+    // xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+
+
+
+/**
+ * Get event information from server by event_id
+ * Save to global 'cache['event']'
+ *
+ * Run func on OK status
+ */
+function loadEvent(event_id, func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields
+                let event = JSON.parse(this.responseText);
+
+                cache['event'] = event;
+
+                func();
+            }
+        }
+    };
+
+    xhttp.open("GET", "//ihse.tk/event?id=" + event_id, true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }

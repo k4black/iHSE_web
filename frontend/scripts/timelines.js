@@ -58,6 +58,8 @@ function loadDays() {
                 }
 
                 setupTabs();
+
+                func()
             }
         }
     };

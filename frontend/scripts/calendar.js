@@ -59,7 +59,7 @@ function setupDays() {   // TODO: Refactor
             }
 
             let today_date = new Date();  //January is 0!
-            let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
+            let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');
 
             if (days_list.includes(dd_mm)) {
                 today = dd + '.' + mm;
