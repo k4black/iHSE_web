@@ -624,7 +624,7 @@ def get_session(sess_id: int) -> tp.Optional[TTableObject]:
 
 
 # TODO: Update time in sessions
-def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0'):
+def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0') -> tp.Optional[bytes]:
     """ Login user
     Create new session if it does not exist and return sess id
 
@@ -646,29 +646,28 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0'):
     # Check user with name and pass exist and got it
     print(f'login user with phone={phone}, pass={passw}')
     cursor.execute(f"select * from users where phone = '{phone}' and pass = {passw};")
-    users = cursor.fetchall()
+    user = cursor.fetchone()
 
-    if len(users) == 0:  # No such user
+    if user is None:  # No such user
         return None
 
-    user = users[0]
-
     # Create new session if there is no session with user_id and user_agent
-    cursor.execute(f"select * from sessions where user_id = {user[0]} and user_agent = '{agent}';")
-    existing_sessions = cursor.fetchall()
-    if len(existing_sessions) == 0:
-        cursor.execute(f"""
-            insert into sessions (user_id, user_type, user_agent, last_ip, time)
-            values ({user[0]}, {user[1]}, '{agent}', '{ip}', '{time_}');
-        """)
-        conn.commit()
+    cursor.execute(f"SELECT * FROM sessions WHERE user_id = %s AND user_agent = %s;", (user[0], agent))
+    existing_session = cursor.fetchone()
 
-    # Get session corresponding to user_id and user_agent
-    cursor.execute(f"select * from sessions where user_id = {user[0]} and user_agent = '{agent}';")
-    result = cursor.fetchone()
+    # Return existing sessions 
+    if existing_session is not None:
+        print(f'session id got by login:{existing_session[0]}')
+        return existing_session[0]
 
-    print(f'session got by login:{result}')
-    return result
+    # Create new session
+    sql_string = f"INSERT INTO sessions (user_id, user_type, user_agent, last_ip, time) " \
+                 f"VALUES (%s, %s, %s, %s, %s) RETURNING id;"
+    session_id = cursor.execute(sql_string, (user[0], user[2], agent, ip, time_))
+    conn.commit()
+
+    print(f'session id created by login:{session_id}')
+    return session_id
 
 
 def remove_session(sess_id: int) -> bool:

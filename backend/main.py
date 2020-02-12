@@ -1176,11 +1176,11 @@ def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     phone = ''.join(i for i in phone if i.isdigit())
 
     # Get session obj or None
-    res = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'], get_time_str())
+    session_id =  sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'], get_time_str())
 
-    if res is not None:
+    if session_id is not None:
         # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
-        sessid = res[0].hex()
+        sessid = session_id.hex()
         # sessid = bytes.hex(res[0])
         # sessid = bytes(res[0])
         print(f'login with got:{sessid}')
