@@ -186,10 +186,17 @@ function setEnrolls() {
 
 
     // TODO: Hide when there is no enrollment (total === 0)
-    setupData(document.querySelector('#class_popup .count').firstElementChild, Object.keys(enrolls).length + ' / ' + cache['class'].total);
+    if (cache['class'].total == 0) {
+        document.querySelector('.class_popup__enroll_section').style.display = 'none';
+    } else {
+        document.querySelector('.class_popup__enroll_section').style.display = 'block';
+        
 
-    console.log(Object.keys(enrolls).length , cache['class'].total, Object.keys(enrolls).length / cache['class'].total);
-    setupBar(Object.keys(enrolls).length / cache['class'].total);  // Number from 0.0 to 1.0
+        setupData(document.querySelector('#class_popup .count').firstElementChild, Object.keys(enrolls).length + ' / ' + cache['class'].total);
+
+        console.log(Object.keys(enrolls).length, cache['class'].total, Object.keys(enrolls).length / cache['class'].total);
+        setupBar(Object.keys(enrolls).length / cache['class'].total);  // Number from 0.0 to 1.0
+    }
 
 
     // Check current user's attendance
