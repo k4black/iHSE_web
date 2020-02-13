@@ -1441,6 +1441,8 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
                 [('Access-Control-Allow-Origin', '//ihse.tk'), ('Access-Control-Allow-Credentials', 'true')],
                 [])
 
+    print('Checkin class. event', event)
+
     # Set up credits and enrolls attendance
     if event['type'] == 1:
         # master
@@ -1467,6 +1469,12 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
                    checkin['id'] in users_to_set_credits]  # type: tp.List[sql.TTableObject]
         for credit in credits:
             sql.insert_to_table(credit, 'credits')
+
+        print('Checkin masterclass. event_id', event_id)
+        print('users_in_enrolls', users_in_enrolls)
+        print('users_in_checkins', users_in_checkins)
+        print('New enrolls: ', enrolls)
+        print('New credits: ', credits)
     else:
         # lecture
         enrolls = [{'class_id': event_id, 'user_id': checkin['id'], 'time': get_time_str(), 'attendance': True,
@@ -1479,6 +1487,10 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
                    for checkin in checkins]  # type: tp.List[sql.TTableObject]
         for credit in credits:
             sql.insert_to_table(credit, 'credits')
+
+        print('Checkin lecture. event_id', event_id)
+        print('New enrolls: ', enrolls)
+        print('New credits: ', credits)
 
     return ('200 Ok',
             [
