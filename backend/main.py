@@ -1572,6 +1572,7 @@ def post_create_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
 
     event_id = query['event_id']
 
+    # TODO: close for 15 min
     if sql.check_class(event_id):
         # Check class have empty places - ok
         sql.insert_enroll((None, event_id, user_obj['id'], get_time_str(), 0))
