@@ -1450,7 +1450,7 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         # Check there are enrolls
         enrolls = sql.get_enrolls_by_event_id(event_id)
 
-        users_in_enrolls = {enroll['user_id'] for enroll in enrolls}  # type: tp.Set[int]
+        users_in_enrolls = {enroll['user_id'] for enroll in enrolls if not enroll['attendance']}  # type: tp.Set[int]
         users_in_checkins = {checkin['id']: checkin['bonus'] for checkin in checkins}  # type: tp.Dict[int, int]
 
         users_to_set_credits = {k for k in users_in_checkins.keys() if k in users_in_enrolls}  # type: tp.Set[int]
@@ -1463,7 +1463,7 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         enrolls = [enroll for enroll in enrolls if
                    enroll['user_id'] in users_to_set_credits]  # type: tp.List[sql.TTableObject]
         sql.update_in_table(enrolls, 'enrolls')
-        
+
         # TODO: Minus balls if not attendant
         credits = [{'user_id': checkin['id'], 'event_id': event_id, 'time': get_time_str(),
                     'value': CREDITS_MASTER + int(checkin['bonus'])} for checkin in checkins if
@@ -1476,7 +1476,7 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         sql.update_in_table(enrolls, 'enrolls')
 
         credits = [{'user_id': checkin['id'], 'event_id': event_id,
-                    'time': get_time_str(), 'value': CREDITS_MASTER + int(checkin['bonus'])}
+                    'time': get_time_str(), 'value': CREDITS_LECTURE + int(checkin['bonus'])}
                    for checkin in checkins]  # type: tp.List[sql.TTableObject]
         sql.insert_to_table(credits, 'credits')
 
