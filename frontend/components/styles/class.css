@@ -236,6 +236,12 @@
 
 
 
+#scan {
+    cursor: pointer;
+}
+
+
+
 
 @media (min-width : 769px) {
     #class_popup .class_popup__body {

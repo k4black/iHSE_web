@@ -220,7 +220,7 @@ function setEnrolls() {
     for (let i in enrolls) {
         let name = names[enrolls[i].user_id];
         let close = '<button class="danger_button"><i class="mobile__item__icon large material-icons">clear</i></button>';
-        let checkbox = '<input type="checkbox" ' + (enrolls[i].attendance === 0 || enrolls[i].attendance === '0' ? '' : 'checked') + '>';
+        let checkbox = '<input type="checkbox" ' + (enrolls[i].attendance === false || enrolls[i].attendance === 'false' ? '' : 'checked') + '>';
 
         users_list += '<div class="enrolled_user" data-id="'+ enrolls[i].id +'" user-id="' + name.id + '">';
 
@@ -334,7 +334,7 @@ function saveEnrolls() {
 
             console.log('New status for ', enroll_list[i].getAttribute('user-id'), ' is ', enroll_list[i].children[1].firstChild.checked);
 
-            let status = (enroll_list[i].children[1].firstChild.checked ? 1 : 0);
+            let status = (enroll_list[i].children[1].firstChild.checked ? true : false);
 
             data_raw.push({
                 'id': enroll_list[i].getAttribute('data-id'),

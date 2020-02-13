@@ -24,6 +24,8 @@ sys.path.append('/home/ubuntu/iHSE_web')
 
 TODAY = datetime.today().strftime('%d.%m')
 
+CONFIG_PATH = '/var/conf/ihse.ini'
+
 # Timeout of updating objects
 TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s TODO: Couple of hours
 
@@ -204,7 +206,7 @@ def read_config() -> None:
     global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
 
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    config.read(CONFIG_PATH)
 
     try:
         CREDITS_TOTAL = config['CREDITS']['total']
@@ -242,7 +244,7 @@ def write_config() -> None:
         'number': NUMBER_TEAMS
     }
 
-    with open('config.ini', 'w') as configfile:
+    with open(CONFIG_PATH, 'w') as configfile:
         config.write(configfile)
 
 
@@ -1061,6 +1063,9 @@ def post(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/credits':
         return post_credits(env, query, cookie)
 
+    if env['PATH_INFO'] == '/checkin':
+        return post_checkin(env, query, cookie)
+
     if env['PATH_INFO'] == '/mark_enrolls':
         return post_mark_enrolls(env, query, cookie)
 
@@ -1399,6 +1404,92 @@ def post_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
                 [])
 
 
+def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """ Check in at lecture  HTTP request (by student )
+    By cookie add credits to user
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if all are ok
+            401 Unauthorized: if wrong session id
+            405 Method Not Allowed: already got it or timeout
+
+    Returns:
+        Response - result of request
+        None; Only http answer
+    """
+
+    checkins = get_json_by_response(env)
+    event_id = query['event']
+
+    # Safety get user_obj
+    user_obj = get_user_by_response(cookie)
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
+
+    if user_obj['user_type'] == 0:
+        return ('405 Method Not Allowed',
+                [('Access-Control-Allow-Origin', '//ihse.tk'), ('Access-Control-Allow-Credentials', 'true')],
+                [])
+
+    event = sql.get_in_table(event_id, 'events')
+
+    if event is None:  # No such event
+        return ('405 Method Not Allowed',
+                [('Access-Control-Allow-Origin', '//ihse.tk'), ('Access-Control-Allow-Credentials', 'true')],
+                [])
+
+    # Set up credits and enrolls attendance
+    if event['type'] == 1:
+        # master
+        # Check there are enrolls
+        enrolls = sql.get_enrolls_by_event_id(event_id)
+
+        users_in_enrolls = {enroll['user_id'] for enroll in enrolls if not enroll['attendance']}  # type: tp.Set[int]
+        users_in_checkins = {checkin['id']: checkin['bonus'] for checkin in checkins}  # type: tp.Dict[int, int]
+
+        users_to_set_credits = {k for k in users_in_checkins.keys() if k in users_in_enrolls}  # type: tp.Set[int]
+
+        # Setup attendance for enrolls
+        for i in range(len(enrolls)):
+            enrolls[i]['attendance'] = True
+            enrolls[i]['bonus'] = users_in_checkins[enrolls[i]['user_id']]
+
+        enrolls = [enroll for enroll in enrolls if
+                   enroll['user_id'] in users_to_set_credits]  # type: tp.List[sql.TTableObject]
+        sql.update_in_table(enrolls, 'enrolls')
+
+        # TODO: Minus balls if not attendant
+        credits = [{'user_id': checkin['id'], 'event_id': event_id, 'time': get_time_str(),
+                    'value': CREDITS_MASTER + int(checkin['bonus'])} for checkin in checkins if
+                   checkin['id'] in users_to_set_credits]  # type: tp.List[sql.TTableObject]
+        sql.insert_to_table(credits, 'credits')
+    else:
+        # lecture
+        enrolls = [{'class_id': event_id, 'user_id': checkin['id'], 'time': get_time_str(), 'attendance': True,
+                    'bonus': checkin['bonus']} for checkin in checkins]  # type: tp.List[sql.TTableObject]
+        sql.update_in_table(enrolls, 'enrolls')
+
+        credits = [{'user_id': checkin['id'], 'event_id': event_id,
+                    'time': get_time_str(), 'value': CREDITS_LECTURE + int(checkin['bonus'])}
+                   for checkin in checkins]  # type: tp.List[sql.TTableObject]
+        sql.insert_to_table(credits, 'credits')
+
+    return ('200 Ok',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', 'http://ihse.tk'),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true'),
+            ],
+            [])
+
+
 # TODO: think mb rename
 def post_mark_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     """ Sing in at lecture  HTTP request (by student )
@@ -1481,6 +1572,7 @@ def post_create_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
 
     event_id = query['event_id']
 
+    # TODO: close for 15 min
     if sql.check_class(event_id):
         # Check class have empty places - ok
         sql.insert_enroll((None, event_id, user_obj['id'], get_time_str(), 0))

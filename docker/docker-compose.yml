@@ -31,6 +31,7 @@ services:
           - ../backend/:/var/app/backend/
           - ./conf/uwsgi.ini:/var/conf/uwsgi.ini
           - /var/log/uwsgi.log:/var/log/uwsgi.log
+          - /var/conf/ihse.ini:/var/conf/ihse.ini
         depends_on:
             - database
 

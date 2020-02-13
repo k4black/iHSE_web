@@ -13,8 +13,9 @@ window.addEventListener('load', function () {
 
     // loadDays();
 
-    loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['user', 'credits']);});
-    loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['user', 'credits']);});
+    loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['days', 'user', 'credits']);});
+    loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['days', 'user', 'credits']);});
+    loadDays(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['days', 'user', 'credits']);});
 });
 
 
@@ -56,7 +57,9 @@ function setAccount() {
 
     // Setup user bio
     topbar.querySelector('.topbar__name').innerText = user.name;
-    topbar.querySelector('.topbar__phone').innerText = user.phone;
+    let phone = user.phone;
+    phone = '+' + phone[0] + ' (' + phone.slice(1, 4) + ') ' + phone.slice(4, 7) + '-' + phone.slice(7);
+    topbar.querySelector('.topbar__phone').innerText = phone;
 
     //setup.sh avatar
     if (user.avatar != null && user.avatar != undefined && user.avatar != '')
@@ -298,25 +301,21 @@ function setCredits() {
     console.log('check setCredits ', cache);
     let credits_by_id = cache['credits'];
 
-    let credits_list = [];
-    for (let id in credits_by_id) {
-        credits_list.push(credits_by_id[id]);
-    }
-
-    let credits = groupBy(credits_list, 'date');  // TODO: sql join add date field
+    let credits = groupBy(Object.values(credits_by_id), 'day_id');  // TODO: sql join add date field
 
     // Count sum for each date
     let data_pre = {};
-    for (let date in days) {  // TODO: load days
+    for (let date in cache['days']) {  // TODO: load days
         data_pre[date] = 0;
     }
 
     let total_sum = 0;
-    for (let date in credits) {
+    for (let day_id in credits) {
         let sum = 0;
+        let date = cache['days'][day_id];
 
-        for (let i in credits[date]) {
-            sum += (credits[date][i].value === undefined ? 0 : credits[date][i].value);
+        for (let credit of credits[day_id]) {
+            sum += (credit.value === undefined ? 0 : credit.value);
         }
 
         data_pre[date] = sum;
@@ -333,19 +332,41 @@ function setCredits() {
     data = [];
     dataShort = [];
     let flag = false;
-    for (let i = days.length - 1; i >= 0; --i) {
-        if (data_pre[days[i]] !== 0) {
+    for (let i = cache['days'].length - 1; i >= 0; --i) {
+        if (data_pre[cache['days'][i]] !== 0) {
             flag = true;
         }
 
         if (flag) {
-            dataShort.unshift(data_pre[days[i]]);
+            dataShort.unshift(data_pre[cache['days'][i]]);
         }
-        data.unshift(data_pre[days[i]]);
+        cache['days'].unshift(data_pre[cache['days'][i]]);
     }
 
 
-    setupCreditsChart(days, data, dataShort);
+    // Load text data of credits
+    let html_history = '';
+    for (let day_id in credits) {
+        html_history += '<div class="credits__history_day img-div">';
+
+        html_history += '<h3>' + cache['days'][day_id] + '</h3>';
+
+        for (let credit of credits[day_id]) {
+            html_history += '<div class="credits__history_item">' +
+                                '<div>'+
+                                    '<i class="mobile__item__icon large material-icons">' + (credit.type == 1 ? 'edit' : credits.type == 2 ? 'school' : 'event') + '</i>' +
+                                    '<p>' + credit.title + '</p>' +
+                                '</div>' +
+                                '<p class="' + (credits.value > 0 ? 'credits_positive' : 'credits_negative') + '">' + (credit.value > 0 ? '+' : '-') + credit.value + '</p>' +
+                            '</div>';
+        }
+
+        html_history += '</div>';
+    }
+
+    document.querySelector('.credits__history').innerHTML = html_history;
+
+    setupCreditsChart(cache['days'], data, dataShort);
 }
 
 

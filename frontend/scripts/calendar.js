@@ -59,7 +59,7 @@ function setupDays() {   // TODO: Refactor
             }
 
             let today_date = new Date();  //January is 0!
-            let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
+            let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');
 
             if (days_list.includes(dd_mm)) {
                 today = dd + '.' + mm;
@@ -139,7 +139,7 @@ function setDay() {
 
         for (let event of times[time]) {
             event_html =
-                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + ' ' + (event.type === 1 || event.type === '1' ? '' : 'active-event-master') + ' ' + (event.type === 2 || event.type === '2' ? '' : 'active-event-lecture') + ' >'
+                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + ' ' + (event.type === 1 || event.type === '1' ? '' : 'active-event-master') + ' ' + (event.type === 2 || event.type === '2' ? '' : 'active-event-lecture') + ' >' +
                     // '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
                     '<button class="admin_element remove_event"><i class="material-icons">close</i></button>' +
                     // '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +

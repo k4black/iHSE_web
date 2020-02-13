@@ -246,13 +246,18 @@ table_fields = {
 """ ---===---==========================================---===--- """
 
 
-def tuples_to_dicts(data_raw: tp.List[tp.Tuple[tp.Any]], table: str) -> tp.List[TTableObject]:
+def tuples_to_dicts(data_raw: tp.List[tp.Tuple[tp.Any]], table: str, custom_fields: tp.Optional[tp.List[str]] = None) -> tp.List[TTableObject]:
     global table_fields
 
     data = []  # type: tp.List[TTableObject]
 
-    for line in data_raw:
-        data.append({table_fields[table][i]: line[i] for i, _ in enumerate(table_fields[table])})
+    if custom_fields is None:
+        for line in data_raw:
+            data.append({table_fields[table][i]: line[i] for i, _ in enumerate(table_fields[table])})
+    else:
+        for line in data_raw:
+            data.append({custom_fields[i]: line[i] for i, _ in enumerate(custom_fields)})
+
 
     return data
 
@@ -549,6 +554,17 @@ def register(name, passw, type_, phone, team) -> bool:
     """)
     conn.commit()
     return True
+
+
+def checkin_by_event_id(event_id: int, checkin_obj: tp.List[TTableObject]):
+    """ Checkin users in event
+    Add user credits for the event
+
+    Args:
+        event_id: id of event to set credits
+        event_obj: (id, type, title, credits, count, total, date)
+    """
+    pass
 
 
 # TODO: ?
@@ -969,10 +985,17 @@ def get_credits_by_user_id(user_id: int) -> tp.List[TTableObject]:
         credits objects: list of credits objects - [ (id, user_id, event_id, date, value), ...]
     """
 
+    sql_string = f'select cr.id, cr.user_id, cr.event_id, cr.value, e.type, e.title, e.day_id from credits cr join events e on cr.event_id = e.id where cr.user_id = %s;'
+    cursor.execute(sql_string, (user_id, ))
+    credits_list = cursor.fetchall()
+
+    return tuples_to_dicts(credits_list, '', custom_fields=['id', 'user_id', 'event_id', 'value', 'type', 'title', 'day_id'])
+
+
     cursor.execute(f'select * from credits where user_id = {user_id};')
     credits_list = cursor.fetchall()
 
-    return credits_list
+    return tuples_to_dicts(credits_list, 'credits')
 
 
 def pay_credit(user_id: int, event_id: int, value: int = 0, time_: str = '0') -> None:

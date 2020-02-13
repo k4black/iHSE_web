@@ -191,3 +191,48 @@ body {
 .wrapper div::-webkit-scrollbar-thumb {
     background-color: #000000;
 }
+
+
+
+
+
+.credits__history {
+    width: 100%;
+    height: fit-content;
+}
+
+
+.credits__history_day {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 4px;
+    margin-bottom: 10px;
+}
+
+.credits__history_day h3 {
+    margin: 0 0 5px 0;
+    width: fit-content;
+}
+
+
+.credits__history_item {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 4px;
+}
+
+.credits__history_item div {
+    display: flex;
+}
+
+
+.credits_negative {
+    color: #bb1f21;
+}
+.credits_positive {
+    color: #227a18;
+}
