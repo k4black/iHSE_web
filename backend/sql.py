@@ -556,6 +556,17 @@ def register(name, passw, type_, phone, team) -> bool:
     return True
 
 
+def checkin_by_event_id(event_id: int, checkin_obj: tp.List[TTableObject]):
+    """ Checkin users in event
+    Add user credits for the event
+
+    Args:
+        event_id: id of event to set credits
+        event_obj: (id, type, title, credits, count, total, date)
+    """
+    pass
+
+
 # TODO: ?
 def checkin_user(user_obj: int, event_obj: int) -> None:
     """ Checkin user in event
