@@ -926,7 +926,7 @@ def get_enrolls_by_event_id(event_id: int) -> tp.List[TTableObject]:
     if len(enrolls) == 0:  # No such enrolls
         return []
 
-    return enrolls
+    return tuples_to_dicts(enrolls, 'enrolls')
 
 
 def get_enrolls_by_user_id(user_id: int) -> tp.List[TTableObject]:
@@ -945,7 +945,7 @@ def get_enrolls_by_user_id(user_id: int) -> tp.List[TTableObject]:
     if len(enrolls) == 0:  # No such enrolls
         return []
 
-    return enrolls
+    return tuples_to_dicts(enrolls, 'enrolls')
 
 
 def remove_enroll(enroll_id: int) -> None:

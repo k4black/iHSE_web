@@ -878,16 +878,13 @@ def get_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         Response - result of request
     """
 
-    enrolls = []
+    data = []
     if 'event_id' in query.keys():
-        enrolls = sql.get_enrolls_by_event_id(query['event_id'])
-        print('enrolls by event_id ', enrolls)
+        data = sql.get_enrolls_by_event_id(query['event_id'])
+        print('enrolls by event_id ', data)
     elif 'user_id' in query.keys():
-        enrolls = sql.get_enrolls_by_user_id(query['user_id'])
-        print('enrolls by user_id ', enrolls)
-
-    # Json event data
-    data = sql.tuples_to_dicts(enrolls, 'enrolls')
+        data = sql.get_enrolls_by_user_id(query['user_id'])
+        print('enrolls by user_id ', data)
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
