@@ -1458,23 +1458,27 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         for i in range(len(enrolls)):
             enrolls[i]['attendance'] = True
             enrolls[i]['bonus'] = users_in_checkins[enrolls[i]['user_id']]
-        sql.update_in_table(enrolls, 'enrolls')
+
+            sql.update_in_table(enrolls[i], 'enrolls')
 
         # TODO: Minus balls if not attendant
         credits = [{'user_id': checkin['id'], 'event_id': event_id, 'time': get_time_str(),
                     'value': CREDITS_MASTER + min(int(checkin['bonus']), CREDITS_ADDITIONAL)} for checkin in checkins if
                    checkin['id'] in users_to_set_credits]  # type: tp.List[sql.TTableObject]
-        sql.insert_to_table(credits, 'credits')
+        for credit in credits:
+            sql.insert_to_table(credit, 'credits')
     else:
         # lecture
         enrolls = [{'class_id': event_id, 'user_id': checkin['id'], 'time': get_time_str(), 'attendance': True,
                     'bonus': min(int(checkin['bonus']), CREDITS_ADDITIONAL)} for checkin in checkins]  # type: tp.List[sql.TTableObject]
-        sql.update_in_table(enrolls, 'enrolls')
+        for enroll in enrolls:
+            sql.update_in_table(enroll, 'enrolls')
 
         credits = [{'user_id': checkin['id'], 'event_id': event_id,
                     'time': get_time_str(), 'value': CREDITS_LECTURE + min(int(checkin['bonus']), CREDITS_ADDITIONAL)}
                    for checkin in checkins]  # type: tp.List[sql.TTableObject]
-        sql.insert_to_table(credits, 'credits')
+        for credit in credits:
+            sql.insert_to_table(credit, 'credits')
 
     return ('200 Ok',
             [
