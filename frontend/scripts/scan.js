@@ -175,7 +175,7 @@ function removeScannedElem(elem) {
 
 function onQRCodeScanned(scannedText) {
     if (scannedSet.has(scannedText)) {
-        console.log('Already Scanned: ', scannedText);  // TODO: remove 
+        console.log('Already Scanned: ', scannedText);  // TODO: remove
         return;  // Already scanned
     }
 
