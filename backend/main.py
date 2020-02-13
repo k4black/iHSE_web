@@ -1448,32 +1448,31 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         enrolls = sql.get_enrolls_by_event_id(event_id)
 
         users_in_enrolls = {enroll['user_id'] for enroll in enrolls if not enroll['attendance']}  # type: tp.Set[int]
-        users_in_checkins = {checkin['id']: checkin['bonus'] for checkin in checkins}  # type: tp.Dict[int, int]
+        users_in_checkins = {checkin['id']: min(int(checkin['bonus']), CREDITS_ADDITIONAL) for checkin in checkins}  # type: tp.Dict[int, int]
 
         users_to_set_credits = {k for k in users_in_checkins.keys() if k in users_in_enrolls}  # type: tp.Set[int]
 
         # Setup attendance for enrolls
+        enrolls = [enroll for enroll in enrolls if
+                   enroll['user_id'] in users_to_set_credits]  # type: tp.List[sql.TTableObject]
         for i in range(len(enrolls)):
             enrolls[i]['attendance'] = True
             enrolls[i]['bonus'] = users_in_checkins[enrolls[i]['user_id']]
-
-        enrolls = [enroll for enroll in enrolls if
-                   enroll['user_id'] in users_to_set_credits]  # type: tp.List[sql.TTableObject]
         sql.update_in_table(enrolls, 'enrolls')
 
         # TODO: Minus balls if not attendant
         credits = [{'user_id': checkin['id'], 'event_id': event_id, 'time': get_time_str(),
-                    'value': CREDITS_MASTER + int(checkin['bonus'])} for checkin in checkins if
+                    'value': CREDITS_MASTER + min(int(checkin['bonus']), CREDITS_ADDITIONAL)} for checkin in checkins if
                    checkin['id'] in users_to_set_credits]  # type: tp.List[sql.TTableObject]
         sql.insert_to_table(credits, 'credits')
     else:
         # lecture
         enrolls = [{'class_id': event_id, 'user_id': checkin['id'], 'time': get_time_str(), 'attendance': True,
-                    'bonus': checkin['bonus']} for checkin in checkins]  # type: tp.List[sql.TTableObject]
+                    'bonus': min(int(checkin['bonus']), CREDITS_ADDITIONAL)} for checkin in checkins]  # type: tp.List[sql.TTableObject]
         sql.update_in_table(enrolls, 'enrolls')
 
         credits = [{'user_id': checkin['id'], 'event_id': event_id,
-                    'time': get_time_str(), 'value': CREDITS_LECTURE + int(checkin['bonus'])}
+                    'time': get_time_str(), 'value': CREDITS_LECTURE + min(int(checkin['bonus']), CREDITS_ADDITIONAL)}
                    for checkin in checkins]  # type: tp.List[sql.TTableObject]
         sql.insert_to_table(credits, 'credits')
 
