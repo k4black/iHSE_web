@@ -59,8 +59,8 @@ function loadUsers(func) {
 function setEvent() {
     let event = cache['event'];
 
-    document.querySelector('.title').innerHTML = event['title'];
-    document.querySelector('.desc').innerHTML = event['description'];
+    document.querySelector('.description .title').innerHTML = event['title'];
+    document.querySelector('.description .desc').innerHTML = event['description'];
 
     let type_elem = "";
     if (event['type'] == 1) {
@@ -175,28 +175,32 @@ function removeScannedElem(elem) {
 
 function onQRCodeScanned(scannedText) {
     if (scannedSet.has(scannedText)) {
+        console.log('Already Scanned: ', scannedText);  // TODO: remove
         return;  // Already scanned
     }
 
 
     console.log('Scanned: ', scannedText);
 
-    if (cache['users'] == undefined || !Object.keys(cache['users']).include(scannedText)) {
+
+    if (cache['users'] == undefined || !Object.keys(cache['users']).includes(scannedText)) {
         console.log('No user with id: ', scannedText);
         setWrongScannedClass(); // Red blink animation
         document.getElementById("scannedTextMemo").innerText = scannedText + ' : ' + 'Wrong user!';
-        return;  //TODO: uncomment
+        return;
     }
 
     if (cache['event']['type'] === 1 || cache['event']['type'] === '1') {  // Master class, not lecture
         let user = cache['users'][scannedText];
-        let enrolls = Object.values(cache['enrolls']).filter(function (i) {return i['user_id'] == 0});
+        let enrolls = Object.values(cache['enrolls']).filter(function (i) {return i['user_id'] == user['id']});
 
         if (enrolls.length === 0) {
             alert('User are NOT enrolled!');
             return;
         }
     }
+
+    alert('Ok. Add user with code ' + scannedText + ' to the list.');
 
     scannedSet.add(scannedText);
 
