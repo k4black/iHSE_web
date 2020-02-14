@@ -829,9 +829,10 @@ def remove_event(event_id: int) -> None:
         return
 
     try:
-        cursor.execute(f'update credits set event_id = 0 where event_id = {event_id};')
-        cursor.execute(f'delete from classes where id = {event_id};')
-        cursor.execute(f'delete from events where id = {event_id};')
+        cursor.execute(f'UPDATE credits SET event_id = 0 WHERE event_id = {event_id};')
+        cursor.execute(f'DELETE FROM enrolls WHERE class_id = {event_id};')
+        cursor.execute(f'DELETE FROM classes WHERE id = {event_id};')
+        cursor.execute(f'DELETE FROM events WHERE id = {event_id};')
     except (IntegrityError, DataError, ProgrammingError, OperationalError) as error:
         print(error)
         cursor.execute('rollback;')
@@ -883,6 +884,7 @@ def remove_class(class_id: int) -> None:
 
     try:
         cursor.execute(f'DELETE FROM classes WHERE id = {class_id};')
+        cursor.execute(f'DELETE FROM enrolls WHERE class_id = {class_id};')
         cursor.execute(f'UPDATE events SET type = 0 WHERE event_id = {class_id};')
     except (IntegrityError, DataError, ProgrammingError, OperationalError) as error:
         print(error)
