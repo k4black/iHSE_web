@@ -115,6 +115,25 @@ function groupByUnique(arr, property) {
 
 
 
+
+
+/**
+ * Calculate hash from password
+ * TODO: Check security
+ * @param {string} s - password with which the hash is calculated
+ * @return {int}
+ */
+function hashCode(s) {
+    let h;
+    for(let i = 0; i < s.length; i++)
+        h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+
+    return h;
+}
+
+
+
+
 /** ===============  SERVER REQUESTS  =============== */
 
 

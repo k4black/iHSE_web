@@ -12,20 +12,6 @@
 
 
 
-/**
- * Calculate hash from password
- * @param {string} s - password with which the hash is calculated
- * @return {int}
- */
-function hashCode(s) {
-    let h;
-    for(let i = 0; i < s.length; i++)
-        h = Math.imul(31, h) + s.charCodeAt(i) | 0;
-
-    return h;
-}
-
-
 
 /**
  * Add button event - 'login'
@@ -72,10 +58,14 @@ document.querySelector('#btn').addEventListener('click', function () {
     };
 
     // Pass not password but hashcode of it
-    var query = "?phone=" + phone.value + "&pass=" + hashCode(pass.value);
-    xhttp.open("POST", "//ihse.tk/login" + query, true);
+    let login_data = {'phone': phone.value, 'pass': hashCode(pass.value)};
+    let data = JSON.stringify(login_data);
+
+    xhttp.open("POST", "//ihse.tk/login", true);
+    //xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
-    xhttp.send();
+    xhttp.send(data);
 });
 
 

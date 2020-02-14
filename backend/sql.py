@@ -520,16 +520,19 @@ def get_user_by_phone(phone: str) -> tp.Optional[TTableObject]:
     return tuple_to_dict(user, 'users')
 
 
-def register(name, passw, type_, phone, team) -> bool:
+def register(code: str, name: str, surname: str, phone: str, sex: bool, passw: str, team: int, type_: int = 0) -> bool:
     """ Register new user
     There is no verification - create anywhere
 
     Args:
-        name: User name - string
-        passw: Password hash - int
-        type_: User type - int  [0 - USER, 1 - HOST, 2 - ADMIN]
+        code: registration code - string
+        name: User name
+        surname: User surname
         phone: phone - string
-        team: number of group - int
+        sex: Sex of user. [True=Male, False=Female]
+        passw: Password hash - int
+        team: number of group - int (0, main.NUM_OF_GROUPS]
+        type_: User type - int  [0=USER, 1=MODERATOR, 2=ADMIN]
 
     Note:
         user id is automatically generated
@@ -538,20 +541,14 @@ def register(name, passw, type_, phone, team) -> bool:
         Sucsess reg or not
     """
 
-    # TODO: change to PostgreSQL
-    cursor.execute(f'select * from users where name = \'{name}\' and pass = {passw};')
-    existing_users = cursor.fetchall()
-    if len(existing_users) != 0:
+    cursor.execute('SELECT * FROM users WHERE phone = %s AND pass = %s;', (phone, passw))
+    existing_user = cursor.fetchone()
+    if existing_user is not None:
         return False
 
-    cursor.execute(f"""
-        insert into users (user_type, phone, name, pass, team)
-        values ({type_},
-               '{phone}',
-               '{name}',
-                {passw},
-                {team});
-    """)
+    sql_string = 'INSERT INTO users (code, user_type, phone, name, sex, pass, team) ' \
+                 'VALUES (%s, %s, %s, %s, %s, %s, %s);'
+    cursor.execute(sql_string, (code, type_, phone, name + ' ' + surname, sex, passw, team))
     conn.commit()
     return True
 
@@ -562,7 +559,7 @@ def checkin_by_event_id(event_id: int, checkin_obj: tp.List[TTableObject]):
 
     Args:
         event_id: id of event to set credits
-        event_obj: (id, type, title, credits, count, total, date)
+        checkin_obj: (id, type, title, credits, count, total, date)
     """
     pass
 
