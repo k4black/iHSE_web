@@ -258,7 +258,6 @@ def tuples_to_dicts(data_raw: tp.List[tp.Tuple[tp.Any]], table: str, custom_fiel
         for line in data_raw:
             data.append({custom_fields[i]: line[i] for i, _ in enumerate(custom_fields)})
 
-
     return data
 
 
@@ -401,8 +400,12 @@ def remove_in_table(data_id: int, table_name: str) -> None:
         remove_project(data_id)
         return
 
-    if table_name == 'events' or table_name == 'classes':
+    if table_name == 'events':
         remove_event(data_id)
+        return
+
+    if table_name == 'classes':
+        remove_class(data_id)
         return
 
     if table_name == 'users':
@@ -779,7 +782,7 @@ def insert_event(event_obj: TTableObject) -> int:
     event_id = cursor.fetchone()[0]
 
     if int(event_obj['type']) != 0:
-        # class
+        # class - add class in table
         cursor.execute(f'INSERT INTO classes (id, total, annotation) VALUES ({event_id}, 0, '');')
     else:
         # regular
@@ -863,6 +866,28 @@ def check_class(class_id: int) -> bool:
         return False
 
     return enrolled < class_obj[1]
+
+
+def remove_class(class_id: int) -> None:
+    """ Delete class by id
+
+    Args:
+        class_id: class id from bd
+
+    Returns:
+        # Success delete or not
+
+    """
+    if class_id in (0, '0'):
+        return
+
+    try:
+        cursor.execute(f'DELETE FROM classes WHERE id = {class_id};')
+        cursor.execute(f'UPDATE events SET type = 0 WHERE event_id = {class_id};')
+    except (IntegrityError, DataError, ProgrammingError, OperationalError) as error:
+        print(error)
+        cursor.execute('rollback;')
+    conn.commit()
 
 
 def enroll_user(class_id: int, user_obj: TTableObject, time_: str = '0') -> bool:  # TODO?
