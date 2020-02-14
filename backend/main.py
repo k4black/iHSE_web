@@ -37,7 +37,8 @@ def get_time_str() -> str:
         time str in format %Y-%m-%d %H:%M:%S
     """
 
-    return time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime()) + ' UTC'
+    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + 3*60*60)) + ' MSK'
+    # return time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime()) + ' UTC'
 
 
 """ ---===---==========================================---===--- """
