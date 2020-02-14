@@ -249,7 +249,8 @@ function setupCreditsChart(days, data, dataShort) {
         },
         stroke: {
             // curve: 'straight',
-            curve: ['smooth', 'straight']
+            curve: ['smooth', 'straight'],
+            colors: ['#007ac500', "#e39100"]
         },
         series: [{
           name: 'Credits',
@@ -286,6 +287,7 @@ function setupCreditsChart(days, data, dataShort) {
         },
     };
 
+    document.getElementById('credits__chart').innerHTML = '';
     var chart = new ApexCharts(document.querySelector('#credits__chart'), options);
     chart.render();
 }
@@ -305,14 +307,14 @@ function setCredits() {
 
     // Count sum for each date
     let data_pre = {};
-    for (let date in cache['days']) {  // TODO: load days
-        data_pre[date] = 0;
+    for (let day_id in cache['days']) {  // TODO: load days
+        data_pre[cache['days'][day_id].date] = 0;
     }
 
     let total_sum = 0;
     for (let day_id in credits) {
         let sum = 0;
-        let date = cache['days'][day_id];
+        let date = cache['days'][day_id].date;
 
         for (let credit of credits[day_id]) {
             sum += (credit.value === undefined ? 0 : credit.value);
@@ -331,16 +333,21 @@ function setCredits() {
     // Correct setup.sh of zeros values (future days)
     data = [];
     dataShort = [];
+    days = [];
     let flag = false;
-    for (let i = cache['days'].length - 1; i >= 0; --i) {
-        if (data_pre[cache['days'][i]] !== 0) {
+    for (let day_id of Object.keys(cache['days']).reverse()) {
+        console.log(day_id);
+        let date = cache['days'][day_id].date;
+
+        if (data_pre[date] !== 0) {
             flag = true;
         }
 
         if (flag) {
-            dataShort.unshift(data_pre[cache['days'][i]]);
+            dataShort.unshift(data_pre[date]);
         }
-        cache['days'].unshift(data_pre[cache['days'][i]]);
+        data.unshift(data_pre[date]);
+        days.unshift(cache['days'][day_id].date);
     }
 
 
@@ -349,7 +356,7 @@ function setCredits() {
     for (let day_id in credits) {
         html_history += '<div class="credits__history_day img-div">';
 
-        html_history += '<h3>' + cache['days'][day_id] + '</h3>';
+        html_history += '<h3>' + cache['days'][day_id].date + '</h3>';
 
         for (let credit of credits[day_id]) {
             html_history += '<div class="credits__history_item">' +
@@ -366,7 +373,8 @@ function setCredits() {
 
     document.querySelector('.credits__history').innerHTML = html_history;
 
-    setupCreditsChart(cache['days'], data, dataShort);
+    console.log(days, data, dataShort);
+    setupCreditsChart(days, data, dataShort);
 }
 
 
