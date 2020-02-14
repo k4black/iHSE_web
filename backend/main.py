@@ -7,7 +7,7 @@ import random
 
 # Threading for sync
 from threading import Timer
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 import urllib.parse
 from http.cookies import SimpleCookie
@@ -29,6 +29,8 @@ CONFIG_PATH = '/var/conf/ihse.ini'
 # Timeout of updating objects
 TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s TODO: Couple of hours
 
+TIMEZONE_SHIFT = 3  # MST timezone
+
 
 def get_time_str() -> str:
     """ Return current time str. According to timezone
@@ -37,7 +39,7 @@ def get_time_str() -> str:
         time str in format %Y-%m-%d %H:%M:%S
     """
 
-    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time() + 3*60*60)) + ' MSK'
+    return datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))).strftime('%Y-%m-%d %H:%M:%S') + ' MSK'
     # return time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime()) + ' UTC'
 
 
