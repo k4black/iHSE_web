@@ -78,7 +78,7 @@ jobs:
                 uses: SamKirkland/FTP-Deploy-Action@2.0.0
                 env:
                     FTP_SERVER: ihse.tk
-                    FTP_USERNAME: ubuntu-ftp
+                    FTP_USERNAME: ${{ secrets.FTP_USER }}
                     FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
                     METHOD: ftp
                     LOCAL_DIR: .
@@ -89,7 +89,7 @@ jobs:
                 uses: appleboy/ssh-action@master
                 with:
                     host: ihse.tk
-                    username: ubuntu
+                    username: ${{ secrets.SSH_USER }}
                     key: ${{ secrets.SSH_KEY }}
                     port: 22
                     script: |
