@@ -1,7 +1,7 @@
 
 
 
-$(function() {
+window.addEventListener('load', function () {
     current_timeline = 'vacations';
     // loadAndCreateTable(current_table);
 

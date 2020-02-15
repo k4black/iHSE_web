@@ -129,7 +129,7 @@ function setDay() {
     var event_html;
 
     let times = groupBy(events, 'time');
-    for (let time in Object.keys(groupBy(events, 'time')).sort()) {
+    for (let time of Object.keys(groupBy(events, 'time')).sort()) {
         time_html = '<div class="time">' +
                         '<div class="bar">' + time + '</div>' +
                             '<div class="events">';
