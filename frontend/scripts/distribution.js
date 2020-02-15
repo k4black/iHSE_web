@@ -72,6 +72,8 @@ function setCredits() {
         sum_for_days[days[day_id].date] = 100.0 * counter_for_day / Object.keys(cache['users']).length;
     }
 
+    console.log('sum_for_days', sum_for_days);
+
 
 
     var ctx = document.getElementById('credits').getContext('2d');

@@ -1797,8 +1797,6 @@ def post_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         None; Only http answer
     """
 
-    # TODO: PROJECT
-
     # Get json from response
     project_obj = get_json_by_response(env)
 
@@ -1807,8 +1805,7 @@ def post_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     if user_obj is None:
         return RESPONSE_WRONG_COOKIE
 
-    if gsheets.save_project(user_obj, project_obj):  # If user exist
-
+    if sql.save_project(project_obj):  # If user exist
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
@@ -1821,7 +1818,7 @@ def post_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
                 [])
 
     else:
-        return ('405 Method Not Allowed',
+        return ('409 Conflict',
                 [('Access-Control-Allow-Origin', '*')],
                 [])
 

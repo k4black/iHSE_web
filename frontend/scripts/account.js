@@ -56,6 +56,7 @@ function setProject() {
 
         document.querySelector('.account__project__create').addEventListener('click', function () {
             console.log('Create project');
+            window.location.href = "/create.html";
         });
         return;
     }
@@ -63,8 +64,6 @@ function setProject() {
     project_elem.classList.remove('no_project');
 
     let project = cache['project'];
-
-    ['id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation']
 
     // TODO: Full display
     let project_html =
