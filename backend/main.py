@@ -430,6 +430,9 @@ def get(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/projects':
         return get_projects(env, query, cookie)
 
+    if env['PATH_INFO'] == '/project':
+        return get_project(env, query, cookie)
+
     if env['PATH_INFO'] == '/credits':
         return get_credits(env, query, cookie)
 
@@ -957,20 +960,39 @@ def get_projects(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
 
     Returns:
         Response - result of request
-
-        projects: List of projects descriptions [  # TODO: to dicts
-                  {
-                      "title": "Some title",
-                      "type": "TED",
-                      "subj": "Math",
-                      "name": "VAsya and Ilya",
-                      "desc": "Some project description"
-                  },
-                  ...
-              ]
     """
 
     data = sql.get_table('projects')
+
+    json_data = json.dumps(data)
+    json_data = json_data.encode('utf-8')
+
+    return ('200 OK',
+            [
+                ('Access-Control-Allow-Origin', '*'),
+                ('Content-type', 'application/json'),
+                ('Content-Length', str(len(json_data)))
+            ],
+            [json_data])
+
+
+# @cache
+def get_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """ Get  Project HTTP request by id
+    Send project description in json format
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Returns:
+        Response - result of request
+    """
+
+    project_id = query['id']
+
+    data = sql.get_in_table(project_id, 'projects')
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')

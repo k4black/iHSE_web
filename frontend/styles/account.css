@@ -148,6 +148,122 @@ body {
 
 
 
+
+
+.account__project {
+    width: 100%;
+    height: fit-content;
+}
+
+
+.no_project .account__project__create {
+    display: flex;
+}
+
+.account__project__create {
+    width: 100%;
+    height: 50px;
+    background-color: #007ac5;
+    display: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.account__project__create * {
+    color: #e8e8e8;
+    font-weight: 500;
+}
+
+
+
+.no_project .account__project__info {
+    display: none;
+}
+
+.account__project__info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.account__project__info .description {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    margin-left: 10px;
+
+    width: 75%;
+}
+
+.project__top_line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.project__top_line span:first-child {
+    font-size: 18px;
+    font-weight: bold;
+    color: #03053b;
+
+    min-width: 100px;
+}
+
+.project__top_line span:last-child {
+    font-size: 14px;
+    color: #8a8a8a;
+
+    min-width: 50px;
+    text-align: right
+}
+
+.project img {
+    height: 60px;
+    width: 60px;
+    border-radius: 50%;
+}
+
+.description div {
+    min-height: 1em;
+
+}
+
+.project__names {
+    font-size: 14px;
+    display: block;
+    height: 1em;
+    width: 100%;
+    white-space: nowrap; /* Запрещаем перенос строк */
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    margin: 0;
+    margin-bottom: 5px;
+    line-height: 0.9em;
+
+    color: #adadad;
+}
+
+
+.project__desc {
+    display: block;
+    height: 1em;
+    width: 100%;
+    white-space: nowrap; /* Запрещаем перенос строк */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+
+
+
+
+
+
 @media (min-width : 769px) {
     .header {
         transition: height 300ms ease-out;

@@ -41,9 +41,48 @@ window.addEventListener('load', function () {
 /** ===============  LOGIC and REQUESTS  =============== */
 
 
+
 /**
- * Get account information from server
- * Send http GET request and get user bio (or guest bio if cookie does not exist)
+ * Get project information from cache
+ * And set up it to html
+ */
+function setProject() {
+    console.log('check setProject ', cache['project']);
+
+    let project_elem = document.querySelector('.account__project');
+
+    if (cache['user'].project_id == 0) {
+        return;
+    }
+
+    project_elem.classList.remove('no_project');
+
+    let project = cache['project'];
+
+    ['id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation']
+
+    // TODO: Full display
+    let project_html =
+        '<div class="project">' +
+            '<img src="images/rocket.jpeg">' +
+            '<div class="description">' +
+                '<div class="project__top_line">' +
+                    '<span>' + project.title + '</span>' +
+                    '<span style="text-align:right">' + project.type + '</span>' +
+                '</div>' +
+                '<p class="project__names">' + names + '</p>' +
+                '<p class="project__desc">' + project.description + '</p>' +
+                '<p class="project__anno">' + project.annotation + '</p>' +
+            '</div>' +
+        '</div>';
+
+    project_elem.innerHTML = project_html;
+}
+
+
+/**
+ * Get account information from cache
+ * And set up it to html
  */
 function setAccount() {
     console.log('check setAccount ', cache);
@@ -54,6 +93,9 @@ function setAccount() {
     // console.log(this.responseText);
 
     let user = cache['user'];
+
+    // Load project
+    loadProject(user['project_id'], setProject);
 
     // Setup user bio
     topbar.querySelector('.topbar__name').innerText = user.name;
