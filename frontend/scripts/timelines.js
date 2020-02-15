@@ -17,64 +17,20 @@ $(function() {
 
     // setupToolbar();
     // setupTabs();
-    loadDays();
+    loadDays(function () {setupTabs(); current_timeline = Object.values(cache['days'])[0].data; loadAndCreateTimeline(current_timeline)});
 
-
-        // timetable.addEvent('Sightseeing', 'Rotterdam', new Date(2015,7,17,9,00), new Date(2015,7,17,11,30), { url: '#' });
-    // timetable.addEvent('Zumba', 'Madrid', new Date(2015,7,17,12), new Date(2015,7,17,13), { url: '#' });
-    // timetable.addEvent('Zumbu', 'Madrid', new Date(2015,7,17,13,30), new Date(2015,7,17,15), { url: '#' });
-    // timetable.addEvent('Lasergaming', 'London', new Date(2015,7,17,17,45), new Date(2015,7,17,19,30), { class: 'vip-only', data: { maxPlayers: 14, gameType: 'Capture the flag' } });
-    // timetable.addEvent('All-you-can-eat grill', 'New York', new Date(2015,7,17,21), new Date(2015,7,18,1,30), { url: '#' });
-    // timetable.addEvent('Hackathon', 'Tokyo', new Date(2015,7,17,11,30), new Date(2015,7,17,20)); // options attribute is not used for this event
-    // timetable.addEvent('Tokyo Hackathon Livestream', 'Los Angeles', new Date(2015,7,17,12,30), new Date(2015,7,17,16,15)); // options attribute is not used for this event
-    // timetable.addEvent('Lunch', 'Jakarta', new Date(2015,7,17,9,30), new Date(2015,7,17,11,45), { onClick: function(event) {
-    // window.alert('You clicked on the ' + event.name + ' event in ' + event.location + '. This is an example of a click handler');
-    // }});
-    // timetable.addEvent('Cocktails', 'Rotterdam', new Date(2015,7,18,00,00), new Date(2015,7,18,02,00), { class: 'vip-only' });
-
-    buildTestTimeline();
-
-    // buildSetsTimeline(['Rotterdam', 'Madrid', 'Los Angeles', 'London', 'New York', 'Jakarta', 'Tokyo'], [
-    //     {title: 'Sightseeing', place: 'Rotterdam', date: '07.17', time: '09.00\n11.30'},
-    //     {title: 'Zumba', place: 'Madrid', date: '07.17', time: '17.00\n13.00'},
-    //     {title: 'Zumba', place: 'Madrid', date: '07.17', time: '13.30\n15.30'},
-    //     {title: 'Lasergaming', place: 'London', date: '07.17', time: '17.45\n19.30'},
-    // ]);
+    // buildTestTimeline();
 });
 
 
-function loadDays() {
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields name and phone
-                days = JSON.parse(this.responseText);
-
-
-                tabs = ['vacations'];
-                for (let day of days) {
-                    tabs.push(day.date);
-                }
-
-                setupTabs();
-
-                func()
-            }
-        }
-    };
-
-    xhttp.open("GET", "//ihse.tk/days", true);
-    // xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
-}
 
 
 function setupTabs() {
-    tabs_html = '';
-    for (let tab_name of tabs) {
+    let tabs_html = '';
+    for (let day of Object.values(cache['days'])) {
+        let tab_name = day.data;
         let name = tab_name.replace('.', '_');
-        tabs_html += '<button ' + (name === 'vacations' ? 'class="active_tab"' : '') + ' id="tab_' + name + '">' + tab_name + '</button>';
+        tabs_html += '<button ' + (name === Object.values(cache['days'])[0].data ? 'class="active_tab"' : '') + ' id="tab_' + name + '">' + tab_name + '</button>';
     }
     $('.tabs')[0].innerHTML = tabs_html;
 

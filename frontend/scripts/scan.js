@@ -29,7 +29,7 @@ window.addEventListener('load', function() {
 
 
 /**
- * Get event information from server by user_id
+ * Get user information from server
  * Save list to global 'cache['users']'
  *
  * Run func on OK status

@@ -66,14 +66,14 @@ function setDay() {
     var event_html;
 
     let times = groupBy(events, 'time');
-    for (let time in times) {
+    for (let time in Object.keys(groupBy(events, 'time')).sort()) {
         time_html = '<div class="time">' +
                         '<div class="bar">' + time + '</div>' +
                             '<div class="events">';
 
         for (let event of times[time]) {
             event_html =
-                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + ' ' + (event.type === 1 || event.type === '1' ? 'active-event-master' : '') + ' ' + (event.type === 2 || event.type === '2' ? 'active-event-lecture': '') + ' >' +
+                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 ? '' : 'active-event') + ' ' + (event.type === 1 ? 'active-event-master' : (event.type === 2 ? 'active-event-lecture' : '')) + ' >' +
                     // (event.type === 0 || event.type === '0' ? '' : '<a href="class.html?id=' + event.id + '">') +
                         '<p class="event__title">' + event.title + '</p>' +
 

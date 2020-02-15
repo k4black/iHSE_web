@@ -11,45 +11,28 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/admin.css">
     <link rel="stylesheet" href="styles/index.css">
-    <link rel="stylesheet" href="styles/timelines.css">
+    <link rel="stylesheet" href="styles/distribution.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <!--  https://github.com/Grible/timetable.js  -->
     <link rel="stylesheet" href="libs/timetable.js.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
 <body>
 
 
-<!--# set var="title" value="Админ-таймлайны" -->
+<!--# set var="title" value="Админ-распределение" -->
 <!--#include virtual="/components/header.html" -->
 
 
-<div class="overlay admin_element" id="popup">
-    <div class="popup_body">
-        <a class="close" onclick="document.getElementById('popup').style.display = 'none'">Close</a>
-
-        <div class="fields">
-        </div>
-
-        <button onclick="document.getElementById('popup').style.display = 'none';saveCredit()">Save</button>
-    </div>
-</div>
-
-
-
-
-<!--#include virtual="/frontend/components/class.html" -->
 
 
 <div class="wrapper">
-
-    <div class="tabs">
-    </div>
-
+    <div id="teams"></div>
 
     <div class="timetable"></div>
-
 </div>
 
 
@@ -57,7 +40,7 @@
 <!-- Libs -->
 <script defer async src="libs/timetable.min.js"></script>
 <!-- Onpage logic -->
-<script defer async src="scripts/timelines.js"></script>
+<script defer async src="scripts/distribution.js"></script>
 <!-- STD logic -->
 <script defer async src="scripts/main.js"></script>
 

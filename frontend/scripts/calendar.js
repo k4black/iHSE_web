@@ -122,28 +122,26 @@ var current_events;
 function setDay() {
     loadingEnd(); // TODO: Check
 
-    let events = [];
-    for (let i in cache['events']) {
-        events.push(cache['events'][i]);
-    }
+    let events = Object.values(cache['events']);
 
     var day_html = "";
     var time_html;
     var event_html;
 
     let times = groupBy(events, 'time');
-    for (let time in times) {
+    for (let time in Object.keys(groupBy(events, 'time')).sort()) {
         time_html = '<div class="time">' +
                         '<div class="bar">' + time + '</div>' +
                             '<div class="events">';
 
         for (let event of times[time]) {
             event_html =
-                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + ' ' + (event.type === 1 || event.type === '1' ? '' : 'active-event-master') + ' ' + (event.type === 2 || event.type === '2' ? '' : 'active-event-lecture') + ' >' +
+                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 ? '' : 'active-event') + ' ' + (event.type === 1 ? 'active-event-master' : (event.type === 2 ? 'active-event-lecture' : '')) + '>' +
                     // '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
                     '<button class="admin_element remove_event"><i class="material-icons">close</i></button>' +
                     // '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
                     '<button class="admin_element edit_event"><i class="material-icons" style="font-size:20px">build</i></button>' +
+                    '<button class="admin_element copy_event"><i class="material-icons" style="font-size:20px">file_copy</i></button>' +
 
                     '<p class="event__title">' + event.title + '</p>' +
 
@@ -209,8 +207,6 @@ function setupAdminButtons() {
 
 
     let editButtons = document.getElementsByClassName("edit_event");
-    console.log('removeButtons ' + removeButtons.length);
-
     for (let i = 0; i < editButtons.length; ++i) {
         editButtons[i].addEventListener('click', function () {
             // alert('clicked remove');
@@ -236,8 +232,32 @@ function setupAdminButtons() {
     }
 
 
+    let copyButtons = document.getElementsByClassName("copy_event");
+    for (let i = 0; i < editButtons.length; ++i) {
+        editButtons[i].addEventListener('click', function () {
+            // alert('clicked remove');
+            console.log('Copy Event ' + editButtons[i].parentElement.getAttribute('data-id'));
+
+            let type = editButtons[i].nextElementSibling.tagName === 'A' ? 1 : 0;
+
+            let title = editButtons[i].parentElement.getElementsByClassName('event__title')[0].textContent;
+            let desc = editButtons[i].parentElement.getElementsByClassName('event__desc');
+            desc = desc.length === 0 ? "" : desc[0].textContent;
+            let names = editButtons[i].parentElement.getElementsByClassName('event__names');
+            names = names.length === 0 ? "" : names[0].textContent;
+            let loc = editButtons[i].parentElement.getElementsByClassName('event__loc');
+            loc = loc.length === 0 ? "" : loc[0].textContent;
+
+            let times = editButtons[i].parentElement.parentElement.parentElement.getElementsByClassName('bar')[0].textContent.split('\n');
+
+            console.log(id + title + desc + names + loc);
+
+            openEditEvent('', title, type, selectedDay, times[0], times[1] === undefined ? "" : times[1], desc, names, loc);
+        });
+    }
+
+
     let createButtons = document.getElementsByClassName("add_event_button");
-    console.log('createEventButtons ' + removeButtons.length);
 
     for (let i = 0; i < createButtons.length; ++i) {
         createButtons[i].addEventListener('click', function () {

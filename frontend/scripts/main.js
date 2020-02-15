@@ -198,6 +198,35 @@ function loadUser(func) {
 }
 
 
+
+/**
+ * Get project information from server by id
+ * Send http GET request and get project description
+ * Save user dict to global 'cache['project']'
+ *
+ * Run func on OK status
+ */
+function loadProject(project_id, func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) {  // Ok
+                let project = JSON.parse(this.responseText);
+
+                cache['project'] = project;
+
+                func();
+            }
+        }
+    };
+
+    xhttp.open("GET", "//ihse.tk/project" + '?id=' + project_id, true);
+    xhttp.send();
+}
+
+
+
 /**
  * Get enrolls information from server according to event_id
  * Send http GET request and loist of enrolls by event_id  TODO: rename in class_id

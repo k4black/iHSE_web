@@ -64,7 +64,7 @@ function setProjects() { // If ok set up day field
 
             '<p class="project__names">' + names + '</p>' +
 
-            '<p class="project__desc">' + project.desc + '</p>' +
+            '<p class="project__desc">' + project.description + '</p>' +
 
             '</div>' +
             '</div>';
