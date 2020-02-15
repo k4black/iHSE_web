@@ -31,13 +31,14 @@ window.addEventListener('load', function () {
 function setupTabs() {
     let tabs_html = '';
     for (let day of Object.values(cache['days'])) {
-        let tab_name = day.data;
-        let name = tab_name.replace('.', '_');
-        tabs_html += '<button ' + (name === Object.values(cache['days'])[0].data ? 'class="active_tab"' : '') + ' id="tab_' + name + '">' + tab_name + '</button>';
+        let name = day.date.replace('.', '_');
+        tabs_html += '<button ' + (day.date === Object.values(cache['days'])[0].date ? 'class="active_tab"' : '') + ' id="tab_' + name + '">' + day.date + '</button>';
     }
     $('.tabs')[0].innerHTML = tabs_html;
 
-    for (let tab_name of tabs) {
+    for (let day of Object.values(cache['days'])) {
+        let tab_name = day.date;
+
         let name = tab_name.replace('.', '_');
         console.log('setuping tab: ' + name, $('#tab_' + name));
 

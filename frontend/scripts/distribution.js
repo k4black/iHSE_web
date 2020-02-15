@@ -29,7 +29,7 @@ function setDistribution() {
 
     let teams_html = '';
     for (let team in users) {
-        teams_html += '<div id="team' + team + '"></div>'
+        teams_html += '<div class="team_pie"><canvas id="team' + team + '"></canvas></div>'
     }
 
     document.getElementById('teams').innerHTML = teams_html;
