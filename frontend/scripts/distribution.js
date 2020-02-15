@@ -11,11 +11,93 @@ window.addEventListener('load', function () {
     loadUsers(function () {checkLoading(setDistribution, ['vacations', 'users', 'days'])});
     loadVacations(function () {checkLoading(setDistribution, ['vacations', 'users', 'days'])});
 
+
+    loadDaysCredits(function () {checkLoading(setCredits, ['credits', 'days'])});
+
     // buildTestTimeline();
 });
 
 
+/**
+ * Load from server credits information, witch includes day_id
+ */
+function loadDaysCredits(func) {
+    let xhttp = new XMLHttpRequest();
 
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+            let credits_raw = JSON.parse(this.responseText);
+            let credits = groupByUnique(credits_raw, 'id');
+
+            cache['credits'] = credits;
+
+            func();
+        }
+    };
+
+    xhttp.open("GET", "//ihse.tk/admin_get_credits", true);
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}
+
+
+
+function setCredits() {
+    let credits_by_id = cache['credits'];
+
+    let credits = [{'id': 1, 'user_id': 1, 'day_id': 3, 'value': 12}, {'id': 2, 'user_id': 1, 'day_id': 2, 'value': 3}, {'id': 3, 'user_id': 1, 'day_id': 5, 'value': 6}, {'id': 4, 'user_id': 2, 'day_id': 1, 'value': 5}, {'id': 5, 'user_id': 2, 'day_id': 3, 'value': 12}, {'id': 6, 'user_id': 3, 'day_id': 2, 'value': 7}, {'id': 7, 'user_id': 3, 'day_id': 5, 'value': 21}]
+    let credits_by_day_id = groupBy(credits, 'day_id');
+    // TODO: make true 
+    // let credits_by_day_id = groupBy(Object.values(credits_by_id), 'day_id');
+
+    let days = cache['days'];
+
+    let sum_for_days = {};
+    for (let day_id in days) {
+        sum_for_days[days[day_id].date] = 0;
+    }
+
+
+    for (let day_id in credits_by_day_id) {
+        let credits_by_user_id = groupBy(credits_by_day_id[day_id], 'user_id');
+
+        let counter_for_day = 0;
+        for (let user_id in credits_by_user_id) {
+            let sum_for_user = 0;
+            for (let credit of credits_by_user_id[user_id]) {
+                sum_for_user += credit.value;
+            }
+
+            if (sum_for_user >= cache['user'].total) {
+                ++counter_for_day;
+            }
+        }
+
+        sum_for_days[days[day_id].date] = counter_for_day;
+    }
+
+
+
+    var ctx = document.getElementById('credits').getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+
+        // The data for our dataset
+        data: {
+            labels: Object.keys(sum_for_days),
+            datasets: [{
+                label: 'My First dataset',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: Object.keys(sum_for_days)
+            }]
+        },
+
+        // Configuration options go here
+        options: {}
+    });
+}
 
 function setDistribution() {
     let users_by_id = cache['users'];

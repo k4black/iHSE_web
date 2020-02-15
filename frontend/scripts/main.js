@@ -425,6 +425,13 @@ function loadProjects(func) {
     xhttp.send();
 }
 
+
+
+
+
+
+
+
 /**
  * Get credits information from server by user cookies
  * Send http GET request and get projects json schedule
@@ -450,3 +457,5 @@ function loadCredits(func) {
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }
+
+
