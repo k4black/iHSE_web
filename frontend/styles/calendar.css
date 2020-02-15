@@ -182,7 +182,7 @@
 
 
 
-.remove_event, .copy_event .edit_event {
+.remove_event, .copy_event, .edit_event {
     position: absolute;
     top: -6px;
 

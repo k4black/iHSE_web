@@ -52,6 +52,11 @@ function setProject() {
     let project_elem = document.querySelector('.account__project');
 
     if (cache['user'].project_id == 0) {
+        // Create  project button
+
+        document.querySelector('.account__project__create').addEventListener('click', function () {
+            console.log('Create project');
+        });
         return;
     }
 
