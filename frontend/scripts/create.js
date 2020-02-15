@@ -40,11 +40,28 @@ document.querySelector('#btn').addEventListener('click', function() {
         return name.value;
     });
 
+    let user_names_allowed = [];
+    for (let user of cache['users']) {
+        if (user['project_id'] == 0) {
+            user_names_allowed.push(user['name']);
+        }
+    }
 
-    if (title.value == "" || type.value == "" || dirs.value == "" || deff.value == "" || names == null || desc.value == "" || anno.value == "") { // If some field are empty - do nothing
-        alert('You have to fill all fields!');  // TODO: show Html error message
+    for (let name of names) {
+        if (name in user_names_allowed) {
+            // ok
+        } else {
+            alert('You can not add user <' + name + '> to your project.\nNo such user or user already has project!');
+            return;
+        }
+    }
+
+
+    if (title.value == "" || type.value == "" || dirs.value == "" || deff.value == "" || names == null || anno.value == "") { // If some field are empty - do nothing
+        alert('You have to fill all fields! \n(However, you can fill description field later)');  // TODO: show Html error message
         return;
     }
+
 
     let data = JSON.stringify({"title": title.value,
                                "type": type.value,
