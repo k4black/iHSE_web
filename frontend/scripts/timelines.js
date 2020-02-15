@@ -155,7 +155,7 @@ function buildTimeline(locations, events) {
     timetable.addLocations(locations);
 
     for (let i in events) {
-        let [month, day] = cache['days'][events[i].day_id].split('.');
+        let [month, day] = cache['days'][events[i].day_id].date.split('.');
         let [time1, time2] = events[i].time.split('\n');
         console.log('added event ', time1, time2);
 

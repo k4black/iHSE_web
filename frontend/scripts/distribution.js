@@ -25,8 +25,8 @@ function setDistribution() {
 
 
     console.log('teams dist', users);
-    users[1] = [];  // TODO: Real values
-    users[2] = [];  // TODO: Real values
+    // users[1] = [];  // TODO: Real values
+    // users[2] = [];  // TODO: Real values
 
 
     let teams_html = '';
@@ -71,8 +71,9 @@ function setDistribution() {
             type: 'doughnut',
             data: {
                 datasets: [{
-                    // data: [male_total - male_vacations, female_total - female_vacations, male_vacations, female_vacations]
-                    data: [12, 23, 3, 0]  // TODO: Real values
+                    data: [male_total - male_vacations, female_total - female_vacations, male_vacations, female_vacations],
+                    // data: [12, 23, 3, 0],  // TODO: Real values
+                    backgroundColor: ['#4177e4', '#c954ec', '#5969b5', '#9e61a9']
                 }],
 
                 // These labels appear in the legend and in the tooltips when hovering different arcs
