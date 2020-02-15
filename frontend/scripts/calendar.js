@@ -141,6 +141,7 @@ function setDay() {
                     '<button class="admin_element remove_event"><i class="material-icons">close</i></button>' +
                     // '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
                     '<button class="admin_element edit_event"><i class="material-icons" style="font-size:20px">build</i></button>' +
+                    '<button class="admin_element copy_event"><i class="material-icons" style="font-size:20px">file_copy</i></button>' +
 
                     '<p class="event__title">' + event.title + '</p>' +
 
@@ -206,8 +207,6 @@ function setupAdminButtons() {
 
 
     let editButtons = document.getElementsByClassName("edit_event");
-    console.log('removeButtons ' + removeButtons.length);
-
     for (let i = 0; i < editButtons.length; ++i) {
         editButtons[i].addEventListener('click', function () {
             // alert('clicked remove');
@@ -233,8 +232,32 @@ function setupAdminButtons() {
     }
 
 
+    let copyButtons = document.getElementsByClassName("copy_event");
+    for (let i = 0; i < editButtons.length; ++i) {
+        editButtons[i].addEventListener('click', function () {
+            // alert('clicked remove');
+            console.log('Copy Event ' + editButtons[i].parentElement.getAttribute('data-id'));
+
+            let type = editButtons[i].nextElementSibling.tagName === 'A' ? 1 : 0;
+
+            let title = editButtons[i].parentElement.getElementsByClassName('event__title')[0].textContent;
+            let desc = editButtons[i].parentElement.getElementsByClassName('event__desc');
+            desc = desc.length === 0 ? "" : desc[0].textContent;
+            let names = editButtons[i].parentElement.getElementsByClassName('event__names');
+            names = names.length === 0 ? "" : names[0].textContent;
+            let loc = editButtons[i].parentElement.getElementsByClassName('event__loc');
+            loc = loc.length === 0 ? "" : loc[0].textContent;
+
+            let times = editButtons[i].parentElement.parentElement.parentElement.getElementsByClassName('bar')[0].textContent.split('\n');
+
+            console.log(id + title + desc + names + loc);
+
+            openEditEvent('', title, type, selectedDay, times[0], times[1] === undefined ? "" : times[1], desc, names, loc);
+        });
+    }
+
+
     let createButtons = document.getElementsByClassName("add_event_button");
-    console.log('createEventButtons ' + removeButtons.length);
 
     for (let i = 0; i < createButtons.length; ++i) {
         createButtons[i].addEventListener('click', function () {
