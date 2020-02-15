@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, viewport-fit=cover">
+
+    <meta name="theme-color" content="#006cae">
+
+    <title>Админ-Панель | iHSE</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/admin.css">
+    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/distribution.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!--  https://github.com/Grible/timetable.js  -->
+    <link rel="stylesheet" href="libs/timetable.js.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+<body>
+
+
+<!--# set var="title" value="Админ-распределение" -->
+<!--#include virtual="/components/header.html" -->
+
+
+
+
+<div class="wrapper">
+    <div id="teams"></div>
+
+    <div class="timetable"></div>
+</div>
+
+
+
+<!-- Libs -->
+<script defer async src="libs/timetable.min.js"></script>
+<!-- Onpage logic -->
+<script defer async src="scripts/distribution.js"></script>
+<!-- STD logic -->
+<script defer async src="scripts/main.js"></script>
+
+</body>
+</html>
