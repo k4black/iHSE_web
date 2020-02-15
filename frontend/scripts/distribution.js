@@ -18,13 +18,15 @@ window.addEventListener('load', function () {
 
 
 function setDistribution() {
-
     let users_by_id = cache['users'];
 
     let users = groupBy(Object.values(users_by_id), 'team');
+    let vacations = cache['vacations'];
 
 
     console.log('teams dist', users);
+    users[1] = [];  // TODO: Real values
+    users[2] = [];  // TODO: Real values
 
 
     let teams_html = '';
@@ -35,25 +37,60 @@ function setDistribution() {
     document.getElementById('teams').innerHTML = teams_html;
 
 
-    var ctx = document.getElementById('team0').getContext('2d');
-    var chart = new Chart(ctx, {
-        // The type of chart we want to create
-        type: 'line',
+    for (let team in users) {
+        let male_total = 0;
+        let female_total = 0;
+        for (let user of users[team]) {
+            if (user.sex) {
+                ++male_total;
+            } else {
+                ++female_total;
+            }
+        }
 
-        // The data for our dataset
-        data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-            datasets: [{
-                label: 'My First dataset',
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
-                data: [0, 10, 5, 2, 20, 30, 45]
-            }]
-        },
+        let male_vacations = 0;
+        let female_vacations = 0;
 
-        // Configuration options go here
-        options: {}
-    });
+        for (let user of users[team]) {
+            for (let v_id in vacations) {
+                if (vacations[v_id].user_id == user.id && vacations[v_id].date_from <= getToday() && getToday() <= vacations[v_id].date_to) {
+                    if (user.sex) {
+                        ++male_vacations;
+                    } else {
+                        ++female_vacations;
+                    }
+                }
+            }
+        }
+
+        console.log('male_total', male_total, 'female_total', female_total);
+        console.log('male_vacations', male_vacations, 'female_vacations', female_vacations);
+
+        var ctx = document.getElementById('team' + team).getContext('2d');
+        var myDoughnutChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    // data: [male_total - male_vacations, female_total - female_vacations, male_vacations, female_vacations]
+                    data: [12, 23, 3, 0]  // TODO: Real values
+                }],
+
+                // These labels appear in the legend and in the tooltips when hovering different arcs
+                labels: [
+                    'Male',
+                    'Female',
+                    'Male Vacations',
+                    'Female Vacations',
+                ]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: (team == 0 ? 'Вожатые' : 'Отряд #' + team)
+                }
+            }
+        });
+    }
 }
 
 
