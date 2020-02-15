@@ -4,9 +4,11 @@ import typing as tp
 import psycopg2
 from psycopg2 import IntegrityError, DataError, ProgrammingError, OperationalError
 
+
 """ ---===---==========================================---===--- """
 """         PostgreSQL database interaction via psycopg2         """
 """ ---===---==========================================---===--- """
+
 
 # initializing connection to database
 # TODO: plain text user & password, great
@@ -192,8 +194,8 @@ cursor.execute("""
         id serial not null primary key unique,
         user_id int,
         foreign key (user_id) references users(id),
-        date_from text default '',
-        date_to text default '',
+        date_from text,
+        date_to text,
         time_from text default '',
         time_to text default ''
     );
@@ -240,6 +242,7 @@ table_fields = {
     'days': ['id', 'date', 'title', 'feedback'],
     'vacations': ['id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'],
 }  # type: tp.Dict[str, tp.List[str]]
+
 
 """ ---===---==========================================---===--- """
 """           Auxiliary functions for sql interactions           """

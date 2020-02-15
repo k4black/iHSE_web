@@ -27,7 +27,7 @@ TODAY = datetime.today().strftime('%d.%m')
 CONFIG_PATH = '/var/conf/ihse.ini'
 
 # Timeout of updating objects
-TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s TODO: Couple of hours
+TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s : Couple of hours
 
 TIMEZONE_SHIFT = 3  # MST timezone
 
