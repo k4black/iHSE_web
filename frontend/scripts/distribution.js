@@ -47,7 +47,7 @@ function setCredits() {
 
     let credits = [{'id': 1, 'user_id': 1, 'day_id': 3, 'value': 12}, {'id': 2, 'user_id': 1, 'day_id': 2, 'value': 3}, {'id': 3, 'user_id': 1, 'day_id': 5, 'value': 6}, {'id': 4, 'user_id': 2, 'day_id': 1, 'value': 5}, {'id': 5, 'user_id': 2, 'day_id': 3, 'value': 12}, {'id': 6, 'user_id': 3, 'day_id': 2, 'value': 7}, {'id': 7, 'user_id': 3, 'day_id': 5, 'value': 21}]
     let credits_by_day_id = groupBy(credits, 'day_id');
-    // TODO: make true 
+    // TODO: make true
     // let credits_by_day_id = groupBy(Object.values(credits_by_id), 'day_id');
 
     let days = cache['days'];
