@@ -9,9 +9,7 @@ var current_timeline = 'vacations';
 
 
 
-
-
-$(function() {
+window.addEventListener('load', function () {
     current_timeline = 'vacations';
     // loadAndCreateTable(current_table);
 
@@ -21,6 +19,11 @@ $(function() {
 
     // buildTestTimeline();
 });
+
+
+// $(function() {
+//
+// });
 
 
 

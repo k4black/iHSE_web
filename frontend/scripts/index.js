@@ -56,17 +56,14 @@ var current_class;
 function setDay() {
     loadingEnd(); // TODO: Check
 
-    let events = [];
-    for (let i in cache['events']) {
-        events.push(cache['events'][i]);
-    }
+    let events = Object.values(cache['events']);
 
     var day_html = "";
     var time_html;
     var event_html;
 
     let times = groupBy(events, 'time');
-    for (let time in Object.keys(groupBy(events, 'time')).sort()) {
+    for (let time of Object.keys(groupBy(events, 'time')).sort()) {
         time_html = '<div class="time">' +
                         '<div class="bar">' + time + '</div>' +
                             '<div class="events">';
