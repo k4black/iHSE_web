@@ -1025,6 +1025,20 @@ def get_credits_by_user_id(user_id: int) -> tp.List[TTableObject]:
     return tuples_to_dicts(credits_list, 'credits')
 
 
+def get_credits_short() -> tp.List[TTableObject]:
+    """ Get all credits of user from sql table
+
+    Returns:
+        credits objects: list of credits objects - [ (id, user_id, event_id, date, value), ...]
+    """
+
+    sql_string = f'select cr.id, cr.user_id, cr.event_id, cr.value, e.type, e.title, e.day_id from credits cr join events e on cr.event_id = e.id;'
+    cursor.execute(sql_string)
+    credits_list = cursor.fetchall()
+
+    return tuples_to_dicts(credits_list, '', custom_fields=['id', 'user_id', 'event_id', 'value', 'type', 'title', 'day_id'])
+
+
 def pay_credit(user_id: int, event_id: int, value: int = 0, time_: str = '0') -> None:
     """ Insert credit for user
 

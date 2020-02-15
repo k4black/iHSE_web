@@ -480,6 +480,24 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/admin_post_config':
         return post_config(env, query, cookie)
 
+    if env['PATH_INFO'] == '/admin_get_credits':
+        data = sql.get_credits_short()
+
+        # Send req data tables
+        json_data = json.dumps(data)
+        json_data = json_data.encode('utf-8')
+
+        return ('200 OK',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', '//ihse.tk'),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                    ('Content-type', 'application/json'),
+                    ('Content-Length', str(len(json_data)))
+                ],
+                [json_data])
+
     if env['PATH_INFO'] == '/admin_get_table':
         table_name = query['table']
         print(f'Got get_table {table_name}')
@@ -1186,7 +1204,6 @@ def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     Returns:
         Response - result of request
-        None
     """
 
     reg_data = get_json_by_response(env)
