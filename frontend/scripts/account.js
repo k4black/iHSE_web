@@ -65,22 +65,16 @@ function setProject() {
 
     let project = cache['project'];
 
+    document.querySelector('.project__title').innerHTML = project.title;
+    document.querySelector('.project__type').innerHTML = project.type;
+    let names_test = '';
+    for (let name in names) {
+        names_test += name + ' ';
+    }
+    document.querySelector('.project__names').innerHTML = names_test;
+    document.querySelector('.project__desc').innerHTML = project.description;
+    document.querySelector('.project__anno').innerHTML = project.annotation;
     // TODO: Full display
-    let project_html =
-        '<div class="project">' +
-            '<img src="images/rocket.jpeg">' +
-            '<div class="description">' +
-                '<div class="project__top_line">' +
-                    '<span>' + project.title + '</span>' +
-                    '<span style="text-align:right">' + project.type + '</span>' +
-                '</div>' +
-                '<p class="project__names">' + names + '</p>' +
-                '<p class="project__desc">' + project.description + '</p>' +
-                '<p class="project__anno">' + project.annotation + '</p>' +
-            '</div>' +
-        '</div>';
-
-    project_elem.innerHTML = project_html;
 }
 
 
