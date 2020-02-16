@@ -13,17 +13,16 @@ window.addEventListener('load', function () {
 
     // loadDays();
 
-    loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['days', 'user', 'credits']);});
-    loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['days', 'user', 'credits']);});
-    loadDays(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['days', 'user', 'credits']);});
+    loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+    loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+    loadDays(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+    loadNames(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
 });
 
 
 
 
 
-
-// TODO: chart when 2-3 credits only
 (function(w) {
     //private variable
     var loaded = false;
@@ -68,8 +67,12 @@ function setProject() {
     document.querySelector('.project__title').innerHTML = project.title;
     document.querySelector('.project__type').innerHTML = project.type;
     let names_test = '';
-    for (let name in names) {
-        names_test += name + ' ';
+    for (let user_id in cache['names']) {
+        let user = cache['names'][user_id];
+
+        if (user.project_id == project.id) {
+            names_test += user.name + ' ';
+        }
     }
     document.querySelector('.project__names').innerHTML = names_test;
     document.querySelector('.project__desc').innerHTML = project.description;
