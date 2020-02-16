@@ -940,19 +940,18 @@ def get_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         Response - result of request
     """
 
-    day = query['day']
+    day = query['day']  # TODO: Check dd.mm of day_id
 
-    tmp = gsheets.get_feedback(day)  # return (title, [event1, event2, event3] ) or None
+    # Safety get user_obj
+    user_obj = get_user_by_response(cookie)
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
 
-    data = {}
+    feedback_template, feedback_data = sql.get_feedback(user_obj['id'], day)
+    print('feedback_template', feedback_template)
+    print('feedback_data', feedback_data)
 
-    # TODO: FEEDBACK
-
-    data['title'] = day + ': ' + tmp[0]
-    data['events'] = [{'title': tmp[1][0]},
-                      {'title': tmp[1][1]},
-                      {'title': tmp[1][2]}
-                      ]
+    data = {'template': feedback_template, 'data': feedback_data}
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
@@ -1934,7 +1933,7 @@ def post_enroll_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TR
             [])
 
 
-def post_enroll_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+def post_deenroll_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     """ De Enroll current user to project HTTP request
 
     Args:
