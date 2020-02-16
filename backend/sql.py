@@ -35,8 +35,8 @@ cursor.execute("""
     create table if not exists projects (
         id serial not null primary key,
         title text default '',
-        type int default 0,
-        def_type int default 0,
+        type text default '',
+        def_type text default '',
         direction text default '',
         description text default '',
         annotation text default ''
