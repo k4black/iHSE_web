@@ -343,31 +343,6 @@ function loadEvent(event_id, func) {
 }
 
 
-/**
- * Get event information from server by event_id
- * Save to global 'cache['event']'
- *
- * Run func on OK status
- */
-function loadEvent(event_id, func) {
-    let xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields
-                let event = JSON.parse(this.responseText);
-
-                cache['event'] = event;
-
-                func();
-            }
-        }
-    };
-
-    xhttp.open("GET", "//ihse.tk/event?id=" + event_id, true);
-    // xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
-}
 
 
 /**
@@ -424,6 +399,36 @@ function loadProjects(func) {
     xhttp.open("GET", "//ihse.tk/projects", true);
     xhttp.send();
 }
+
+
+
+
+/**
+ * Get feedback information from server by date
+ * Send http GET request and get projects json schedule
+ * Save feedback list to global 'cache['feedback']'
+ *
+ * Run func on OK status
+ */
+function loadFeedback(date, func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+            let feedback = JSON.parse(this.responseText);
+
+            cache['feedback'] = feedback;
+
+            func();
+        }
+    };
+
+    xhttp.open("GET", "//ihse.tk/feedback?date=" + date , true);
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}
+
+
 
 
 

@@ -940,7 +940,7 @@ def get_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         Response - result of request
     """
 
-    day = query['day']  # TODO: Check dd.mm of day_id
+    day = query['date']  # TODO: Check dd.mm of day_id
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)

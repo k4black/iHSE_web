@@ -1170,7 +1170,7 @@ def get_feedback(user_id, date) -> tp.Tuple[tp.List[TTableObject], tp.List[TTabl
         cursor.execute('SELECT * FROM feedback WHERE user_id = %s AND event_id = %s', (user_id, event['id']))
         feedback = cursor.fetchone()
         if feedback is not None:
-            feedback_dicts.append(feedback)
+            feedback_dicts.append(tuple_to_dict(feedback, 'feedback'))
 
     return events_dicts, feedback_dicts
 
