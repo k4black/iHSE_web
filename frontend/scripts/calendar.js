@@ -72,7 +72,9 @@ function setupDays() {   // TODO: Refactor
 
             let topbar_html = '';
             let i = 0;
-            for (let day of cache['days']) {
+            for (let day_id in cache['days']) {
+                let day = cache['days'][day_id];
+
                 if (day.id == 0) {
                     ++i;
                     continue;

@@ -19,7 +19,8 @@ function setDays() {
 
     let options_html = '<option selected disabled value="">Выбрать день</option>';
 
-    for (let day of days) {
+    for (let day_id in days) {
+        let day = days[day_id];
         if (day['feedback'] === true) {
             options_html += '<option value="' + day['id'] + '">' + day['date'] + '</option>'
         }
