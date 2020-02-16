@@ -53,7 +53,7 @@ function setProjects() { // If ok set up day field
         }
 
 
-        project_html = '<div class="project">' +
+        project_html = '<div class="project" onclick="editProject(' + id + ')">' +
             '<img src="images/rocket.jpeg">' +
             '<div class="description">' +
 

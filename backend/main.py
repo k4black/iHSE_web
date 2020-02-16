@@ -1097,6 +1097,15 @@ def post(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/project':
         return post_project(env, query, cookie)
 
+    if env['PATH_INFO'] == '/edit_project':
+        return post_edit_project(env, query, cookie)
+
+    if env['PATH_INFO'] == '/enroll_project':
+        return post_enroll_project(env, query, cookie)
+
+    if env['PATH_INFO'] == '/deenroll_project':
+        return post_deenroll_project(env, query, cookie)
+
     if env['PATH_INFO'] == '/logout':
         return post_logout(env, query, cookie)
 
@@ -1794,7 +1803,6 @@ def post_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
 
     Returns:
         Response - result of request
-        None; Only http answer
     """
 
     # Get json from response
@@ -1804,6 +1812,16 @@ def post_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
         return RESPONSE_WRONG_COOKIE
+
+    # Mb there are some project for current user?
+    if user_obj['project_id'] != 0:
+        return ('409 Conflict',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
+
+    # Check current user in the project
+    if user_obj['name'] not in project_obj['names']:
+        project_obj['names'].append(user_obj['name'])
 
     if sql.save_project(project_obj):  # If user exist
         return ('200 OK',
@@ -1821,6 +1839,143 @@ def post_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         return ('409 Conflict',
                 [('Access-Control-Allow-Origin', '*')],
                 [])
+
+
+def post_edit_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """ Post edit project HTTP request
+    Edit project signed by cookie
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if all are ok
+            401 Unauthorized: if wrong session id
+            405 Method Not Allowed: already got it
+
+    Returns:
+        Response - result of request
+    """
+
+    # Get json from response
+    project_obj = get_json_by_response(env)
+
+    # Safety get user_obj
+    user_obj = get_user_by_response(cookie)
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
+
+    # Check current user can edit
+    if user_obj['project_id'] != project_obj['id']:
+        return ('405 Method Not Allowed',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
+
+    sql.update_in_table(project_obj, 'projects')
+
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true'),
+                # ('Location', '//ihse.tk/projects.html')
+                # ('Location', '//ihse.tk/')
+            ],
+            [])
+
+
+def post_enroll_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """ Enroll current user to project HTTP request
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if all are ok
+            401 Unauthorized: if wrong session id
+            405 Method Not Allowed: already got it
+
+    Returns:
+        Response - result of request
+    """
+
+    project_id = query['project_id']
+
+    # Safety get user_obj
+    user_obj = get_user_by_response(cookie)
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
+
+    # Check current user can edit
+    if user_obj['project_id'] != 0:
+        return ('409 Conflict',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
+
+    sql.enroll_project(user_obj['id'], project_id)
+
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true'),
+                # ('Location', '//ihse.tk/projects.html')
+                # ('Location', '//ihse.tk/')
+            ],
+            [])
+
+
+def post_enroll_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """ De Enroll current user to project HTTP request
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Note:
+        Send:
+            200 Ok: if all are ok
+            401 Unauthorized: if wrong session id
+            405 Method Not Allowed: already got it
+
+    Returns:
+        Response - result of request
+    """
+
+    project_id = query['project_id']
+
+    # Safety get user_obj
+    user_obj = get_user_by_response(cookie)
+    if user_obj is None:
+        return RESPONSE_WRONG_COOKIE
+
+    # Check current user can edit
+    if user_obj['project_id'] == 0:
+        return ('409 Conflict',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
+
+    sql.deenroll_project(user_obj['id'])
+
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', '//ihse.tk'),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true'),
+                # ('Location', '//ihse.tk/projects.html')
+                # ('Location', '//ihse.tk/')
+            ],
+            [])
 
 
 # """

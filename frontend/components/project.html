@@ -1,0 +1,91 @@
+<link rel="stylesheet" href="/components/styles/project.css">
+
+
+<div class="overlay" id="project_popup">
+    <div class="project_popup__body">
+        <div class="project_popup__header">
+            <p class="project_popup__header__title">Title</p>
+<!--                <i class="close" onclick="document.getElementById('project_popup').style.display = 'none'">Close</i>-->
+            <i class="mobile__item__icon large material-icons" onclick="hideProject()">clear</i>
+        </div>
+
+        <div class="project_popup__wrapper">
+            <div class="project_popup__container">
+                <div class="project_popup__block loading__resource">
+                    <div class="anno">
+                        <p>Some description of the event in several lines lines lines lines lines.</p>
+                        <textarea>Some description of the event in several lines lines lines lines lines.</textarea>
+                    </div>
+                </div>
+
+                <div class="project_popup__block loading__resource">
+                    <div class="type">
+                        <p>Project type</p>
+                        <select name="type">
+                            <option value="Project">Проект</option>
+                            <option value="Science">Исследование</option>
+                            <option value="Some">Другое</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="project_popup__block loading__resource">
+                    <i class="mobile__item__icon large material-icons">label_important</i>
+                    <div class="def_type">
+                        <p>Def type</p>
+                        <select name="def">
+                            <option value="Presentation">Презентация</option>
+                            <option value="TED">TED</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="project_popup__block loading__resource">
+                    <i class="mobile__item__icon large material-icons">label_important</i>
+                    <div class="dirs">
+                        <p>Direction</p>
+                        <select name="dirs">
+                            <option value="IT">Цифоровые технологии</option>
+                            <option value="Events">Событийная программа</option>
+                            <option value="Media">Медиапроекты\Кино</option>
+                            <option value="Tourism">Туризм</option>
+                            <option value="Education">Провсвещение</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="position: relative">
+                    <hr class="border_line">
+                    <button id="enroll" class="enroll__button"><i class="mobile__item__icon large material-icons">person_add</i></button>
+                    <button id="deenroll" class="enroll__button"><i class="mobile__item__icon large material-icons">person_add_disabled</i></button>
+                    <button id="save" class="edit_mode_element enroll__button" onclick="saveProject()"><i class="mobile__item__icon large material-icons">save</i></button>
+                </div>
+
+
+                <div class="project_popup__enroll_section loading__resource" style="visibility: visible">
+                    <div class="users_list" id="users_list">
+                    </div>
+                </div>
+                
+
+                <div class="project_popup__block loading__resource">
+                    <i class="mobile__item__icon large material-icons">label_important</i>
+                    <div class="desc">
+                        <p>Some description of the event in several lines lines lines lines lines.</p>
+                        <textarea>Some description of the event in several lines lines lines lines lines.</textarea>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!--STD logic -->
+<script defer async src="/scripts/main.js"></script>
+
+<script defer async src="/components/scripts/project.js"></script>

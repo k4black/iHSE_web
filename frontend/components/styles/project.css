@@ -1,0 +1,291 @@
+
+
+#project_popup {
+    display: none;
+}
+
+
+#project_popup .project_popup__body {
+    top: 0;
+    left: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    border-radius: 0;
+
+    overflow-y: scroll;
+    background-color: #f7f7f7;;
+}
+
+.project_popup__header {
+    margin-top: 0;
+    height: 60px;
+    padding-right: 20px;
+
+    background-color: #00b3bc;
+    /*padding: 25px 10px;*/
+
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+
+.project_popup__header * {
+    font-size: 30px!important;
+    color: whitesmoke;
+}
+
+.project_popup__header__title {
+    margin-top: 10px;
+    margin-left: 15px;
+}
+
+.project_popup__header i {
+    cursor: pointer;
+}
+
+.project_popup__wrapper {
+    padding: 0 25px 25px 25px;
+    /*height: 530px;*/
+    /*overflow-y: scroll;*/
+    height: calc(100% - 70px);
+}
+
+.project_popup__container {
+    overflow-y: scroll;
+}
+
+
+.project_popup__enroll_section  {
+    margin-bottom: 15px;
+}
+
+
+
+
+.project_popup__block {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    /*height: 50px;*/
+    min-height: 35px;
+    margin: 10px 0 10px 0;
+    width: 100%;
+
+    line-height: 1.0;
+}
+
+.project_popup__block:first-child {
+    margin: 5px 0 -5px 0;
+}
+
+
+.project_popup__block:first-child div {
+    margin: 0;
+}
+
+
+.project_popup__block i {
+    color: #8a8a8a;
+}
+
+.project_popup__block div {
+    /*margin-left: 20px;*/
+    margin: 0 0 0 20px;
+    width: fit-content;
+
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+}
+
+.project_popup__block .anno p:first-child {
+    color: #494949;
+    font-weight: normal;
+}
+
+.project_popup__block div p:first-child {
+    color: #494949;
+    font-weight: bold;
+}
+
+.project_popup__block div p:nth-child(2) {
+    color: #b4b4b4;
+    font-weight: lighter;
+}
+
+.project_popup__block:last-child {
+    margin-bottom: 0;
+}
+
+
+
+.anno {
+    width: 100%!important;
+}
+
+.anno textarea {
+    font-size: 15px;
+    width: inherit;
+}
+
+
+.count {
+    /*align-self: left;*/
+    /*margin-top: 30px;*/
+    /*font-weight: lighter;*/
+    /*font-size: 14px;*/
+    color: #b4b4b4;
+    width: fit-content;
+    min-width: 50px;
+}
+
+
+.status p {
+    color: #22a91d!important;
+}
+
+
+/*.count p:first-child {*/
+/*    font-weight: normal!important;*/
+/*}*/
+
+#users_progress_bar {
+    margin: 5px 0 0 0;
+    /*margin: 0 0 30px 0;*/
+    width: 100%;
+    height: 8px;
+}
+
+.enroll__button {
+    width: 50px!important;
+    height: 50px!important;
+    display: block;
+    position: absolute;
+    top: -25px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.enroll__button i {
+    font-size: 25px;
+}
+
+
+.inactive {
+    background-color: #8da6cd;
+    pointer-events: none;
+}
+
+
+
+.users_list {
+    margin-top: 30px;
+}
+
+.users_list * {
+    display: inline-flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.enrolled_user {
+    width: 100%;
+}
+
+.enrolled_user button {
+    width: 30px!important;
+    height: 30px!important;
+    margin-left: 15px;
+}
+.enrolled_user button i {
+    font-size: 24px;
+    margin-top: 2px;
+    margin-left: -3.5px;
+}
+
+.enrolled_user input {
+    width: 25px!important;
+    height: 25px!important;
+}
+
+.enrolled_user p {
+    line-height: 0.8;
+}
+
+/*.enrolled_user div {*/
+/*    width: fit-content;*/
+/*}*/
+
+
+
+.data__loading button {
+    pointer-events: none;
+}
+
+
+
+
+#scan {
+    cursor: pointer;
+}
+
+
+
+
+@media (min-width : 769px) {
+    #project_popup .project_popup__body {
+        position: fixed;
+        top: 6%;
+        left: 35%;
+        margin: 0;
+        height: 600px;
+        width: 400px;
+        padding: 0;
+        border-radius: 10px;
+    }
+
+    .project_popup__header {
+        height: 70px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+}
+
+
+
+.project_popup__block :last-child :first-child {
+    display: block;
+}
+.project_popup__block :last-child :last-child {
+    display: none;
+}
+
+
+
+.edit_mode .project_popup__block :last-child :first-child {
+    display: none;
+}
+.edit_mode .project_popup__block :last-child :last-child {
+    display: block;
+}
+
+
+.edit_mode_element {
+    display: none;
+}
+
+.edit_mode button .edit_mode_element {
+    display: block;
+}

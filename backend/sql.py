@@ -1122,3 +1122,23 @@ def save_project(project: tp.Dict[str, tp.Any]) -> bool:
         return True
 
     return False
+
+
+def enroll_project(user_id: int, project_id: int) -> None:
+    """ Enroll user in project
+
+    Args:
+        user_id: user id from bd
+        project_id: project id from bd
+
+    Returns:
+        Success creation or not
+    """
+
+    # TODO: try except
+    cursor.execute(f"UPDATE users SET project_id = %s WHERE id = %s;", (project_id, user_id))
+
+
+def deenroll_project(user_id: int) -> None:
+
+    return enroll_project(user_id, 0)
