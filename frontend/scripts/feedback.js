@@ -7,10 +7,22 @@
 
 
 window.addEventListener('load', function () {
-    loadDays(function () {});
+    // loadDays(setDays);
+    loadDays(function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
+    loadFeedback('05.06', function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
+    // TOOD: remove '05.06'
+    loadNames(setNames);
+
+
+    document.querySelector('#btn').addEventListener('click', saveFeedback);
+
 });
 
 
+
+/**
+ * Create topbar day buttons
+ */
 function setDays() {
     let today = getToday();
 
@@ -25,22 +37,25 @@ function setDays() {
     }
 
     let topbar_html = '';
-    for (let id in cache['days']) {
-        if (cache['days'][i].date === today) {  // TODO: Today
+    let i = 0;
+    for (let day of cache['days']) {
+        if (!day['feedback'] || day.id == 0) {
+            ++i;
+            continue;
+        }
+
+        if (day.date === today) {  // TODO: Today
             topbar_html += '<div class="day today selected">'
         } else {
             topbar_html += '<div class="day">'
         }
 
         topbar_html += '<div class="day__num">' + i + '</div>' +
-            '<div class="day__name">' + cache['days'][i].date + '</div>' +
+            '<div class="day__name">' + day.date + '</div>' +
             '</div>';
-    }
 
-    topbar_html += '<div class="admin_element day add_day"> <div class="day__num">' +
-        '<i class="mobile__item__icon large material-icons">add</i>' + '</div>' +
-            '<div class="day__name">' + 'add_day' + '</div>' +
-            '</div>';
+        ++i;
+    }
 
 
     document.querySelector('.topbar').innerHTML = topbar_html;
@@ -54,6 +69,7 @@ function setDays() {
             this.classList.add('selected');
 
             loadFeedback(this.lastElementChild.textContent, setFeedback);
+            document.querySelector('.feedback_title').innerHTML = this.lastElementChild.textContent; // TODO: load title from cache
         });
     }
 }
@@ -67,199 +83,87 @@ function setDays() {
 
 /**
  * Loading users in list
- * Send http GET request to get users
  */
-var xhttp = new XMLHttpRequest();
+function setNames() {
+    let datalist_html = "";
 
-xhttp.onreadystatechange = function () {
-    if (this.readyState === 4) {
-        if (this.status === 200) { // If ok set up fields name and phone
-
-            // console.log(this.responseText);
-            var users = JSON.parse(this.responseText);
-
-            var datalist_html = "";
-
-            for (var i = 0; i < users.length; ++i) {
-                datalist_html += '<option value="' + users[i] + '">';
-            }
-
-
-            document.querySelector('#users_list').innerHTML = datalist_html;
-        }
-    }
-};
-
-xhttp.open("GET", "//ihse.tk/names", true);
-xhttp.withCredentials = true; // To send Cookie;
-xhttp.send();
-
-
-
-
-/**
- * Create topbar day buttons
- */
-var today_date = new Date();
-var dd = String(today_date.getDate()).padStart(2, '0');
-
-var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
-
-
-var today = mm + '.' + dd;
-
-startDay = 5;
-startMonth = 6;
-numOfDays = 14;
-text_days = ['05.06', '08.06', '11.06', '14.06', '17.06', '18.06'];
-
-
-topbar_html = "";
-
-for (var i = 0; i < text_days.length; ++i) {
-    let day_text = text_days[i];
-    if ( day_text === today) {
-        topbar_html += '<div class="day today selected">'
-    } else {
-        topbar_html += '<div class="day">'
+    for (let id in cache['names']) {
+        datalist_html += '<option value="' + cache['names'][id] + '">';
     }
 
-    topbar_html +=          '<div class="day__num">' + i + '</div>' +
-        '<div class="day__name">' + day_text + '</div>' +
-        '</div>';
+    document.querySelector('#users_list').innerHTML = datalist_html;
 }
 
-console.log(topbar_html);
-document.querySelector('.topbar').innerHTML = topbar_html;
 
 
+function setFeedback() {
+    let form = document.querySelector('.feedback_form');
 
+    let template = cache['feedback'].template;
+    let data = cache['feedback'].data;
+    let feedback_by_event_id = groupBy(Object.values(data), 'event_id');
 
-setupDays();
-function setupDays() {
-    var xhttp = new XMLHttpRequest();
+    let events_html = '';
 
-    xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            days = JSON.parse( this.responseText );
-            sortBy(days, 'date');
+    for (let event of template) {
+        let feedback = feedback_by_event_id[event['id']][0];
 
-            let days_list = [];
-            for (let day of days) {
-                if (day.feedback) {
-                    days_list.push(day.date);
-                }
-            }
+        events_html +=
+            '<div class="event">' +
+                '<h3>' + event.title + '</h3>' +
+                '<p class="host">' + event.host + '</p>' +
+                '<div class="event_feature">' +
+                    '<label for="event' + event.id + 'score">Общее впечатление</label>' +
+                    '<div><input type="text" id="event' + event.id + 'score" class="slider"></div>' +
+                '</div>' +
 
-            let today_date = new Date();  //January is 0!
-            let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
+                '<div class="event_feature">' +
+                    '<label for="event' + event.id + 'entertain">Интересно</label>' +
+                    '<div><input type="text" id="event' + event.id + 'entertain" class="slider"></div>' +
+                '</div>' +
+                '<div class="event_feature">' +
+                    '<label for="event' + event.id + 'useful">Полезно</label>' +
+                    '<div><input type="text" id="event' + event.id + 'useful" class="slider"></div>' +
+                '</div>' +
+                '<div class="event_feature">' +
+                    '<label for="event' + event.id + 'understand">Весело</label>' +
+                    '<div><input type="text" id="event' + event.id + 'understand" class="slider"></div>' +
+                '</div>' +
 
-            if (days_list.includes(dd_mm)) {
-                today = dd + '.' + mm;
-            } else {
-                today = days_list[0];
-            }
+                '<p>Комментарии и отзывы:</p>' +
+                '<div class="form__input feedback__input feedback__input__div">' +
+                    '<textarea id="event' + event.id + 'comment" placeholder="Что было плохо? Что сделать лучше?"></textarea>' +
+                '</div>' +
+            '</div>';
+    }
 
-            let topbar_html = '';
-            for (var i = 0; i < days.length; ++i) {
-                if (days[i].date === today) {  // TODO: Today
-                    topbar_html += '<div class="day today selected">'
-                } else {
-                    topbar_html += '<div class="day">'
-                }
+    document.querySelector('.events').innerHTML = events_html;
 
-                topbar_html += '<div class="day__num">' + i + '</div>' +
-                    '<div class="day__name">' + days[i].date + '</div>' +
-                    '</div>';
-            }
+    // Setup sliders
+    for (let event of template) {
+        let feedback = feedback_by_event_id[event['id']][0];
 
-            document.querySelector('.topbar').innerHTML = topbar_html;
-
-            var days = document.querySelectorAll('.day');
-            for (let i = 0; i < days.length; i++) {
-                days[i].addEventListener('click', function() {
-                    document.querySelector('.selected').classList.remove('selected');
-                    this.classList.add('selected');
-
-                    getDay(this.lastElementChild.textContent);
-                });
-            }
+        // TODO: check disabled
+        for (let feature of ['score', 'entertain', 'useful', 'understand']) {
+            let eventSliders = new rSlider({
+                target: '#event' + event['id'] + feature,
+                values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                range: false,
+                set: [5],
+                tooltip: false,
+                disabled: (feedback == null ? false : true)
+            });
         }
-    };
 
-    xhttp.open("GET", "//ihse.tk/days", true);
-    xhttp.send();
-}
-
-
-
-/**
- * Get and set feedback day description
- * GET request to get day data
- */
-function getDay(dayNum) {
-
-    form = document.querySelector('.feedback_form');
-
-    var xhttp = new XMLHttpRequest();
-
-    xhttp.onreadystatechange = function() {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields name and phone
-
-                var day = JSON.parse( this.responseText );
-
-                form.firstElementChild.innerText = day.title;
-
-                var events = form.querySelectorAll('.event');
-
-                for (var i = 0; i < events.length; i++) {
-                    events[i].firstElementChild.innerText = day.events[i].title;
-                }
-
-            }
+        // TODO: check comment
+        if (feedback != null) {
+            document.querySelector('#event' + event.id + 'comment textarea').disabled = true;
+            document.querySelector('#event' + event.id + 'comment textarea').value = feedback['comment'];
         }
-    };
-
-    xhttp.open("GET", "//ihse.tk/feedback?day=" + dayNum, true);
-    // xhttp.withCredentials = true; // To send Cookie;
-    xhttp.send();
+    }
 }
 
 
-/**
- * Add button event - press topbar
- * Set up day feedback form. GET request to get day data
- */
-var days = document.querySelectorAll('.day');
-for (let i = 0; i < days.length; i++) {
-
-    days[i].addEventListener('click', function() {
-
-        document.querySelector('.selected').classList.remove('selected');
-        this.classList.add('selected');
-
-
-        getDay(this.lastElementChild.textContent)
-    });
-
-}
-
-
-
-
-/**
- * First time Set up day feedback form.
- * GET request to get day data
- */
-var today_date = new Date();
-var dd = String(today_date.getDate()).padStart(2, '0');
-var mm = String(today_date.getMonth() + 1).padStart(2, '0'); //January is 0!
-
-
-var today = mm + '.' + dd;
-
-getDay(today);
 
 
 
@@ -286,7 +190,7 @@ var overallSlider = new rSlider({
 var eventSliders = [];
 
 eventSliders[0] = new rSlider({
-    target: '#event1',
+    target: '#event1feature1',
     values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     range: false,
     set: [5],
@@ -294,7 +198,7 @@ eventSliders[0] = new rSlider({
 });
 
 eventSliders[1] = new rSlider({
-    target: '#event2',
+    target: '#event1feature2',
     values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     range: false,
     set: [5],
@@ -302,7 +206,14 @@ eventSliders[1] = new rSlider({
 });
 
 eventSliders[2] = new rSlider({
-    target: '#event3',
+    target: '#event1feature3',
+    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    range: false,
+    set: [5],
+    tooltip: false,
+});
+eventSliders[3] = new rSlider({
+    target: '#event1feature4',
     values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     range: false,
     set: [5],
@@ -316,8 +227,7 @@ eventSliders[2] = new rSlider({
  * Add button event - 'send feedback'
  * Send http POST request to set feedback message
  */
-document.querySelector('#btn').addEventListener('click', function() {
-
+function saveFeedback() {
     events = document.querySelectorAll('.event');
     users = document.querySelectorAll('.user');
 
@@ -334,20 +244,54 @@ document.querySelector('#btn').addEventListener('click', function() {
         return;
     }
 
-    var data = JSON.stringify({"overall": overallSlider.getValue(),
-                                     "user1": users[0].value,
-                                     "user2": users[1].value,
-                                     "user3": users[2].value,
-                                     "event1": eventSliders[0].getValue(),
-                                     "event2": eventSliders[1].getValue(),
-                                     "event3": eventSliders[2].getValue(),
-                                     "event1_text": events[0].lastElementChild.textContent,
-                                     "event2_text": events[1].lastElementChild.textContent,
-                                     "event3_text": events[2].lastElementChild.textContent
+    // Process names
+    let names = [];
+    for (let user in cache['names']) {
+        names.push(user.name);
+    }
+
+    let chosen_names = [];
+    for (let user of users) {
+        let name = user.value;
+
+        if (name in chosen_names) {
+            alert('Невозможно выбрать пользователя <' + name + '>. Уже выбран.');
+            return;
+        }
+
+        if (name in names) {
+            chosen_names.push(name);
+        } else {
+            alert('Невозможно выбрать пользователя <' + name + '>. Нет пользователя.');
+            return;
+        }
+    }
+
+    // Events
+    let chosen_events = [];
+    for (let event_elem of events) {
+        let event_features = event_elem.querySelectorAll('.event_feature');
+
+        let score = {
+            'score': event_features[0].lastElementChild.firstElementChild.value,
+            'entertain': event_features[1].lastElementChild.firstElementChild.value,
+            'useful': event_features[2].lastElementChild.firstElementChild.value,
+            'understand': event_features[3].lastElementChild.firstElementChild.value,
+            'comment': event_elem.querySelector('textarea').value,
+        };
+
+        chosen_events.push(score);
+    }
+
+
+    let data = JSON.stringify({"overall": overallSlider.getValue(),
+                                     "users": chosen_names,
+                                     "events": chosen_events,
                               });
 
 
-    var xhttp = new XMLHttpRequest();
+
+    let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 1) {  // Opened
@@ -372,14 +316,13 @@ document.querySelector('#btn').addEventListener('click', function() {
     };
 
 
-    var query = "?day=" + document.querySelector('.today').lastElementChild.textContent;
-    xhttp.open("POST", "//ihse.tk/feedback" + query, true);
+    let today = document.querySelector('.today').lastElementChild.textContent;
+    xhttp.open("POST", "//ihse.tk/feedback?date=" + today, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send(data);
-
-});
+}
 
 
 

@@ -1143,3 +1143,36 @@ def enroll_project(user_id: int, project_id: int) -> None:
 def deenroll_project(user_id: int) -> None:
 
     return enroll_project(user_id, 0)
+
+
+# Feedback
+def get_feedback(user_id, date) -> tp.Tuple[tp.List[TTableObject], tp.List[TTableObject]]:
+    """ Enroll user in project
+
+    Args:
+        user_id: user id from bd
+        date: date from bd  # TODO: Check dd.mm of day_id
+
+    Returns:
+        Feedback template - events list
+        Feedback data - list of feedback (if any for template events)
+    """
+
+    day_id = cursor.execute('SELECT id FROM days WHERE date = %s', (date,))[0]
+
+    sql_string = f'SELECT e.id, e.type, e.title, e.host, e.day_id FROM enrolls en JOIN events e ON en.class_id = e.id WHERE en.user_id = %s AND en.attendance = true AND e.day_id = %s;'
+    cursor.execute(sql_string, (user_id, day_id))
+    events_list = cursor.fetchall()
+    events_dicts = tuples_to_dicts(events_list, '', custom_fields=['id', 'type', 'title', 'host', 'day_id'])
+
+    feedback_dicts = []
+    for event in events_dicts:
+        cursor.execute('SELECT * FROM feedback WHERE user_id = %s AND event_id = %s', (user_id, event['id']))
+        feedback = cursor.fetchone()
+        if feedback is not None:
+            feedback_dicts.append(tuple_to_dict(feedback, 'feedback'))
+
+    return events_dicts, feedback_dicts
+
+
+

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, viewport-fit=cover">
+
+    <meta name="theme-color" content="#006cae">
+
+    <title>Админ-Панель | iHSE</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/admin.css">
+    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/reports.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+<body>
+
+
+<!--# set var="title" value="Админ-распределение" -->
+<!--#include virtual="/components/header.html" -->
+
+
+
+
+<div class="wrapper">
+    <div class="header">
+        <h2>Events feedback</h2>
+        <select id="days" onchange="countDayFeedback()">
+            <option selected disabled value="">Выбрать день</option>
+            <option>05.13</option>
+            <option>06.13</option>
+            <option>07.13</option>
+            <option>08.13</option>
+        </select>
+        <button id="show_day_feedback" onclick="countDayFeedback()">Показать</button>
+    </div>
+
+    <div class="days_feedback">
+        <div class="day_feedback">
+            <div class="description">
+                <p class="event_title">Title</p>
+                <p class="event_count">14</p>
+            </div>
+            <canvas id="event1"></canvas>
+        </div>
+
+        <div class="day_feedback">
+            <p class="events_count"></p>
+            <p class="events_count"></p>
+            <canvas id="event2"></canvas>
+        </div>
+    </div>
+
+
+    <div class="admin_element">
+        <h2>Host feedback</h2>
+        <div class="host_feedback">
+
+        </div>
+    </div>
+
+
+    <div class="admin_element">
+        <h2>Top</h2>
+        <canvas class="top_feedback"></canvas>
+    </div>
+</div>
+
+
+
+<!-- STD logic -->
+<script defer async src="scripts/main.js"></script>
+<!-- Onpage logic -->
+<script defer async src="scripts/reports.js"></script>
+
+</body>
+</html>

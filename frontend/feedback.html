@@ -32,56 +32,6 @@
 
     <img class="loading" alt="Loading" src="images/loading.gif">
 
-<!--    <div class="day">-->
-<!--        <div class="day__num">2</div>-->
-<!--        <div class="day__name">13.05</div>-->
-<!--    </div>-->
-
-<!--    <div class="day">-->
-<!--        <div class="day__num">3</div>-->
-<!--        <div class="day__name">14.05</div>-->
-<!--    </div>-->
-
-<!--    <div class="day">-->
-<!--        <div class="day__num">4</div>-->
-<!--        <div class="day__name">15.05</div>-->
-<!--    </div>-->
-
-<!--    <div class="day">-->
-<!--        <div class="day__num">5</div>-->
-<!--        <div class="day__name">16.05</div>-->
-<!--    </div>-->
-
-<!--    <div class="day">-->
-<!--        <div class="day__num">6</div>-->
-<!--        <div class="day__name">17.05</div>-->
-<!--    </div>-->
-
-<!--    <div class="day today">-->
-<!--        <div class="day__num">7</div>-->
-<!--        <div class="day__name">18.05</div>-->
-<!--    </div>-->
-
-<!--    <div class="day">-->
-<!--        <div class="day__num">8</div>-->
-<!--        <div class="day__name">19.05</div>-->
-<!--    </div>-->
-
-<!--    <div class="day">-->
-<!--        <div class="day__num">9</div>-->
-<!--        <div class="day__name">20.05</div>-->
-<!--    </div>-->
-
-<!--    <div class="day">-->
-<!--        <div class="day__num">10</div>-->
-<!--        <div class="day__name">21.05</div>-->
-<!--    </div>-->
-
-<!--    <div class="day">-->
-<!--        <div class="day__num">11</div>-->
-<!--        <div class="day__name">22.05</div>-->
-<!--    </div>-->
-
 </div>
 
 <!--<span class="nav-prev" id="prev"></span>-->
@@ -91,7 +41,7 @@
 <div class="wrapper">
 
     <div id="ajax_form" class="form feedback_form">
-        <h1 class="">Day one</h1>
+        <h1 class="feedback_title">Day one</h1>
 
         <hr class="border_line">
 
@@ -112,13 +62,13 @@
         <!--<input class="user" type="text" list="users_list" id="user2">-->
         <!--<input class="user" type="text" list="users_list" id="user3">-->
         <div class="form__input">
-            <input class="user" id="user1" type="text" name="user" list="users_list" maxlength=""/>
+            <input class="user" id="user1" type="text" name="user" list="users_list" maxlength="" placeholder="..."/>
         </div>
         <div class="form__input">
-            <input class="user" id="user2" type="text" name="user" list="users_list" maxlength=""/>
+            <input class="user" id="user2" type="text" name="user" list="users_list" maxlength="" placeholder="..."/>
         </div>
         <div class="form__input">
-            <input class="user" id="user3" type="text" name="user" list="users_list" maxlength=""/>
+            <input class="user" id="user3" type="text" name="user" list="users_list" maxlength="" placeholder="..."/>
         </div>
 
 
@@ -126,42 +76,62 @@
 
         <p>Пожалуйста, оцените посещённые мероприятия</p>
 
-        <div class="event">
-            <h3>Event 1 Title</h3>
+        <div class="events">
+            <div class="event">
+                <h3>Event 1 Title</h3>
+                <p class="host">Какой-то хреню.</p>
 
-            <div style="width: 100%; margin: 0 auto"><input type="text" id="event1" class="slider"></div>
-            <textarea type="text" ></textarea>
+                <div class="event_feature">
+                    <label for="event1feature1">Общее впечатление</label>
+                    <div><input type="text" id="event1feature1" class="slider"></div>
+                </div>
 
-            <p>Комментарии и отзывы:</p>
-            <!--<div class="content" contentEditable="true"></div>-->
-            <div class="form__input feedback__input feedback__input__div">
-                <div class="content" contenteditable></div>
+                <div class="event_feature">
+                    <label for="event1feature2">Интересно</label>
+                    <div><input type="text" id="event1feature2" class="slider"></div>
+                </div>
+
+                <div class="event_feature">
+                    <label for="event1feature3">Полезно</label>
+                    <div><input type="text" id="event1feature3" class="slider"></div>
+                </div>
+
+                <div class="event_feature">
+                    <label for="event1feature4">Понятно</label>
+                    <div><input type="text" id="event1feature4" class="slider"></div>
+                </div>
+
+                <p>Комментарии и отзывы:</p>
+                <div class="form__input feedback__input feedback__input__div">
+<!--                    <div class="content" contenteditable></div>-->
+                    <textarea placeholder="Что было плохо? Что сделать лучше?"></textarea>
+                </div>
             </div>
-        </div>
 
-        <div class="event">
-            <h3>Event 2 Title</h3>
+            <div class="event">
+                <h3>Event 2 Title</h3>
 
-            <div style="width: 100%; margin: 0 auto"><input type="text" id="event2" class="slider"></div>
-            <textarea type="text" ></textarea>
+                <div style="width: 100%; margin: 0 auto"><input type="text" id="event2" class="slider"></div>
+                <textarea type="text" ></textarea>
 
-            <p>Комментарии и отзывы:</p>
-            <!--<div class="content" contentEditable="true"></div>-->
-            <div class="form__input feedback__input feedback__input__div">
-                <div class="content" contenteditable></div>
+                <p>Комментарии и отзывы:</p>
+                <!--<div class="content" contentEditable="true"></div>-->
+                <div class="form__input feedback__input feedback__input__div">
+                    <div class="content" contenteditable></div>
+                </div>
             </div>
-        </div>
 
-        <div class="event">
-            <h3>Event 3 Title</h3>
+            <div class="event">
+                <h3>Event 3 Title</h3>
 
-            <div style="width: 100%; margin: 0 auto"><input type="text" id="event3" class="slider"></div>
-            <textarea type="text" ></textarea>
+                <div style="width: 100%; margin: 0 auto"><input type="text" id="event3" class="slider"></div>
+                <textarea type="text" ></textarea>
 
-            <p>Комментарии и отзывы:</p>
-            <!--<div class="content" contentEditable="true"></div>-->
-            <div class="form__input feedback__input feedback__input__div">
-                <div class="content" contenteditable></div>
+                <p>Комментарии и отзывы:</p>
+                <!--<div class="content" contentEditable="true"></div>-->
+                <div class="form__input feedback__input feedback__input__div">
+                    <div class="content" contenteditable></div>
+                </div>
             </div>
         </div>
 

@@ -173,9 +173,11 @@ h1 {
 }
 
 .rs-container {
-    overflow: hidden;
+    /*overflow: hidden;*/
     /*margin: 0 10px !important;*/
     padding: 0 10px !important;
+
+    overflow: visible;
 }
 
 .rs-container span:first-child, .rs-container span:last-child{
@@ -224,4 +226,53 @@ h1 {
 
 
     }
+}
+
+
+
+
+
+.event h3 {
+    margin-bottom: 0;
+}
+
+
+.event .host {
+    margin: 0 0 10px 0;
+    color: #595959;
+
+    font-size: 14px;
+    font-style: italic;
+}
+
+
+
+.event .event_feature {
+    margin-top: 5px;
+
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+}
+
+.event .event_feature label {
+    position: relative;
+    top: 0;
+    color: #2c3e50;
+    width: fit-content;
+
+    margin-right: 10px;
+}
+
+.event .event_feature>div {
+    width: 100%;
+    margin: 0 auto;
+}
+
+
+.event textarea {
+    border: 0 solid gainsboro;
+    font-size: 16px;
+    display: block;
+    padding-left: 6px;
 }
