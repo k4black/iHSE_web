@@ -7,7 +7,7 @@ window.addEventListener('load', function () {
 
     // setupToolbar();
     // setupTabs();
-    loadDays(function () {checkLoading(setDistribution, ['vacations', 'users', 'days'])});
+    loadDays(function () {checkLoading(function () {setDistribution(); setDays()}, ['vacations', 'users', 'days'])});
     loadUsers(function () {checkLoading(setDistribution, ['vacations', 'users', 'days'])});
     loadVacations(function () {checkLoading(setDistribution, ['vacations', 'users', 'days'])});
 
@@ -15,7 +15,71 @@ window.addEventListener('load', function () {
     loadDaysCredits(function () {checkLoading(setCredits, ['users', 'credits', 'days'])});
 
     loadEvents(setHosts);
+    loadEnrolls(function () {});
 });
+
+
+
+
+
+function countDay() {
+    let day_id = document.getElementById('days').value;
+
+    let events_attendance = {};
+    for (let event_id in cache['events']) {
+        let event = cache['events'][event_id];
+        if (event.day_id == day_id && event.type != 0) {
+            events_attendance[event_id] = 0;
+        }
+    }
+
+    let enrolls_by_class_id = groupByUnique(Object.values(cache['enrolls']), 'class_id');
+    for (let class_id in enrolls_by_class_id) {
+        if (cache['events'][class_id].day_id == day_id) {
+            events_attendance[class_id]++;
+        }
+    }
+
+    let processed_events_attendance = {};
+    for (let event_id in events_attendance) {
+        processed_events_attendance[cache['events'][event_id].title] = events_attendance[event_id];
+    }
+
+    // attendance
+    var ctx = document.getElementById('attendance').getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'horizontalBar',
+
+        // The data for our dataset
+        data: {
+            labels: Object.keys(processed_events_attendance),
+            datasets: [{
+                label: 'Количество посещений',
+                data: Object.values(processed_events_attendance)
+            }]
+        },
+
+        // Configuration options go here
+        options: {}
+    });
+}
+
+
+
+
+function setDays() {
+    let days = cache['days'];
+
+    let options_html = '<option selected disabled value="">Выбрать день</option>';
+
+    for (let day_id in days) {
+        let day = days[day_id];
+        options_html += '<option value="' + day['id'] + '">' + day['date'] + '</option>'
+    }
+
+    document.getElementById('days').innerHTML = options_html;
+}
 
 
 
@@ -221,6 +285,9 @@ function setDistribution() {
         console.log('male_total', male_total, 'female_total', female_total);
         console.log('male_vacations', male_vacations, 'female_vacations', female_vacations);
 
+        document.getElementById('counter').innerText = '' + (male_total - male_vacations + female_total - female_vacations);
+        document.getElementById('counter_total').innerText = '' + (male_total + female_total);
+
         var ctx = document.getElementById('team' + team).getContext('2d');
         var myDoughnutChart = new Chart(ctx, {
             type: 'doughnut',
@@ -331,6 +398,28 @@ function loadEvents(func) {
     };
 
     xhttp.open("GET", "/admin_get_table?table=" + 'events', true);
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}
+
+/**
+ * Load from server events information
+ */
+function loadEnrolls(func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+            let enrolls_raw = JSON.parse(this.responseText);
+            let enrolls = groupByUnique(enrolls_raw, 'id');
+
+            cache['enrolls'] = enrolls;
+
+            func();
+        }
+    };
+
+    xhttp.open("GET", "/admin_get_table?table=" + 'enrolls', true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }

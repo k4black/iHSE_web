@@ -4,3 +4,11 @@
 .team_pie {
     display: inline-block;
 }
+
+
+
+select {
+    width: fit-content;
+    height: 30px;
+    font-size: 16px;
+}
