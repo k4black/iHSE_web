@@ -203,6 +203,8 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
+    width: 100%;
 }
 
 .project__top_line span:first-child {

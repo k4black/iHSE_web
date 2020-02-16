@@ -4,11 +4,14 @@ loadNames(function () {});
 
 
 
+function editOthersProject(project_id) {
+    document.querySelector('body').classList.remove('edit_mode');
+    loadProject(project_id, setPopupProject);
+}
 
 function editProject(project_id) {
-
-    loadProject(setPopupProject, project_id);
-
+    document.querySelector('body').classList.add('edit_mode');
+    loadProject(project_id, setPopupProject);
 }
 
 

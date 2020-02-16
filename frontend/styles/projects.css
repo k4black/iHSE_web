@@ -15,6 +15,7 @@
 
 
 .project {
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -96,4 +97,20 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
+}
+
+
+
+
+
+.project__edit_button {
+    position: absolute;
+
+    left: -10px;
+    top: 40px;
+
+    width: 40px;
+    height: 40px;
+
+    cursor: pointer;
 }
