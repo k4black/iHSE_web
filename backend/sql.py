@@ -332,6 +332,7 @@ def insert_to_table(data: TTableObject, table_name: str) -> int:
 
     sql_string = f"INSERT INTO {table_name} ({fields}) VALUES (default, {values_placeholder}) RETURNING id;"
 
+    print(f'isert using {sql_string} values {dict_to_tuple(data, table_name, ignore_id=True)}')
     cursor.execute(sql_string, dict_to_tuple(data, table_name, ignore_id=True))  # TODO: try catch
     hundred = cursor.fetchone()[0]
 
