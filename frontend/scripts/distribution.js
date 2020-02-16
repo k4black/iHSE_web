@@ -12,7 +12,7 @@ window.addEventListener('load', function () {
     loadVacations(function () {checkLoading(setDistribution, ['vacations', 'users', 'days'])});
 
 
-    loadDaysCredits(function () {checkLoading(setCredits, ['credits', 'days'])});
+    loadDaysCredits(function () {checkLoading(setCredits, ['users', 'credits', 'days'])});
 
     // buildTestTimeline();
 });
@@ -44,11 +44,7 @@ function loadDaysCredits(func) {
 
 function setCredits() {
     let credits_by_id = cache['credits'];
-
-    let credits = [{'id': 1, 'user_id': 1, 'day_id': 3, 'value': 12}, {'id': 2, 'user_id': 1, 'day_id': 2, 'value': 3}, {'id': 3, 'user_id': 1, 'day_id': 5, 'value': 6}, {'id': 4, 'user_id': 2, 'day_id': 1, 'value': 5}, {'id': 5, 'user_id': 2, 'day_id': 3, 'value': 12}, {'id': 6, 'user_id': 3, 'day_id': 2, 'value': 7}, {'id': 7, 'user_id': 3, 'day_id': 5, 'value': 21}]
-    let credits_by_day_id = groupBy(credits, 'day_id');
-    // TODO: make true
-    // let credits_by_day_id = groupBy(Object.values(credits_by_id), 'day_id');
+    let credits_by_day_id = groupBy(Object.values(credits_by_id), 'day_id');
 
     let days = cache['days'];
 
@@ -73,8 +69,10 @@ function setCredits() {
             }
         }
 
-        sum_for_days[days[day_id].date] = counter_for_day;
+        sum_for_days[days[day_id].date] = 100.0 * counter_for_day / Object.keys(cache['users']).length;
     }
+
+    console.log('sum_for_days', sum_for_days);
 
 
 
@@ -87,9 +85,8 @@ function setCredits() {
         data: {
             labels: Object.keys(sum_for_days),
             datasets: [{
-                label: 'My First dataset',
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
+                label: 'Процент сдавших',
+                backgroundColor: '#006cae',
                 data: Object.keys(sum_for_days)
             }]
         },

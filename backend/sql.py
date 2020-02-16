@@ -503,11 +503,11 @@ def get_names() -> tp.List[TTableObject]:
         user short objects: list of user objects - [(id, code, name, team, project_id), ...]
     """
 
-    cursor.execute('select * from users;')
+    cursor.execute('SELECT id, name, team, project_id FROM users WHERE type != 0;')
     users_list = cursor.fetchall()
 
-    return [{'id': user[0], 'name': user[4], 'team': user[6], 'project_id': user[8]} for user in users_list]
-    # TODO: only if type == 0
+    return tuples_to_dicts(users_list, '', custom_fields=['id', 'name', 'team', 'project_id'])
+
 
 
 def get_user_by_phone(phone: str) -> tp.Optional[TTableObject]:
@@ -1017,12 +1017,10 @@ def get_credits_by_user_id(user_id: int) -> tp.List[TTableObject]:
     credits_list = cursor.fetchall()
 
     return tuples_to_dicts(credits_list, '', custom_fields=['id', 'user_id', 'event_id', 'value', 'type', 'title', 'day_id'])
-
-
-    cursor.execute(f'select * from credits where user_id = {user_id};')
-    credits_list = cursor.fetchall()
-
-    return tuples_to_dicts(credits_list, 'credits')
+    # cursor.execute(f'select * from credits where user_id = {user_id};')
+    # credits_list = cursor.fetchall()
+    #
+    # return tuples_to_dicts(credits_list, 'credits')
 
 
 def get_credits_short() -> tp.List[TTableObject]:
@@ -1099,3 +1097,48 @@ def use_code(code: str) -> bool:
     cursor.execute(f"update codes set used = true where code = '{code}';")
     conn.commit()
     return True
+
+
+# Projects
+def save_project(project: tp.Dict[str, tp.Any]) -> bool:
+    """ Create project
+    Set for all users in project
+
+    Args:
+        project: code from bd
+
+    Returns:
+        Success creation or not
+    """
+
+    # Create new project
+    project_id = insert_to_table(project, 'projects')
+    if project_id:
+
+        # Set this project for all users if there are no projects
+        for name in project['names']:
+            # TODO: try except
+            cursor.execute(f"UPDATE users SET project_id = %s WHERE name = %s and project_id = 0;", (project_id, name))
+        return True
+
+    return False
+
+
+def enroll_project(user_id: int, project_id: int) -> None:
+    """ Enroll user in project
+
+    Args:
+        user_id: user id from bd
+        project_id: project id from bd
+
+    Returns:
+        Success creation or not
+    """
+
+    # TODO: try except
+    cursor.execute(f"UPDATE users SET project_id = %s WHERE id = %s;", (project_id, user_id))
+
+
+def deenroll_project(user_id: int) -> None:
+
+    return enroll_project(user_id, 0)

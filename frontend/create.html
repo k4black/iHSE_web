@@ -35,6 +35,11 @@
             <input id="title" type="text" name="title" maxlength="35"/>
         </div>
 
+        <div class="form__input create__input create__input__div">
+            <label for="anno" class="create__label">Аннотация</label>
+            <div id="anno" contenteditable></div>
+        </div>
+
         <div class="form__input active">
             <label for="type" class="create__label">Тип</label>
             <select id="type" name="type">
@@ -67,7 +72,7 @@
         </datalist>
 
         <div class="form__input">
-            <label for="name" class="create__label">Авторы</label>
+            <label for="name" class="create__label">Участники</label>
             <input id="name" type="text" name="name" list="users_list" maxlength=""/>
             <div class="input__icon">
                 <i style="display: none" class="mobile__item__icon large material-icons">-</i>
