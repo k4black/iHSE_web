@@ -44,6 +44,7 @@ cursor.execute("""
 """)
 
 # Users
+# TODO: rename user_type to type
 cursor.execute("""
     create table if not exists users (
         id serial not null primary key unique,
@@ -503,11 +504,10 @@ def get_names() -> tp.List[TTableObject]:
         user short objects: list of user objects - [(id, code, name, team, project_id), ...]
     """
 
-    cursor.execute('SELECT id, name, team, project_id FROM users WHERE type != 0;')
+    cursor.execute('SELECT id, name, team, project_id FROM users WHERE user_type != 0;')
     users_list = cursor.fetchall()
 
     return tuples_to_dicts(users_list, '', custom_fields=['id', 'name', 'team', 'project_id'])
-
 
 
 def get_user_by_phone(phone: str) -> tp.Optional[TTableObject]:
