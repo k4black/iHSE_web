@@ -242,7 +242,7 @@ function setDistribution() {
             options: {
                 title: {
                     display: true,
-                    text: (team == 0 ? 'Вожатые' : 'Отряд #' + team)
+                    text: (team == 0 ? 'Вожатые' : 'Отряд #' + team) + '[' + (male_total - male_vacations + female_total - female_vacations) + '/' + (male_total + female_total) + ']'
                 }
             }
         });
