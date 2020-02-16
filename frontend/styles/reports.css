@@ -28,5 +28,32 @@
 
 .day_feedback {
     width: fit-content;
+}
+
+
+
+
+
+
+.events_feedback, .hosts_feedback {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+
+.day_feedback, .host_feedback {
+    display: inline-flex;
+    flex-direction: column;
+}
+
+
+.day_feedback .event_title, .host_feedback .host_title {
+
+}
+
+
+.day_feedback .event_count, .host_feedback .host_count {
 
 }

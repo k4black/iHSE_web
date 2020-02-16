@@ -14,8 +14,55 @@ window.addEventListener('load', function () {
 
     loadDaysCredits(function () {checkLoading(setCredits, ['users', 'credits', 'days'])});
 
-    // buildTestTimeline();
+    loadEvents(setHosts);
 });
+
+
+
+
+function setHosts() {
+    let events = cache['events'];
+
+    let hosts = {};
+    let hosts_total = {};
+
+    for (let event of Object.values(events)) {
+        if (hosts[event.host] == undefined) {
+            hosts[event.host] = {'master': 0, 'lecture': 0};
+            hosts_total[event.host] = 0;
+        }
+
+        hosts_total[event.host]++;
+        if (event.type == 1) {
+            hosts[event.host]['master']++;
+        }
+
+        if (event.type == 2) {
+            hosts[event.host]['lecture']++;
+        }
+    }
+
+
+    var ctx = document.getElementById('hosts').getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'horizontalBar',
+
+        // The data for our dataset
+        data: {
+            labels: Object.keys(hosts_total),
+            datasets: [{
+                label: 'Количество занятий',
+                data: Object.values(hosts_total)
+            }]
+        },
+
+        // Configuration options go here
+        options: {}
+    });
+}
+
+
 
 
 /**
@@ -35,7 +82,7 @@ function loadDaysCredits(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/admin_get_credits", true);
+    xhttp.open("GET", "/admin_get_credits", true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }
@@ -223,7 +270,7 @@ function loadUsers(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/admin_get_table?" + "table=" + 'users', true);
+    xhttp.open("GET", "/admin_get_table?" + "table=" + 'users', true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -251,7 +298,35 @@ function loadVacations(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/admin_get_table?" + "table=" + 'vacations', true);
+    xhttp.open("GET", "/admin_get_table?" + "table=" + 'vacations', true);
     xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+
+
+
+
+
+
+/**
+ * Load from server events information
+ */
+function loadEvents(func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+            let events_raw = JSON.parse(this.responseText);
+            let events = groupByUnique(events_raw, 'id');
+
+            cache['events'] = events;
+
+            func();
+        }
+    };
+
+    xhttp.open("GET", "/admin_get_table?table=" + 'events', true);
+    xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }

@@ -354,7 +354,7 @@ function loadTable(tableName, func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/admin_get_table?" + "table=" + tableName, true);
+    xhttp.open("GET", "/admin_get_table?" + "table=" + tableName, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -445,7 +445,7 @@ function saveCredit() {
     };
 
 
-    xhttp.open("POST", "//ihse.tk/admin_send_data?" + "table=credits", true);
+    xhttp.open("POST", "/admin_send_data?" + "table=credits", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie

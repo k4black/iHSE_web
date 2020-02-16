@@ -162,7 +162,7 @@ function loadDays(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/days", true);
+    xhttp.open("GET", "/days", true);
     xhttp.send();
 }
 
@@ -192,7 +192,7 @@ function loadUser(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/user", true);
+    xhttp.open("GET", "/user", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -221,7 +221,7 @@ function loadProject(project_id, func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/project" + '?id=' + project_id, true);
+    xhttp.open("GET", "/project" + '?id=' + project_id, true);
     xhttp.send();
 }
 
@@ -249,7 +249,7 @@ function loadEnrollsByClassId(class_id, func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/enrolls?event_id=" + class_id, true);
+    xhttp.open("GET", "/enrolls?event_id=" + class_id, true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -279,7 +279,7 @@ function loadNames(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/names", true);
+    xhttp.open("GET", "/names", true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -308,7 +308,7 @@ function loadClass(class_id, func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/class?id=" + class_id, true);
+    xhttp.open("GET", "/class?id=" + class_id, true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -337,7 +337,7 @@ function loadEvent(event_id, func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/event?id=" + event_id, true);
+    xhttp.open("GET", "/event?id=" + event_id, true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -371,7 +371,7 @@ function loadDay(day, func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/day?day=" + day, true);
+    xhttp.open("GET", "/day?day=" + day, true);
     xhttp.send();
 }
 
@@ -396,7 +396,7 @@ function loadProjects(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/projects", true);
+    xhttp.open("GET", "/projects", true);
     xhttp.send();
 }
 
@@ -423,7 +423,7 @@ function loadFeedback(date, func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/feedback?date=" + date , true);
+    xhttp.open("GET", "/feedback?date=" + date , true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }
@@ -460,7 +460,7 @@ function loadCredits(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/credits", true);
+    xhttp.open("GET", "/credits", true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }

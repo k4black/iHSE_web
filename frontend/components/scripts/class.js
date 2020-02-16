@@ -263,7 +263,7 @@ function createEnroll() {
         }
     };
 
-    xhttp.open("POST", "//ihse.tk/create_enroll?" + "event_id="+ current_event + "&user_id=" + user.id, true);
+    xhttp.open("POST", "/create_enroll?" + "event_id="+ current_event + "&user_id=" + user.id, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     // xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
@@ -303,7 +303,7 @@ function removeEnroll(enroll_id) {
         }
     };
 
-    xhttp.open("POST", "//ihse.tk/remove_enroll?id=" + enroll_id, true);
+    xhttp.open("POST", "/remove_enroll?id=" + enroll_id, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -353,7 +353,7 @@ function saveEnrolls() {
 
     let data = JSON.stringify(data_raw);
 
-    xhttp.open("POST", "//ihse.tk/mark_enrolls?", true);
+    xhttp.open("POST", "/mark_enrolls?", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
@@ -386,7 +386,7 @@ function saveClass() {
         cache['class'].annotation = anno;
     let data = JSON.stringify(cache['class']);
 
-    xhttp.open("POST", "//ihse.tk/admin_send_data?" + "table="+'classes', true);
+    xhttp.open("POST", "/admin_send_data?" + "table="+'classes', true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie

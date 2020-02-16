@@ -317,7 +317,7 @@ function saveFeedback() {
 
 
     let today = document.querySelector('.today').lastElementChild.textContent;
-    xhttp.open("POST", "//ihse.tk/feedback?date=" + today, true);
+    xhttp.open("POST", "/feedback?date=" + today, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie

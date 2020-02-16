@@ -140,7 +140,7 @@ function setAccount() {
 //         if (this.readyState === 4) {
 //             if (this.status === 200) {
 //
-//                 location = 'http://ihse.tk/index.html';  // Refer to start page
+//                 location = 'http:/index.html';  // Refer to start page
 //             }
 //
 //             if (this.status === 302) {  // Ok - redir
@@ -149,7 +149,7 @@ function setAccount() {
 //         }
 //     };
 //
-//     xhttp.open("POST", "//ihse.tk/logout", true);
+//     xhttp.open("POST", "/logout", true);
 //     xhttp.withCredentials = true; // To send Cookie;
 //     xhttp.send();
 // });
@@ -192,7 +192,7 @@ function setAccount() {
 //         }
 //     };
 //
-//     xhttp.open("POST", "//ihse.tk/credits?code=" + code.value, true);
+//     xhttp.open("POST", "/credits?code=" + code.value, true);
 //     xhttp.withCredentials = true;  // To receive cookie
 //     xhttp.send();
 // });

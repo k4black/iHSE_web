@@ -100,7 +100,7 @@ document.querySelector('#btn').addEventListener('click', function() {
     };
 
 
-    xhttp.open("POST", "//ihse.tk/project", true);
+    xhttp.open("POST", "/project", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
@@ -132,7 +132,7 @@ function loadNames(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/names", true);
+    xhttp.open("GET", "/names", true);
     xhttp.send();
 }
 
