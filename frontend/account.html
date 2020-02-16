@@ -64,7 +64,7 @@
 
 <div class="wrapper">
 
-    <!--#include virtual="/components/class.html" -->
+    <!--#include virtual="/components/project.html" -->
 
     <div class="credits loading__resource">
 
@@ -80,19 +80,19 @@
 
     <div class="loading__resource account__project no_project">
         <button class="account__project__create"><i class="mobile__item__icon large material-icons">add</i><p>Создать проект</p></button>
-        <div class="account__project__info">
-            <img>
+        <div class="account__project__info" style="position: relative">
+            <img src="images/rocket.jpeg">
             <div class="description">
                 <div class="project__top_line">
-                    <span></span>
-                    <span></span>
+                    <span class="project__title"></span>
+                    <span class="project__type" style="text-align:right"></span>
                 </div>
 
                 <p class="project__names"></p>
                 <p class="project__desc"></p>
                 <p class="project__anno"></p>
             </div>
-            <button onclick="editProject(cache['project']['id'])"></button>
+            <button class="project__edit_button" onclick="editProject(cache['project']['id'])"></button>
         </div>
     </div>
 
