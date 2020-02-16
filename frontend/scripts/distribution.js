@@ -265,7 +265,7 @@ function loadUsers(func) {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
                 let users = JSON.parse(this.responseText);
-                let objs = groupByUnique(users, 'code');
+                let objs = groupByUnique(users, 'id');
 
                 cache['users'] = objs;
 

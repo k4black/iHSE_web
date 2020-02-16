@@ -5,7 +5,7 @@ window.addEventListener('load', function () {
     loadDays(setDays);
 
     loadEvents(function () {});
-    loadAllFeedback(function () {});
+    loadAllFeedback(function () {countHostFeedback()});
 
     loadTop(function () {checkLoading(countTop, ['users', 'top'])});
     loadUsers(function () {checkLoading(countTop, ['users', 'top'])});
@@ -89,7 +89,7 @@ function countHostFeedback() {
         for (let feedback_obj of feedback_by_event_id[event_id]) {
             hosts_mean[host]['score'] += feedback_obj['score'];
             hosts_mean[host]['entertain'] += feedback_obj['entertain'];
-            hosts_mean[host]['useful'] += feedback_obj['useful'] / len;
+            hosts_mean[host]['useful'] += feedback_obj['useful'];
             hosts_mean[host]['understand'] += feedback_obj['understand'];
         }
     }
@@ -105,7 +105,7 @@ function countHostFeedback() {
             '<div class="host_feedback">' +
                 '<div class="description">' +
                     '<p class="host_title">' + host + '</p>' +
-                    '<p class="host_count">' + hosts_count[host] + '</p>' +
+                    '<p class="host_count">' + 'Собрано:' + hosts_count[host] + '</p>' +
                 '</div>' +
                 '<canvas id="host' + host + '"></canvas>' +
             '</div>';
@@ -152,8 +152,8 @@ function countDayFeedback() {
         events_html +=
             '<div class="day_feedback">' +
                 '<div class="description">' +
-                    '<p class="event_title">' + events[event_id].title + ' [' + cache['users'][events[event_id].host] +']</p>' +
-                    '<p class="event_count">' + feedback_by_event_id[event_id].length + '</p>' +
+                    '<p class="event_title">' + events[event_id].title + ' [' + events[event_id].host +']</p>' +
+                    '<p class="event_count">' + 'Собрано:' + feedback_by_event_id[event_id].length + '</p>' +
                 '</div>' +
                 '<canvas id="event' + event_id + '"></canvas>' +
             '</div>';
@@ -243,7 +243,7 @@ function loadUsers(func) {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
                 let users = JSON.parse(this.responseText);
-                let objs = groupByUnique(users, 'code');
+                let objs = groupByUnique(users, 'id');
 
                 cache['users'] = objs;
 
@@ -271,7 +271,7 @@ function loadTop(func) {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
                 let top = JSON.parse(this.responseText);
-                let objs = groupByUnique(top, 'code');
+                let objs = groupByUnique(top, 'id');
 
                 cache['top'] = objs;
 

@@ -32,6 +32,13 @@
 
 
 
+.description {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
 
 
 
@@ -55,5 +62,11 @@
 
 
 .day_feedback .event_count, .host_feedback .host_count {
+    font-style: italic;
+}
 
+
+
+#top_feedback {
+    width: 100%;
 }

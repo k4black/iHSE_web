@@ -145,9 +145,9 @@ function getTableColumns(tableName, fields) {
                             if (val === 0 || val === '0') {
                                 // Regualr event
                                 return '<div class="event_type regular_event" event_type=' + val + ' title="event_type: ' + val + '">regular</div>'
-                            } else if (val === 1 || val === '1') {
+                            } else if (val === 1 || val === '1' || val === 2 || val === '2') {
                                 // Class
-                                return '<div class="event_type class_event" event_type=' + val + ' title="event_type: ' + val + '">class</div>'
+                                return '<div class="event_type class_event" event_type=' + val + ' title="event_type: ' + val + '">' + (val == 1 ? 'master' : 'lecture') + '</div>'
                             }
                         }
                         if ((tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback') || (tableName === 'codes' && field === 'used')) {
@@ -441,7 +441,6 @@ function editRow(row) {
         placeholder = (field.slice(0, 4) === 'time' ? 'placeholder="hh.mm"' : '');
         placeholder = (current_table === 'events' && field === 'time' ? 'placeholder="hh.mm-hh.mm"' : '');
         if (Object.keys(row).length === 0) {
-            let t = '<input name="asd">';
             current_inputs_html += '<input name="' + field + '" value="" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         } else {
             current_inputs_html += '<input name="' + field + '" value="' + row[field] + '" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
