@@ -49,8 +49,10 @@ function setCredits() {
     let days = cache['days'];
 
     let sum_for_days = {};
+    let mean_for_days = {};
     for (let day_id in days) {
         sum_for_days[days[day_id].date] = 0;
+        mean_for_days[days[day_id].date] = 0;
     }
 
 
@@ -62,6 +64,7 @@ function setCredits() {
             let sum_for_user = 0;
             for (let credit of credits_by_user_id[user_id]) {
                 sum_for_user += credit.value;
+                mean_for_days[days[day_id].date] += credit.value;
             }
 
             if (sum_for_user >= cache['user'].total) {
@@ -70,13 +73,14 @@ function setCredits() {
         }
 
         sum_for_days[days[day_id].date] = 100.0 * counter_for_day / Object.keys(cache['users']).length;
+        mean_for_days.value[days[day_id].date] = credits_by_day_id[day_id].length == 0 ? 0 : mean_for_days.value[days[day_id].date] / credits_by_day_id[day_id].length;
     }
 
     console.log('sum_for_days', sum_for_days);
 
 
 
-    var ctx = document.getElementById('credits').getContext('2d');
+    var ctx = document.getElementById('percentage').getContext('2d');
     var chart = new Chart(ctx, {
         // The type of chart we want to create
         type: 'bar',
@@ -87,7 +91,28 @@ function setCredits() {
             datasets: [{
                 label: 'Процент сдавших',
                 backgroundColor: '#006cae',
-                data: Object.keys(sum_for_days)
+                data: Object.values(sum_for_days)
+            }]
+        },
+
+        // Configuration options go here
+        options: {}
+    });
+
+
+
+    var ctx = document.getElementById('credits').getContext('2d');
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'line',
+
+        // The data for our dataset
+        data: {
+            labels: Object.keys(mean_for_days),
+            datasets: [{
+                label: 'Среднее кредиты',
+                backgroundColor: '#006cae',
+                data: Object.values(mean_for_days)
             }]
         },
 

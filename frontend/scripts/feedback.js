@@ -7,7 +7,7 @@
 
 
 window.addEventListener('load', function () {
-    loadDays(function () {});
+    loadDays(setDays);
 });
 
 
@@ -25,22 +25,25 @@ function setDays() {
     }
 
     let topbar_html = '';
-    for (let id in cache['days']) {
-        if (cache['days'][i].date === today) {  // TODO: Today
+    let i = 0;
+    for (let day of cache['days']) {
+        if (!day['feedback'] || day.id == 0) {
+            ++i;
+            continue;
+        }
+
+        if (day.date === today) {  // TODO: Today
             topbar_html += '<div class="day today selected">'
         } else {
             topbar_html += '<div class="day">'
         }
 
         topbar_html += '<div class="day__num">' + i + '</div>' +
-            '<div class="day__name">' + cache['days'][i].date + '</div>' +
+            '<div class="day__name">' + day.date + '</div>' +
             '</div>';
-    }
 
-    topbar_html += '<div class="admin_element day add_day"> <div class="day__num">' +
-        '<i class="mobile__item__icon large material-icons">add</i>' + '</div>' +
-            '<div class="day__name">' + 'add_day' + '</div>' +
-            '</div>';
+        ++i;
+    }
 
 
     document.querySelector('.topbar').innerHTML = topbar_html;

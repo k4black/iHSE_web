@@ -68,17 +68,26 @@ function setupDays() {   // TODO: Refactor
             }
 
             let topbar_html = '';
-            for (var i = 0; i < days.length; ++i) {
-                if (days[i].date === today) {  // TODO: Today
+            let i = 0;
+            for (let day of cache['days']) {
+                if (day.id == 0) {
+                    ++i;
+                    continue;
+                }
+
+                if (day.date === today) {  // TODO: Today
                     topbar_html += '<div class="day today selected">'
                 } else {
                     topbar_html += '<div class="day">'
                 }
 
                 topbar_html += '<div class="day__num">' + i + '</div>' +
-                    '<div class="day__name">' + days[i].date + '</div>' +
+                    '<div class="day__name">' + day.date + '</div>' +
                     '</div>';
+
+                ++i;
             }
+
 
             topbar_html += '<div class="admin_element day add_day"> <div class="day__num">' +
                 '<i class="mobile__item__icon large material-icons">add</i>' + '</div>' +

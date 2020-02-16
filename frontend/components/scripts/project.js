@@ -60,7 +60,9 @@ function setPopupProject() {
     setupData(document.querySelector('#project_popup .type'), project.type);
 
     let users_html = '';
-    for (let user of names) {
+    for (let id in names) {
+        let user = names[id];
+
         if (user['project_id'] == project_id) {
             users_html += '<div class="user ' + (user['id'] == cache['user']['id'] ? 'current_user' : '') + '">' + user.name + '</div>';
         }
