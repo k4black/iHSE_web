@@ -4,8 +4,8 @@
 window.addEventListener('load', function () {
     loadDays(setDays);
 
-    loadEvents(function () {});
-    loadAllFeedback(function () {countHostFeedback()});
+    loadEvents(function () {checkLoading(countHostFeedback, ['events', 'feedback'])});
+    loadAllFeedback(function () {checkLoading(countHostFeedback, ['events', 'feedback'])});
 
     loadTop(function () {checkLoading(countTop, ['users', 'top'])});
     loadUsers(function () {checkLoading(countTop, ['users', 'top'])});
@@ -129,7 +129,11 @@ function countHostFeedback() {
             },
 
             // Configuration options go here
-            options: {}
+            options: {
+                ticks: {
+                    min: 0
+                }
+            }
         });
     }
 }
@@ -191,7 +195,11 @@ function countDayFeedback() {
             },
 
             // Configuration options go here
-            options: {}
+            options: {
+                ticks: {
+                    min: 0
+                }
+            }
         });
     }
 }

@@ -87,9 +87,9 @@ function getTableColumns(credits, days, events) {
     for (let day_id in cache['days']) {
         processed_days[day_id] = new Set();
 
-        for (let credit of Object.values(cache['credits'])) {
-            if (events_by_id[credit.event_id].day_id == day_id) {
-                processed_days[day_id].add(credit.event_id);
+        for (let event of Object.values(cache['events'])) {
+            if (events_by_id[event.id].day_id == day_id && event.host != '' && event.place != '') {  // TODO: Check not so regular event (dinner and etc)
+                processed_days[day_id].add(event.id);
             }
         }
     }
