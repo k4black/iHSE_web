@@ -72,6 +72,67 @@ function countTop() {
 
 
 
+function countHostFeedback() {
+    let events = cache['events'];
+    let feedback_by_event_id = groupBy(Object.values(cache['feedback']), 'event_id');
+
+    let hosts_mean = {};
+    let hosts_count = {};
+    for (let event_id of feedback_by_event_id) {
+        let host = cache['events'][event_id].host;
+
+        // Count mean for each score
+        hosts_mean[host] = {'score': 0, 'entertain': 0, 'useful': 0, 'understand': 0};
+        hosts_count[host] = (hosts_count[host] == undefined ? 0 : hosts_count[host] + 1);
+
+        for (let feedback_obj of feedback_by_event_id[event_id]) {
+            hosts_mean[host]['score'] += feedback_obj['score'];
+            hosts_mean[host]['entertain'] += feedback_obj['entertain'];
+            hosts_mean[host]['useful'] += feedback_obj['useful'] / len;
+            hosts_mean[host]['understand'] += feedback_obj['understand'];
+        }
+    }
+
+    for (let host in hosts_mean) {
+        hosts_mean[host] /= hosts_count[host];
+    }
+
+
+    let host_html = '';
+    for (let host in hosts_mean) {
+        host_html +=
+            '<div class="host_feedback">' +
+                '<div class="description">' +
+                    '<p class="host_title">' + host + '</p>' +
+                    '<p class="host_count">' + hosts_count[host] + '</p>' +
+                '</div>' +
+                '<canvas id="host' + host + '"></canvas>' +
+            '</div>';
+    }
+    document.querySelector('.hosts_feedback').innerHTML = host_html;
+
+    for (let host in hosts_mean) {
+        var ctx = document.getElementById('host' + host).getContext('2d');
+        var chart = new Chart(ctx, {
+            // The type of chart we want to create
+            type: 'bar',
+
+            // The data for our dataset
+            data: {
+                labels: ['Общее', 'Интересно', 'Полезно', 'Понятно'],
+                datasets: [{
+                    label: 'Средние оценки',
+                    data: [mean_score['score'], mean_score['entertain'], mean_score['useful'], mean_score['understand']]
+                }]
+            },
+
+            // Configuration options go here
+            options: {}
+        });
+    }
+}
+
+
 
 function countDayFeedback() {
     let day_id = document.getElementById('days').value;
@@ -90,7 +151,7 @@ function countDayFeedback() {
         events_html +=
             '<div class="day_feedback">' +
                 '<div class="description">' +
-                    '<p class="event_title">' + events[event_id].title + '</p>' +
+                    '<p class="event_title">' + events[event_id].title + ' [' + cache['users'][events[event_id].host] +']</p>' +
                     '<p class="event_count">' + feedback_by_event_id[event_id].length + '</p>' +
                 '</div>' +
                 '<canvas id="event' + event_id + '"></canvas>' +
@@ -122,7 +183,6 @@ function countDayFeedback() {
                 labels: ['Общее', 'Интересно', 'Полезно', 'Понятно'],
                 datasets: [{
                     label: 'Средние оценки',
-                    backgroundColor: '#006cae',
                     data: [mean_score['score'], mean_score['entertain'], mean_score['useful'], mean_score['understand']]
                 }]
             },
