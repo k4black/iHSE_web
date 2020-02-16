@@ -12,6 +12,9 @@ window.addEventListener('load', function () {
     loadFeedback(this.lastElementChild.textContent, function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
 
     loadNames(setNames);
+
+
+    document.querySelector('#btn').addEventListener('click', saveFeedback);
 });
 
 
@@ -138,8 +141,7 @@ function setFeedback() {
     for (let event of template) {
         let feedback = feedback_by_event_id[event['id']][0];
 
-        // TODO: disabled
-
+        // TODO: check disabled
         for (let feature of ['score', 'entertain', 'useful', 'understand']) {
             let eventSliders = new rSlider({
                 target: '#event' + event['id'] + feature,
@@ -147,10 +149,15 @@ function setFeedback() {
                 range: false,
                 set: [5],
                 tooltip: false,
+                disabled: (feedback == null ? false : true)
             });
         }
 
-        // TODO: comment
+        // TODO: check comment
+        if (feedback != null) {
+            document.querySelector('#event' + event.id + 'comment textarea').disabled = true;
+            document.querySelector('#event' + event.id + 'comment textarea').value = feedback['comment'];
+        }
     }
 }
 
@@ -218,8 +225,7 @@ eventSliders[3] = new rSlider({
  * Add button event - 'send feedback'
  * Send http POST request to set feedback message
  */
-document.querySelector('#btn').addEventListener('click', function() {
-
+function saveFeedback() {
     events = document.querySelectorAll('.event');
     users = document.querySelectorAll('.user');
 
@@ -236,20 +242,54 @@ document.querySelector('#btn').addEventListener('click', function() {
         return;
     }
 
-    var data = JSON.stringify({"overall": overallSlider.getValue(),
-                                     "user1": users[0].value,
-                                     "user2": users[1].value,
-                                     "user3": users[2].value,
-                                     "event1": eventSliders[0].getValue(),
-                                     "event2": eventSliders[1].getValue(),
-                                     "event3": eventSliders[2].getValue(),
-                                     "event1_text": events[0].lastElementChild.textContent,
-                                     "event2_text": events[1].lastElementChild.textContent,
-                                     "event3_text": events[2].lastElementChild.textContent
+    // Process names
+    let names = [];
+    for (let user in cache['names']) {
+        names.push(user.name);
+    }
+
+    let chosen_names = [];
+    for (let user of users) {
+        let name = user.value;
+
+        if (name in chosen_names) {
+            alert('Невозможно выбрать пользователя <' + name + '>. Уже выбран.');
+            return;
+        }
+
+        if (name in names) {
+            chosen_names.push(name);
+        } else {
+            alert('Невозможно выбрать пользователя <' + name + '>. Нет пользователя.');
+            return;
+        }
+    }
+
+    // Events
+    let chosen_events = [];
+    for (let event_elem of events) {
+        let event_features = event_elem.querySelectorAll('.event_feature');
+
+        let score = {
+            'score': event_features[0].lastElementChild.firstElementChild.value,
+            'entertain': event_features[1].lastElementChild.firstElementChild.value,
+            'useful': event_features[2].lastElementChild.firstElementChild.value,
+            'understand': event_features[3].lastElementChild.firstElementChild.value,
+            'comment': event_elem.querySelector('textarea').value,
+        };
+
+        chosen_events.push(score);
+    }
+
+
+    let data = JSON.stringify({"overall": overallSlider.getValue(),
+                                     "users": chosen_names,
+                                     "events": chosen_events,
                               });
 
 
-    var xhttp = new XMLHttpRequest();
+    
+    let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 1) {  // Opened
@@ -274,14 +314,13 @@ document.querySelector('#btn').addEventListener('click', function() {
     };
 
 
-    var query = "?day=" + document.querySelector('.today').lastElementChild.textContent;
-    xhttp.open("POST", "//ihse.tk/feedback" + query, true);
+    let today = document.querySelector('.today').lastElementChild.textContent;
+    xhttp.open("POST", "//ihse.tk/feedback?date=" + today, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send(data);
-
-});
+}
 
 
 
