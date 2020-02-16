@@ -328,7 +328,7 @@ def insert_to_table(data: TTableObject, table_name: str) -> int:
         return insert_event(data)
 
     fields = ', '.join(table_fields[table_name])
-    values_placeholder = ', '.join(['%s' for field in fields if field != 'id'])
+    values_placeholder = ', '.join(['%s' for field in table_fields[table_name] if field != 'id'])
 
     sql_string = f"INSERT INTO {table_name} ({fields}) VALUES (default, {values_placeholder}) RETURNING id;"
 

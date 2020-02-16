@@ -41,7 +41,7 @@ document.querySelector('#btn').addEventListener('click', function() {
     });
 
     let user_names_allowed = [];
-    for (let user of cache['users']) {
+    for (let user of cache['names']) {
         if (user['project_id'] == 0) {
             user_names_allowed.push(user['name']);
         }
