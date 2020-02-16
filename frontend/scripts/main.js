@@ -371,7 +371,7 @@ function loadDay(day, func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/day?day=" + day, true);
+    xhttp.open("GET", "/day?day=" + day, true);
     xhttp.send();
 }
 
