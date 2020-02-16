@@ -119,7 +119,7 @@ function logout() {
         }
     };
 
-    xhttp.open("POST", "//ihse.tk/logout", true);
+    xhttp.open("POST", "/logout", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }

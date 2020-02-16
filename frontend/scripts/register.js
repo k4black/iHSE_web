@@ -88,7 +88,7 @@ document.querySelector('#btn').addEventListener('click', function () {
     let user = {'name': name_.value, 'surname': surname.value, 'phone': phone.value, 'sex': sex.value, 'pass': hashCode(pass.value), 'code': code.value};
     let data = JSON.stringify(user);
 
-    xhttp.open("POST", "//ihse.tk/register", true);
+    xhttp.open("POST", "/register", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.send(data);

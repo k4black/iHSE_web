@@ -218,7 +218,7 @@ function loadEvents(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/admin_get_table?table=" + 'events', true);
+    xhttp.open("GET", "/admin_get_table?table=" + 'events', true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }
@@ -251,7 +251,7 @@ function loadUsers(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/admin_get_table?" + "table=" + 'users', true);
+    xhttp.open("GET", "/admin_get_table?" + "table=" + 'users', true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -279,7 +279,7 @@ function loadTop(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/admin_get_table?" + "table=" + 'top', true);
+    xhttp.open("GET", "/admin_get_table?" + "table=" + 'top', true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -308,7 +308,7 @@ function loadAllFeedback(func) {
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/admin_get_table?" + "table=" + 'feedback', true);
+    xhttp.open("GET", "/admin_get_table?" + "table=" + 'feedback', true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }

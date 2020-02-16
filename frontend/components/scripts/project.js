@@ -116,7 +116,7 @@ function enrollProject() {
         }
     };
 
-    xhttp.open("POST", "//ihse.tk/enroll_project?" + "project_id="+ cache['project']['id'], true);
+    xhttp.open("POST", "/enroll_project?" + "project_id="+ cache['project']['id'], true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }
@@ -136,7 +136,7 @@ function deenrollProject() {
         }
     };
 
-    xhttp.open("POST", "//ihse.tk/deenroll_project?" + "project_id="+ cache['project']['id'], true);
+    xhttp.open("POST", "/deenroll_project?" + "project_id="+ cache['project']['id'], true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }
@@ -178,7 +178,7 @@ function saveProject() {
 
     let data = JSON.stringify(cache['project']);
 
-    xhttp.open("POST", "//ihse.tk/edit_project", true);
+    xhttp.open("POST", "/edit_project", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie

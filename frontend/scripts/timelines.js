@@ -100,7 +100,7 @@ function loadAndCreateTimeline(timeline) {  // TODO: refactor
         }
     };
 
-    xhttp.open("GET", "//ihse.tk/day?day=" + timeline, true);
+    xhttp.open("GET", "/day?day=" + timeline, true);
     xhttp.send();
 }
 

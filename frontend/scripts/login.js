@@ -61,7 +61,7 @@ document.querySelector('#btn').addEventListener('click', function () {
     let login_data = {'phone': phone.value, 'pass': hashCode(pass.value)};
     let data = JSON.stringify(login_data);
 
-    xhttp.open("POST", "//ihse.tk/login", true);
+    xhttp.open("POST", "/login", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
