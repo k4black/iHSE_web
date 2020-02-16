@@ -787,7 +787,7 @@ def insert_event(event_obj: TTableObject) -> int:
 
     if int(event_obj['type']) != 0:
         # master/lecture - add class in table
-        cursor.execute(f'INSERT INTO classes (id, total, annotation) VALUES (%s, %s, %s);', ({event_id}, 0, ''))
+        cursor.execute(f'INSERT INTO classes (id, total, annotation) VALUES (%s, %s, %s);', (event_id, 0, ''))
     else:
         # regular
         pass
