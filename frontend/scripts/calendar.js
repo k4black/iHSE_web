@@ -51,6 +51,9 @@ function setupDays() {   // TODO: Refactor
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
             days = JSON.parse( this.responseText );
+
+            cache['days'] = groupByUnique(days, 'id');
+
             sortBy(days, 'date');
 
             let days_list = [];

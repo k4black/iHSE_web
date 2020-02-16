@@ -27,6 +27,10 @@ function setHosts() {
     let hosts_total = {};
 
     for (let event of Object.values(events)) {
+        if (event.host === '') {
+            continue;
+        }
+
         if (hosts[event.host] == undefined) {
             hosts[event.host] = {'master': 0, 'lecture': 0};
             hosts_total[event.host] = 0;
