@@ -38,8 +38,10 @@ function setDays() {
 
     let topbar_html = '';
     let i = 0;
-    for (let day of cache['days']) {
-        if (!day['feedback'] || day.id == 0) {
+    for (let day_id in cache['days']) {
+        let day = cache['days'][day_id];
+
+        if (!day['feedback'] || day_id == 0) {
             ++i;
             continue;
         }
