@@ -9,12 +9,13 @@
 window.addEventListener('load', function () {
     // loadDays(setDays);
     loadDays(function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
-    loadFeedback(this.lastElementChild.textContent, function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
-
+    loadFeedback('05.06', function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
+    // TOOD: remove '05.06'
     loadNames(setNames);
 
 
     document.querySelector('#btn').addEventListener('click', saveFeedback);
+
 });
 
 
@@ -68,6 +69,7 @@ function setDays() {
             this.classList.add('selected');
 
             loadFeedback(this.lastElementChild.textContent, setFeedback);
+            document.querySelector('.feedback_title').innerHTML = this.lastElementChild.textContent; // TODO: load title from cache
         });
     }
 }
@@ -288,7 +290,7 @@ function saveFeedback() {
                               });
 
 
-    
+
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {

@@ -437,6 +437,8 @@ function loadFeedback(date, func) {
 
 
 
+
+
 /**
  * Get credits information from server by user cookies
  * Send http GET request and get projects json schedule
