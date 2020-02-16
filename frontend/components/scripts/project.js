@@ -7,7 +7,7 @@ loadNames(function () {});
 
 function editProject(project_id) {
 
-    loadProject(setProject, project_id);
+    loadProject(setPopupProject, project_id);
 
 }
 
@@ -43,7 +43,7 @@ function setupData(elem, data) {
 /**
  * Set class fields in the popup class info
  */
-function setProject() {
+function setPopupProject() {
     let names = cache['names'];
     let project = cache['project'];
     let project_id = project.id;
@@ -104,7 +104,7 @@ function enrollProject() {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
                 cache['user']['project_id'] = cache['project']['id'];
-                loadProjects(cache['project']['id'], setProject);
+                loadProjects(cache['project']['id'], setPopupProject);
             } else if (this.status === 409) {
                 alert('Невозможно записаться. у вас уже есть проект.')
             }
@@ -124,7 +124,7 @@ function deenrollProject() {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
                 cache['user']['project_id'] = 0;
-                loadProjects(cache['project']['id'], setProject);
+                loadProjects(cache['project']['id'], setPopupProject);
             } else if (this.status === 409) {
                 alert('Невозможно отписаться. у вас нет проекта.')
             }
@@ -146,7 +146,7 @@ function saveProject() {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
-                loadProjects(cache['project']['id'], setProject);
+                loadProjects(cache['project']['id'], setPopupProject);
                 // hideProject();
             } else if (this.status === 405) {
                 alert('Вы не участник этого проекта. Нельзя его редактировать.')

@@ -74,7 +74,9 @@ function setProject() {
     document.querySelector('.project__names').innerHTML = names_test;
     document.querySelector('.project__desc').innerHTML = project.description;
     document.querySelector('.project__anno').innerHTML = project.annotation;
-    // TODO: Full display
+
+    // Edit button
+    document.querySelector('.project__anno').onclick = function () {editProject(project['id'])};
 }
 
 
