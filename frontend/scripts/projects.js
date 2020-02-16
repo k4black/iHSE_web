@@ -53,7 +53,7 @@ function setProjects() { // If ok set up day field
         }
 
 
-        project_html = '<div class="project" onclick="editProject(' + id + ')">' +
+        project_html = '<div class="project" ' + (cache['user']['project_id'] == project.id ? 'onclick="editProject(' + project.id + ')"' : 'onclick="editOthersProject(' + project.id + ');"') + '>' +
             '<img src="images/rocket.jpeg">' +
             '<div class="description">' +
 
@@ -65,7 +65,7 @@ function setProjects() { // If ok set up day field
             '<p class="project__names">' + names + '</p>' +
 
             '<p class="project__desc">' + project.description + '</p>' +
-
+            (cache['user']['project_id'] == project.id ? '<button class="project__edit_button"><i class="mobile__item__icon large material-icons">edit</i></button>' : '') +
             '</div>' +
             '</div>';
         projects_html += project_html + '<hr class="border_line">';

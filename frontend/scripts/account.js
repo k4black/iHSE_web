@@ -76,7 +76,7 @@ function setProject() {
     document.querySelector('.project__anno').innerHTML = project.annotation;
 
     // Edit button
-    document.querySelector('.project__anno').onclick = function () {editProject(project['id'])};
+    document.querySelector('.project__edit_button').onclick = function () {editProject(project['id'])};
 }
 
 
