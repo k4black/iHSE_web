@@ -1158,7 +1158,12 @@ def get_feedback(user_id, date) -> tp.Tuple[tp.List[TTableObject], tp.List[TTabl
         Feedback data - list of feedback (if any for template events)
     """
 
-    day_id = cursor.execute('SELECT id FROM days WHERE date = %s', (date,))[0]
+    day = cursor.execute('SELECT id FROM days WHERE date = %s', (date,))
+
+    if day is None:
+        return [], []
+
+    day_id = day[0]
 
     sql_string = f'SELECT e.id, e.type, e.title, e.host, e.day_id FROM enrolls en JOIN events e ON en.class_id = e.id WHERE en.user_id = %s AND en.attendance = true AND e.day_id = %s;'
     cursor.execute(sql_string, (user_id, day_id))

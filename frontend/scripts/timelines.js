@@ -150,7 +150,7 @@ function buildTimeline(locations, events) {
 
     console.log(' hour ', start_hours, end_hours, Math.min.apply(Math, start_hours), Math.max.apply(Math, end_hours));
 
-    timetable.setScope(Math.min.apply(Math, start_hours) - 1, Math.max.apply(Math, end_hours) + 1);
+    timetable.setScope(Math.min.apply(Math, start_hours), Math.max.apply(Math, end_hours) + 1);
 
     timetable.addLocations(locations);
 
