@@ -8,8 +8,8 @@ window.addEventListener('load', function () {
     // setupToolbar();
     // setupTabs();
     loadDays(function () {checkLoading(function () {setDistribution(); setDays()}, ['vacations', 'users', 'days'])});
-    loadUsers(function () {checkLoading(setDistribution, ['vacations', 'users', 'days'])});
-    loadVacations(function () {checkLoading(setDistribution, ['vacations', 'users', 'days'])});
+    loadUsers(function () {checkLoading(function () {setDistribution(); setDays()}, ['vacations', 'users', 'days'])});
+    loadVacations(function () {checkLoading(function () {setDistribution(); setDays()}, ['vacations', 'users', 'days'])});
 
 
     loadDaysCredits(function () {checkLoading(setCredits, ['users', 'credits', 'days'])});

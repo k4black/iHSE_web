@@ -436,7 +436,7 @@ function editRow(row) {
         let current_inputs_html = '<label for=' + field + '>' + field + '</label>';
 
         let disabled = (field === 'id' ? 'disabled' : '');
-        let list = (field === 'user_id' || field === 'event_id' || field === 'project_id' || field === 'day_id' ? 'list=' + field + '_list' : '');
+        let list = (field === 'user_id' || field === 'event_id' || field === 'class_id' || field === 'project_id' || field === 'day_id' ? 'list=' + field + '_list' : '');
         let placeholder = (field.slice(0, 4) === 'date' ? 'placeholder="dd.mm"' : '');
         placeholder = (field.slice(0, 4) === 'time' ? 'placeholder="hh.mm"' : '');
         placeholder = (current_table === 'events' && field === 'time' ? 'placeholder="hh.mm-hh.mm"' : '');
@@ -446,14 +446,14 @@ function editRow(row) {
             current_inputs_html += '<input name="' + field + '" value="' + row[field] + '" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         }
 
-        if (field === 'user_id' || field === 'event_id' || field === 'project_id' || field === 'day_id') {
+        if (field === 'user_id' || field === 'event_id' || field === 'class_id' || field === 'project_id' || field === 'day_id') {
             current_inputs_html += '<datalist id="' + field + '_list" name="' + field + '_list">';
 
             if (field === 'user_id') {
                 for (let id in users) {
                     current_inputs_html += '<option value="' + id + '">' + users[id].name + '</option>';
                 }
-            } else if (field === 'event_id') {
+            } else if (field === 'event_id' || field === 'class_id' ) {
                 for (let id in events) {
                     current_inputs_html += '<option value="' + id + '">' + events[id].title + '</option>';
                 }

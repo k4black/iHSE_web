@@ -10,7 +10,7 @@ window.addEventListener('load', function () {
     // loadDays(setDays);
     loadDays(function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
     loadFeedback('05.06', function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
-    // TOOD: remove '05.06'
+    // TODO: remove '05.06'
     loadNames(setNames);
 
 
@@ -90,7 +90,7 @@ function setNames() {
     let datalist_html = "";
 
     for (let id in cache['names']) {
-        datalist_html += '<option value="' + cache['names'][id] + '">';
+        datalist_html += '<option value="' + cache['names'][id].name + '">';
     }
 
     document.querySelector('#users_list').innerHTML = datalist_html;

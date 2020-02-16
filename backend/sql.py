@@ -1158,7 +1158,8 @@ def get_feedback(user_id, date) -> tp.Tuple[tp.List[TTableObject], tp.List[TTabl
         Feedback data - list of feedback (if any for template events)
     """
 
-    day = cursor.execute('SELECT id FROM days WHERE date = %s', (date,))
+    cursor.execute('SELECT id FROM days WHERE date = %s;', (date,))
+    day = cursor.fetchone()
 
     if day is None:
         return [], []

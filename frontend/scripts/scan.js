@@ -59,7 +59,7 @@ function loadUsers(func) {
 function setEvent() {
     let event = cache['event'];
 
-    document.querySelector('.description .title').innerHTML = event['title'];
+    document.querySelector('.description .event_title').innerHTML = event['title'];
     document.querySelector('.description .desc').innerHTML = event['description'];
 
     let type_elem = "";
