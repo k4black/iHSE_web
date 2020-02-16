@@ -49,7 +49,7 @@ function countTop() {
     let top_counter_not_empty = {};
     for (let user_id in top_counter) {
         if (top_counter[user_id] != 0) {
-            top_counter_not_empty[users[user_id]] = top_counter[user_id];
+            top_counter_not_empty[users[user_id].name] = top_counter[user_id];
         }
     }
 
@@ -79,7 +79,7 @@ function countHostFeedback() {
 
     let hosts_mean = {};
     let hosts_count = {};
-    for (let event_id of feedback_by_event_id) {
+    for (let event_id in feedback_by_event_id) {
         let host = cache['events'][event_id].host;
 
         // Count mean for each score
@@ -123,6 +123,7 @@ function countHostFeedback() {
                 labels: ['Общее', 'Интересно', 'Полезно', 'Понятно'],
                 datasets: [{
                     label: 'Средние оценки',
+                    backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
                     data: [mean_score['score'], mean_score['entertain'], mean_score['useful'], mean_score['understand']]
                 }]
             },
@@ -184,6 +185,7 @@ function countDayFeedback() {
                 labels: ['Общее', 'Интересно', 'Полезно', 'Понятно'],
                 datasets: [{
                     label: 'Средние оценки',
+                    backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
                     data: [mean_score['score'], mean_score['entertain'], mean_score['useful'], mean_score['understand']]
                 }]
             },
