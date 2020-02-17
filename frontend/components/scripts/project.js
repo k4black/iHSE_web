@@ -55,7 +55,7 @@ function setPopupProject() {
 
     setupData(document.querySelector('#project_popup .desc'), project.description);
     setupData(document.querySelector('#project_popup .anno'), project.annotation);
-    setupData(document.querySelector('#project_popup .dirs'), project.description);
+    setupData(document.querySelector('#project_popup .dirs'), project.direction);
     setupData(document.querySelector('#project_popup .def_type'), project.def_type);
     setupData(document.querySelector('#project_popup .type'), project.type);
 
@@ -106,6 +106,10 @@ function setPopupProject() {
 
 
 function enrollProject() {
+    if (!confirm('Вы уверены, что хотите участвовать в проекте?')) {
+        return;
+    }
+
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
@@ -126,6 +130,10 @@ function enrollProject() {
 
 
 function deenrollProject() {
+    if (!confirm('Вы уверены, что хотите покинуть проект?')) {
+        return;
+    }
+
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {

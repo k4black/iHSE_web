@@ -68,7 +68,16 @@ function countTop() {
         },
 
         // Configuration options go here
-        options: {}
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        // max: 100
+                    }
+                }]
+            }
+        }
     });
 
     // topChart.scaleService.updateScaleDefaults('linear', {
@@ -144,8 +153,13 @@ function countHostFeedback() {
 
             // Configuration options go here
             options: {
-                ticks: {
-                    min: 0
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            max: 10
+                        }
+                    }]
                 }
             }
         });
@@ -216,8 +230,13 @@ function countDayFeedback() {
 
             // Configuration options go here
             options: {
-                ticks: {
-                    min: 0
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            max: 10
+                        }
+                    }]
                 }
             }
         });
