@@ -161,11 +161,11 @@ function setFeedback() {
 
         // TODO: check comment
         if (feedback != null) {
-            document.querySelector('#event' + event.id + 'comment textarea').disabled = true;
-            document.querySelector('#event' + event.id + 'comment textarea').value = feedback['comment'];
+            document.querySelector('#event' + event.id + 'comment').disabled = true;
+            document.querySelector('#event' + event.id + 'comment').value = feedback['comment'];
         } else {
-            document.querySelector('#event' + event.id + 'comment textarea').disabled = false;
-            document.querySelector('#event' + event.id + 'comment textarea').value = '';
+            document.querySelector('#event' + event.id + 'comment').disabled = false;
+            document.querySelector('#event' + event.id + 'comment').value = '';
         }
     }
 }
