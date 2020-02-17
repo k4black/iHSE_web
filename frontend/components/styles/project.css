@@ -289,3 +289,23 @@
 .edit_mode button .edit_mode_element {
     display: block;
 }
+
+
+
+
+.names {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.names .user p {
+    color: #0d0d2f;
+    font-size: 16px;
+}
+
+.names .user.current_user p {
+    color: #151552;
+    /*font-style: italic;*/
+    font-weight: 400;
+}
