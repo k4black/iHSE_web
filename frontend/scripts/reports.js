@@ -71,11 +71,11 @@ function countTop() {
         options: {}
     });
 
-    topChart.scaleService.updateScaleDefaults('linear', {
-        ticks: {
-            min: 0
-        }
-    });
+    // topChart.scaleService.updateScaleDefaults('linear', {
+    //     ticks: {
+    //         min: 0
+    //     }
+    // });
 }
 
 
@@ -87,17 +87,24 @@ function countHostFeedback() {
     let hosts_mean = {};
     let hosts_count = {};
     for (let event_id in feedback_by_event_id) {
-        let host = cache['events'][event_id].host;
+        for (let host of events[event_id].host.split(', ')) {
+            // Count mean for each score
+            let tmp_hosts_mean = {'score': 0, 'entertain': 0, 'useful': 0, 'understand': 0};
+            hosts_count[host] = (hosts_count[host] == undefined ? 0 : hosts_count[host] + 1);
 
-        // Count mean for each score
-        hosts_mean[host] = {'score': 0, 'entertain': 0, 'useful': 0, 'understand': 0};
-        hosts_count[host] = (hosts_count[host] == undefined ? 0 : hosts_count[host] + 1);
+            for (let feedback_obj of feedback_by_event_id[event_id]) {
+                hosts_mean[host]['score'] += feedback_obj['score'];
+                hosts_mean[host]['entertain'] += feedback_obj['entertain'];
+                hosts_mean[host]['useful'] += feedback_obj['useful'];
+                hosts_mean[host]['understand'] += feedback_obj['understand'];
+            }
 
-        for (let feedback_obj of feedback_by_event_id[event_id]) {
-            hosts_mean[host]['score'] += feedback_obj['score'];
-            hosts_mean[host]['entertain'] += feedback_obj['entertain'];
-            hosts_mean[host]['useful'] += feedback_obj['useful'];
-            hosts_mean[host]['understand'] += feedback_obj['understand'];
+            if (hosts_mean[host] == undefined) {
+                hosts_mean[host] = {'score': 0, 'entertain': 0, 'useful': 0, 'understand': 0};
+            }
+            for (let field of ['score', 'entertain', 'useful', 'understand']) {
+                hosts_mean[host][field] += tmp_hosts_mean[field];
+            }
         }
     }
 
@@ -114,13 +121,13 @@ function countHostFeedback() {
                     '<p class="host_title">' + host + '</p>' +
                     '<p class="host_count">' + 'Собрано:' + hosts_count[host] + '</p>' +
                 '</div>' +
-                '<canvas id="host' + host + '"></canvas>' +
+                '<canvas id="host' + hashCode(host) + '"></canvas>' +
             '</div>';
     }
     document.querySelector('.hosts_feedback').innerHTML = host_html;
 
     for (let host in hosts_mean) {
-        var ctx = document.getElementById('host' + host).getContext('2d');
+        var ctx = document.getElementById('host' + hashCode(host)).getContext('2d');
         var chart = new Chart(ctx, {
             // The type of chart we want to create
             type: 'bar',
@@ -131,7 +138,7 @@ function countHostFeedback() {
                 datasets: [{
                     label: 'Средние оценки',
                     backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
-                    data: [mean_score['score'], mean_score['entertain'], mean_score['useful'], mean_score['understand']]
+                    data: [hosts_mean['score'], hosts_mean['entertain'], hosts_mean['useful'], hosts_mean['understand']]
                 }]
             },
 
@@ -143,11 +150,11 @@ function countHostFeedback() {
             }
         });
 
-        chart.scaleService.updateScaleDefaults('linear', {
-            ticks: {
-                min: 0
-            }
-        });
+        // chart.scaleService.updateScaleDefaults('linear', {
+        //     ticks: {
+        //         min: 0
+        //     }
+        // });
     }
 }
 
@@ -215,11 +222,11 @@ function countDayFeedback() {
             }
         });
 
-        chart.scaleService.updateScaleDefaults('linear', {
-            ticks: {
-                min: 0
-            }
-        });
+        // chart.scaleService.updateScaleDefaults('linear', {
+        //     ticks: {
+        //         min: 0
+        //     }
+        // });
     }
 }
 
