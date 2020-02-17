@@ -1312,7 +1312,7 @@ def post_logout(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     """
 
     # Get session id or ''
-    sessid = bytes.fromhex(cookie.get('sessid', ''))
+    # sessid = bytes.fromhex(cookie.get('sessid', ''))
     sessid = cookie.get('sessid', '')
 
     if sql.logout(sessid):
@@ -1923,7 +1923,7 @@ def post_edit_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
         return RESPONSE_WRONG_COOKIE
 
     # Check current user can edit
-    if user_obj['project_id'] != project_obj['id']:
+    if user_obj['type'] == 0 and user_obj['project_id'] != project_obj['id']:
         return ('405 Method Not Allowed',
                 [('Access-Control-Allow-Origin', '*')],
                 [])
