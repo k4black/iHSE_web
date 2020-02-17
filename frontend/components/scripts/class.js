@@ -189,12 +189,16 @@ function setEnrolls() {
     setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + Object.keys(enrolls).length + ' записалсь');
 
 
-    // TODO: Hide when there is no enrollment (total === 0)
+    // Hide when there is no enrollment (total === 0)
     if (cache['class'].total == 0) {
         document.querySelector('.class_popup__enroll_section').style.display = 'none';
+        document.querySelector('#enroll').style.display = 'none';
+        document.querySelector('#deenroll').style.display = 'none';
     } else {
         document.querySelector('.class_popup__enroll_section').style.display = 'block';
-        
+        document.querySelector('#enroll').style.display = 'block';
+        document.querySelector('#deenroll').style.display = 'block';
+
 
         setupData(document.querySelector('#class_popup .count').firstElementChild, Object.keys(enrolls).length + ' / ' + cache['class'].total);
 
@@ -262,7 +266,9 @@ function createEnroll() {
                 // loadEnrolls(current_event);
                 loadEnrollsByClassId(current_event, setEnrolls);
             } else if (this.status === 401) {
-                alert('Невозможно записаться. Нет свободных мест!')
+                alert('Запись невозможна. Нет свободных мест!');
+            } else if (this.status === 410) {
+                alert('Запись невозможна. Только за 15 минут до мероприятия.');
             }
         }
     };
@@ -303,6 +309,8 @@ function removeEnroll(enroll_id) {
                 loadClass(current_event, setClass);
                 // loadEnrolls(current_event);
                 loadEnrollsByClassId(current_event, setEnrolls);
+            } else if (this.status === 410) {
+                alert('Удалить запись невозможно. Только за 15 минут до мероприятия.');
             }
         }
     };

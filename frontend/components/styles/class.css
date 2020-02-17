@@ -229,6 +229,16 @@
 
 
 
+
+.enroll_alert {
+    font-style: italic;
+    color: #595959;
+}
+
+
+
+
+
 .data__loading button {
     pointer-events: none;
 }

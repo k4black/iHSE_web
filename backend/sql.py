@@ -757,6 +757,23 @@ def get_day(date: str) -> tp.List[TTableObject]:
     return tuples_to_dicts(events_list, 'events')
 
 
+def get_event_with_date(event_id: int) -> TTableObject:
+    """ Get event obj with date in dd.mm
+
+    Args:
+        event_id: id of events for selecting
+
+    Returns:
+        credits objects: l
+    """
+
+    sql_string = f'SELECT e.id, e.type, d.date, e.time FROM events e JOIN days d ON e.day_id = d.id WHERE e.id = %s;'
+    cursor.execute(sql_string, (event_id, ))
+    event = cursor.fetchone()
+
+    return {'id': event[0], 'type': event[1], 'date': event[2], 'time': event[3]}
+
+
 def insert_event(event_obj: TTableObject) -> int:
     """ Insert event
 
@@ -897,12 +914,12 @@ def remove_class(class_id: int) -> None:
     conn.commit()
 
 
-def enroll_user(class_id: int, user_obj: TTableObject, time_: str = '0') -> bool:  # TODO?
+def enroll_user(class_id: int, user_id: TTableObject, time_: str = '0') -> bool:  # TODO?
     """ Enroll user in event
 
     Args:
         class_id: class id (event id) from bd
-        user_obj: (id, user_type, phone, name, pass, team, credits)
+        user_id: user id form db
         time_: time str
 
     Returns:
@@ -920,7 +937,7 @@ def enroll_user(class_id: int, user_obj: TTableObject, time_: str = '0') -> bool
 
     cursor.execute(
         f"insert into enrolls (class_id, user_id, time, attendance, bonus) "
-        f"values ({class_id}, {user_obj['id']}, {time_}, false, 0);")
+        f"values ({class_id}, {user_id}, {time_}, false, 0);")
     conn.commit()
     return True
 
