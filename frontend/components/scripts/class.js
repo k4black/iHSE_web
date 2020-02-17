@@ -61,6 +61,10 @@ function setupClasses() {
     let class_events = document.querySelectorAll('[active-event]');
     for (let i in class_events) {
         class_events[i].onclick = function (val) {
+            if (val.target.tagName != 'DIV') {
+                return;  // To not to click on other buttons
+            }
+
             cache['class'] = undefined;
             cache['enrolls'] = undefined;
 
