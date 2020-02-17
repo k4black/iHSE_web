@@ -102,10 +102,10 @@ function countHostFeedback() {
             hosts_count[host] = (hosts_count[host] == undefined ? 0 : hosts_count[host] + 1);
 
             for (let feedback_obj of feedback_by_event_id[event_id]) {
-                tmp_hosts_mean[host]['score'] += feedback_obj['score'];
-                tmp_hosts_mean[host]['entertain'] += feedback_obj['entertain'];
-                tmp_hosts_mean[host]['useful'] += feedback_obj['useful'];
-                tmp_hosts_mean[host]['understand'] += feedback_obj['understand'];
+                tmp_hosts_mean['score'] += feedback_obj['score'];
+                tmp_hosts_mean['entertain'] += feedback_obj['entertain'];
+                tmp_hosts_mean['useful'] += feedback_obj['useful'];
+                tmp_hosts_mean['understand'] += feedback_obj['understand'];
             }
 
             if (hosts_mean[host] == undefined) {

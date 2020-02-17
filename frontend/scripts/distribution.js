@@ -26,6 +26,8 @@ var attendanceChart = undefined;
 function countDay() {
     let day_id = document.getElementById('days').value;
 
+    console.log('day_id', day_id);
+
     let events_attendance = {};
     for (let event_id in cache['events']) {
         let event = cache['events'][event_id];
@@ -37,7 +39,7 @@ function countDay() {
     let enrolls_by_class_id = groupBy(Object.values(cache['enrolls']), 'class_id');
     for (let event_id in cache['events']) {
         if (enrolls_by_class_id[event_id] == undefined) {
-            return;
+            continue;
         }
 
         for (let enroll of enrolls_by_class_id[event_id]) {
@@ -51,6 +53,8 @@ function countDay() {
     for (let event_id in events_attendance) {
         processed_events_attendance[cache['events'][event_id].title] = events_attendance[event_id];
     }
+
+    console.log('processed_events_attendance', processed_events_attendance);
 
     // attendance
     if (attendanceChart !== undefined) {
