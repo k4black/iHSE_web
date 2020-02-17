@@ -721,11 +721,11 @@ def logout(sess_id: int) -> bool:
         Success delete or not
     """
 
-    cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
-    session = cursor.fetchone()
-
-    if session is None:  # No such session
-        return False
+    # cursor.execute(f'select * from sessions where id = bytea \'\\x{sess_id}\';')
+    # session = cursor.fetchone()
+    #
+    # if session is None:  # No such session
+    #     return False
 
     cursor.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
     conn.commit()

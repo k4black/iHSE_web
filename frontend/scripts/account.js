@@ -134,28 +134,27 @@ function setAccount() {
 /**
  * Logout button
  * Send http POST request to clear session id
- */  // TODO: Add logout button
-// document.querySelector('.header__button').addEventListener('click', function () {
-//
-//     var xhttp = new XMLHttpRequest();
-//
-//     xhttp.onreadystatechange = function() {
-//         if (this.readyState === 4) {
-//             if (this.status === 200) {
-//
-//                 location = 'http:/index.html';  // Refer to start page
-//             }
-//
-//             if (this.status === 302) {  // Ok - redir
-//
-//             }
-//         }
-//     };
-//
-//     xhttp.open("POST", "/logout", true);
-//     xhttp.withCredentials = true; // To send Cookie;
-//     xhttp.send();
-// });
+ */
+function logout() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+
+                location = '/index.html';  // Refer to start page
+            }
+
+            if (this.status === 302) {  // Ok - redir
+
+            }
+        }
+    };
+
+    xhttp.open("POST", "/logout", true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
 
 
 

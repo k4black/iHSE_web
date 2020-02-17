@@ -360,15 +360,16 @@ body {
 
 
 
-
 .project__edit_button {
     position: absolute;
 
-    left: -10px;
-    top: 40px;
+    left: 40px;
+    top: 35px;
 
     width: 40px;
     height: 40px;
 
     cursor: pointer;
+
+    padding: 3px 0 0 1px;
 }

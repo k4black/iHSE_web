@@ -165,7 +165,7 @@
     height: 8px;
 }
 
-.enroll__button {
+.enroll__button, .save__button {
     width: 50px!important;
     height: 50px!important;
     display: block;
@@ -175,7 +175,11 @@
     cursor: pointer;
 }
 
-.enroll__button i {
+.save__button {
+    right: 70px;
+}
+
+.enroll__button i, save__button i{
     font-size: 25px;
 }
 

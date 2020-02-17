@@ -173,11 +173,11 @@ function saveProject() {
         return;
     }
 
-    cache['project']['anno'] = anno;
+    cache['project']['annotation'] = anno;
     cache['project']['type'] = type;
     cache['project']['def_type'] = def_type;
-    cache['project']['dirs'] = dirs;
-    cache['project']['desc'] = desc;
+    cache['project']['direction'] = dirs;
+    cache['project']['description'] = desc;
 
     let data = JSON.stringify(cache['project']);
 
