@@ -78,6 +78,10 @@ body {
 }
 
 
+.header__button {
+    cursor: pointer;
+}
+
 .header__button i {
     color: white;
 }
@@ -202,12 +206,13 @@ body {
 .project__top_line {
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: space-between;
 
     width: 100%;
 }
 
-.project__top_line span:first-child {
+.project__top_line>span:first-child {
     font-size: 18px;
     font-weight: bold;
     color: #03053b;
@@ -215,7 +220,15 @@ body {
     min-width: 100px;
 }
 
-.project__top_line span:last-child {
+.project__top_line div span:first-child {
+    font-size: 14px;
+    color: #8a8a8a;
+
+    min-width: 50px;
+    text-align: right
+}
+
+.project__top_line div span:last-child {
     font-size: 14px;
     color: #8a8a8a;
 
@@ -346,6 +359,8 @@ body {
 
 .credits__history_item div {
     display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 
