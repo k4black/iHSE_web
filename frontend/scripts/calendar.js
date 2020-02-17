@@ -10,6 +10,26 @@
 /** ===============  LOGIC and REQUESTS  =============== */
 
 
+document.addEventListener('load', function () {
+    loadUsers(setUsers)
+});
+
+
+function setUsers() {
+    let users = cache['users'];
+
+    let options_html = '';
+    for (let user_id in users) {
+        if (users[user_id].type != 0) {
+            options_html += '<option>' + users[user_id].name + '</option>'
+        }
+    }
+    document.getElementById('names_datalist').innerHTML = options_html;
+}
+
+
+
+
 
 /**
  * Get day information from server (first time)
@@ -215,7 +235,9 @@ function setupAdminButtons() {
     for (let i = 0; i < removeButtons.length; ++i) {
         removeButtons[i].onclick = function () {
             // alert('clicked remove');
-            removeEvent(removeButtons[i].parentElement.getAttribute('data-id'));
+            if (confirm('Удалить мероприятие <' + removeButtons[i].parentElement.querySelector('.event__title').innerHTML + '>')) {
+                removeEvent(removeButtons[i].parentElement.getAttribute('data-id'));
+            }
         }
     }
 
@@ -430,5 +452,38 @@ function removeEvent(id) {
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}
+
+
+
+
+
+
+
+/**
+ * Get user information from server
+ * Save list to global 'cache['users']'
+ *
+ * Run func on OK status
+ */
+function loadUsers(func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields
+                let users = JSON.parse(this.responseText);
+                let objs = groupByUnique(users, 'id');
+
+                cache['users'] = objs;
+
+                func();
+            }
+        }
+    };
+
+    xhttp.open("GET", "/admin_get_table?" + "table=" + 'users', true);
+    xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }

@@ -95,18 +95,21 @@ function setHosts() {
             continue;
         }
 
-        if (hosts[event.host] == undefined) {
-            hosts[event.host] = {'master': 0, 'lecture': 0};
-            hosts_total[event.host] = 0;
-        }
+        for (let host of event.host.split(', ')) {
 
-        hosts_total[event.host]++;
-        if (event.type == 1) {
-            hosts[event.host]['master']++;
-        }
+            if (hosts[host] == undefined) {
+                hosts[host] = {'master': 0, 'lecture': 0};
+                hosts_total[host] = 0;
+            }
 
-        if (event.type == 2) {
-            hosts[event.host]['lecture']++;
+            hosts_total[host]++;
+            if (event.type == 1) {
+                hosts[host]['master']++;
+            }
+
+            if (event.type == 2) {
+                hosts[host]['lecture']++;
+            }
         }
     }
 

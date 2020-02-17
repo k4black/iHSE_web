@@ -386,8 +386,8 @@ function saveClass() {
 
     if (total !== '')
         cache['class'].total = total;
-    if (total !== '')
-        cache['class'].annotation = anno;
+    cache['class'].annotation = anno;
+
     let data = JSON.stringify(cache['class']);
 
     xhttp.open("POST", "/admin_send_data?" + "table="+'classes', true);
