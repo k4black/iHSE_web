@@ -62,7 +62,8 @@ function getTableColumns(credits, days, events) {
     let fixedColumns = userColumns.length;
 
 
-    let specialColumns = ['olymp', 'sport'];
+    // let specialColumns = ['olymp', 'sport'];
+    let specialColumns = [];
 
 
     for (let i of userColumns) {
@@ -103,7 +104,7 @@ function getTableColumns(credits, days, events) {
             align: 'center'
         });
 
-        for (let event_id in processed_days[day_id]) {
+        for (let event_id of processed_days[day_id]) {
             columnsBottom.push({
                 field: 'date' + days[day_id].date + 'id' + event_id,
                 title: event_id,
