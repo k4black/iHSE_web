@@ -217,11 +217,11 @@ function setCredits() {
         options: {}
     });
 
-    percentageChart.scaleService.updateScaleDefaults('linear', {
-        ticks: {
-            min: 0
-        }
-    });
+    // percentageChart.scaleService.updateScaleDefaults('linear', {
+    //     ticks: {
+    //         min: 0
+    //     }
+    // });
 
 
 
@@ -244,11 +244,11 @@ function setCredits() {
         options: {}
     });
 
-    creditsChart.scaleService.updateScaleDefaults('linear', {
-        ticks: {
-            min: 0
-        }
-    });
+    // creditsChart.scaleService.updateScaleDefaults('linear', {
+    //     ticks: {
+    //         min: 0
+    //     }
+    // });
 }
 
 function setDistribution() {
