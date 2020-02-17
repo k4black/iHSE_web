@@ -95,18 +95,21 @@ function setHosts() {
             continue;
         }
 
-        if (hosts[event.host] == undefined) {
-            hosts[event.host] = {'master': 0, 'lecture': 0};
-            hosts_total[event.host] = 0;
-        }
+        for (let host of event.host.split(', ')) {
 
-        hosts_total[event.host]++;
-        if (event.type == 1) {
-            hosts[event.host]['master']++;
-        }
+            if (hosts[host] == undefined) {
+                hosts[host] = {'master': 0, 'lecture': 0};
+                hosts_total[host] = 0;
+            }
 
-        if (event.type == 2) {
-            hosts[event.host]['lecture']++;
+            hosts_total[host]++;
+            if (event.type == 1) {
+                hosts[host]['master']++;
+            }
+
+            if (event.type == 2) {
+                hosts[host]['lecture']++;
+            }
         }
     }
 
@@ -196,7 +199,7 @@ function setCredits() {
 
 
     var ctx = document.getElementById('percentage').getContext('2d');
-    var chart = new Chart(ctx, {
+    var percentageChart = new Chart(ctx, {
         // The type of chart we want to create
         type: 'bar',
 
@@ -214,10 +217,16 @@ function setCredits() {
         options: {}
     });
 
+    percentageChart.scaleService.updateScaleDefaults('linear', {
+        ticks: {
+            min: 0
+        }
+    });
+
 
 
     var ctx = document.getElementById('credits').getContext('2d');
-    var chart = new Chart(ctx, {
+    var creditsChart = new Chart(ctx, {
         // The type of chart we want to create
         type: 'line',
 
@@ -233,6 +242,12 @@ function setCredits() {
 
         // Configuration options go here
         options: {}
+    });
+
+    creditsChart.scaleService.updateScaleDefaults('linear', {
+        ticks: {
+            min: 0
+        }
     });
 }
 

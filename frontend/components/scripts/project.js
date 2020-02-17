@@ -39,7 +39,7 @@ function hideProject() {
 
 function setupData(elem, data) {
     elem.firstElementChild.innerHTML = data;
-    elem.lastElementChild.innerHTML = data;
+    elem.lastElementChild.value = data;
 }
 
 
@@ -64,9 +64,12 @@ function setPopupProject() {
         let user = names[id];
 
         if (user['project_id'] == project_id) {
-            users_html += '<div class="user ' + (user['id'] == cache['user']['id'] ? 'current_user' : '') + '">' + user.name + '</div>';
+            users_html += '<p class="user ' + (user['id'] == cache['user']['id'] ? 'current_user' : '') + '">' + user.name + ' [' + user.team + ']</p>';
         }
     }
+
+
+    document.querySelector('.names').innerHTML = users_html;
 
 
 
@@ -131,7 +134,7 @@ function deenrollProject() {
                 cache['user']['project_id'] = 0;
                 loadProjects(cache['project']['id'], setPopupProject);
             } else if (this.status === 409) {
-                alert('Невозможно отписаться. у вас нет проекта.')
+                alert('Невозможно отписаться. У вас нет проекта.');
             }
         }
     };

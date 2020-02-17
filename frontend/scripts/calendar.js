@@ -10,6 +10,26 @@
 /** ===============  LOGIC and REQUESTS  =============== */
 
 
+document.addEventListener('load', function () {
+    loadUsers(setUsers)
+});
+
+
+function setUsers() {
+    let users = cache['users'];
+
+    let options_html = '';
+    for (let user_id in users) {
+        if (users[user_id].type != 0) {
+            options_html += '<option>' + users[user_id].name + '</option>'
+        }
+    }
+    document.getElementById('names_datalist').innerHTML = options_html;
+}
+
+
+
+
 
 /**
  * Get day information from server (first time)
@@ -185,8 +205,8 @@ function setDay() {
 
     document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
 
-    setupAdminButtons();
     setupClasses();
+    setupAdminButtons();
 }
 
 
@@ -213,21 +233,26 @@ function setupAdminButtons() {
     console.log('removeButtons ' + removeButtons.length);
 
     for (let i = 0; i < removeButtons.length; ++i) {
-        removeButtons[i].addEventListener('click', function () {
+        removeButtons[i].onclick = function () {
             // alert('clicked remove');
-            removeEvent(removeButtons[i].parentElement.getAttribute('data-id'));
-        });
+            if (confirm('Удалить мероприятие <' + removeButtons[i].parentElement.querySelector('.event__title').innerHTML + '>')) {
+                removeEvent(removeButtons[i].parentElement.getAttribute('data-id'));
+            }
+        }
     }
 
 
     let editButtons = document.getElementsByClassName("edit_event");
     for (let i = 0; i < editButtons.length; ++i) {
-        editButtons[i].addEventListener('click', function () {
+        editButtons[i].onclick = function () {
             // alert('clicked remove');
             console.log('Edit Event ' + editButtons[i].parentElement.getAttribute('data-id'));
             let id = editButtons[i].parentElement.getAttribute('data-id');
 
-            let type = editButtons[i].nextElementSibling.tagName === 'A' ? 1 : 0;
+            let type = 0;
+            if ('active-event' in Object.values(editButtons[i].parentElement.attributes)) {
+                type = ('active-event-lecture' in Object.values(editButtons[i].parentElement.attributes)) ? 2 : 1;
+            }
 
             let title = editButtons[i].parentElement.getElementsByClassName('event__title')[0].textContent;
             let desc = editButtons[i].parentElement.getElementsByClassName('event__desc');
@@ -242,32 +267,35 @@ function setupAdminButtons() {
             console.log(id + title + desc + names + loc);
 
             openEditEvent(id, title, type, selectedDay, times[0], times[1] === undefined ? "" : times[1], desc, names, loc);
-        });
+        }
     }
 
 
     let copyButtons = document.getElementsByClassName("copy_event");
-    for (let i = 0; i < editButtons.length; ++i) {
-        editButtons[i].addEventListener('click', function () {
+    for (let i = 0; i < copyButtons.length; ++i) {
+        copyButtons[i].onclick = function () {
             // alert('clicked remove');
-            console.log('Copy Event ' + editButtons[i].parentElement.getAttribute('data-id'));
+            console.log('Copy Event ' + copyButtons[i].parentElement.getAttribute('data-id'));
 
-            let type = editButtons[i].nextElementSibling.tagName === 'A' ? 1 : 0;
+            let type = 0;
+            if ('active-event' in Object.values(copyButtons[i].parentElement.attributes)) {
+                type = ('active-event-lecture' in Object.values(copyButtons[i].parentElement.attributes)) ? 2 : 1;
+            }
 
-            let title = editButtons[i].parentElement.getElementsByClassName('event__title')[0].textContent;
-            let desc = editButtons[i].parentElement.getElementsByClassName('event__desc');
+            let title = copyButtons[i].parentElement.getElementsByClassName('event__title')[0].textContent;
+            let desc = copyButtons[i].parentElement.getElementsByClassName('event__desc');
             desc = desc.length === 0 ? "" : desc[0].textContent;
-            let names = editButtons[i].parentElement.getElementsByClassName('event__names');
+            let names = copyButtons[i].parentElement.getElementsByClassName('event__names');
             names = names.length === 0 ? "" : names[0].textContent;
-            let loc = editButtons[i].parentElement.getElementsByClassName('event__loc');
+            let loc = copyButtons[i].parentElement.getElementsByClassName('event__loc');
             loc = loc.length === 0 ? "" : loc[0].textContent;
 
-            let times = editButtons[i].parentElement.parentElement.parentElement.getElementsByClassName('bar')[0].textContent.split('\n');
+            let times = copyButtons[i].parentElement.parentElement.parentElement.getElementsByClassName('bar')[0].textContent.split('\n');
 
             console.log(id + title + desc + names + loc);
 
             openEditEvent('', title, type, selectedDay, times[0], times[1] === undefined ? "" : times[1], desc, names, loc);
-        });
+        }
     }
 
 
@@ -424,5 +452,38 @@ function removeEvent(id) {
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}
+
+
+
+
+
+
+
+/**
+ * Get user information from server
+ * Save list to global 'cache['users']'
+ *
+ * Run func on OK status
+ */
+function loadUsers(func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields
+                let users = JSON.parse(this.responseText);
+                let objs = groupByUnique(users, 'id');
+
+                cache['users'] = objs;
+
+                func();
+            }
+        }
+    };
+
+    xhttp.open("GET", "/admin_get_table?" + "table=" + 'users', true);
+    xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }

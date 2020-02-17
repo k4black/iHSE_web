@@ -54,7 +54,7 @@ function countTop() {
     }
 
     var ctx = document.getElementById('top_feedback').getContext('2d');
-    var myBarChart = new Chart(ctx, {
+    var topChart = new Chart(ctx, {
         type: 'horizontalBar',
 
         // The data for our dataset
@@ -62,12 +62,19 @@ function countTop() {
             labels: Object.keys(top_counter_not_empty),  // TODO: sort
             datasets: [{
                 label: 'Количество выбранных',
-                data: Object.values(top_counter_not_empty)
+                data: Object.values(top_counter_not_empty),
+                backgroundColor: '#006cae'
             }]
         },
 
         // Configuration options go here
         options: {}
+    });
+
+    topChart.scaleService.updateScaleDefaults('linear', {
+        ticks: {
+            min: 0
+        }
     });
 }
 
@@ -135,6 +142,12 @@ function countHostFeedback() {
                 }
             }
         });
+
+        chart.scaleService.updateScaleDefaults('linear', {
+            ticks: {
+                min: 0
+            }
+        });
     }
 }
 
@@ -199,6 +212,12 @@ function countDayFeedback() {
                 ticks: {
                     min: 0
                 }
+            }
+        });
+
+        chart.scaleService.updateScaleDefaults('linear', {
+            ticks: {
+                min: 0
             }
         });
     }

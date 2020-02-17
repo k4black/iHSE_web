@@ -31,16 +31,52 @@ TIMEOUT = 7200  # In seconds 2h = 2 * 60m * 60s = 7200s : Couple of hours
 
 TIMEZONE_SHIFT = 3  # MST timezone
 
+ENROLL_CLOSE_FOR = 15  # Minutes
+
+
+def get_datetime_str() -> str:
+    """ Return current time str. According to timezone
+
+    Returns:
+        time str in format yyyy-mm-dd hh:mm:ss
+    """
+
+    return datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))).strftime('%Y-%m-%d %H:%M:%S') + ' MSK'
+
 
 def get_time_str() -> str:
     """ Return current time str. According to timezone
 
     Returns:
-        time str in format %Y-%m-%d %H:%M:%S
+        time str in format hh.mm
     """
 
-    return datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))).strftime('%Y-%m-%d %H:%M:%S') + ' MSK'
-    # return time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime()) + ' UTC'
+    return datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))).strftime('%H.%M')
+
+
+def get_date_str() -> str:
+    """ Return current time str. According to timezone
+
+    Returns:
+        time str in format dd.mm
+    """
+
+    return datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))).strftime('%d.%m')
+
+
+def check_enroll_time(date: str, time_: str, year: str = '2020') -> bool:
+    """ Check appropriate time for enroll on event
+
+    Returns:
+        bool can enroll or deenroll on the event
+    """
+
+    can_enroll = datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))) <= \
+        datetime.strptime(f'{date}.{year} {time_}', '%d.%m.%Y %M.%H') - timedelta(minutes=ENROLL_CLOSE_FOR)
+
+    current_day = get_date_str() == date
+
+    return can_enroll and current_day
 
 
 """ ---===---==========================================---===--- """
@@ -138,7 +174,7 @@ def update_cache() -> None:
     # Update today
     TODAY = datetime.today().strftime('%d.%m')
     print('Today ', TODAY)
-    print('sync time: ' + get_time_str())
+    print('sync time: ' + get_datetime_str())
 
     return
 
@@ -1229,7 +1265,7 @@ def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     phone = ''.join(i for i in phone if i.isdigit())
 
     # Get session obj or None
-    session_id = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'], get_time_str())
+    session_id = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'], get_datetime_str())
 
     if session_id is not None:
         # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
@@ -1352,7 +1388,7 @@ def post_register(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
     success = sql.register(code, name, surname, phone, sex, passw, team)
     if user is not None and success:
         # Auto login of user
-        session_id = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'], get_time_str())
+        session_id = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'], get_datetime_str())
 
         if session_id is not None:
             # Convert: b'\xbeE%-\x8c\x14y3\xd8\xe1ui\x03+D\xb8' -> be45252d8c147933d8e17569032b44b8
@@ -1542,7 +1578,7 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
             sql.update_in_table(enrolls[i], 'enrolls')
 
         # TODO: Minus balls if not attendant
-        credits = [{'user_id': int(checkin['id']), 'event_id': event_id, 'time': get_time_str(),
+        credits = [{'user_id': int(checkin['id']), 'event_id': event_id, 'time': get_datetime_str(),
                     'value': CREDITS_MASTER + min(int(checkin['bonus']), CREDITS_ADDITIONAL)} for checkin in checkins if
                    int(checkin['id']) in users_to_set_credits]  # type: tp.List[sql.TTableObject]
         for credit in credits:
@@ -1555,13 +1591,13 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         print('New credits: ', credits)
     else:
         # lecture
-        enrolls = [{'class_id': event_id, 'user_id': int(checkin['id']), 'time': get_time_str(), 'attendance': True,
+        enrolls = [{'class_id': event_id, 'user_id': int(checkin['id']), 'time': get_datetime_str(), 'attendance': True,
                     'bonus': min(int(checkin['bonus']), CREDITS_ADDITIONAL)} for checkin in checkins]  # type: tp.List[sql.TTableObject]
         for enroll in enrolls:
             sql.update_in_table(enroll, 'enrolls')
 
         credits = [{'user_id': int(checkin['id']), 'event_id': event_id,
-                    'time': get_time_str(), 'value': CREDITS_LECTURE + min(int(checkin['bonus']), CREDITS_ADDITIONAL)}
+                    'time': get_datetime_str(), 'value': CREDITS_LECTURE + min(int(checkin['bonus']), CREDITS_ADDITIONAL)}
                    for checkin in checkins]  # type: tp.List[sql.TTableObject]
         for credit in credits:
             sql.insert_to_table(credit, 'credits')
@@ -1617,7 +1653,7 @@ def post_mark_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
             if enroll['attendance'] is True or enroll['attendance'] == 'true':
                 sql.pay_credit(enroll['user_id'], enroll['event_id'],
                                CREDITS_MASTER + min(CREDITS_ADDITIONAL, enroll['bonus']),
-                               get_time_str())
+                               get_datetime_str())
                 # TODO: CREDITS_MASTER CREDITS_LECTURE check
 
         return ('200 Ok',
@@ -1662,10 +1698,20 @@ def post_create_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
 
     event_id = query['event_id']
 
-    # TODO: close for 15 min
-    if sql.check_class(event_id):
-        # Check class have empty places - ok
-        sql.insert_enroll((None, event_id, user_obj['id'], get_time_str(), 0))
+    event = sql.get_event_with_date(event_id)
+
+    if event is None:
+        return ('405 Method Not Allowed',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
+
+    if not check_enroll_time(event['date'], event['time']):  # Close for 15 min
+        return ('410 Gone',
+                [('Access-Control-Allow-Origin', '*')],
+                [])
+
+
+    if sql.enroll_user(event_id, user_obj['id'], get_datetime_str()):
 
         return ('200 Ok',
                 [
@@ -1710,8 +1756,16 @@ def post_remove_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
     enroll_id = query['id']
     enroll = sql.get_in_table(enroll_id, 'enrolls')
 
-    if user_obj['user_type'] == 0 and enroll['user_id'] == user_obj['id'] or user_obj['user_type'] >= 1:
+    if enroll is not None and (user_obj['user_type'] == 0 and enroll['user_id'] == user_obj['id'] or user_obj['user_type'] >= 1):
         # Check admin or user remove himself
+
+        event = sql.get_event_with_date(enroll['event_id'])
+
+        if not check_enroll_time(event['date'], event['time']):  # Close for 15 min
+            return ('410 Gone',
+                    [('Access-Control-Allow-Origin', '*')],
+                    [])
+
         sql.remove_enroll(enroll_id)
 
         return ('200 Ok',
@@ -1759,7 +1813,7 @@ def post_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     # TODO:
 
-    if sql.enroll_user(event_id, user_obj, get_time_str()):
+    if sql.enroll_user(event_id, user_obj, get_datetime_str()):
 
         event = sql.get_event(event_id)
 
