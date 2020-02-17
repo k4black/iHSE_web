@@ -103,12 +103,14 @@ function setFeedback() {
 
     let template = cache['feedback'].template;
     let data = cache['feedback'].data;
-    let feedback_by_event_id = groupBy(Object.values(data), 'event_id');
+    let feedback_by_event_id = groupByUnique(Object.values(data), 'event_id');
 
     let events_html = '';
 
     for (let event of template) {
-        let feedback = feedback_by_event_id[event['id']][0];
+        let feedback = feedback_by_event_id[event['id']];
+
+        console.log('feedback data for event ' + event, feedback);
 
         events_html +=
             '<div class="event">' +
@@ -143,7 +145,7 @@ function setFeedback() {
 
     // Setup sliders
     for (let event of template) {
-        let feedback = feedback_by_event_id[event['id']][0];
+        let feedback = feedback_by_event_id[event['id']];
 
         // TODO: check disabled
         for (let feature of ['score', 'entertain', 'useful', 'understand']) {
@@ -151,7 +153,7 @@ function setFeedback() {
                 target: '#event' + event['id'] + feature,
                 values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                 range: false,
-                set: [5],
+                set: [(feedback == null ? 5 : feedback[feature])],
                 tooltip: false,
                 disabled: (feedback == null ? false : true)
             });
@@ -161,6 +163,9 @@ function setFeedback() {
         if (feedback != null) {
             document.querySelector('#event' + event.id + 'comment textarea').disabled = true;
             document.querySelector('#event' + event.id + 'comment textarea').value = feedback['comment'];
+        } else {
+            document.querySelector('#event' + event.id + 'comment textarea').disabled = false;
+            document.querySelector('#event' + event.id + 'comment textarea').value = '';
         }
     }
 }

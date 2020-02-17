@@ -39,6 +39,13 @@
     width: 75%;
 }
 
+
+.description p:last-child {
+    font-size: 14px;
+    color: #e3e6e5;
+    min-width: 100px;
+}
+
 .project__top_line {
     display: flex;
     flex-direction: row;

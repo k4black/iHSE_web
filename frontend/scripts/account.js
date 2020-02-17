@@ -66,6 +66,7 @@ function setProject() {
 
     document.querySelector('.project__title').innerHTML = project.title;
     document.querySelector('.project__type').innerHTML = project.type;
+    document.querySelector('.project__def_type').innerHTML = project.def_type;
     let names_test = '';
     for (let user_id in cache['names']) {
         let user = cache['names'][user_id];

@@ -89,12 +89,15 @@
             <div class="description">
                 <div class="project__top_line">
                     <span class="project__title"></span>
-                    <span class="project__type" style="text-align:right"></span>
+                    <div style="display: inline-flex; flex-direction: column">
+                        <span class="project__type" style="text-align:right"></span>
+                        <span class="project__def_type" style="text-align:right"></span>
+                    </div>
                 </div>
 
                 <p class="project__names"></p>
-                <p class="project__desc"></p>
                 <p class="project__anno"></p>
+                <p class="project__desc"></p>
             </div>
             <button class="project__edit_button" onclick="editProject(cache['project']['id']);"><i class="mobile__item__icon large material-icons">edit</i></button>
         </div>

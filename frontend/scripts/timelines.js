@@ -170,7 +170,7 @@ function buildTimeline(locations, events) {
         console.log('added event ', month + '.' + day, hours1 + ':' + min1, hours2 + ':' + min2);
 
         let options = {
-            class: (events[i].type === 1 ? 'class' : 'regular'),
+            class: (events[i].type === 0 ? 'regular' : (events[i].type === 1 ? 'master' : 'lecture')),
             onClick: function (event) {
                 if (events[i].type === 1) {
                     console.log('clicked event with id: ', events[i].id);
