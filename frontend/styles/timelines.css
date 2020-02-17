@@ -4,22 +4,22 @@
 }
 
 .master {
-    background-color: #c4dcf5; !important;
-    border: 1px solid #b2c7de !important;
+    background-color: #91a9cd !important;
+    border: 1px solid #8499ba !important;
     cursor: pointer;
     border-radius: 5px;
 }
 
-.class:hover {
-    background-color: #b2c7de; !important;
-    border: 1px solid #b2c7de !important;
+.master:hover {
+    background-color: #8499ba !important;
+    border: 1px solid #8499ba !important;
 }
 
 .lecture {
     background: linear-gradient(45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%),linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%) !important;
     background-size: 1em 1em !important;
-    background-color: #c4dcf5 !important;
-    border: 1px solid #b2c7de !important;
+    background-color: #91a9cd !important;
+    border: 1px solid #8499ba !important;
     cursor: pointer;
     border-radius: 5px;
 }
@@ -27,34 +27,23 @@
 .class:hover, .lecture:hover {
     background: linear-gradient(45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%),linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%) !important;
     background-size: 1em 1em !important;
-    background-color: #b2c7de !important;
-    border: 1px solid #b2c7de !important;
-}
-
-
-
-.event[active-event] {
-
-    cursor: pointer;
-}
-
-.event[active-event-lecture] {
-
+    background-color: #8499ba !important;
+    border: 1px solid #8499ba !important;
 }
 
 
 
 
 .regular {
-    background-color: #e3e6e5 !important;
-    border: 1px solid #d8dbda !important;
+    background-color: #bbbdbc !important;
+    border: 1px solid #acaead !important;
     cursor: default;
     border-radius: 5px;
 }
 
 .regular:hover {
-    background-color: #d8dbda !important;
-    border: 1px solid #d8dbda !important;
+    background-color: #acaead !important;
+    border: 1px solid #acaead !important;
     cursor: default;
     border-radius: 5px;
 }
