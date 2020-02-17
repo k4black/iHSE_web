@@ -21,6 +21,7 @@ window.addEventListener('load', function () {
 
 
 
+var attendanceChart = undefined;
 
 function countDay() {
     let day_id = document.getElementById('days').value;
@@ -48,8 +49,11 @@ function countDay() {
     }
 
     // attendance
+    if (attendanceChart !== undefined) {
+        attendanceChart.clear();
+    }
     var ctx = document.getElementById('attendance').getContext('2d');
-    var chart = new Chart(ctx, {
+    attendanceChart = new Chart(ctx, {
         // The type of chart we want to create
         type: 'horizontalBar',
 
@@ -64,7 +68,16 @@ function countDay() {
         },
 
         // Configuration options go here
-        options: {}
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        // max: 100
+                    }
+                }]
+            }
+        }
     });
 }
 
@@ -133,7 +146,16 @@ function setHosts() {
         },
 
         // Configuration options go here
-        options: {}
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        // max: 100
+                    }
+                }]
+            }
+        }
     });
 }
 
