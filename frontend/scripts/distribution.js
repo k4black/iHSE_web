@@ -36,6 +36,10 @@ function countDay() {
 
     let enrolls_by_class_id = groupBy(Object.values(cache['enrolls']), 'class_id');
     for (let event_id in cache['events']) {
+        if (enrolls_by_class_id[event_id] == undefined) {
+            return;
+        }
+
         for (let enroll of enrolls_by_class_id[event_id]) {
             if (enroll.attendance == true) {
                 events_attendance[event_id]++;
@@ -148,7 +152,7 @@ function setHosts() {
         // Configuration options go here
         options: {
             scales: {
-                yAxes: [{
+                xAxes: [{
                     ticks: {
                         min: 0,
                         // max: 100

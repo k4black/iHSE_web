@@ -1,6 +1,6 @@
 
 
-.wrapper div {
+.wrapper>div {
     width: 100%;
 }
 
@@ -61,6 +61,7 @@
 .day_feedback, .host_feedback {
     display: inline-flex;
     flex-direction: column;
+    margin: 10px;
 }
 
 
