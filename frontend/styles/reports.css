@@ -1,5 +1,12 @@
 
 
+.wrapper div {
+    width: 100%;
+}
+
+
+
+
 .feedback_header {
     display: flex;
     flex-direction: row;

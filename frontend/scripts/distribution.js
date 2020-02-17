@@ -196,7 +196,7 @@ function setCredits() {
 
 
     var ctx = document.getElementById('percentage').getContext('2d');
-    var chart = new Chart(ctx, {
+    var percentageChart = new Chart(ctx, {
         // The type of chart we want to create
         type: 'bar',
 
@@ -214,10 +214,16 @@ function setCredits() {
         options: {}
     });
 
+    percentageChart.scaleService.updateScaleDefaults('linear', {
+        ticks: {
+            min: 0
+        }
+    });
+
 
 
     var ctx = document.getElementById('credits').getContext('2d');
-    var chart = new Chart(ctx, {
+    var creditsChart = new Chart(ctx, {
         // The type of chart we want to create
         type: 'line',
 
@@ -233,6 +239,12 @@ function setCredits() {
 
         // Configuration options go here
         options: {}
+    });
+
+    creditsChart.scaleService.updateScaleDefaults('linear', {
+        ticks: {
+            min: 0
+        }
     });
 }
 
