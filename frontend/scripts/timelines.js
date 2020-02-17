@@ -172,7 +172,7 @@ function buildTimeline(locations, events) {
         let options = {
             class: (events[i].type === 0 ? 'regular' : (events[i].type === 1 ? 'master' : 'lecture')),
             onClick: function (event) {
-                if (events[i].type === 1) {
+                if (events[i].type === 1 || events[i].type === 2) {
                     console.log('clicked event with id: ', events[i].id);
 
                     // loadClass(events[i].id);

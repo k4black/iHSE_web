@@ -248,6 +248,10 @@
 
 #scan {
     cursor: pointer;
+    width: 100%;
+    height: 50px;
+    border-radius: 25px!important;
+    text-align: center;
 }
 
 

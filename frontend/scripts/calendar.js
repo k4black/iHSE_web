@@ -163,7 +163,13 @@ function setDay() {
     var event_html;
 
     let times = groupBy(events, 'time');
-    for (let time of Object.keys(groupBy(events, 'time')).sort()) {
+    let times_arr = Object.keys(times);
+    let processed_times_arr = times_arr.map(function (i) {return i.length === 9 ? '0'+i : i}).map(function (i) {return i.length === 10 ? i.slice(0, 6)+'0'+i.slice(6) : i});
+
+    for (let processed_time of processed_times_arr) {
+        let time = processed_time[6] == '0' && processed_time[7] != '0' ? processed_time.slice(0, 6) + processed_time.slice(7) : processed_time;
+        time = time[0] === '0' && time[1] !== '0' ? time.slice(1) : time;
+
         time_html = '<div class="time">' +
                         '<div class="bar">' + time + '</div>' +
                             '<div class="events">';
@@ -364,7 +370,7 @@ function saveEvent() {
     let names = document.getElementById('names').value;
     let location = document.getElementById('location').value;
 
-    alert('Saving event: ' + id + ' ' + title + ' ' + type + ' ' + date + ' ' + time + ' ' + desc + ' ' + names + ' ' + location);
+    // alert('Saving event: ' + id + ' ' + title + ' ' + type + ' ' + date + ' ' + time + ' ' + desc + ' ' + names + ' ' + location);
 
     if (title === '' || date === '' || time === '') {
         alert('Cannot save with empty TITLE or DATE or TIME');
@@ -395,7 +401,7 @@ function saveEvent() {
             let selectedDay = document.getElementsByClassName("day selected")[0].children[1].textContent;
 
             if (this.status === 200) {  // Got it
-                alert("ok!");
+                console.log("Event created;");
             }
 
             if (this.status === 405) {  //  Method Not Allowed or already got it

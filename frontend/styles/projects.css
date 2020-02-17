@@ -40,11 +40,11 @@
 }
 
 
-.description p:last-child {
-    font-size: 14px;
-    color: #e3e6e5;
-    min-width: 100px;
-}
+/*.description p:last-child {*/
+/*    font-size: 14px;*/
+/*    color: #e3e6e5;*/
+/*    min-width: 100px;*/
+/*}*/
 
 .project__top_line {
     display: flex;

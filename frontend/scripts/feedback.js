@@ -161,71 +161,14 @@ function setFeedback() {
 
         // TODO: check comment
         if (feedback != null) {
-            document.querySelector('#event' + event.id + 'comment textarea').disabled = true;
-            document.querySelector('#event' + event.id + 'comment textarea').value = feedback['comment'];
+            document.querySelector('#event' + event.id + 'comment').disabled = true;
+            document.querySelector('#event' + event.id + 'comment').value = feedback['comment'];
         } else {
-            document.querySelector('#event' + event.id + 'comment textarea').disabled = false;
-            document.querySelector('#event' + event.id + 'comment textarea').value = '';
+            document.querySelector('#event' + event.id + 'comment').disabled = false;
+            document.querySelector('#event' + event.id + 'comment').value = '';
         }
     }
 }
-
-
-
-
-
-
-
-/**
- * Setup sliders
- * https://www.cssscript.com/animated-customizable-range-slider-pure-javascript-rslider-js/
- */
-var overallSlider = new rSlider({
-    target: '#slider',
-    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    range: false, // range slider
-    set:    [5], // an array of preselected values
-    scale:    true,
-    labels:   true,
-    tooltip:  false,
-    step:     1, // step size
-    disabled: false, // is disabled?
-    onChange: null // callback
-});
-
-
-var eventSliders = [];
-
-eventSliders[0] = new rSlider({
-    target: '#event1feature1',
-    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    range: false,
-    set: [5],
-    tooltip: false,
-});
-
-eventSliders[1] = new rSlider({
-    target: '#event1feature2',
-    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    range: false,
-    set: [5],
-    tooltip: false,
-});
-
-eventSliders[2] = new rSlider({
-    target: '#event1feature3',
-    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    range: false,
-    set: [5],
-    tooltip: false,
-});
-eventSliders[3] = new rSlider({
-    target: '#event1feature4',
-    values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    range: false,
-    set: [5],
-    tooltip: false,
-});
 
 
 
@@ -291,7 +234,7 @@ function saveFeedback() {
     }
 
 
-    let data = JSON.stringify({"overall": overallSlider.getValue(),
+    let data = JSON.stringify({
                                      "users": chosen_names,
                                      "events": chosen_events,
                               });
