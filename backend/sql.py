@@ -235,7 +235,7 @@ table_fields = {
     'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
     'codes': ['code', 'type', 'used'],
     'feedback': ['id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'],
-    'top': ['id', 'user_id', 'chosen_1', 'chosen_2', 'chosen_3', 'day_id'],
+    'top': ['id', 'user_id', 'day_id', 'chosen_1', 'chosen_2', 'chosen_3'],
     'projects': ['id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'],
     'events': ['id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'],
     'classes': ['id', 'total', 'annotation'],
@@ -598,6 +598,7 @@ def remove_user(user_id: int) -> bool:
 
     try:
         cursor.execute(f'delete from sessions where user_id = {user_id};')
+        cursor.execute(f'delete from vacations where user_id = {user_id};')
         cursor.execute(f'delete from feedback where user_id = {user_id};')
         cursor.execute(f'delete from credits where user_id = {user_id};')
         cursor.execute(f'delete from top where user_id = {user_id};')

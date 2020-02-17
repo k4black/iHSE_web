@@ -35,7 +35,7 @@ let fields = {
     'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
     'codes': ['code', 'type', 'used'],
     'feedback': ['id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'],
-    'top': ['id', 'user_id', 'chosen_1', 'chosen_2', 'chosen_3', 'day_id'],
+    'top': ['id', 'user_id', 'day_id', 'chosen_1', 'chosen_2', 'chosen_3'],
     'projects': ['id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'],
     'events': ['id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'],
     'classes': ['id', 'total', 'annotation'],
@@ -314,20 +314,17 @@ $(function() {
 function removeRow(table_name, row_id) {
     var xhttp = new XMLHttpRequest();
 
-    // xhttp.onreadystatechange = function() {
-    //     if (this.readyState === 4) {
-    //         if (this.status === 200) {
-    //             // TODO ?
-    //         }
-    //     }
-    // };
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                loadAndCreateTable(current_table);  // TODO: Check update
+            }
+        }
+    };
 
     xhttp.open("POST", "/admin_remove_data?" + "table="+table_name + "&id=" + row_id, true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
-
-
-    loadAndCreateTable(current_table);  // TODO: Check update
 }
 
 
@@ -348,6 +345,8 @@ function clearTable(table_name) {
                     data: [],
                     columns: columns
                 });
+
+                loadAndCreateTable(current_table);  // TODO: Check update
             }
 
             else if (this.status === 401) {  // No account data
@@ -359,9 +358,6 @@ function clearTable(table_name) {
     xhttp.open("POST", "/admin_clearTable?" + "table=" + table_name, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
-
-
-    loadAndCreateTable(current_table);  // TODO: Check update
 }
 
 
@@ -389,25 +385,22 @@ function saveRow() {
     
     var xhttp = new XMLHttpRequest();
 
-    // xhttp.onreadystatechange = function() {
-    //     if (this.readyState === 4) {
-    //         if (this.status === 200) {
-    //             // TODO ?
-    //         }
-    //     }
-    // };
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                loadAndCreateTable(current_table);  // TODO: Check update
+            }
+        }
+    };
     
     console.log('Edited row', row);
-    
     let  data = JSON.stringify(row);
+
     xhttp.open("POST", "/admin_send_data?" + "table="+current_table, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send(data);
-    
-    
-    loadAndCreateTable(current_table);  // TODO: Check update
 }
 
 function createRow() {

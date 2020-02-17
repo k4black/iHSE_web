@@ -131,7 +131,7 @@ function deenrollProject() {
                 cache['user']['project_id'] = 0;
                 loadProjects(cache['project']['id'], setPopupProject);
             } else if (this.status === 409) {
-                alert('Невозможно отписаться. у вас нет проекта.')
+                alert('Невозможно отписаться. У вас нет проекта.');
             }
         }
     };
