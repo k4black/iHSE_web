@@ -55,7 +55,7 @@ function setPopupProject() {
 
     setupData(document.querySelector('#project_popup .desc'), project.description);
     setupData(document.querySelector('#project_popup .anno'), project.annotation);
-    setupData(document.querySelector('#project_popup .dirs'), project.description);
+    setupData(document.querySelector('#project_popup .dirs'), project.direction);
     setupData(document.querySelector('#project_popup .def_type'), project.def_type);
     setupData(document.querySelector('#project_popup .type'), project.type);
 

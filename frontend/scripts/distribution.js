@@ -56,7 +56,8 @@ function countDay() {
             labels: Object.keys(processed_events_attendance),
             datasets: [{
                 label: 'Количество посещений',
-                data: Object.values(processed_events_attendance)
+                data: Object.values(processed_events_attendance),
+                backgroundColor: '#006cae'
             }]
         },
 
@@ -124,7 +125,8 @@ function setHosts() {
             labels: Object.keys(hosts_total),
             datasets: [{
                 label: 'Количество занятий',
-                data: Object.values(hosts_total)
+                data: Object.values(hosts_total),
+                backgroundColor: '#006cae'
             }]
         },
 
