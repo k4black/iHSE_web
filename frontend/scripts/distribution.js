@@ -33,10 +33,12 @@ function countDay() {
         }
     }
 
-    let enrolls_by_class_id = groupByUnique(Object.values(cache['enrolls']), 'class_id');
-    for (let class_id in enrolls_by_class_id) {
-        if (cache['events'][class_id].day_id == day_id) {
-            events_attendance[class_id]++;
+    let enrolls_by_class_id = groupBy(Object.values(cache['enrolls']), 'class_id');
+    for (let event_id in cache['events']) {
+        for (let enroll of enrolls_by_class_id[event_id]) {
+            if (enroll.attendance == true) {
+                events_attendance[event_id]++;
+            }
         }
     }
 
@@ -193,7 +195,7 @@ function setCredits() {
         }
 
         sum_for_days[days[day_id].date] = 100.0 * counter_for_day / Object.keys(cache['users']).length;
-        mean_for_days.value[days[day_id].date] = credits_by_day_id[day_id].length == 0 ? 0 : mean_for_days.value[days[day_id].date] / credits_by_day_id[day_id].length;
+        mean_for_days[days[day_id].date] = credits_by_day_id[day_id].length === 0 ? 0 : mean_for_days[days[day_id].date] / credits_by_day_id[day_id].length;
     }
 
     console.log('sum_for_days', sum_for_days);
