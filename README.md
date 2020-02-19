@@ -16,6 +16,15 @@ Release:
 This is the source code of the **website** for the education multi-disciplinary **summer camp** 'iHSE' from the Higher School of Economics - Nizhny Novgorod.
 
 
+## Table of Contents
+- [Why do we need a website?](##Why-do-we-need-a-website?)
+- [Branches](##Branches)
+- [Structure](##Structure)
+- [Docker](##Docker)
+- [Testing](##Testing)
+ 
+
+
 ## Why do we need a website?
 
 In short, it will make life easier for the camp organizers. 
