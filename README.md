@@ -17,9 +17,14 @@ This is the source code of the **website** for the education multi-disciplinary 
 
 
 ## Table of Contents
-- [Why do we need a website?](#why-do-we-need-a-website?)
+- [Why do we need a website?](#why-do-we-need-a-website)
+  - [Opportunities for a Participant](#opportunities-for-a-participant)
+  - [Opportunities for a Moderator](#opportunities-for-a-moderator)
+  - [Opportunities for a Administrator](#opportunities-for-a-administrator)
 - [Branches](#branches)
 - [Structure](#structure)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
 - [Docker](#docker)
 - [Testing](#testing)
  
@@ -30,7 +35,7 @@ This is the source code of the **website** for the education multi-disciplinary 
 In short, it will make life easier for the camp organizers. 
 
 
-### The ability of the participant: 
+### Opportunities for a Participant:
 
 * Schedule  
 During the camp, participants attend various lectures, master classes and entertainment events. The site provides an opportunity to view the schedule for each day and information on each event separately.
@@ -53,7 +58,8 @@ It is also possible to delete the current project, edit or leave it. You can als
 A page to collect comments on some days. Reviews are collected for events that a person visited on that day, as well as for people who remembered in recent days (top). 
 
 
-### Opportunities for a Moderator (team Leader)
+### Opportunities for a Moderator:
+(team Leader)
 
 * Credits  
 View and edit the history of getting credits for all camp participants in the form of a table. 
@@ -72,7 +78,7 @@ View events in the timeline format. For each location, the events that will take
 TODO visual editing Capability. 
 
 
-### Opportunities for a Administrator
+### Opportunities for a Administrator:
 All features of the moderator, as well as: 
 
 
