@@ -13,9 +13,91 @@ Release:
 
 
 
+This is the source code of the **website** for the education multi-disciplinary **summer camp** 'iHSE' from the Higher School of Economics - Nizhny Novgorod.
 
 
-TODO
+## Table of Contents
+- [Why do we need a website?](#why-do-we-need-a-website)
+  - [Opportunities for a Participant](#opportunities-for-a-participant)
+  - [Opportunities for a Moderator](#opportunities-for-a-moderator)
+  - [Opportunities for a Administrator](#opportunities-for-a-administrator)
+- [Branches](#branches)
+- [Structure](#structure)
+  - [Frontend](#frontend)
+  - [Backend](#backend)
+- [Docker](#docker)
+- [Testing](#testing)
+ 
+
+
+## Why do we need a website?
+
+In short, it will make life easier for the camp organizers. 
+
+
+### Opportunities for a Participant:
+
+* Schedule  
+During the camp, participants attend various lectures, master classes and entertainment events. The site provides an opportunity to view the schedule for each day and information on each event separately.
+
+* Credits  
+Participants receive "educational credits" for participation in educational events or active participation in the life of the camp. By the end of the camp, participants must collect a certain number of credits.  
+On the personal page, you can view the history of receiving credits and current amount of it.
+
+* Projects  
+During the camp, each participant must invent, develop and protect their project (individually or as part of a group). On the "projects" page, you can view all created projects and sign up for them if the participant does not currently have projects. The project is also shown in the personal account page.   
+
+* Enrolls  
+There are two types of educational events - lectures and masterclasses. And some masterclasses have a limited number of places to visit and you need to make an enroll in advance. Any participant can enroll for the event from the registration page, if there are enough available places. 
+
+* Account  
+The personal page displays the participant's credit history for all days of the camp, as well as the current amount of credits and the credits goal.  
+It is also possible to delete the current project, edit or leave it. You can also create a new one if you don't already have one. 
+
+* Feedback  
+A page to collect comments on some days. Reviews are collected for events that a person visited on that day, as well as for people who remembered in recent days (top). 
+
+
+### Opportunities for a Moderator:
+(team Leader)
+
+* Credits  
+View and edit the history of getting credits for all camp participants in the form of a table. 
+
+* Profiles (TODO)  
+You can view users' pages to see beautiful graphics of their credits.
+
+* Events  
+Ability to edit the annotation for events and the maximum number of people in the event. 
+
+* Checkin  
+For each educational event, users must register for it (give credits) by scanning the QR codes of participants at the end of the class event. 
+
+* Timelines  
+View events in the timeline format. For each location, the events that will take place in it are shown.  
+TODO visual editing Capability. 
+
+
+### Opportunities for a Administrator:
+All features of the moderator, as well as: 
+
+
+* Schedule (Calendar)  
+Ability to edit\create\copy\delete events. 
+
+* Data base  
+Ability to fully edit all parameters in the database. `[DANGEROUSLY]`
+
+* Reports
+View **depersonalized** statistics on feedback. 
+Both top participants (selected by others) and statistics on events and counselors who conducted them. 
+
+* Statistics  
+Statistics on the number of people in each of the units and their division by gender. It also shows the number and percentage of people who have accumulated the required number of credits and the average number of credits. 
+
+* Configuration  
+Allows you to configure the number of default credits received for different types of events. As well as set a requirement for the number of credits collected.
+
 
 
 ## Branches 
