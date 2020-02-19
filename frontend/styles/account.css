@@ -388,3 +388,27 @@ body {
 
     padding: 3px 0 0 1px;
 }
+
+
+
+
+
+
+
+
+
+.spoiler input, .spoiler div  {
+    display: none; /* Скрываем содержимое */
+}
+.spoiler label::before {
+    content: '►'; /* Текст перед заголовком */
+    margin-right: 5px; /* Расстояние до текста */
+}
+/* Открытый спойлер */
+.spoiler :checked + label::before {
+    content: '▼';
+}
+.spoiler :checked ~ div {
+    display: flex; /* Показываем спойлер */
+    padding: 10px; /* Поля вокруг текста */
+}

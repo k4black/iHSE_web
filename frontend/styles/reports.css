@@ -79,3 +79,38 @@
 #top_feedback {
     width: 100%;
 }
+
+
+
+
+
+.spoiler input, .spoiler div  {
+    display: none; /* Скрываем содержимое */
+}
+.spoiler label::before {
+    content: '►'; /* Текст перед заголовком */
+    margin-right: 5px; /* Расстояние до текста */
+}
+/* Открытый спойлер */
+.spoiler :checked + label::before {
+    content: '▼';
+}
+.spoiler :checked ~ div {
+    display: flex; /* Показываем спойлер */
+    padding: 10px; /* Поля вокруг текста */
+}
+
+.spoiler>div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.spoiler>div p {
+    color: #595959;
+}
