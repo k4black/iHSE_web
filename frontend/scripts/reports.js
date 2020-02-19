@@ -79,12 +79,6 @@ function countTop() {
             }
         }
     });
-
-    // topChart.scaleService.updateScaleDefaults('linear', {
-    //     ticks: {
-    //         min: 0
-    //     }
-    // });
 }
 
 
@@ -93,37 +87,61 @@ function countHostFeedback() {
     let events = cache['events'];
     let feedback_by_event_id = groupBy(Object.values(cache['feedback']), 'event_id');
 
-    let hosts_mean = {};
+    let hosts_mean = {};  // Why not working?
+    let hosts_mean_score = {};
+    let hosts_mean_entertain = {};
+    let hosts_mean_useful = {};
+    let hosts_mean_understand = {};
     let hosts_count = {};
+
+    // for (let event_id in events) {
+    //     for (let host of events[event_id].host.split(', ')) {
+    //         if (host == '') {
+    //             continue;
+    //         }
+    //
+    //         hosts_count[host] = 0;
+    //         hosts_mean[host] = {'score': 0, 'entertain': 0, 'useful': 0, 'understand': 0};
+    //     }
+    // }
+
+    console.log(hosts_count, hosts_mean);
+
     for (let event_id in feedback_by_event_id) {
         for (let host of events[event_id].host.split(', ')) {
+            if (hosts_count[host] == undefined) {
+                hosts_count[host] = 0;
+                hosts_mean_score[host] = 0.;
+                hosts_mean_entertain[host] = 0.;
+                hosts_mean_useful[host] = 0.;
+                hosts_mean_understand[host] = 0.;
+            }
+
             // Count mean for each score
-            let tmp_hosts_mean = {'score': 0, 'entertain': 0, 'useful': 0, 'understand': 0};
-            hosts_count[host] = (hosts_count[host] == undefined ? 0 : hosts_count[host] + 1);
+            hosts_count[host] += feedback_by_event_id[event_id].length;
 
             for (let feedback_obj of feedback_by_event_id[event_id]) {
-                tmp_hosts_mean['score'] += feedback_obj['score'];
-                tmp_hosts_mean['entertain'] += feedback_obj['entertain'];
-                tmp_hosts_mean['useful'] += feedback_obj['useful'];
-                tmp_hosts_mean['understand'] += feedback_obj['understand'];
-            }
-
-            if (hosts_mean[host] == undefined) {
-                hosts_mean[host] = {'score': 0, 'entertain': 0, 'useful': 0, 'understand': 0};
-            }
-            for (let field of ['score', 'entertain', 'useful', 'understand']) {
-                hosts_mean[host][field] += tmp_hosts_mean[field];
+                hosts_mean_score[host] += feedback_obj['score'];
+                hosts_mean_entertain[host] += feedback_obj['entertain'];
+                hosts_mean_useful[host] += feedback_obj['useful'];
+                hosts_mean_understand[host] += feedback_obj['understand'];
             }
         }
     }
 
-    for (let host in hosts_mean) {
-        hosts_mean[host] /= hosts_count[host];
+    console.log(hosts_count, hosts_mean_score);
+
+    for (let host in hosts_count) {
+        hosts_mean_score[host] /= hosts_count[host];
+        hosts_mean_entertain[host] /= hosts_count[host];
+        hosts_mean_useful[host] /= hosts_count[host];
+        hosts_mean_understand[host] /= hosts_count[host];
     }
 
+    console.log(hosts_count, hosts_mean_score);
 
     let host_html = '';
-    for (let host in hosts_mean) {
+    for (let host in hosts_count) {
         host_html +=
             '<div class="host_feedback">' +
                 '<div class="description">' +
@@ -133,9 +151,11 @@ function countHostFeedback() {
                 '<canvas id="host' + hashCode(host) + '"></canvas>' +
             '</div>';
     }
+
     document.querySelector('.hosts_feedback').innerHTML = host_html;
 
-    for (let host in hosts_mean) {
+    for (let host in hosts_count) {
+        // console.log('host', host, 'data_pre', hosts_mean[host], 'data', [hosts_mean[host]['score'], hosts_mean[host]['entertain'], hosts_mean[host]['useful'], hosts_mean[host]['understand']])
         var ctx = document.getElementById('host' + hashCode(host)).getContext('2d');
         var chart = new Chart(ctx, {
             // The type of chart we want to create
@@ -147,7 +167,7 @@ function countHostFeedback() {
                 datasets: [{
                     label: 'Средние оценки',
                     backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
-                    data: [hosts_mean['score'], hosts_mean['entertain'], hosts_mean['useful'], hosts_mean['understand']]
+                    data: [hosts_mean_score[host], hosts_mean_entertain[host], hosts_mean_useful[host], hosts_mean_understand[host]]
                 }]
             },
 
@@ -163,12 +183,6 @@ function countHostFeedback() {
                 }
             }
         });
-
-        // chart.scaleService.updateScaleDefaults('linear', {
-        //     ticks: {
-        //         min: 0
-        //     }
-        // });
     }
 }
 
@@ -195,11 +209,20 @@ function countDayFeedback() {
                     '<p class="event_count">' + 'Собрано:' + feedback_by_event_id[event_id].length + '</p>' +
                 '</div>' +
                 '<canvas id="event' + event_id + '"></canvas>' +
+                '<div class="spoiler">' +
+                    '<input type="checkbox" id="spoiler' + event_id + '">' +
+                    '<label for="spoiler' + event_id + '">Комментарии к мероприятию</label>' +
+                    '<div id="comments' + event_id + '">' +
+                        'Некий текст под спойлером. Тут должны быть коммантарии' +
+                    '</div>' +
+                '</div>' +
             '</div>';
     }
+
     document.querySelector('.days_feedback').innerHTML = events_html;
 
     for (let event_id in feedback_by_event_id) {
+        let comments_html = '';
         let mean_score = {'score': 0, 'entertain': 0, 'useful': 0, 'understand': 0};
 
         // Count mean for each score
@@ -210,8 +233,11 @@ function countDayFeedback() {
             mean_score['entertain'] += feedback_obj['entertain'] / len;
             mean_score['useful'] += feedback_obj['useful'] / len;
             mean_score['understand'] += feedback_obj['understand'] / len;
+
+            comments_html += '<p>' + feedback_obj['comment'] + '</p>'
         }
 
+        document.getElementById('comments' + event_id).innerHTML = comments_html;
 
         var ctx = document.getElementById('event' + event_id).getContext('2d');
         var chart = new Chart(ctx, {
@@ -240,12 +266,6 @@ function countDayFeedback() {
                 }
             }
         });
-
-        // chart.scaleService.updateScaleDefaults('linear', {
-        //     ticks: {
-        //         min: 0
-        //     }
-        // });
     }
 }
 
