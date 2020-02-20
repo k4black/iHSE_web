@@ -4,7 +4,7 @@ services:
     # Nginx server for static frontend 
     nginx:        
         build:
-            context: .
+            context: ../
             dockerfile: nginx.dockerfile
         container_name: nginx_docker
         restart: unless-stopped

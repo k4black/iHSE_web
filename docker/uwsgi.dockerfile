@@ -1,5 +1,6 @@
 FROM python:3.7
-RUN pip install uwsgi && pip install -r /var/app/backend/requirements.txt
+COPY ./backend/requirements.txt /tmp/requirements.txt
+RUN pip install uwsgi && pip install -r /tmp/requirements.txt
 
 EXPOSE 8001
 
