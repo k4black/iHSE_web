@@ -85,6 +85,7 @@
 
 
 .spoiler input, .spoiler div  {
+    position: relative!important;
     display: none; /* Скрываем содержимое */
 }
 .spoiler label::before {

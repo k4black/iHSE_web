@@ -210,7 +210,6 @@ cursor.execute("""
 #                         foreign key (project_id) references projects(id)
 #                     );
 #                     """)
-
 conn.commit()
 
 TTableObject = tp.Dict[str, tp.Any]
