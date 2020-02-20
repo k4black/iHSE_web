@@ -160,3 +160,6 @@ server {
 
 # удалит все файлы и папки старше 10 дней. вы можете добавить его в ежедневный cron.
 sudo find /tmp -type f -atime +10 -delete
+
+
+du -h | sort -h
