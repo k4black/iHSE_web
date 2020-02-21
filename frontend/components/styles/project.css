@@ -20,7 +20,8 @@
 
 .project_popup__header {
     margin-top: 0;
-    height: 60px;
+    min-height: 60px;
+    padding-bottom: 5px;
     padding-right: 20px;
 
     background-color: #00b3bc;
@@ -264,7 +265,7 @@ select {
     }
 
     .project_popup__header {
-        height: 70px;
+        min-height: 70px;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
     }
@@ -294,7 +295,7 @@ select {
     display: none;
 }
 
-.edit_mode button .edit_mode_element {
+.edit_mode button.edit_mode_element {
     display: block;
 }
 

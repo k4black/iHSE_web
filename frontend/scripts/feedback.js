@@ -208,6 +208,10 @@ function saveFeedback() {
 
 
     // Process names
+    let existed_names = [];
+    for (let user in cache['names']) {
+        existed_names.push(user.name);
+    }
     let names = [];
     for (let user in cache['names']) {
         names.push(user.name);
@@ -222,7 +226,7 @@ function saveFeedback() {
             return;
         }
 
-        if (name in names) {
+        if (name in existed_names) {
             chosen_names.push(name);
         } else {
             alert('Невозможно выбрать пользователя <' + name + '>. Нет пользователя.');
