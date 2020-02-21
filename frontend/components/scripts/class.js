@@ -232,7 +232,7 @@ function setEnrolls() {
 
         users_list += '<div class="enrolled_user" data-id="'+ enrolls[i].id +'" user-id="' + name.id + '">';
 
-        users_list += '<p>'+ name.name +'</p>' + '<div>' + checkbox + close + '</div>';
+        users_list += '<p>'+ name.name + ' [' + name.team +']</p>' + '<div>' + checkbox + close + '</div>';
 
         users_list += '</div>';
     }

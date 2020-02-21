@@ -207,6 +207,12 @@ function setCredits() {
         mean_for_days[days[day_id].date] = 0;
     }
 
+    let users_counter = 0;
+    for (let user_id in cache['users']) {
+        if (cache['users'][user_id].type != 0) {
+            ++users_counter;
+        }
+    }
 
     for (let day_id in credits_by_day_id) {
         let credits_by_user_id = groupBy(credits_by_day_id[day_id], 'user_id');
@@ -225,7 +231,7 @@ function setCredits() {
         }
 
         sum_for_days[days[day_id].date] = 100.0 * counter_for_day / Object.keys(cache['users']).length;
-        mean_for_days[days[day_id].date] = credits_by_day_id[day_id].length === 0 ? 0 : mean_for_days[days[day_id].date] / credits_by_day_id[day_id].length;
+        mean_for_days[days[day_id].date] = credits_by_day_id[day_id].length === 0 ? 0 : mean_for_days[days[day_id].date] / users_counter;
     }
 
     console.log('sum_for_days', sum_for_days);
@@ -248,14 +254,17 @@ function setCredits() {
         },
 
         // Configuration options go here
-        options: {}
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        // max: 10
+                    }
+                }]
+            }
+        }
     });
-
-    // percentageChart.scaleService.updateScaleDefaults('linear', {
-    //     ticks: {
-    //         min: 0
-    //     }
-    // });
 
 
 
@@ -275,14 +284,18 @@ function setCredits() {
         },
 
         // Configuration options go here
-        options: {}
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        // max: 10
+                    }
+                }]
+            }
+        }
     });
 
-    // creditsChart.scaleService.updateScaleDefaults('linear', {
-    //     ticks: {
-    //         min: 0
-    //     }
-    // });
 }
 
 function setDistribution() {

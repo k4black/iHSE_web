@@ -234,10 +234,12 @@ function countDayFeedback() {
             mean_score['useful'] += feedback_obj['useful'] / len;
             mean_score['understand'] += feedback_obj['understand'] / len;
 
-            comments_html += '<p>' + feedback_obj['comment'] + '</p>'
+            if (feedback_obj['comment'] != '') {
+                comments_html += '<p>' + feedback_obj['comment'] + '</p>'
+            }
         }
 
-        document.getElementById('comments' + event_id).innerHTML = comments_html;
+        document.getElementById('comments' + event_id).innerHTML = comments_html == '' ? '[нет комментариев]' : comments_html;
 
         var ctx = document.getElementById('event' + event_id).getContext('2d');
         var chart = new Chart(ctx, {

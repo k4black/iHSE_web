@@ -113,7 +113,7 @@ function setFeedback() {
         console.log('feedback data for event ' + event, feedback);
 
         events_html +=
-            '<div class="event">' +
+            '<div class="event" event-id="' + event.id + '">' +
                 '<h3>' + event.title + '</h3>' +
                 '<p class="host">' + event.host + '</p>' +
                 '<div class="event_feature">' +
@@ -182,17 +182,30 @@ function saveFeedback() {
     users = document.querySelectorAll('.user');
 
     // Checking full fields
-    var flag = false;
+    let flag = false;
     for (let i = 0; !flag && i < events.length; ++i) {
-        flag = (events[i].lastElementChild.textContent === '');
+        for (let feature of events[i].querySelectorAll('.event_feature')) {
+            let mark = feature.querySelector('input').value;
+            console.log(mark);
+
+            if (mark != '5') {
+                flag = true;
+                break;
+            }
+        }
     }
-    for (let i = 0; !flag && i < users.length; ++i) {
-        flag = (users[i].value === '');
-    }
-    if (flag){ // If some field are empty - do nothing
-        alert('You have to fill all fields!');  // TODO: show Html error message
+    if (!flag) {
+        alert('Пожалуйста, оцените все мерприятия!');  // TODO: show Html error message
         return;
     }
+
+    for (let i = 0; !flag && i < users.length; ++i) {
+        if (users[i].value === '') {
+            alert('Вы должны выбрать 3х человек!');  // TODO: show Html error message
+            return;
+        }
+    }
+
 
     // Process names
     let names = [];
@@ -223,6 +236,7 @@ function saveFeedback() {
         let event_features = event_elem.querySelectorAll('.event_feature');
 
         let score = {
+            'event_id': event_elem.getAttribute('event-id'),
             'score': event_features[0].lastElementChild.firstElementChild.value,
             'entertain': event_features[1].lastElementChild.firstElementChild.value,
             'useful': event_features[2].lastElementChild.firstElementChild.value,
@@ -234,10 +248,7 @@ function saveFeedback() {
     }
 
 
-    let data = JSON.stringify({
-                                     "users": chosen_names,
-                                     "events": chosen_events,
-                              });
+    let data = JSON.stringify({"users": chosen_names, "events": chosen_events});
 
 
 
@@ -266,8 +277,8 @@ function saveFeedback() {
     };
 
 
-    let today = document.querySelector('.today').lastElementChild.textContent;
-    xhttp.open("POST", "/feedback?date=" + today, true);
+    let date = document.querySelector('.selected').lastElementChild.textContent;
+    xhttp.open("POST", "/feedback?date=" + date, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
