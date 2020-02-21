@@ -1446,7 +1446,7 @@ def post_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
     users = feedback_obj['users']
     events = feedback_obj['events']
 
-    # TODO: check 
+    # TODO: check
     if sql.post_feedback(user_obj['id'], events) and sql.post_top(user_obj['id'], date, users):
 
         return ('200 OK',
