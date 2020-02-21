@@ -504,7 +504,7 @@ def get_names() -> tp.List[TTableObject]:
         user short objects: list of user objects - [(id, code, name, team, project_id), ...]
     """
 
-    cursor.execute('SELECT id, name, team, project_id FROM users WHERE user_type != 0;')
+    cursor.execute('SELECT id, name, team, project_id FROM users WHERE user_type == 0;')
     users_list = cursor.fetchall()
 
     return tuples_to_dicts(users_list, '', custom_fields=['id', 'name', 'team', 'project_id'])
@@ -1198,4 +1198,56 @@ def get_feedback(user_id, date) -> tp.Tuple[tp.List[TTableObject], tp.List[TTabl
     return events_dicts, feedback_dicts
 
 
+def post_feedback(user_id, feedback_list) -> None:
+    """ Post feedbacks
+
+    Args:
+        user_id: user id from bd
+        feedback_list: loist of feedback  # TODO: Check dd.mm of day_id
+
+    Returns:
+        None
+    """
+
+    for feedback in feedback_list:
+        feedback['user_id'] = user_id
+        insert_to_table(feedback, 'feedback')
+
+
+def post_top(user_id, date, users_list) -> None:
+    """ Post top users
+
+    Args:
+        user_id: user id from bd
+        date: dd.mm
+        users_list: loist of feedback  # TODO: Check dd.mm of day_id
+
+    Returns:
+        None
+    """
+
+    cursor.execute('SELECT (id) FROM days WHERE date = %s;', (date,))
+    day = cursor.fetchone()
+
+    if day is None:
+        return
+
+    day_id = day[0]
+
+    top_obj = {}  # type: TTableObject
+    top_obj['user_id'] = user_id
+    top_obj['day_id'] = day_id
+
+    for i, name in enumerate(users_list):
+        cursor.execute('SELECT (id) FROM users WHERE name = %s;', (name,))
+        user = cursor.fetchone()
+
+        if user is None:
+            continue
+
+        user_id = user[0]
+
+        top_obj['chosen' + str(i+1)] = user_id
+
+    insert_to_table(top_obj, 'top')
 

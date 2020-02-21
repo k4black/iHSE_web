@@ -1434,17 +1434,20 @@ def post_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
         None; Only http answer
     """
 
-    day = query['day']
-
-    # Get json from response
-    feedback_obj = get_json_by_response(env)
+    date = query['date']
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
         return RESPONSE_WRONG_COOKIE
 
-    if gsheets.save_feedback(user_obj, day, feedback_obj):
+    # Get json from response
+    feedback_obj = get_json_by_response(env)
+    users = feedback_obj['users']
+    events = feedback_obj['events']
+
+    # TODO: check 
+    if sql.post_feedback(user_obj['id'], events) and sql.post_top(user_obj['id'], date, users):
 
         return ('200 OK',
                 [
