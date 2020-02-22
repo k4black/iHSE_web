@@ -10,6 +10,7 @@ from psycopg2 import IntegrityError, DataError, ProgrammingError, OperationalErr
 """         PostgreSQL database interaction via psycopg2         """
 """ ---===---==========================================---===--- """
 
+
 # TODO: cover all db-related try_catch with NAMES OF THE FUNCTIONS where they were triggered
 # TODO: carefully check all db-related stuff against https://www.psycopg.org/docs/usage.html#transactions-control
 # initializing connection to database

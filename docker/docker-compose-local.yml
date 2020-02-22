@@ -4,7 +4,7 @@ services:
     # Nginx server for static frontend 
     nginx:        
         build:
-            context: ./nginx
+            context: ./nginx/
             dockerfile: nginx_local.dockerfile
         container_name: nginx_docker_local
         restart: unless-stopped
@@ -13,20 +13,20 @@ services:
           - 443:443
         volumes:
           - ../frontend/:/var/app/frontend/
-          - /var/log/nginx:/var/log/nginx
+          - ../log/nginx:/var/log/nginx
         depends_on:
           - uwsgi
 
     # uWSGI server for backend 
     uwsgi:
         build:
-            context: ./uwsgi
+            context: ./uwsgi/
             dockerfile: uwsgi.dockerfile
         container_name: uwsgi_docker
         restart: unless-stopped
         volumes:
           - ../backend/:/var/app/backend/
-          - /var/log/uwsgi.log:/var/log/uwsgi.log
+          - ../log/uwsgi:/var/log/uwsgi
         depends_on:
             - database
 
@@ -42,7 +42,7 @@ services:
         ports:
           - 5431:5432
         volumes:
-          - /var/lib/postgresql/data:/var/lib/postgresql/data/pgdata
+          - ../data/pgdata:/var/lib/postgresql/data/pgdata
         environment:
             POSTGRES_DB: ihse
             POSTGRES_USER: postgres
