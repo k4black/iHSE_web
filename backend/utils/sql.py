@@ -371,7 +371,6 @@ def insert_to_table(data: TTableObject, table_name: str) -> tp.Optional[int]:
     values_placeholder = ', '.join(['%s' for field in table_fields[table_name] if field != 'id'])
 
     sql_string = f"INSERT INTO {table_name} ({fields}) VALUES (default, {values_placeholder}) RETURNING id;"
-    sql_string = f"INSERT INTO {table_name} ({fields}) VALUES (default, {values_placeholder}) RETURNING id;"
 
     print(f'insert using {sql_string} values {dict_to_tuple(data, table_name, ignore_id=True)}')
     try:
@@ -598,7 +597,7 @@ def get_names() -> tp.List[TTableObject]:
 
     try:
         with conn.cursor() as cursor_:
-            cursor_.execute('SELECT id, name, team, project_id FROM users WHERE user_type != 0;')
+            cursor_.execute('SELECT id, name, team, project_id FROM users WHERE user_type = 0;')
             users_list = cursor_.fetchall()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_names(): {error_}")
@@ -1572,7 +1571,7 @@ def deenroll_project(user_id: int) -> bool:
 
 
 # Feedback
-def get_feedback(user_id, date) -> tp.Tuple[tp.List[TTableObject], tp.List[TTableObject]]:
+def get_feedback(user_id: int, date: str) -> tp.Tuple[tp.List[TTableObject], tp.List[TTableObject]]:
     """ Enroll user in project
 
     Args:
@@ -1633,3 +1632,72 @@ def get_feedback(user_id, date) -> tp.Tuple[tp.List[TTableObject], tp.List[TTabl
         return [], []
     else:
         return events_dicts, feedback_dicts
+
+
+def post_feedback(user_id: int, feedback_list: tp.List[TTableObject]) -> None:
+    """ Post feedbacks
+
+    Args:
+        user_id: user id from bd
+        feedback_list: loist of feedback  # TODO: Check dd.mm of day_id
+
+    Returns:
+        None
+    """
+
+    for feedback in feedback_list:
+        feedback['user_id'] = user_id
+        insert_to_table(feedback, 'feedback')
+
+
+def post_top(user_id: int, date: str, users_list: tp.List[str]) -> None:
+    """ Post top users
+
+    Args:
+        user_id: user id from bd
+        date: dd.mm
+        users_list: loist of feedback  # TODO: Check dd.mm of day_id
+
+    Returns:
+        None
+    """
+
+    try:
+        with conn.cursor() as cursor_:
+            cursor_.execute('SELECT (id) FROM days WHERE date = %s;', (date,))
+    except psycopg2.Error as error_:
+        print(f"Error in sql.post_top(): {error_}")
+        # conn.rollback()
+        return
+
+    day = cursor.fetchone()
+
+    if day is None:
+        return
+
+    day_id = day[0]
+
+    top_obj = {}  # type: TTableObject
+    top_obj['user_id'] = user_id
+    top_obj['day_id'] = day_id
+
+    for i, name in enumerate(users_list):
+        user = None  # type: tp.Optional[tp.Tuple[int]]
+        try:
+            with conn.cursor() as cursor_:
+                cursor.execute('SELECT (id) FROM users WHERE name = %s;', (name,))
+                user = cursor.fetchone()
+        except psycopg2.Error as error_:
+            print(f"Error in sql.post_top(): {error_}")
+            # conn.rollback()
+            continue
+
+        if user is None:
+            continue
+
+        user_id = user[0]
+
+        top_obj['chosen' + str(i+1)] = user_id
+
+    insert_to_table(top_obj, 'top')
+
