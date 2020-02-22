@@ -26,6 +26,7 @@ services:
         restart: unless-stopped
         volumes:
           - ../backend/:/var/app/backend/
+          - /var/conf/:/var/conf/
           - /var/log/uwsgi.log:/var/log/uwsgi.log
         depends_on:
             - database
