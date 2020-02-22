@@ -24,7 +24,7 @@ function loadConfig() {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_get_config", true);
+    xhttp.open("GET", "/admin_get_config", true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }
@@ -50,7 +50,7 @@ function saveConfig() {
 
     let data = JSON.stringify(config);
 
-    xhttp.open("POST", "http://ihse.tk:50000/admin_post_config", true);
+    xhttp.open("POST", "/admin_post_config", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie

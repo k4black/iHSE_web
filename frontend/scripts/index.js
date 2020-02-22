@@ -56,24 +56,27 @@ var current_class;
 function setDay() {
     loadingEnd(); // TODO: Check
 
-    let events = [];
-    for (let i in cache['events']) {
-        events.push(cache['events'][i]);
-    }
+    let events = Object.values(cache['events']);
 
     var day_html = "";
     var time_html;
     var event_html;
 
     let times = groupBy(events, 'time');
-    for (let time in times) {
+    let times_arr = Object.keys(times);
+    let processed_times_arr = times_arr.map(function (i) {return (i.length === 4 || i.length === 9) ? '0'+i : i}).map(function (i) {return i.length === 10 ? i.slice(0, 6)+'0'+i.slice(6) : i});
+
+    for (let processed_time of processed_times_arr.sort()) {
+        let time = processed_time[6] == '0' && processed_time[7] != '0' ? processed_time.slice(0, 6) + processed_time.slice(7) : processed_time;
+        time = time[0] === '0' && time[1] !== '0' ? time.slice(1) : time;
+
         time_html = '<div class="time">' +
                         '<div class="bar">' + time + '</div>' +
                             '<div class="events">';
 
         for (let event of times[time]) {
             event_html =
-                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === '0' ? '' : 'active-event') + '>' +
+                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 ? '' : 'active-event') + ' ' + (event.type === 1 ? 'active-event-master' : (event.type === 2 ? 'active-event-lecture' : '')) + ' >' +
                     // (event.type === 0 || event.type === '0' ? '' : '<a href="class.html?id=' + event.id + '">') +
                         '<p class="event__title">' + event.title + '</p>' +
 

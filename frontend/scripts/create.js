@@ -7,6 +7,13 @@
 
 
 
+window.addEventListener('load', function () {
+
+    loadNames(setNames);
+
+});
+
+
 
 
 /** ===============  LOGIC and REQUESTS  =============== */
@@ -33,18 +40,38 @@ document.querySelector('#btn').addEventListener('click', function() {
         return name.value;
     });
 
+    let user_names_allowed = [];
+    for (let user_id in cache['names']) {
+        let user = cache['names'][user_id];
 
-    if (title.value == "" || type.value == "" || dirs.value == "" || deff.value == "" || names == null || desc.value == "") { // If some field are empty - do nothing
-        alert('You have to fill all fields!');  // TODO: show Html error message
+        if (user['project_id'] == 0) {
+            user_names_allowed.push(user['name']);
+        }
+    }
+
+    for (let name of names) {
+        if (name in user_names_allowed) {
+            // ok
+        } else {
+            alert('You can not add user <' + name + '> to your project.\nNo such user or user already has project!');
+            return;
+        }
+    }
+
+
+    if (title.value == "" || type.value == "" || dirs.value == "" || deff.value == "" || names == null || anno.value == "") { // If some field are empty - do nothing
+        alert('You have to fill all fields! \n(However, you can fill description field later)');  // TODO: show Html error message
         return;
     }
 
+
     let data = JSON.stringify({"title": title.value,
                                "type": type.value,
-                               "deff": deff.value,
-                               "dirs": dirs.value,
-                               "name": names,
-                               "desc": desc.textContent
+                               "def_type": deff.value,
+                               "direction": dirs.value,
+                               "users": names,
+                               "description": desc.textContent,
+                               "annotation": anno.textContent
                               });
 
 
@@ -61,23 +88,21 @@ document.querySelector('#btn').addEventListener('click', function() {
             if (this.status === 200) {  // Got it
                 // alert("ok!");
 
-                location = '../index.html'; // TODO: Redirection projects
-
+                location = '../projects.html';
             }
 
             if (this.status === 302) {  // Ok - redir
 
             }
 
-            if (this.status === 405) {  //  Method Not Allowed or already got it
+            if (this.status === 409) {  //  Conflict or already got it
                 alert("Cannot create project!");  // TODO: show Html error message
-
             }
         }
     };
 
 
-    xhttp.open("POST", "http://ihse.tk:50000/project", true);
+    xhttp.open("POST", "/project", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
@@ -88,33 +113,46 @@ document.querySelector('#btn').addEventListener('click', function() {
 
 
 /**
- * Loading user names in list to auto
+ * Loading user names in list (short users description)
  * Send http GET request to get users
+ * And save it to `cache['names']`
  */
-{
+function loadNames(func) {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields name and phone
+                let names_raw = JSON.parse(this.responseText);
 
-                // console.log(this.responseText);
-                var names = JSON.parse(this.responseText);
+                let obj = groupByUnique(names_raw, 'id');
 
-                var datalist_html = "";
+                cache['names'] = obj;
 
-                for (let i = 0; i < names.length; ++i) {
-                    datalist_html += '<option value="' + names[i] + '">';
-                }
-
-                document.querySelector('#users_list').innerHTML = datalist_html;
+                func();
             }
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/names", true);
-    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.open("GET", "/names", true);
     xhttp.send();
+}
+
+
+function setNames() {
+    let names = cache['names'];
+
+    // For choosing names
+    let datalist_html = "";
+    for (let user of names) {
+        if (user['project_id'] == 0) {  // Can choose Ony if there are no user's project
+            datalist_html += '<option value="' + user['name'] + '"></option>';
+        }
+    }
+    document.querySelector('#users_list').innerHTML = datalist_html;
+
+    // Setup first user
+    document.querySelector('#name').value = cache['user'].name;
 }
 
 
@@ -141,7 +179,7 @@ function addField() {
 
         var newObj = document.createElement('div');
         newObj.classList = 'form__input active name__input';
-        newObj.innerHTML = '<label for="name" class="create__label">Names</label>'+
+        newObj.innerHTML = '<label for="name" class="create__label">Участники</label>'+
                         '<input id="name" type="text" name="name" list="users_list" maxlength=""/>' +
                         '<div class="input__icon">' +
                             '<i style="display:none" class="mobile__item__icon large material-icons">-</i>' +
@@ -156,17 +194,13 @@ function addField() {
 
         document.querySelector('#name').removeEventListener('focus', nameActive);
         document.querySelector('#name').removeEventListener('blur', nameDisactive);
-    }
-
-    else {
-
+    } else {
         if (!this.parentElement.classList.contains('name__input')) {
             this.parentElement.nextElementSibling.classList.remove('name__input');
         }
 
         this.parentElement.parentNode.removeChild(this.parentElement);
     }
-
 }
 
 

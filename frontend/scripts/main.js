@@ -46,6 +46,17 @@ function checkLoading(foo, waiting_list) {
 }
 
 
+/**
+ * Get string of today date (dd.mm)
+ */
+function getToday() {
+    let today_date = new Date();  //January is 0!
+    let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');
+
+    return dd_mm;
+}
+
+
 
 /** ===============  AUXILIARY FUNCTIONS  =============== */
 
@@ -104,7 +115,56 @@ function groupByUnique(arr, property) {
 
 
 
+
+
+/**
+ * Calculate hash from password
+ * TODO: Check security
+ * @param {string} s - password with which the hash is calculated
+ * @return {int}
+ */
+function hashCode(s) {
+    let h;
+    for(let i = 0; i < s.length; i++)
+        h = Math.imul(31, h) + s.charCodeAt(i) | 0;
+
+    return h;
+}
+
+
+
+
 /** ===============  SERVER REQUESTS  =============== */
+
+
+
+/**
+ * Get days list information from server
+ * Send http GET request and get days list
+ * Save user dict to global 'cache['days']'
+ *
+ * Run func on OK status
+ */
+function loadDays(func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) {  // Ok
+                let days_raw = JSON.parse(this.responseText);
+                let days = groupByUnique(days_raw, 'id');
+                cache['days'] = days;
+
+                func();
+            } else if (this.status === 401) {  // Unauthorized
+
+            }
+        }
+    };
+
+    xhttp.open("GET", "/days", true);
+    xhttp.send();
+}
 
 
 
@@ -132,10 +192,39 @@ function loadUser(func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/user", true);
+    xhttp.open("GET", "/user", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
+
+
+
+/**
+ * Get project information from server by id
+ * Send http GET request and get project description
+ * Save user dict to global 'cache['project']'
+ *
+ * Run func on OK status
+ */
+function loadProject(project_id, func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) {  // Ok
+                let project = JSON.parse(this.responseText);
+
+                cache['project'] = project;
+
+                func();
+            }
+        }
+    };
+
+    xhttp.open("GET", "/project" + '?id=' + project_id, true);
+    xhttp.send();
+}
+
 
 
 /**
@@ -160,7 +249,7 @@ function loadEnrollsByClassId(class_id, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/enrolls?event_id=" + class_id, true);
+    xhttp.open("GET", "/enrolls?event_id=" + class_id, true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -190,7 +279,7 @@ function loadNames(func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/names", true);
+    xhttp.open("GET", "/names", true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -219,10 +308,41 @@ function loadClass(class_id, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/class?id=" + class_id, true);
+    xhttp.open("GET", "/class?id=" + class_id, true);
     // xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
+
+
+
+
+/**
+ * Get event information from server by event_id
+ * Save to global 'cache['event']'
+ *
+ * Run func on OK status
+ */
+function loadEvent(event_id, func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields
+                let event = JSON.parse(this.responseText);
+
+                cache['event'] = event;
+
+                func();
+            }
+        }
+    };
+
+    xhttp.open("GET", "/event?id=" + event_id, true);
+    // xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+
 
 
 /**
@@ -251,7 +371,7 @@ function loadDay(day, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/day?day=" + day, true);
+    xhttp.open("GET", "/day?day=" + day, true);
     xhttp.send();
 }
 
@@ -276,9 +396,48 @@ function loadProjects(func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/projects", true);
+    xhttp.open("GET", "/projects", true);
     xhttp.send();
 }
+
+
+
+
+/**
+ * Get feedback information from server by date
+ * Send http GET request and get projects json schedule
+ * Save feedback list to global 'cache['feedback']'
+ *
+ * Run func on OK status
+ */
+function loadFeedback(date, func) {
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+            let feedback = JSON.parse(this.responseText);
+
+            cache['feedback'] = feedback;
+
+            func();
+        }
+    };
+
+    xhttp.open("GET", "/feedback?date=" + date , true);
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Get credits information from server by user cookies
@@ -301,7 +460,9 @@ function loadCredits(func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/credits", true);
+    xhttp.open("GET", "/credits", true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }
+
+

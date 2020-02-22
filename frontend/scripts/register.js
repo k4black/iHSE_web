@@ -15,23 +15,6 @@
 
 
 /**
- * Calculate hash from password
- * TODO: Check security
- * @param {string} s - password with which the hash is calculated
- * @return {int}
- */
-function hashCode(s) {
-    let h;
-    for(let i = 0; i < s.length; i++)
-        h = Math.imul(31, h) + s.charCodeAt(i) | 0;
-
-    return h;
-}
-
-
-
-
-/**
  * Add button event - 'register'
  * Send http POST request to register and automatically login - get session id
  */
@@ -39,12 +22,13 @@ document.querySelector('#btn').addEventListener('click', function () {
 
     var name_ = document.querySelector('#name');
     var surname = document.querySelector('#surname');
+    var sex = document.querySelector('#sex');
     var phone = document.querySelector('#phone');
     var pass = document.querySelector('#pass');
     var code = document.querySelector('#code');
 
 
-    if (name_.value == "" || surname.value == "" || pass.value == "" || code.value == "" || phone.value == ""){ // If some field are empty - do nothing
+    if (name_.value == "" || sex.value == "" || surname.value == "" || pass.value == "" || code.value == "" || phone.value == ""){ // If some field are empty - do nothing
         alert('Вы должны заполнить все поля!');  // TODO: show Html error message
         return;
     }
@@ -63,6 +47,7 @@ document.querySelector('#btn').addEventListener('click', function () {
                 location = '../index.html';
 
                 name.value = "";
+                sex.value = "";
                 phone.value = "";
                 pass.value = "";
                 code.value = "";
@@ -82,8 +67,9 @@ document.querySelector('#btn').addEventListener('click', function () {
             if (this.status === 409) {  // Already exist error
                 alert("Пользователь уже существует!");  // TODO: show Html error message
 
-                location = '../login.html';
+                // location = '../login.html';
 
+                phone.value = "";
                 pass.value = "";
                 code.value = "";
             }
@@ -97,12 +83,15 @@ document.querySelector('#btn').addEventListener('click', function () {
         }
     };
 
-
     // Pass not password but hashcode of it
     // code - registration code
-    var query = "?name=" + name_.value + " " + surname.value + "&phone=" + phone.value + "&pass=" + hashCode(pass.value) + "&code=" + code.value;
-    xhttp.open("POST", "http://ihse.tk:50000/register" + query, true);
-    xhttp.send();
+    let user = {'name': name_.value, 'surname': surname.value, 'phone': phone.value, 'sex': sex.value, 'pass': hashCode(pass.value), 'code': code.value};
+    let data = JSON.stringify(user);
+
+    xhttp.open("POST", "/register", true);
+    //xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Content-Type', 'text/plain');
+    xhttp.send(data);
 });
 
 

@@ -1,7 +1,0 @@
-###### Requirements without Version Specifiers ######
-
-# main req
-configparser
-
-# SQL req
-psycopg2-binary

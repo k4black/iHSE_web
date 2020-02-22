@@ -1,0 +1,120 @@
+
+
+.wrapper>div {
+    width: 100%;
+}
+
+
+
+
+.feedback_header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.feedback_header button {
+    width: fit-content;
+    height: 30px;
+}
+
+.feedback_header select {
+    width: fit-content;
+    height: 30px;
+    font-size: 16px;
+}
+
+
+.days_feedback {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.day_feedback {
+    width: fit-content;
+}
+
+
+
+.description {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+
+
+
+.events_feedback, .hosts_feedback {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+
+.day_feedback, .host_feedback {
+    display: inline-flex;
+    flex-direction: column;
+    margin: 10px;
+}
+
+
+.day_feedback .event_title, .host_feedback .host_title {
+
+}
+
+
+.day_feedback .event_count, .host_feedback .host_count {
+    font-style: italic;
+}
+
+
+
+#top_feedback {
+    width: 100%;
+}
+
+
+
+
+
+.spoiler input, .spoiler div  {
+    /*position: relative!important;*/
+    display: none; /* Скрываем содержимое */
+}
+.spoiler label {
+    position: relative;
+}
+.spoiler label::before {
+    content: '►'; /* Текст перед заголовком */
+    margin-right: 5px; /* Расстояние до текста */
+}
+/* Открытый спойлер */
+.spoiler :checked + label::before {
+    content: '▼';
+}
+.spoiler :checked ~ div {
+    display: flex; /* Показываем спойлер */
+    padding: 10px; /* Поля вокруг текста */
+}
+
+.spoiler>div {
+    width: 100%;
+    /*display: flex;*/
+    flex-direction: column;
+    align-items: flex-start;
+
+
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.spoiler>div p {
+    color: #595959;
+}

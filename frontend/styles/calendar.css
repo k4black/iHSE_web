@@ -182,17 +182,20 @@
 
 
 
-
-
-.remove_event {
+.remove_event, .copy_event, .edit_event {
     position: absolute;
-    right: -3px;
     top: -6px;
 
     width: 25px;
     height: 25px;
     border-radius: 50%;
+
     color: black;
+}
+
+
+.remove_event {
+    right: -3px;
     background-color: #ff1e1c;
 }
 
@@ -202,18 +205,21 @@
 
 
 .edit_event {
-    position: absolute;
     right: 25px;
-    top: -6px;
-
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    color: black;
     background-color: #0085d650;
 }
 
 .edit_event:hover {
+    background-color: #0085d699;
+}
+
+
+.copy_event {
+    right: 53px;
+    background-color: #0085d650;
+}
+
+.copy_event:hover {
     background-color: #0085d699;
 }
 

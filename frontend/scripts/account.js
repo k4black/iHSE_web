@@ -13,16 +13,16 @@ window.addEventListener('load', function () {
 
     // loadDays();
 
-    loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['user', 'credits']);});
-    loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['user', 'credits']);});
+    loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+    loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+    loadDays(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+    loadNames(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
 });
 
 
 
 
 
-
-// TODO: chart when 2-3 credits only
 (function(w) {
     //private variable
     var loaded = false;
@@ -40,9 +40,53 @@ window.addEventListener('load', function () {
 /** ===============  LOGIC and REQUESTS  =============== */
 
 
+
 /**
- * Get account information from server
- * Send http GET request and get user bio (or guest bio if cookie does not exist)
+ * Get project information from cache
+ * And set up it to html
+ */
+function setProject() {
+    console.log('check setProject ', cache['project']);
+
+    let project_elem = document.querySelector('.account__project');
+
+    if (cache['user'].project_id == 0) {
+        // Create  project button
+
+        document.querySelector('.account__project__create').addEventListener('click', function () {
+            console.log('Create project');
+            window.location.href = "/create.html";
+        });
+        return;
+    }
+
+    project_elem.classList.remove('no_project');
+
+    let project = cache['project'];
+
+    document.querySelector('.project__title').innerHTML = project.title;
+    document.querySelector('.project__type').innerHTML = project.type;
+    document.querySelector('.project__def_type').innerHTML = project.def_type;
+    let names_test = '';
+    for (let user_id in cache['names']) {
+        let user = cache['names'][user_id];
+
+        if (user.project_id == project.id) {
+            names_test += user.name + ' ';
+        }
+    }
+    document.querySelector('.project__names').innerHTML = names_test;
+    document.querySelector('.project__desc').innerHTML = project.description;
+    document.querySelector('.project__anno').innerHTML = project.annotation;
+
+    // Edit button
+    document.querySelector('.project__edit_button').onclick = function () {editProject(project['id'])};
+}
+
+
+/**
+ * Get account information from cache
+ * And set up it to html
  */
 function setAccount() {
     console.log('check setAccount ', cache);
@@ -54,9 +98,14 @@ function setAccount() {
 
     let user = cache['user'];
 
+    // Load project
+    loadProject(user['project_id'], setProject);
+
     // Setup user bio
     topbar.querySelector('.topbar__name').innerText = user.name;
-    topbar.querySelector('.topbar__phone').innerText = user.phone;
+    let phone = user.phone;
+    phone = '+' + phone[0] + ' (' + phone.slice(1, 4) + ') ' + phone.slice(4, 7) + '-' + phone.slice(7);
+    topbar.querySelector('.topbar__phone').innerText = phone;
 
     //setup.sh avatar
     if (user.avatar != null && user.avatar != undefined && user.avatar != '')
@@ -86,28 +135,27 @@ function setAccount() {
 /**
  * Logout button
  * Send http POST request to clear session id
- */  // TODO: Add logout button
-// document.querySelector('.header__button').addEventListener('click', function () {
-//
-//     var xhttp = new XMLHttpRequest();
-//
-//     xhttp.onreadystatechange = function() {
-//         if (this.readyState === 4) {
-//             if (this.status === 200) {
-//
-//                 location = 'http://ihse.tk/index.html';  // Refer to start page
-//             }
-//
-//             if (this.status === 302) {  // Ok - redir
-//
-//             }
-//         }
-//     };
-//
-//     xhttp.open("POST", "http://ihse.tk:50000/logout", true);
-//     xhttp.withCredentials = true; // To send Cookie;
-//     xhttp.send();
-// });
+ */
+function logout() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+
+                location = '/index.html';  // Refer to start page
+            }
+
+            if (this.status === 302) {  // Ok - redir
+
+            }
+        }
+    };
+
+    xhttp.open("POST", "/logout", true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
 
 
 
@@ -147,7 +195,7 @@ function setAccount() {
 //         }
 //     };
 //
-//     xhttp.open("POST", "http://ihse.tk:50000/credits?code=" + code.value, true);
+//     xhttp.open("POST", "/credits?code=" + code.value, true);
 //     xhttp.withCredentials = true;  // To receive cookie
 //     xhttp.send();
 // });
@@ -246,7 +294,8 @@ function setupCreditsChart(days, data, dataShort) {
         },
         stroke: {
             // curve: 'straight',
-            curve: ['smooth', 'straight']
+            curve: ['smooth', 'straight'],
+            colors: ['#007ac500', "#e39100"]
         },
         series: [{
           name: 'Credits',
@@ -283,6 +332,7 @@ function setupCreditsChart(days, data, dataShort) {
         },
     };
 
+    document.getElementById('credits__chart').innerHTML = '';
     var chart = new ApexCharts(document.querySelector('#credits__chart'), options);
     chart.render();
 }
@@ -298,25 +348,21 @@ function setCredits() {
     console.log('check setCredits ', cache);
     let credits_by_id = cache['credits'];
 
-    let credits_list = [];
-    for (let id in credits_by_id) {
-        credits_list.push(credits_by_id[id]);
-    }
-
-    let credits = groupBy(credits_list, 'date');  // TODO: sql join add date field
+    let credits = groupBy(Object.values(credits_by_id), 'day_id');  // TODO: sql join add date field
 
     // Count sum for each date
     let data_pre = {};
-    for (let date in days) {  // TODO: load days
-        data_pre[date] = 0;
+    for (let day_id in cache['days']) {  // TODO: load days
+        data_pre[cache['days'][day_id].date] = 0;
     }
 
     let total_sum = 0;
-    for (let date in credits) {
+    for (let day_id in credits) {
         let sum = 0;
+        let date = cache['days'][day_id].date;
 
-        for (let i in credits[date]) {
-            sum += (credits[date][i].value === undefined ? 0 : credits[date][i].value);
+        for (let credit of credits[day_id]) {
+            sum += (credit.value === undefined ? 0 : credit.value);
         }
 
         data_pre[date] = sum;
@@ -332,19 +378,47 @@ function setCredits() {
     // Correct setup.sh of zeros values (future days)
     data = [];
     dataShort = [];
+    days = [];
     let flag = false;
-    for (let i = days.length - 1; i >= 0; --i) {
-        if (data_pre[days[i]] !== 0) {
+    for (let day_id of Object.keys(cache['days']).reverse()) {
+        console.log(day_id);
+        let date = cache['days'][day_id].date;
+
+        if (data_pre[date] !== 0) {
             flag = true;
         }
 
         if (flag) {
-            dataShort.unshift(data_pre[days[i]]);
+            dataShort.unshift(data_pre[date]);
         }
-        data.unshift(data_pre[days[i]]);
+        data.unshift(data_pre[date]);
+        days.unshift(cache['days'][day_id].date);
     }
 
 
+    // Load text data of credits
+    let html_history = '';
+    for (let day_id in credits) {
+        html_history += '<div class="credits__history_day img-div">';
+
+        html_history += '<h3>' + cache['days'][day_id].date + '</h3>';
+
+        for (let credit of credits[day_id]) {
+            html_history += '<div class="credits__history_item">' +
+                                '<div>'+
+                                    '<i class="mobile__item__icon large material-icons">' + (credit.type == 1 ? 'edit' : credits.type == 2 ? 'school' : 'event') + '</i>' +
+                                    '<p>' + credit.title + '</p>' +
+                                '</div>' +
+                                '<p class="' + (credits.value > 0 ? 'credits_positive' : 'credits_negative') + '">' + (credit.value > 0 ? '+' : '-') + credit.value + '</p>' +
+                            '</div>';
+        }
+
+        html_history += '</div>';
+    }
+
+    document.querySelector('.credits__history').innerHTML = html_history;
+
+    console.log(days, data, dataShort);
     setupCreditsChart(days, data, dataShort);
 }
 

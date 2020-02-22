@@ -35,19 +35,24 @@
             <input id="title" type="text" name="title" maxlength="35"/>
         </div>
 
+        <div class="form__input create__input create__input__div">
+            <label for="anno" class="create__label">Аннотация</label>
+            <div id="anno" contenteditable></div>
+        </div>
+
         <div class="form__input active">
             <label for="type" class="create__label">Тип</label>
             <select id="type" name="type">
-                <option value="Project">Проект</option>
-                <option value="Science">Исследование</option>
-                <option value="Some">Другое</option>
+                <option value="project">Проект</option>
+                <option value="science">Исследование</option>
+                <option value="other">Другое</option>
             </select>
         </div>
 
         <div class="form__input active">
             <label for="deff" class="create__label">Тип защиты</label>
             <select id="deff" name="deff">
-                <option value="Presentation">Презентация</option>
+                <option value="presentation">Презентация</option>
                 <option value="TED">TED</option>
             </select>
         </div>
@@ -56,10 +61,10 @@
             <label for="dirs" class="create__label">Направление</label>
             <select id="dirs" name="dirs">
                 <option value="IT">Цифоровые технологии</option>
-                <option value="Events">Событийная программа</option>
-                <option value="Media">Медиапроекты\Кино</option>
-                <option value="Tourism">Туризм</option>
-                <option value="Education">Провсвещение</option>
+                <option value="events">Событийная программа</option>
+                <option value="media">Медиапроекты\Кино</option>
+                <option value="tourism">Туризм</option>
+                <option value="education">Провсвещение</option>
             </select>
         </div>
 
@@ -67,7 +72,7 @@
         </datalist>
 
         <div class="form__input">
-            <label for="name" class="create__label">Авторы</label>
+            <label for="name" class="create__label">Участники</label>
             <input id="name" type="text" name="name" list="users_list" maxlength=""/>
             <div class="input__icon">
                 <i style="display: none" class="mobile__item__icon large material-icons">-</i>

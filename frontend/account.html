@@ -17,8 +17,7 @@
 <!--    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>-->
 
 </head>
-<body class="data__loading" onload="setupNav('calendar')">
-<!-- TODO: Think how make better -->
+<body class="data__loading">
 
 
 <!-- TODO: Exit button (logout) -->
@@ -57,13 +56,19 @@
 
     </div>
 
-    <p class="topbar__type"></p>
+    <div class="header__right">
+        <div class="header__button" onclick="logout()"><i class="mobile__item__icon large material-icons">exit_to_app</i></div>
+        <p class="topbar__type"></p>
+    </div>
+
 </div>
 
 <!--<hr class="border_line">-->
 
 
 <div class="wrapper">
+
+    <!--#include virtual="/components/project.html" -->
 
     <div class="credits loading__resource">
 
@@ -73,7 +78,29 @@
         </div>
 
         <div class="progress"></div>
+    </div>
 
+    <hr class="border_line">
+
+    <div class="loading__resource account__project no_project">
+        <button class="account__project__create"><i class="mobile__item__icon large material-icons">add</i><p>Создать проект</p></button>
+        <div class="account__project__info" style="position: relative">
+            <img src="images/rocket.jpeg">
+            <div class="description">
+                <div class="project__top_line">
+                    <span class="project__title"></span>
+                    <div style="display: inline-flex; flex-direction: row">
+                        <span class="project__type" style="text-align:right; width: fit-content; margin-left: 5px"></span>
+                        <span class="project__def_type" style="text-align:right;  width: fit-content; margin-left: 5px"></span>
+                    </div>
+                </div>
+
+                <p class="project__names"></p>
+                <p class="project__anno"></p>
+                <p class="project__desc"></p>
+            </div>
+            <button class="project__edit_button" onclick="editProject(cache['project']['id']);"><i class="mobile__item__icon large material-icons">edit</i></button>
+        </div>
     </div>
 
     <hr class="border_line">
@@ -83,6 +110,27 @@
     </div>
 
     <hr class="border_line">
+
+    <div class="loading__resource credits__history" style="">
+
+        <div class="credits__history_day img-div">
+            <h3>05.02_______</h3>
+            <div class="credits__history_item"><div><i class="mobile__item__icon large material-icons"></i><p>Some title</p></div><p>+0</p></div>
+            <div class="credits__history_item"><p>Some tit</p><p class="credits_positive">+10</p></div>
+        </div>
+
+        <div class="credits__history_day img-div">
+            <h3>06.02_______</h3>
+            <div class="credits__history_item"><p>Some othle</p><p>10</p></div>
+        </div>
+
+        <div class="credits__history_day img-div">
+            <h3>07.02_______</h3>
+            <div class="credits__history_item"><p>Some </p><p>+10</p></div>
+            <div class="credits__history_item"><p>Sitle</p><p>+1</p></div>
+            <div class="credits__history_item"><p>Some title</p><p>-120</p></div>
+        </div>
+    </div>
 
 <!--    <p>Input code of the lecture:</p>-->
 

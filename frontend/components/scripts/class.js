@@ -61,6 +61,10 @@ function setupClasses() {
     let class_events = document.querySelectorAll('[active-event]');
     for (let i in class_events) {
         class_events[i].onclick = function (val) {
+            if (val.target.tagName != 'DIV') {
+                return;  // To not to click on other buttons
+            }
+
             cache['class'] = undefined;
             cache['enrolls'] = undefined;
 
@@ -150,6 +154,10 @@ function setClass() {
     if (cache['user'].type >= 1) {
         document.querySelector('.anno').parentElement.style.display = 'none';
     }
+
+    document.querySelector('#scan').addEventListener('click', function () {
+        window.location = '/scan.html?event=' + event_class['id'];
+    });
 }
 
 
@@ -181,11 +189,22 @@ function setEnrolls() {
     setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + Object.keys(enrolls).length + ' записалсь');
 
 
-    // TODO: Hide when there is no enrollment (total === 0)
-    setupData(document.querySelector('#class_popup .count').firstElementChild, Object.keys(enrolls).length + ' / ' + cache['class'].total);
+    // Hide when there is no enrollment (total === 0)
+    if (cache['class'].total == 0) {
+        document.querySelector('.class_popup__enroll_section').style.display = 'none';
+        document.querySelector('#enroll').style.display = 'none';
+        document.querySelector('#deenroll').style.display = 'none';
+    } else {
+        document.querySelector('.class_popup__enroll_section').style.display = 'block';
+        document.querySelector('#enroll').style.display = 'block';
+        document.querySelector('#deenroll').style.display = 'block';
 
-    console.log(Object.keys(enrolls).length , cache['class'].total, Object.keys(enrolls).length / cache['class'].total);
-    setupBar(Object.keys(enrolls).length / cache['class'].total);  // Number from 0.0 to 1.0
+
+        setupData(document.querySelector('#class_popup .count').firstElementChild, Object.keys(enrolls).length + ' / ' + cache['class'].total);
+
+        console.log(Object.keys(enrolls).length, cache['class'].total, Object.keys(enrolls).length / cache['class'].total);
+        setupBar(Object.keys(enrolls).length / cache['class'].total);  // Number from 0.0 to 1.0
+    }
 
 
     // Check current user's attendance
@@ -209,11 +228,11 @@ function setEnrolls() {
     for (let i in enrolls) {
         let name = names[enrolls[i].user_id];
         let close = '<button class="danger_button"><i class="mobile__item__icon large material-icons">clear</i></button>';
-        let checkbox = '<input type="checkbox" ' + (enrolls[i].attendance === 0 || enrolls[i].attendance === '0' ? '' : 'checked') + '>';
+        let checkbox = '<input type="checkbox" ' + (enrolls[i].attendance === false || enrolls[i].attendance === 'false' ? '' : 'checked') + '>';
 
         users_list += '<div class="enrolled_user" data-id="'+ enrolls[i].id +'" user-id="' + name.id + '">';
 
-        users_list += '<p>'+ name.name +'</p>' + '<div>' + checkbox + close + '</div>';
+        users_list += '<p>'+ name.name + ' [' + name.team +']</p>' + '<div>' + checkbox + close + '</div>';
 
         users_list += '</div>';
     }
@@ -247,12 +266,14 @@ function createEnroll() {
                 // loadEnrolls(current_event);
                 loadEnrollsByClassId(current_event, setEnrolls);
             } else if (this.status === 401) {
-                alert('Невозможно записаться. Нет свободных мест!')
+                alert('Запись невозможна. Нет свободных мест!');
+            } else if (this.status === 410) {
+                alert('Запись невозможна. Только за 15 минут до мероприятия.');
             }
         }
     };
 
-    xhttp.open("POST", "http://ihse.tk:50000/create_enroll?" + "event_id="+ current_event + "&user_id=" + user.id, true);
+    xhttp.open("POST", "/create_enroll?" + "event_id="+ current_event + "&user_id=" + user.id, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     // xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
@@ -288,11 +309,13 @@ function removeEnroll(enroll_id) {
                 loadClass(current_event, setClass);
                 // loadEnrolls(current_event);
                 loadEnrollsByClassId(current_event, setEnrolls);
+            } else if (this.status === 410) {
+                alert('Удалить запись невозможно. Только за 15 минут до мероприятия.');
             }
         }
     };
 
-    xhttp.open("POST", "http://ihse.tk:50000/remove_enroll?id=" + enroll_id, true);
+    xhttp.open("POST", "/remove_enroll?id=" + enroll_id, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -323,7 +346,7 @@ function saveEnrolls() {
 
             console.log('New status for ', enroll_list[i].getAttribute('user-id'), ' is ', enroll_list[i].children[1].firstChild.checked);
 
-            let status = (enroll_list[i].children[1].firstChild.checked ? 1 : 0);
+            let status = (enroll_list[i].children[1].firstChild.checked ? true : false);
 
             data_raw.push({
                 'id': enroll_list[i].getAttribute('data-id'),
@@ -342,7 +365,7 @@ function saveEnrolls() {
 
     let data = JSON.stringify(data_raw);
 
-    xhttp.open("POST", "http://ihse.tk:50000/mark_enrolls?", true);
+    xhttp.open("POST", "/mark_enrolls?", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
@@ -371,11 +394,11 @@ function saveClass() {
 
     if (total !== '')
         cache['class'].total = total;
-    if (total !== '')
-        cache['class'].annotation = anno;
+    cache['class'].annotation = anno;
+
     let data = JSON.stringify(cache['class']);
 
-    xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+'classes', true);
+    xhttp.open("POST", "/admin_send_data?" + "table="+'classes', true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie

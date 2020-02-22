@@ -73,8 +73,93 @@ $ docker-compose --version
 echo "Setup database"
 
 sudo mkdir /var/lib/postgresql/data
-sudo chmod +a /var/lib/postgresql/data  # TODO: check
+sudo chmod +rw /var/lib/postgresql/data  # TODO: check
 
 
 
 
+# setup SSL sertificate (Certbot)
+# https://certbot.eff.org/lets-encrypt/ubuntubionic-nginx
+
+echo "https://certbot.eff.org/lets-encrypt/ubuntuxenial-nginx"
+sudo apt-get update
+sudo apt-get install software-properties-common
+sudo add-apt-repository universe
+sudo add-apt-repository ppa:certbot/certbot
+sudo apt-get update
+
+
+udo apt-get install certbot python-certbot-nginx
+
+
+certbot register --email me@example.com
+
+
+
+sudo certbot --nginx  # This Setup directly nginx sertificate  # TODO: Add to docker
+sudo certbot certonly --ngin  x  # Only got certificate
+
+
+certbot certonly --dry-run -d example.com -d www.example.com  # TEST get sert
+
+certbot certonly -d example.com -d www.example.com # TRYLY got sert
+
+certbot certonly -d example.com -d www.example.com -d shop.example.com  # Add subdomen
+
+openssl x509 -text -in /etc/letsencrypt/live/example.com/cert.pem # Check sert
+
+
+sudo certbot renew --dry-run
+
+
+
+# Config file for cerbot
+/etc/letsencrypt/cli.ini
+
+authenticator = webroot
+webroot-path = /var/www/html
+post-hook = service nginx reload
+text = True
+
+
+
+
+# Config ngix
+server {
+    server_name www.example.com;
+    listen www.example.com:443 ssl; # default_server;
+    # выше можно добавить default_server для клиентов без SNI
+
+    ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+    ssl_trusted_certificate /etc/letsencrypt/live/example.com/chain.pem;
+
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    resolver 127.0.0.1 8.8.8.8;
+
+    # исключим возврат на http-версию сайта
+    add_header Strict-Transport-Security "max-age=31536000";
+
+    # явно "сломаем" все картинки с http://
+    add_header Content-Security-Policy "img-src https: data:; upgrade-insecure-requests";
+
+    # далее всё что вы обычно указываете
+    #location / {
+    #    proxy_pass ...;
+    #}
+}
+
+
+
+
+
+
+
+
+
+# удалит все файлы и папки старше 10 дней. вы можете добавить его в ежедневный cron.
+sudo find /tmp -type f -atime +10 -delete
+
+
+du -h | sort -h

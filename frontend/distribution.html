@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, viewport-fit=cover">
+
+    <meta name="theme-color" content="#006cae">
+
+    <title>Админ-статистика | iHSE</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/admin.css">
+    <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/distribution.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!--  https://github.com/Grible/timetable.js  -->
+    <link rel="stylesheet" href="libs/timetable.js.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+<body>
+
+
+<!--# set var="title" value="Админ-статистика" -->
+<!--#include virtual="/components/header.html" -->
+
+
+
+
+<div class="wrapper">
+    <h3>Участники</h3>
+    <div style="width:60%; display: flex; justify-content: space-around; align-items: center">
+        <h4 style="margin: 0">Человек в системе:</h4>
+        <p id="counter" style="font-size: 18px">12</p>
+
+        <h4 style="margin: 0">Человек в лагере:</h4>
+        <p id="counter_total" style="font-size: 18px">12</p>
+    </div>
+
+    <!--  Teams vacations   -->
+    <div id="teams"></div>
+
+    <div class="timetable"></div>
+
+    <hr class="border_line">
+    <h3>Успеваемость</h3>
+
+    <!--  Credits achivment percentage users  -->
+    <canvas id="percentage"></canvas>
+    <canvas id="credits"></canvas>
+
+
+    <hr class="border_line">
+    <h3>Вожатые</h3>
+
+
+    <!--  Host  -->
+    <canvas id="hosts"></canvas>
+
+    <hr class="border_line">
+    <div style="display: flex; flex-direction: row; align-items: center">
+        <h3 style="margin-right: 10px">Занятия</h3>
+        <select id="days" onchange="countDay()">
+            <option selected disabled value="">Выбрать день</option>
+            <option>05.13</option>
+            <option>06.13</option>
+            <option>07.13</option>
+            <option>08.13</option>
+        </select>
+    </div>
+
+
+    <canvas id="attendance"></canvas>
+
+</div>
+
+
+
+<!-- STD logic -->
+<script defer async src="scripts/main.js"></script>
+<!-- Libs -->
+<script defer async src="libs/timetable.min.js"></script>
+<!-- Onpage logic -->
+<script defer async src="scripts/distribution.js"></script>
+
+</body>
+</html>

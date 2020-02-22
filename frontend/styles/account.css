@@ -78,6 +78,10 @@ body {
 }
 
 
+.header__button {
+    cursor: pointer;
+}
+
 .header__button i {
     color: white;
 }
@@ -148,6 +152,134 @@ body {
 
 
 
+
+
+.account__project {
+    width: 100%;
+    height: fit-content;
+}
+
+
+.no_project .account__project__create {
+    display: flex;
+    cursor: pointer;
+}
+
+.account__project__create {
+    width: 100%;
+    height: 50px;
+    background-color: #007ac5;
+    display: none;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.account__project__create * {
+    color: #e8e8e8;
+    font-weight: 500;
+}
+
+
+
+.no_project .account__project__info {
+    display: none;
+}
+
+.account__project__info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.account__project__info .description {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    margin-left: 10px;
+
+    width: 75%;
+}
+
+.project__top_line {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+}
+
+.project__top_line>span:first-child {
+    font-size: 18px;
+    font-weight: bold;
+    color: #03053b;
+
+    min-width: 100px;
+}
+
+.project__top_line div span:first-child {
+    font-size: 14px;
+    color: #8a8a8a;
+
+    min-width: 50px;
+    text-align: right
+}
+
+.project__top_line div span:last-child {
+    font-size: 14px;
+    color: #8a8a8a;
+
+    min-width: 50px;
+    text-align: right
+}
+
+.account__project__info img {
+    height: 70px;
+    width: 70px;
+    border-radius: 50%;
+}
+
+.description div {
+    min-height: 1em;
+
+}
+
+.project__names {
+    font-size: 14px;
+    display: block;
+    height: 1em;
+    width: 100%;
+    white-space: nowrap; /* Запрещаем перенос строк */
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    margin: 0;
+    margin-bottom: 5px;
+    line-height: 0.9em;
+
+    color: #adadad;
+}
+
+
+.project__desc {
+    display: block;
+    height: 1em;
+    width: 100%;
+    white-space: nowrap; /* Запрещаем перенос строк */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+
+
+
+
+
+
 @media (min-width : 769px) {
     .header {
         transition: height 300ms ease-out;
@@ -190,4 +322,95 @@ body {
 
 .wrapper div::-webkit-scrollbar-thumb {
     background-color: #000000;
+}
+
+
+
+
+
+.credits__history {
+    width: 100%;
+    height: fit-content;
+}
+
+
+.credits__history_day {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: 4px;
+    margin-bottom: 10px;
+}
+
+.credits__history_day h3 {
+    margin: 0 0 5px 0;
+    width: fit-content;
+}
+
+
+.credits__history_item {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 4px;
+}
+
+.credits__history_item div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+.credits_negative {
+    color: #bb1f21;
+}
+
+.credits_positive {
+    color: #227a18;
+}
+
+
+
+
+.project__edit_button {
+    position: absolute;
+
+    left: 40px;
+    top: 35px;
+
+    width: 40px;
+    height: 40px;
+
+    cursor: pointer;
+
+    padding: 3px 0 0 1px;
+}
+
+
+
+
+
+
+
+
+
+
+.spoiler input, .spoiler div  {
+    position: relative!important;
+    display: none; /* Скрываем содержимое */
+}
+.spoiler label::before {
+    content: '►'; /* Текст перед заголовком */
+    margin-right: 5px; /* Расстояние до текста */
+}
+/* Открытый спойлер */
+.spoiler :checked + label::before {
+    content: '▼';
+}
+.spoiler :checked ~ div {
+    display: flex; /* Показываем спойлер */
+    padding: 10px; /* Поля вокруг текста */
 }

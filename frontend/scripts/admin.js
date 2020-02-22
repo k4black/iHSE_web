@@ -30,12 +30,12 @@ let data = [
 ];
 
 let fields = {
-    'users': ['id', 'user_type', 'phone', 'name', 'pass', 'team', 'project_id', 'avatar'],
+    'users': ['id', 'code', 'user_type', 'phone', 'name', 'sex', 'pass', 'team', 'project_id', 'avatar'],
     'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
     'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
     'codes': ['code', 'type', 'used'],
     'feedback': ['id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'],
-    'top': ['id', 'user_id', 'chosen_1', 'chosen_2', 'chosen_3', 'day_id'],
+    'top': ['id', 'user_id', 'day_id', 'chosen_1', 'chosen_2', 'chosen_3'],
     'projects': ['id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'],
     'events': ['id', 'type', 'title', 'description', 'host', 'place', 'time', 'day_id'],
     'classes': ['id', 'total', 'annotation'],
@@ -145,9 +145,9 @@ function getTableColumns(tableName, fields) {
                             if (val === 0 || val === '0') {
                                 // Regualr event
                                 return '<div class="event_type regular_event" event_type=' + val + ' title="event_type: ' + val + '">regular</div>'
-                            } else if (val === 1 || val === '1') {
+                            } else if (val === 1 || val === '1' || val === 2 || val === '2') {
                                 // Class
-                                return '<div class="event_type class_event" event_type=' + val + ' title="event_type: ' + val + '">class</div>'
+                                return '<div class="event_type class_event" event_type=' + val + ' title="event_type: ' + val + '">' + (val == 1 ? 'master' : 'lecture') + '</div>'
                             }
                         }
                         if ((tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback') || (tableName === 'codes' && field === 'used')) {
@@ -257,7 +257,7 @@ function loadTable(tableName, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + tableName, true);
+    xhttp.open("GET", "/admin_get_table?" + "table=" + tableName, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -314,20 +314,17 @@ $(function() {
 function removeRow(table_name, row_id) {
     var xhttp = new XMLHttpRequest();
 
-    // xhttp.onreadystatechange = function() {
-    //     if (this.readyState === 4) {
-    //         if (this.status === 200) {
-    //             // TODO ?
-    //         }
-    //     }
-    // };
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                loadAndCreateTable(current_table);  // TODO: Check update
+            }
+        }
+    };
 
-    xhttp.open("POST", "http://ihse.tk:50000/admin_remove_data?" + "table="+table_name + "&id=" + row_id, true);
+    xhttp.open("POST", "/admin_remove_data?" + "table="+table_name + "&id=" + row_id, true);
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
-
-
-    loadAndCreateTable(current_table);  // TODO: Check update
 }
 
 
@@ -348,6 +345,8 @@ function clearTable(table_name) {
                     data: [],
                     columns: columns
                 });
+
+                loadAndCreateTable(current_table);  // TODO: Check update
             }
 
             else if (this.status === 401) {  // No account data
@@ -356,12 +355,9 @@ function clearTable(table_name) {
         }
     };
 
-    xhttp.open("POST", "http://ihse.tk:50000/admin_clearTable?" + "table=" + table_name, true);
+    xhttp.open("POST", "/admin_clearTable?" + "table=" + table_name, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
-
-
-    loadAndCreateTable(current_table);  // TODO: Check update
 }
 
 
@@ -389,25 +385,22 @@ function saveRow() {
     
     var xhttp = new XMLHttpRequest();
 
-    // xhttp.onreadystatechange = function() {
-    //     if (this.readyState === 4) {
-    //         if (this.status === 200) {
-    //             // TODO ?
-    //         }
-    //     }
-    // };
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                loadAndCreateTable(current_table);  // TODO: Check update
+            }
+        }
+    };
     
     console.log('Edited row', row);
-    
     let  data = JSON.stringify(row);
-    xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table="+current_table, true);
+
+    xhttp.open("POST", "/admin_send_data?" + "table="+current_table, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send(data);
-    
-    
-    loadAndCreateTable(current_table);  // TODO: Check update
 }
 
 function createRow() {
@@ -436,25 +429,24 @@ function editRow(row) {
         let current_inputs_html = '<label for=' + field + '>' + field + '</label>';
 
         let disabled = (field === 'id' ? 'disabled' : '');
-        let list = (field === 'user_id' || field === 'event_id' || field === 'project_id' || field === 'day_id' ? 'list=' + field + '_list' : '');
+        let list = (field === 'user_id' || field === 'event_id' || field === 'class_id' || field === 'project_id' || field === 'day_id' ? 'list=' + field + '_list' : '');
         let placeholder = (field.slice(0, 4) === 'date' ? 'placeholder="dd.mm"' : '');
         placeholder = (field.slice(0, 4) === 'time' ? 'placeholder="hh.mm"' : '');
         placeholder = (current_table === 'events' && field === 'time' ? 'placeholder="hh.mm-hh.mm"' : '');
         if (Object.keys(row).length === 0) {
-            let t = '<input name="asd">';
             current_inputs_html += '<input name="' + field + '" value="" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         } else {
             current_inputs_html += '<input name="' + field + '" value="' + row[field] + '" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         }
 
-        if (field === 'user_id' || field === 'event_id' || field === 'project_id' || field === 'day_id') {
+        if (field === 'user_id' || field === 'event_id' || field === 'class_id' || field === 'project_id' || field === 'day_id') {
             current_inputs_html += '<datalist id="' + field + '_list" name="' + field + '_list">';
 
             if (field === 'user_id') {
                 for (let id in users) {
                     current_inputs_html += '<option value="' + id + '">' + users[id].name + '</option>';
                 }
-            } else if (field === 'event_id') {
+            } else if (field === 'event_id' || field === 'class_id' ) {
                 for (let id in events) {
                     current_inputs_html += '<option value="' + id + '">' + events[id].title + '</option>';
                 }
@@ -538,7 +530,7 @@ document.querySelector('.save').addEventListener('click', function () {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_save", true);
+    xhttp.open("GET", "/admin_save", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });
@@ -555,7 +547,7 @@ document.querySelector('.update').addEventListener('click', function () {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_update", true);
+    xhttp.open("GET", "/admin_update", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });
@@ -572,7 +564,7 @@ document.querySelector('.load').addEventListener('click', function () {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_load", true);
+    xhttp.open("GET", "/admin_load", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });
@@ -589,7 +581,7 @@ document.querySelector('.codes').addEventListener('click', function () {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_codes", true);
+    xhttp.open("GET", "/admin_codes", true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 });

@@ -3,28 +3,47 @@
     padding-top: 0;
 }
 
-.class {
-    background-color: #cc333b !important;
-    border: 1px solid #ed2e1c !important;
+.master {
+    background-color: #91a9cd !important;
+    border: 1px solid #8499ba !important;
     cursor: pointer;
     border-radius: 5px;
 }
 
-.class:hover {
-    background-color: #a62a31!important;
-    border: 1px solid #e32c1b!important;
+.master:hover {
+    background-color: #8499ba !important;
+    border: 1px solid #8499ba !important;
 }
 
+.lecture {
+    background: linear-gradient(45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%),linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%) !important;
+    background-size: 1em 1em !important;
+    background-color: #91a9cd !important;
+    border: 1px solid #8499ba !important;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.class:hover, .lecture:hover {
+    background: linear-gradient(45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%),linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%) !important;
+    background-size: 1em 1em !important;
+    background-color: #8499ba !important;
+    border: 1px solid #8499ba !important;
+}
+
+
+
+
 .regular {
-    background-color: #b7b7b7 !important;
-    border: 1px solid #aeaeae !important;
+    background-color: #bbbdbc !important;
+    border: 1px solid #acaead !important;
     cursor: default;
     border-radius: 5px;
 }
 
 .regular:hover {
-    background-color: #a8a8a8!important;
-    border: 1px solid #8a8a8a !important;
+    background-color: #acaead !important;
+    border: 1px solid #acaead !important;
     cursor: default;
     border-radius: 5px;
 }

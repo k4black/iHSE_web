@@ -30,75 +30,6 @@ function creditsFormatter(value, row, index) {
 }
 
 
-function groupBy(arr, property) {
-    return arr.reduce(function(memo, x) {
-        if (!memo[x[property]]) {
-            memo[x[property]] = [];
-        }
-        memo[x[property]].push(x);
-        return memo;
-    }, {});
-}
-
-
-function processCredits(credits_raw) {
-    credits_raw.sort(function(first, second) {
-        return first.user_id - second.user_id;
-    });
-
-    let credits_rawGroups = groupBy(credits_raw, 'user_id');
-
-    let credits = {};
-
-    for (let user_id in credits_rawGroups) {
-        credits[user_id] = processUserCredits(credits_rawGroups[user_id]);
-    }
-
-    return credits;
-}
-
-
-function processUserCredits(userCredits_raw) {
-    userCredits_raw.sort(function(first, second) {
-        return first.date - second.date;
-    });
-    userCredits_rawGroups = groupBy(userCredits_raw, 'date');
-
-    let userCredits = [];
-
-    for (let date in userCredits_rawGroups) {
-        userCredits[date] = [];
-
-        for (let j in userCredits_rawGroups[date]) {
-            userCredits[date].push({'id': userCredits_rawGroups[date][j].id, 'event_id': userCredits_rawGroups[date][j].event_id, 'value': userCredits_rawGroups[date][j].value});
-        }
-    }
-
-    return userCredits;
-}
-
-
-
-function processUsers(users_raw) {
-    let users = {};
-
-    for (let i in users_raw) {
-        users[users_raw[i].id] = users_raw[i];
-    }
-
-    return users;
-}
-
-
-function processEvents(events_raw) {
-    let events = {};
-
-    for (let i in events_raw) {
-        events[events_raw[i].id] = events_raw[i];
-    }
-
-    return events;
-}
 
 
 function getDaysEvents(credits, days, events) {
@@ -131,7 +62,8 @@ function getTableColumns(credits, days, events) {
     let fixedColumns = userColumns.length;
 
 
-    let specialColumns = ['olymp', 'sport'];
+    // let specialColumns = ['olymp', 'sport'];
+    let specialColumns = [];
 
 
     for (let i of userColumns) {
@@ -150,8 +82,20 @@ function getTableColumns(credits, days, events) {
     }
 
 
-    processed_days = getDaysEvents(credits, days, events);  // Dict of Sets {day_id: {event_id's, ....} , ..}
+    // Get Dict of Sets {day_id: {event_id's, ....} , ..}
+    let processed_days = {};
+    let events_by_id = cache['events'];
+    for (let day_id in cache['days']) {
+        processed_days[day_id] = new Set();
 
+        for (let event of Object.values(cache['events'])) {
+            if (events_by_id[event.id].day_id == day_id && event.host != '' && event.place != '') {  // TODO: Check not so regular event (dinner and etc)
+                processed_days[day_id].add(event.id);
+            }
+        }
+    }
+
+    console.log('processed_days', processed_days);
 
     for (let day_id in processed_days) {
         columnsTop.push({
@@ -354,7 +298,7 @@ function loadTable(tableName, func) {
         }
     };
 
-    xhttp.open("GET", "http://ihse.tk:50000/admin_get_table?" + "table=" + tableName, true);
+    xhttp.open("GET", "/admin_get_table?" + "table=" + tableName, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }
@@ -445,7 +389,7 @@ function saveCredit() {
     };
 
 
-    xhttp.open("POST", "http://ihse.tk:50000/admin_send_data?" + "table=credits", true);
+    xhttp.open("POST", "/admin_send_data?" + "table=credits", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie

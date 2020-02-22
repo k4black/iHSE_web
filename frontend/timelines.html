@@ -6,7 +6,7 @@
 
     <meta name="theme-color" content="#006cae">
 
-    <title>Админ-Панель | iHSE</title>
+    <title>Админ-Таймлайны | iHSE</title>
 
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/admin.css">
@@ -17,13 +17,11 @@
 
     <!--  https://github.com/Grible/timetable.js  -->
     <link rel="stylesheet" href="libs/timetable.js.css">
-    <link rel="stylesheet" href="frontend/styles/demo.css">
-
 </head>
 <body>
 
 
-<!--# set var="title" value="Админ-таймлайны" -->
+<!--# set var="title" value="Админ-Таймлайны" -->
 <!--#include virtual="/components/header.html" -->
 
 
@@ -41,7 +39,8 @@
 
 
 
-<!--#include virtual="/frontend/components/class.html" -->
+<!--#include virtual="/components/class.html" -->
+
 
 
 <div class="wrapper">
@@ -56,12 +55,12 @@
 
 
 
+<!-- STD logic -->
+<script defer async src="scripts/main.js"></script>
 <!-- Libs -->
 <script defer async src="libs/timetable.min.js"></script>
 <!-- Onpage logic -->
 <script defer async src="scripts/timelines.js"></script>
-<!-- STD logic -->
-<script defer async src="scripts/main.js"></script>
 
 </body>
 </html>
