@@ -193,9 +193,10 @@ def sync() -> None:
         Run every TIMEOUT seconds
     """
 
-    print('============ sync_start ============')
+    print('============ Sync start ============')
+    print('sync_time:', get_datetime_str())
     # update_cache()  # Sync itself
-    print('============= sync_end =============')
+    print('============= Sync end =============')
 
     start_sync(TIMEOUT)  # Update - to call again
 
