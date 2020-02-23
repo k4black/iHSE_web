@@ -148,6 +148,9 @@ function getTableColumns(tableName, fields) {
                             } else if (val === 1 || val === '1' || val === 2 || val === '2') {
                                 // Class
                                 return '<div class="event_type class_event" event_type=' + val + ' title="event_type: ' + val + '">' + (val == 1 ? 'master' : 'lecture') + '</div>'
+                            } else if (val === 3 || val === '3') {
+                                // Regualr event
+                                return '<div class="event_type fun_event" event_type=' + val + ' title="event_type: ' + val + '">fun</div>'
                             }
                         }
                         if ((tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback') || (tableName === 'codes' && field === 'used')) {

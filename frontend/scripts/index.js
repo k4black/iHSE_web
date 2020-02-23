@@ -75,8 +75,19 @@ function setDay() {
                             '<div class="events">';
 
         for (let event of times[time]) {
+            let event_type = '';
+            if (event.type === 0) {
+                event_type = 'regular-event';
+            } else if (event.type === 1) {
+                event_type = 'master-event';
+            } else if (event.type === 2) {
+                event_type = 'lecture-event';
+            } else if (event.type === 3) {
+                event_type = 'fun-event';
+            }
+
             event_html =
-                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 ? '' : 'active-event') + ' ' + (event.type === 1 ? 'active-event-master' : (event.type === 2 ? 'active-event-lecture' : '')) + ' >' +
+                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 ? '' : 'active-event') + ' ' + event_type + ' >' +
                     // (event.type === 0 || event.type === '0' ? '' : '<a href="class.html?id=' + event.id + '">') +
                         '<p class="event__title">' + event.title + '</p>' +
 

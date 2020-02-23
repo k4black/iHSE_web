@@ -39,10 +39,10 @@
     --danger-colour: #db2828;
     --sub-colour: #00b3bc;
 
-    --event-colour: var(--light-grey-colour);
+    --event-colour: #f0f0f0;
     --event-master-colour: #c4dcf5;
     --event-lecture-colour: #c4dcf5;
-    --event-fun-colour: #fbe4b9;  /* TODO: Check */
+    --event-fun-colour: #e0e0e0;  /* TODO: Check */
 }
 
 

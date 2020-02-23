@@ -1030,7 +1030,7 @@ def insert_event(event_obj: TTableObject) -> tp.Optional[int]:
     else:
         conn.commit()
 
-    if int(event_obj['type']) != 0:
+    if int(event_obj['type']) == 1 or int(event_obj['type']) == 2:
         # master/lecture - add class in table
         try:
             with conn.cursor() as cursor_:
@@ -1067,7 +1067,7 @@ def edit_event(event_obj: TTableObject) -> bool:
                 cursor_.execute(f"select (id) from days where date = %s", (event_obj['date'],))
                 day = cursor_.fetchone()
         except psycopg2.Error as error_:
-            print(f"Error in sql.insert_event(): {error_}")
+            print(f"Error in sql.edit_event(): {error_}")
             # conn.rollback()
             return None
 
@@ -1075,6 +1075,30 @@ def edit_event(event_obj: TTableObject) -> bool:
             return None
 
         day_id = day[0]
+
+    if int(event_obj['type']) == 1 or int(event_obj['type']) == 2:
+        # Now it's class. Check class exist
+        try:
+            with conn.cursor() as cursor_:
+                cursor_.execute("INSERT INTO classes (id, total, annotation) VALUES (%s, 0, '') ON CONFLICT DO NOTHING", (event_obj['id'],))
+        except psycopg2.Error as error_:
+            print(f"Error in sql.edit_event(): {error_}")
+            conn.rollback()
+            return False
+        else:
+            conn.commit()
+
+    else:
+        # Mb was a class. Remove
+        try:
+            with conn.cursor() as cursor_:
+                cursor_.execute('REMOVE FROM classes where id = %s', (event_obj['id'],))
+        except psycopg2.Error as error_:
+            print(f"Error in sql.edit_event(): {error_}")
+            conn.rollback()
+            return False
+        else:
+            conn.commit()
 
 
     sql_string = "update events set type = %s, title = %s, description = %s, host = %s, " \

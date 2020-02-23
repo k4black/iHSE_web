@@ -66,6 +66,9 @@ footer div {
     margin-right: 15px;
     font-size: 23px;
     line-height: 1.3em;
+
+    color: var(--header-colour);
+    /*  TODO: Check if only regular events  */
 }
 
 .bar div {
@@ -96,7 +99,7 @@ footer div {
 
     background-color: var(--event-colour);
 
-    padding: 10px 10px;
+    padding: 12px 10px 10px 10px;
     /*background-color: orange;*/
     display: flex;
     flex-direction: column;
@@ -121,8 +124,12 @@ footer div {
     justify-content: space-between;
     align-items: flex-end;
 
-    margin-top: 5px;
+    margin: 5px 0 -3px 0;
     width: 100%;
+}
+
+.event__last_line span {
+    line-height: 1em;
 }
 
 .event__last_line span:first-child {
@@ -168,11 +175,21 @@ footer div {
     cursor: pointer;
 }
 
-.event[active-event-master] {
+.event[regular-event] {
+    background-color: var(--event-colour);
+}
+
+.event[regular-event] .event__title {
+    color: var(--subtext-colour);
+    /*color: var(--text-colour);*/
+    font-weight: 500;
+}
+
+.event[master-event] {
     background-color: var(--event-master-colour);
 }
 
-.event[active-event-lecture] {
+.event[lecture-event] {
     background-color: var(--event-lecture-colour);
 }
 

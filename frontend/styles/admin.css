@@ -14,7 +14,10 @@
 }
 
 
-.regular_user, .regular_event, .true_bool {
+.regular_event {
+    background-color: #a7a9a8;
+}
+.regular_user, .fun_event, .true_bool {
     background-color: #307bbb;
 }
 
