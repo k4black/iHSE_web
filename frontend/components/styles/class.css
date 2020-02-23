@@ -20,8 +20,8 @@
 
 .class_popup__header {
     margin-top: 0;
-    height: 60px;
-    padding-right: 20px;
+    min-height: 60px;
+    padding: 5px 20px 5px 0;
 
     background-color: #00b3bc;
     /*padding: 25px 10px;*/
@@ -41,8 +41,8 @@
 }
 
 .class_popup__header__title {
-    margin-top: 10px;
-    margin-left: 15px;
+    margin: 10px 15px 0px 15px;
+    line-height: 1em;
 }
 
 .class_popup__header i {

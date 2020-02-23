@@ -4,15 +4,6 @@
 
 
 
-/*background*/
-.background__image {
-    background: url("image/background.jpg");
-    width: 100vw;
-    height: 140vh;
-    background-size: cover;
-    background-position: center;
-}
-
 .scroller {
     height: auto;
     width: auto;
@@ -103,7 +94,7 @@ footer div {
 
     width: 100%;
 
-    background-color: #e3e6e5;
+    background-color: var(--event-colour);
 
     padding: 10px 10px;
     /*background-color: orange;*/
@@ -137,7 +128,7 @@ footer div {
 .event__last_line span:first-child {
     font-size: 16px;
     font-weight: lighter;
-    color: #333333;
+    color: var(--text-colour);
     width: fit-content;
     min-width: 120px;
 
@@ -148,7 +139,7 @@ footer div {
 
 .event__last_line span:last-child {
     font-size: 14px;
-    color: #8a8a8a;
+    color: var(--hint-colour);
     text-align: right;
     width: fit-content;
     min-width: 80px;
@@ -160,6 +151,7 @@ footer div {
     line-height: 1em;
     font-size: 20px;
     font-weight: bold;
+    color: var(--header-colour);
 }
 
 .event__desc {
@@ -173,14 +165,19 @@ footer div {
 
 
 .event[active-event] {
-    background-color: #c4dcf5;
     cursor: pointer;
 }
 
+.event[active-event-master] {
+    background-color: var(--event-master-colour);
+}
+
 .event[active-event-lecture] {
-    background: linear-gradient(45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%),linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%);
-    background-size: 1em 1em;
-    background-color: #c4dcf5;
+    background-color: var(--event-lecture-colour);
+}
+
+.event[fun-event] {
+    background-color: var(--event-fun-colour);
 }
 
 
