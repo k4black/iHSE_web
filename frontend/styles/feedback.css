@@ -46,7 +46,7 @@
 }
 
 .today .day__num {
-    background-color: orange;
+    background-color: var(--accent-colour);
 }
 
 .day__name {
@@ -57,6 +57,13 @@
 }
 
 
+
+
+
+
+.feedback_title {
+    color: var(--header-colour);
+}
 
 
 .border {
@@ -102,11 +109,9 @@ textarea {
     border: 1px solid gainsboro;
     resize: none;
 
-
     min-height: 30px;
 
     display: none;
-
 }
 
 
@@ -168,8 +173,8 @@ h1 {
 }
 
 .rs-container .rs-selected {
-    background-color: #007ac5 !important;
-    border: 1px solid #0071b6 !important;
+    background-color: var(--main-colour)!important;
+    border: 1px solid var(--main-dark-colour) !important;
 }
 
 .rs-container {
@@ -223,8 +228,6 @@ h1 {
         z-index: 90;
         padding-left: calc(50% - 250px);
         padding-right: calc(50% - 250px);
-
-
     }
 }
 
@@ -239,7 +242,7 @@ h1 {
 
 .event .host {
     margin: 0 0 10px 0;
-    color: #595959;
+    color: var(--subtext-colour);
 
     font-size: 14px;
     font-style: italic;

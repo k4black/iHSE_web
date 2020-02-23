@@ -22,7 +22,7 @@
 
 
     --header-colour: #0d0d2f;
-    --text-colour: #333333;
+    --text-colour: #1b202b;
     --subtext-colour: #494949;
     --hint-colour: #8a8a8a;
 
@@ -81,7 +81,7 @@ a {
 
 p {
     vertical-align: middle;
-    color: #0d0d2f;
+    color: var(--text-colour);
     margin: 0;
 }
 
@@ -111,7 +111,18 @@ button {
 
     z-index: 10;
     background: var(--main-light-colour);
+
+    transition: ease-out 300ms;
 }
+
+button:hover {
+    background: var(--main-dark-colour);
+}
+
+button * {
+    color: var(--header-light-colour);
+}
+
 
 label {
     font-size: 16px;
@@ -206,7 +217,7 @@ form {
 .form {
     /*margin-top: 30px;*/
     max-width: 300px;
-    width: 60vw;
+    width: 70%;
     z-index: 10;
 
     min-height: 70vh;

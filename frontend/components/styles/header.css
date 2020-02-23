@@ -49,11 +49,11 @@
 
 
 .title {
-
     font-size: 25px;
     margin-left: 20px;
     vertical-align: middle;
-    height: 35px;
+    height: 25px;
+    line-height: 1.2em;
     font-weight: 400;
 }
 
