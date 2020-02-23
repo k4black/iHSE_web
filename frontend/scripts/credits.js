@@ -105,6 +105,17 @@ function getTableColumns(credits, days, events) {
         });
 
         for (let event_id of processed_days[day_id]) {
+            let event_type = '';
+            if (events[event_id].type === 0) {
+                event_type = 'regular-event';
+            } else if (events[event_id].type === 1) {
+                event_type = 'master-event';
+            } else if (events[event_id].type === 2) {
+                event_type = 'lecture-event';
+            } else if (events[event_id].type === 3) {
+                event_type = 'fun-event';
+            }
+
             columnsBottom.push({
                 field: 'date' + days[day_id].date + 'id' + event_id,
                 title: event_id,
@@ -121,7 +132,7 @@ function getTableColumns(credits, days, events) {
                         console.log('click ' + event.currentTarget)
                     }
                 },
-                class: 'cell'
+                class: 'cell' + ' ' + event_type
             });
         }
         columnsBottom.push({

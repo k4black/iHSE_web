@@ -14,12 +14,24 @@
 .total_cell {
     font-weight: bold;
     font-style: italic;
-    background-color: #00000004;
+    background-color: #0000000E;
 }
 
 .title_cell {
-    background-color: #0000000D;
+    background-color: #0000000F;
 }
+
+
+.master-event {
+    background-color: #c4dcf530;
+}
+.lecture-event {
+    background-color: #c4dcf530;
+}
+.fun-event {
+    background-color: #e0e0e025;
+}
+
 
 
 

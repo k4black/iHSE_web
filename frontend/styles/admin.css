@@ -47,7 +47,7 @@ div.tabs {
     height: 70px;
     width: calc(100% + 30px);
     border-bottom: solid 1px #151552;
-    background-color: #efefef;
+    background-color: var(--popup-colour);
     margin-bottom: 25px;
 
     overflow-x: scroll;
@@ -55,8 +55,7 @@ div.tabs {
 
 div.tabs button {
     height: 90%;
-    background-color: #cacaca;
-    color: #0d0d2f;
+    background-color: var(--grey-colour);
     position: relative;
     border-radius: 10px!important;
     border-bottom-left-radius: 0!important;
@@ -69,13 +68,15 @@ div.tabs button {
 }
 
 div.tabs button * {
+    color: var(--header-colour);
+
     display: inline-block;
     margin: 0;
 }
 
 
 div.tabs button.active_tab {
-    background-color: #FFFFFF;
+    background-color: var(--wrap-colour);
     position: relative;
     top: 1px;
     z-index: 1;
@@ -136,7 +137,11 @@ button.danger_button:hover  {
     background: #00000010;
 
     box-shadow: 0 0 0 1px #DB2828 inset!important;
-    color: #DB2828!important;
+
+}
+
+button.danger_button * {
+    color: var(--danger-colour);
 }
 
 
