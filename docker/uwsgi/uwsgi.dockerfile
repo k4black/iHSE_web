@@ -4,9 +4,9 @@ RUN python3.7 -m pip install --no-cache-dir -r /tmp/requirements.txt
 
 #EXPOSE 8001
 
-COPY uwsgi.ini /var/conf/uwsgi.ini
-#COPY main.py /var/src/main.py
-#CMD cat /var/src/main.py
+RUN mkdir -p /var/conf/
+# COPY uwsgi.ini /var/conf/uwsgi.ini
+ADD uwsgi.ini /var/conf/
 
 ENV PYTHONPATH "${PYTHONPATH}:/var/app/backend/"
 
@@ -16,4 +16,4 @@ CMD touch /var/log/uwsgi/uwsgi.log
 CMD cp -T /var/log/uwsgi/uwsgi.log /var/log/uwsgi/uwsgi.log.old && echo "" > /var/log/uwsgi/uwsgi.log
 
 ENTRYPOINT ["uwsgi"]
-CMD ["/var/conf/uwsgi.ini", "--need-app"]
+CMD ["--ini", "/var/conf/uwsgi.ini", "--need-app"]

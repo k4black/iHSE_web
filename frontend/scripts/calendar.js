@@ -164,7 +164,7 @@ function setDay() {
 
     let times = groupBy(events, 'time');
     let times_arr = Object.keys(times);
-    let processed_times_arr = times_arr.map(function (i) {return (i.length === 4 || i.length === 9) ? '0'+i : i}).map(function (i) {return i.length === 10 ? i.slice(0, 6)+'0'+i.slice(6) : i});
+    let processed_times_arr = times_arr.map(function (i) {return (i.length === 4 || i[4] == '\n') ? '0'+i : i}).map(function (i) {return i.length === 10 ? i.slice(0, 6)+'0'+i.slice(6) : i});
 
     for (let processed_time of processed_times_arr.sort()) {
         let time = processed_time[6] == '0' && processed_time[7] != '0' ? processed_time.slice(0, 6) + processed_time.slice(7) : processed_time;

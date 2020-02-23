@@ -16,6 +16,7 @@ from psycopg2 import IntegrityError, DataError, ProgrammingError, OperationalErr
 # initializing connection to database
 # TODO: plain text user & password, great
 init_successful = False
+conn = None
 while not init_successful:
     try:
         conn = psycopg2.connect(dbname='ihse', user='postgres', password='root', host='database')
@@ -36,10 +37,16 @@ def checkpoint():
 
     pass
     # conn_sqlite.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # WAL
-    # conn_sqlite.execute("VACUUM;")  # Repack database file
+    with conn.cursor() as cursor_:
+        try:
+            cursor_.execute("VACUUM ANALYZE;")  # Repack database file and re ANALYZE
+        except psycopg2.Error as err:
+            print("Checkpoint error:", err)
+    conn.commit()
 
 
 checkpoint()
+
 
 try:
     with conn.cursor() as cursor:
@@ -300,7 +307,7 @@ def dict_to_tuple(data_raw: TTableObject, table: str, ignore_id: bool = False, e
             elif 'date' in data_raw.keys():
                 try:
                     with conn.cursor() as cursor_:
-                        cursor_.execute(f"select (id) from days where date = '{data_raw['date']}'")
+                        cursor_.execute("select (id) from days where date = %s", (data_raw['date'],))
                         day_id_obj = cursor_.fetchone()
                         if day_id_obj is None:
                             data.append(empty_placeholder)
@@ -989,23 +996,21 @@ def insert_event(event_obj: TTableObject) -> tp.Optional[int]:
         id: id of the created event
     """
 
-    if 'date' in event_obj.keys():
-        day_id = insert_to_table((event_obj['date'], '', False), 'days')
-    else:
-        try:
-            day: tp.Optional[tp.Tuple] = None
-            with conn.cursor() as cursor_:
-                cursor_.execute(f"select (id) from days where date = '{event_obj['date']}'")
-                day = cursor_.fetchone()
-        except psycopg2.Error as error_:
-            print(f"Error in sql.insert_event(): {error_}")
-            # conn.rollback()
-            return None
+    day: tp.Optional[tp.Tuple[int]] = None
 
-        if day is None:
-            return None
+    try:
+        with conn.cursor() as cursor_:
+            cursor_.execute(f"select (id) from days where date = %s", (event_obj['date'],))
+            day = cursor_.fetchone()
+    except psycopg2.Error as error_:
+        print(f"Error in sql.insert_event(): {error_}")
+        # conn.rollback()
+        return None
 
-        day_id = day[0]
+    if day is None:
+        return None
+
+    day_id = day[0]
 
     event_obj['day_id'] = day_id
     values_placeholder = ', '.join(['%s' for field in table_fields['events'] if field != 'id'])
@@ -1052,6 +1057,26 @@ def edit_event(event_obj: TTableObject) -> bool:
 
     # TODO: Check Changed type -> create or delete
 
+    if 'day_id' in event_obj.keys():
+        day_id = event_obj['day_id']
+    else:
+        day: tp.Optional[tp.Tuple[int]] = None
+
+        try:
+            with conn.cursor() as cursor_:
+                cursor_.execute(f"select (id) from days where date = %s", (event_obj['date'],))
+                day = cursor_.fetchone()
+        except psycopg2.Error as error_:
+            print(f"Error in sql.insert_event(): {error_}")
+            # conn.rollback()
+            return None
+
+        if day is None:
+            return None
+
+        day_id = day[0]
+
+
     sql_string = "update events set type = %s, title = %s, description = %s, host = %s, " \
                  "place = %s, time = %s, day_id = %s where id = %s;"
 
@@ -1064,7 +1089,7 @@ def edit_event(event_obj: TTableObject) -> bool:
                              event_obj['host'],
                              event_obj['place'],
                              event_obj['time'],
-                             event_obj['day_id'],
+                             day_id,
                              event_obj['id']))
     except psycopg2.Error as error_:
         print(f"Error in sql.edit_event(): {error_}")
