@@ -21,11 +21,6 @@ window.addEventListener('load', function () {
 });
 
 
-// $(function() {
-//
-// });
-
-
 
 
 function setupTabs() {
@@ -51,11 +46,6 @@ function setupTabs() {
         };
     }
 }
-
-
-
-
-var current_events;
 
 
 
@@ -142,7 +132,8 @@ function buildTimeline(locations, events) {
         start_hours.push(parseInt(time1.split('.')[0]));
 
         if (time2 === undefined) {
-            end_hours.push(parseInt(time1.split('.')[0]) + 1);
+            let end_time = parseInt(time1.split('.')[0]) + 1;
+            end_hours.push(end_time == 24 ? 0 : end_time);
         } else {
             end_hours.push(parseInt(time2.split('.')[0]));
         }
@@ -150,8 +141,7 @@ function buildTimeline(locations, events) {
 
     console.log(' hour ', start_hours, end_hours, Math.min.apply(Math, start_hours), Math.max.apply(Math, end_hours));
 
-    timetable.setScope(Math.min.apply(Math, start_hours), Math.max.apply(Math, end_hours) + 1);
-
+    timetable.setScope(Math.min.apply(Math, start_hours), Math.max.apply(Math, end_hours) + 1 == 23 ? 0 : Math.max.apply(Math, end_hours) + 1);
     timetable.addLocations(locations);
 
     for (let i in events) {
@@ -169,8 +159,19 @@ function buildTimeline(locations, events) {
 
         console.log('added event ', month + '.' + day, hours1 + ':' + min1, hours2 + ':' + min2);
 
+        let event_type = '';
+        if (events[i].type === 0) {
+            event_type = 'regular-event';
+        } else if (events[i].type === 1) {
+            event_type = 'master-event';
+        } else if (events[i].type === 2) {
+            event_type = 'lecture-event';
+        } else if (events[i].type === 3) {
+            event_type = 'fun-event';
+        }
+
         let options = {
-            class: (events[i].type === 0 ? 'regular' : (events[i].type === 1 ? 'master' : 'lecture')),
+            class: event_type,
             onClick: function (event) {
                 if (events[i].type === 1 || events[i].type === 2) {
                     console.log('clicked event with id: ', events[i].id);

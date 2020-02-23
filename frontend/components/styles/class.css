@@ -150,7 +150,7 @@
 
 
 .status p {
-    color: #22a91d!important;
+    color: var(--ok-status)!important;
 }
 
 

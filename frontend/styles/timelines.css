@@ -3,47 +3,63 @@
     padding-top: 0;
 }
 
-.master {
-    background-color: #91a9cd !important;
-    border: 1px solid #8499ba !important;
+
+.time-entry {
+    line-height: 0.8em;
+}
+
+.timetable .time-entry {
+    border: 0.5px #9a9a9a solid!important;
+
+}
+
+
+.timetable .time-entry.master-event {
+    background-color: #91a9cd;
     cursor: pointer;
     border-radius: 5px;
 }
 
-.master:hover {
-    background-color: #8499ba !important;
-    border: 1px solid #8499ba !important;
+.timetable .time-entry.master-event:hover {
+    background-color: #8499ba;
 }
 
-.lecture {
-    background: linear-gradient(45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%),linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%) !important;
-    background-size: 1em 1em !important;
-    background-color: #91a9cd !important;
-    border: 1px solid #8499ba !important;
+.timetable .time-entry.lecture-event {
+    background-color: #91a9cd;
     cursor: pointer;
     border-radius: 5px;
 }
 
-.class:hover, .lecture:hover {
-    background: linear-gradient(45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%),linear-gradient(-45deg,rgba(0, 0, 0, 0) 48%,rgba(0, 0, 0, 0.05) 50%,rgba(0, 0, 0, 0) 52%) !important;
-    background-size: 1em 1em !important;
-    background-color: #8499ba !important;
-    border: 1px solid #8499ba !important;
+.timetable .time-entry.lecture-event:hover {
+    background-color: #91a9cd;
+    cursor: pointer;
+    border-radius: 5px;
 }
 
 
 
-
-.regular {
-    background-color: #bbbdbc !important;
-    border: 1px solid #acaead !important;
+.timetable .time-entry.regular-event {
+    background-color: #bbbdbc;
     cursor: default;
     border-radius: 5px;
 }
 
-.regular:hover {
-    background-color: #acaead !important;
-    border: 1px solid #acaead !important;
+.timetable .time-entry.regular-event:hover {
+    background-color: #acaead;
+    cursor: default;
+    border-radius: 5px;
+}
+
+
+
+.timetable .time-entry.fun-event {
+    background-color: #bd9763;
+    cursor: default;
+    border-radius: 5px;
+}
+
+.timetable .time-entry.fun-event:hover {
+    background-color: #b3874a;
     cursor: default;
     border-radius: 5px;
 }

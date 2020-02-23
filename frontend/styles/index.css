@@ -99,7 +99,7 @@ footer div {
 
     background-color: var(--event-colour);
 
-    padding: 12px 10px 10px 10px;
+    padding: 12px 10px 8px 10px;
     /*background-color: orange;*/
     display: flex;
     flex-direction: column;
