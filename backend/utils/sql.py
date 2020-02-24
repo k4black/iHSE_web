@@ -361,10 +361,10 @@ def insert_to_table(data: TTableObject, table_name: str) -> tp.Optional[int]:
         return insert_event(data)
 
     hundred: tp.Optional[tp.Tuple[int]]
-    fields = ', '.join(table_fields[table_name])
+    fields = ', '.join([field for field in table_fields[table_name] if field != 'id'])
     values_placeholder = ', '.join(['%s' for field in table_fields[table_name] if field != 'id'])
 
-    sql_string = f"INSERT INTO {table_name} ({fields}) VALUES (default, {values_placeholder}) RETURNING id;"
+    sql_string = f"INSERT INTO {table_name} ({fields}) VALUES ({values_placeholder}) RETURNING id;"
 
     print(f'insert using {sql_string} values {dict_to_tuple(data, table_name, ignore_id=True)}')
     try:
@@ -1029,8 +1029,8 @@ def insert_event(event_obj: TTableObject) -> tp.Optional[int]:
     values_placeholder = ', '.join(['%s' for field in table_fields['events'] if field != 'id'])
     event_id: tp.Optional[tp.Tuple[int]] = None
 
-    sql_string = f"INSERT INTO events (id, type, title, description, host, place, time, day_id) " \
-                 f"VALUES (default, {values_placeholder}) RETURNING id;"
+    sql_string = f"INSERT INTO events (type, title, description, host, place, time, day_id) " \
+                 f"VALUES ({values_placeholder}) RETURNING id;"
 
     try:
         with conn.cursor() as cursor_:
@@ -1484,7 +1484,7 @@ def pay_credit(user_id: int, event_id: int, value: int = 0, time_: str = '0') ->
     # else:
     #     conn.commit()
 
-    sql_string = 'insert into credits (id, user_id, event_id, time, value) values (default, %s, %s, %s, %s);'
+    sql_string = 'insert into credits (user_id, event_id, time, value) values (%s, %s, %s, %s);'
 
     if not credits_:
         try:

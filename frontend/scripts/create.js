@@ -140,11 +140,12 @@ function loadNames(func) {
 
 
 function setNames() {
-    let names = cache['names'];
 
     // For choosing names
     let datalist_html = "";
-    for (let user of names) {
+    for (let user_id in cache['names']) {
+        let user =  cache['names'][user_id];
+
         if (user['project_id'] == 0) {  // Can choose Ony if there are no user's project
             datalist_html += '<option value="' + user['name'] + '"></option>';
         }
