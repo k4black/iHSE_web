@@ -59,6 +59,9 @@ footer div {
 
 
 .bar {
+    font-family: 'Hind', sans-serif;
+
+
     width: 50px;
     min-width: 50px;
     height: fit-content;
@@ -99,7 +102,7 @@ footer div {
 
     background-color: var(--event-colour);
 
-    padding: 12px 10px 8px 10px;
+    padding: 10px 10px 8px 10px;
     /*background-color: orange;*/
     display: flex;
     flex-direction: column;
@@ -124,7 +127,7 @@ footer div {
     justify-content: space-between;
     align-items: flex-end;
 
-    margin: 5px 0 -3px 0;
+    margin: 5px 0 0px 0;
     width: 100%;
 }
 
