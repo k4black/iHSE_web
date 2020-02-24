@@ -53,6 +53,7 @@ function getToday() {
     let today_date = new Date();  //January is 0!
     let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');
 
+    dd_mm = cache['today'];  // Debug??
     return dd_mm;
 }
 
@@ -152,8 +153,9 @@ function loadDays(func) {
         if (this.readyState === 4) {
             if (this.status === 200) {  // Ok
                 let days_raw = JSON.parse(this.responseText);
-                let days = groupByUnique(days_raw, 'id');
+                let days = groupByUnique(days_raw['days'], 'id');
                 cache['days'] = days;
+                cache['today'] = days_raw['today'];
 
                 func();
             } else if (this.status === 401) {  // Unauthorized

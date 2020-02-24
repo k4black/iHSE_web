@@ -31,31 +31,6 @@ function setUsers() {
 
 
 
-/**
- * Get day information from server (first time)
- * Send http GET request and get today json schedule
- * than parse of json data and create html
- */
-
-function loadDayFirstTime(days_list) {
-    let urlParams = new URLSearchParams(window.location.search);
-    var dayNum = urlParams.get('day');
-
-    let today_date = new Date();  //January is 0!
-    let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
-
-    if (days_list.includes(dd_mm)) {
-        today = dd + '.' + mm;
-    } else {
-        today = days_list[0];
-    }
-    loadDay((dayNum != null ? dayNum : today), setDay);
-}
-
-
-
-
-
 
 var days;
 
@@ -70,22 +45,19 @@ function setupDays() {   // TODO: Refactor
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            days = JSON.parse( this.responseText );
+            let days_raw = JSON.parse( this.responseText );
 
-            cache['days'] = groupByUnique(days, 'id');
-
-            sortBy(days, 'date');
+            cache['days'] = groupByUnique(days_raw['days'], 'id');
+            cache['today'] = days_raw['today'];
 
             let days_list = [];
-            for (let day of days) {
-                days_list.push(day.date);
+            for (let day_id in cache['days']) {
+                days_list.push(cache['days'][day_id].date);
             }
 
-            let today_date = new Date();  //January is 0!
-            let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');
-
-            if (days_list.includes(dd_mm)) {
-                today = dd + '.' + mm;
+            let today = getToday();
+            if (days_list.includes(today)) {
+                today = today;
             } else {
                 today = days_list[0];
             }
@@ -102,6 +74,8 @@ function setupDays() {   // TODO: Refactor
 
                 if (day.date === today) {  // TODO: Today
                     topbar_html += '<div class="day today selected">'
+                } else if (day.date < today) {
+                    topbar_html += '<div class="day disabled">'
                 } else {
                     topbar_html += '<div class="day">'
                 }
@@ -137,7 +111,7 @@ function setupDays() {   // TODO: Refactor
                 });
             }
 
-            loadDayFirstTime(days_list);
+            loadDay(today, setDay);
         }
     };
 

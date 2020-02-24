@@ -19,14 +19,12 @@
 
 .day {
     width: auto;
-    display: flex;
     flex-direction: column;
-}
 
-.day {
-    display: inline-block;
-
+    display: inline-flex;
     transition: background-color 300ms ease-out;
+
+    cursor: pointer;
 }
 
 
@@ -54,6 +52,32 @@
 .selected .day__num {
     background-color: #0085d6 !important;
 }
+
+
+
+.disabled {
+    cursor: default;
+}
+
+.disabled div {
+    color: var(--hint-light-colour);
+}
+
+.day.disabled:hover {
+    /*background: 0;*/
+}
+
+.day.disabled:hover .day__num {
+    background-color: #0085d6;
+/*  TODO: check right colour  */
+}
+
+.day.disabled .day__num {
+    background-color: #0085d6;
+}
+
+
+
 
 .today .day__num {
     background-color: var(--accent-colour) !important;

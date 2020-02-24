@@ -1,5 +1,9 @@
 
-loadNames(function () {});
+
+document.addEventListener('load', function () {
+    loadNames(function () {});
+});
+
 
 
 

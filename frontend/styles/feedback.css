@@ -12,14 +12,25 @@
 
 
 
+.day:hover {
+    background: linear-gradient(0deg, #00000025 0%, #00000005 40%, #00000000 100%);
+
+}
+
+.day:hover .day__num {
+    background-color: #0083d4;
+}
 
 
 .day {
     width: auto;
-    display: flex;
     flex-direction: column;
-}
 
+    display: inline-flex;
+    transition: background-color 300ms ease-out;
+
+    cursor: pointer;
+}
 
 
 .day__num {
@@ -31,29 +42,53 @@
     margin: 5px 7px;
 
     background-color: #00000015;
-    color: white;
+    color: var(--header-light-colour);
     font-size: 18px;
     border-radius: 50%;
- }
+
+    transition: background-color 300ms ease-out;
+}
 
 .selected {
     background-color: #00000020;
-    background: linear-gradient(0deg, #00000030 0%, #00000020 60%, #00000010 80%, #00000000 100%);
+    background: linear-gradient(0deg, #00000030 0%, #00000020 60%, #00000010 80%, #00000000 100%) !important;
 }
 
 .selected .day__num {
-    background-color: #0085d6;
+    background-color: #0085d6 !important;
 }
 
 .today .day__num {
-    background-color: var(--accent-colour);
+    background-color: var(--accent-colour) !important;
 }
 
 .day__name {
     line-height: 15px;
     font-size: 12px;
     text-align: center;
-    color: #e3e6e5;
+    color: var(--subtext-light-colour);
+}
+
+
+.disabled {
+    cursor: default;
+}
+
+.disabled div {
+    color: var(--hint-light-colour);
+}
+
+.day.disabled:hover {
+    background: 0;
+}
+
+.day.disabled:hover .day__num {
+    background-color: #0085d6;
+/*  TODO: check right colour  */
+}
+
+.day.disabled .day__num {
+    background-color: #0085d6;
 }
 
 
@@ -74,9 +109,6 @@
 
 
 
-.day {
-    display: inline-block;
-}
 
 
 

@@ -58,6 +58,7 @@ def get_date_str() -> str:
         time str in format dd.mm
     """
 
+    return '07.06'  # TODO: DEBUG porp!
     return datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))).strftime('%d.%m')
 
 
@@ -864,9 +865,10 @@ def get_days(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         Response - result of request
     """
 
-    data = sql.get_table('days')
+    days = sql.get_table('days')
+    days = [obj for obj in days if obj['id'] != 0]
 
-    data = [obj for obj in data if obj['id'] != 0]
+    data = {'days': days, 'today': get_date_str()}
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')

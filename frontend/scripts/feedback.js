@@ -36,6 +36,7 @@ function setDays() {
         today = days_list[0];
     }
 
+
     let topbar_html = '';
     let i = 0;
     for (let day_id in cache['days']) {
@@ -48,6 +49,8 @@ function setDays() {
 
         if (day.date === today) {  // TODO: Today
             topbar_html += '<div class="day today selected">'
+        } else if (day.date > today) {
+            topbar_html += '<div class="day disabled">'
         } else {
             topbar_html += '<div class="day">'
         }
@@ -66,6 +69,10 @@ function setDays() {
     // Set onclick loading other day
     var days = document.querySelectorAll('.day');
     for (let i = 0; i < days.length; i++) {
+        if (days[i].classList.contains('disabled')) {
+            continue;
+        }
+
         days[i].addEventListener('click', function() {
             let selected = document.querySelector('.selected');
             if (selected != null) {
