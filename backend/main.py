@@ -76,6 +76,30 @@ def check_enroll_time(date: str, time_: str, year: str = '2020') -> bool:
     return can_enroll and current_day
 
 
+def generate_codes(num: int) -> tp.Set[str]:
+    """ Generate registration 6-sign codes
+    Arguments:
+        num:
+
+    Returns:
+        time str in format dd.mm
+    """
+
+    # random.seed(0)
+    symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "0123456789" + "0123456789"
+    symbols = [i for i in symbols]
+
+    codes = set({})  # type: tp.Set[str]
+    for i in range(num):
+        choose5 = ''.join(random.choices(symbols, k=5))
+        control1 = symbols[hash(choose5) % len(symbols)]
+
+        code = choose5 + control1
+        codes.add(code)
+
+    return codes
+
+
 """ ---===---==========================================---===--- """
 """                       uWSGI typing objects                   """
 """ ---===---==========================================---===--- """
@@ -630,8 +654,13 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
                 [])
 
     if env['PATH_INFO'] == '/admin_codes':
-        # TODO
-        gsheets.generate_codes(150, 25, 5)
+        codes = generate_codes(20)
+
+        print('===codes===', codes)
+
+        for code in codes:
+            data = {'code': code, 'type': 0, 'used': False}
+            sql.insert_to_table(data, 'codes')
 
         return ('200 OK',
                 [('Access-Control-Allow-Origin', '*')],

@@ -240,25 +240,12 @@ conn.commit()
 
 TTableObject = tp.Dict[str, tp.Any]
 
-# TODO: Remove ?
-TUser = tp.Dict[str, tp.Any]
-TSession = tp.Dict[str, tp.Any]
-TCredit = tp.Dict[str, tp.Any]
-TCode = tp.Dict[str, tp.Any]
-TFeedback = tp.Dict[str, tp.Any]
-TTop = tp.Dict[str, tp.Any]
-TProject = tp.Dict[str, tp.Any]
-TEvent = tp.Dict[str, tp.Any]
-TClass = tp.Dict[str, tp.Any]
-TEnroll = tp.Dict[str, tp.Any]
-TDay = tp.Dict[str, tp.Any]
-TVacation = tp.Dict[str, tp.Any]
 
 table_fields: tp.Dict[str, tp.List[str]] = {
     'users': ['id', 'code', 'user_type', 'phone', 'name', 'sex', 'pass', 'team', 'project_id', 'avatar'],
     'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
     'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
-    'codes': ['code', 'type', 'used'],
+    'codes': ['id', 'code', 'type', 'used'],
     'feedback': ['id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'],
     'top': ['id', 'user_id', 'day_id', 'chosen_1', 'chosen_2', 'chosen_3'],
     'projects': ['id', 'title', 'type', 'def_type', 'direction', 'description', 'annotation'],
@@ -659,6 +646,20 @@ def register(code: str, name: str, surname: str, phone: str, sex: bool, passw: s
     Returns:
         Success reg or not
     """
+
+    # Check code
+    try:
+        with conn.cursor() as cursor_:
+            cursor_.execute('SELECT * FROM codes WHERE code = %s AND used = false;', (code,))
+            existing_user = cursor_.fetchone()
+            if existing_user is None:
+                return False
+    except psycopg2.Error as error_:
+        print(f"Error in sql.register(): {error_}")
+        # conn.rollback()
+        return False
+
+    # Check user exist
     try:
         with conn.cursor() as cursor_:
             cursor_.execute('SELECT * FROM users WHERE phone = %s AND pass = %s;', (phone, passw))
@@ -670,6 +671,18 @@ def register(code: str, name: str, surname: str, phone: str, sex: bool, passw: s
         # conn.rollback()
         return False
 
+    # Update code
+    try:
+        with conn.cursor() as cursor_:
+            cursor_.execute('UPDATE codes SET used = true WHERE code = %s;', (code,))
+    except psycopg2.Error as error_:
+        print(f"Error in sql.register(): {error_}")
+        # conn.rollback()
+        return False
+    else:
+        conn.commit()
+
+    # Create user
     sql_string = 'INSERT INTO users (code, user_type, phone, name, sex, pass, team) ' \
                  'VALUES (%s, %s, %s, %s, %s, %s, %s);'
     try:
