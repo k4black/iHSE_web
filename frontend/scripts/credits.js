@@ -165,6 +165,11 @@ function getTableData(credits, users, days, events) {
     let data = [];
 
     for (let user_id in users) {
+        console.log(users[user_id]);
+        if (users[user_id].user_type == 1 || users[user_id].user_type == 2) {
+            continue;  // Show only regular users
+        }
+
         let row = {};
 
         row['id'] = user_id;
