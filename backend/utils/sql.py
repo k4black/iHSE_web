@@ -1107,14 +1107,13 @@ def edit_event(event_obj: TTableObject) -> bool:
         # Mb was a class. Remove
         try:
             with conn.cursor() as cursor_:
-                cursor_.execute('REMOVE FROM classes where id = %s', (event_obj['id'],))
+                cursor_.execute('delete FROM classes where id = %s', (event_obj['id'],))
         except psycopg2.Error as error_:
             print(f"Error in sql.edit_event(): {error_}")
             conn.rollback()
             return False
         else:
             conn.commit()
-
 
     sql_string = "update events set type = %s, title = %s, description = %s, host = %s, " \
                  "place = %s, time = %s, day_id = %s where id = %s;"

@@ -241,9 +241,15 @@ function setupAdminButtons() {
             console.log('Edit Event ' + editButtons[i].parentElement.getAttribute('data-id'));
             let id = editButtons[i].parentElement.getAttribute('data-id');
 
-            let type = 0;
-            if ('active-event' in Object.values(editButtons[i].parentElement.attributes)) {
-                type = ('active-event-lecture' in Object.values(editButtons[i].parentElement.attributes)) ? 2 : 1;
+            let type = "0";
+            let attributes = Object.values(editButtons[i].parentElement.attributes).map(function (i) {return i.name});
+            // console.log('attributes', 'class' in attributes);
+            if (attributes.includes('master-event')) {
+                type = "1";
+            } else if (attributes.includes('lecture-event')) {
+                type = "2";
+            } else if (attributes.includes('fun-event')) {
+                type = "3";
             }
 
             let title = editButtons[i].parentElement.getElementsByClassName('event__title')[0].textContent;
@@ -295,11 +301,21 @@ function setupAdminButtons() {
 
     for (let i = 0; i < createButtons.length; ++i) {
         createButtons[i].addEventListener('click', function () {
-            // alert('clicked remove');
             let times = createButtons[i].parentElement.previousElementSibling.textContent.split('\n');
-            console.log('Create Event [' + times[0] + "," + times[1] + "]");
 
-            openCreateEvent(selectedDay, times[0], times[1] === undefined ? "" : times[1]);
+            let type = "0";
+            let attributes = Object.values(createButtons[i].previousElementSibling.attributes).map(function (i) {return i.name});
+            // console.log('attributes', 'class' in attributes);
+            if (attributes.includes('master-event')) {
+                type = "1";
+            } else if (attributes.includes('lecture-event')) {
+                type = "2";
+            } else if (attributes.includes('fun-event')) {
+                type = "3";
+            }
+            console.log('Create Event. type:' + type + ' [' + times[0] + "," + times[1] + "]");
+
+            openCreateEvent(selectedDay, type, times[0], times[1] === undefined ? "" : times[1]);
         });
     }
 
@@ -319,7 +335,7 @@ function setupAdminButtons() {
         }
 
         addTimeButtons[i].addEventListener('click', function () {
-            openCreateEvent(selectedDay, startTime, '');
+            openCreateEvent(selectedDay, '0', startTime, '');
         });
     }
 }
@@ -339,9 +355,9 @@ function openEditEvent(id, title, type, date, time1, time2, desc, names, locatio
     popup.style.display = 'block';
 }
 
-function openCreateEvent(date, time1, time2) {
+function openCreateEvent(date, type, time1, time2) {
     console.log('create event');
-    openEditEvent('', '', 0, date, time1, time2, '', '', '');
+    openEditEvent('', '', type, date, time1, time2, '', '', '');
 }
 
 function saveEvent() {
