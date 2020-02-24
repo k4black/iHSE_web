@@ -302,9 +302,9 @@ def dict_to_tuple(data_raw: TTableObject, table: str, ignore_id: bool = False, e
                             data.append(day_id_obj[0])
                 except psycopg2.Error as err_:
                     print(f"Error in sql.dict_to_tuple(): {err_}")
-                    # conn.rollback()
+                    conn.rollback()
                     data.append(empty_placeholder)  # in case of error
-                # conn.commit()
+                conn.commit()
                 continue
             else:
                 data.append(empty_placeholder)
@@ -433,10 +433,10 @@ def get_in_table(data_id: int, table_name: str) -> tp.Optional[TTableObject]:
             obj = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error is sql.get_in_table(\'{table_name}\'): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return None
-    # else:
-        # conn.commit()
+    else:
+        conn.commit()
 
     if obj is None:
         return None
@@ -513,9 +513,9 @@ def get_table(table_name: str) -> tp.List[TTableObject]:
             objects_list = cursor_.fetchall()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_table(\'{table_name}\'): {error_}")
-        # conn.rollback()
-    # else:
-    #     conn.commit()
+        conn.rollback()
+    else:
+        conn.commit()
 
     return tuples_to_dicts(objects_list, table_name)
 
@@ -595,7 +595,7 @@ def get_names() -> tp.List[TTableObject]:
             users_list = cursor_.fetchall()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_names(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return []  # type: tp.List[TTableObject]
     else:
         return tuples_to_dicts(users_list, '', custom_fields=['id', 'name', 'team', 'project_id'])
@@ -620,7 +620,7 @@ def get_user_by_phone(phone: str) -> tp.Optional[TTableObject]:
             user = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_user_by_phone(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return None
     else:
         return tuple_to_dict(user, 'users')
@@ -668,7 +668,7 @@ def register(code: str, name: str, surname: str, phone: str, sex: bool, passw: s
                 return False
     except psycopg2.Error as error_:
         print(f"Error in sql.register(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return False
 
     # Update code
@@ -815,10 +815,10 @@ def get_session(sess_id: int) -> tp.Optional[TTableObject]:
             sess = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_session(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return None
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     return tuple_to_dict(sess, 'sessions')
 
@@ -854,10 +854,10 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0') -> tp.O
             user = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.login(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return None
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     if user is None:  # No such user
         return None
@@ -869,10 +869,10 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0') -> tp.O
             existing_session = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.login(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return None
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     # Return existing sessions
     if existing_session is not None:
@@ -898,7 +898,7 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0') -> tp.O
 
 def remove_session(sess_id: int) -> bool:
     """ Remove session by id
-
+	# TODO: remove this function?
     See:
         logout
     """
@@ -948,10 +948,10 @@ def get_day(date: str) -> tp.List[TTableObject]:
             day = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_day(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return []  # type: tp.List[TTableObject]
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     if day is None:
         return []  # type: tp.List[TTableObject]
@@ -964,10 +964,10 @@ def get_day(date: str) -> tp.List[TTableObject]:
             events_list = cursor_.fetchall()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_day(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return []  # type: tp.List[TTableObject]
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     return tuples_to_dicts(events_list, 'events')
 
@@ -991,10 +991,10 @@ def get_event_with_date(event_id: int) -> tp.Optional[TTableObject]:
             event = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_event_with_date(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return None
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     return {'id': event[0], 'type': event[1], 'date': event[2], 'time': event[3]}
 
@@ -1017,8 +1017,10 @@ def insert_event(event_obj: TTableObject) -> tp.Optional[int]:
             day = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.insert_event(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return None
+    else:
+        conn.commit()
 
     if day is None:
         return None
@@ -1195,10 +1197,10 @@ def check_class(class_id: int) -> bool:
             enrolled = cursor_.fetchone()[0]
     except psycopg2.Error as error_:
         print(f"Error in sql.check_class(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return False
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     class_obj: tp.Optional[tp.Tuple] = None
     try:
@@ -1207,10 +1209,10 @@ def check_class(class_id: int) -> bool:
             class_obj = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.check_class(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return False
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     if class_obj is None:
         return False
@@ -1261,10 +1263,10 @@ def enroll_user(class_id: int, user_id: TTableObject, time_: str = '0') -> bool:
             class_ = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.enroll_user(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return False
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     enrolled: tp.Optional[int] = None
     try:
@@ -1273,10 +1275,10 @@ def enroll_user(class_id: int, user_id: TTableObject, time_: str = '0') -> bool:
             enrolled = cursor_.fetchone()[0]
     except psycopg2.Error as error_:
         print(f"Error in sql.enroll_user(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return False
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     if not class_ or not enrolled or enrolled >= class_[1]:  # No such event or too many people
         return False
@@ -1297,7 +1299,7 @@ def enroll_user(class_id: int, user_id: TTableObject, time_: str = '0') -> bool:
 
 def remove_class(class_id: int) -> bool:
     """ Delete class by id
-
+	# TODO: remove function?
     Args:
         class_id: class id (event id) from bd
 
@@ -1326,10 +1328,10 @@ def get_enrolls_by_event_id(event_id: int) -> tp.List[TTableObject]:
             enrolls = cursor_.fetchall()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_enrolls_by_event_id(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return []
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     if not enrolls:
         return []
@@ -1354,10 +1356,10 @@ def get_enrolls_by_user_id(user_id: int) -> tp.List[TTableObject]:
             enrolls = cursor_.fetchall()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_enrolls_by_user_id(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return []
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     if not enrolls:
         return []
@@ -1382,10 +1384,10 @@ def remove_enroll(enroll_id: int) -> bool:
             enroll = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.remove_enroll(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return False
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
     # event_id = enroll[1]
 
     if not enroll:
@@ -1426,10 +1428,10 @@ def get_credits_by_user_id(user_id: int) -> tp.List[TTableObject]:
             credits_list = cursor_.fetchall()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_credits_by_user_id(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return []  # type: tp.List[TTableObject]
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     if not credits_list:
         return []  # type: tp.List[TTableObject]
@@ -1454,10 +1456,10 @@ def get_credits_short() -> tp.List[TTableObject]:
             credits_list = cursor_.fetchall()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_credits_short(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return []  # type: tp.List[TTableObject]
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     return tuples_to_dicts(credits_list, '', custom_fields=['id', 'user_id', 'event_id', 'value', 'type', 'title', 'day_id'])
 
@@ -1479,10 +1481,10 @@ def pay_credit(user_id: int, event_id: int, value: int = 0, time_: str = '0') ->
             credits_ = cursor_.fetchall()
     except psycopg2.Error as error_:
         print(f"Error in sql.pay_credit(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return False
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     sql_string = 'insert into credits (user_id, event_id, time, value) values (%s, %s, %s, %s);'
 
@@ -1554,10 +1556,10 @@ def use_code(code: str) -> bool:
             code = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.use_code(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return False
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     if not code or code[0]:
         return False
@@ -1652,10 +1654,10 @@ def get_feedback(user_id: int, date: str) -> tp.Tuple[tp.List[TTableObject], tp.
             day = cursor_.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_feedback(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return [], []
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     if day is None:
         return [], []
@@ -1670,10 +1672,10 @@ def get_feedback(user_id: int, date: str) -> tp.Tuple[tp.List[TTableObject], tp.
             events_list = cursor_.fetchall()
     except psycopg2.Error as error_:
         print(f"Error in sql.get_feedback(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return [], []
-    # else:
-    #     conn.commit()
+    else:
+        conn.commit()
 
     if not events_list:
         return [], []
@@ -1690,9 +1692,10 @@ def get_feedback(user_id: int, date: str) -> tp.Tuple[tp.List[TTableObject], tp.
                     feedback_dicts.append(tuple_to_dict(feedback, 'feedback'))
     except psycopg2.Error as error_:
         print(f"Error in sql.get_feedback(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return [], []
     else:
+        conn.commit()
         return events_dicts, feedback_dicts
 
 
@@ -1706,7 +1709,7 @@ def post_feedback(user_id: int, feedback_list: tp.List[TTableObject]) -> None:
     Returns:
         None
     """
-
+    # TODO: maybe batch will be faster here?
     for feedback in feedback_list:
         feedback['user_id'] = user_id
         insert_to_table(feedback, 'feedback')
@@ -1723,16 +1726,18 @@ def post_top(user_id: int, date: str, users_list: tp.List[str]) -> None:
     Returns:
         None
     """
+    day: tp.Optional[tp.Tuple[int]] = None
 
     try:
         with conn.cursor() as cursor_:
             cursor_.execute('SELECT (id) FROM days WHERE date = %s;', (date,))
+            day = cursor.fetchone()
     except psycopg2.Error as error_:
         print(f"Error in sql.post_top(): {error_}")
-        # conn.rollback()
+        conn.rollback()
         return
-
-    day = cursor.fetchone()
+    else:
+        conn.commit()
 
     if day is None:
         return
@@ -1751,6 +1756,8 @@ def post_top(user_id: int, date: str, users_list: tp.List[str]) -> None:
                 user = cursor.fetchone()
         except psycopg2.Error as error_:
             print(f"Error in sql.post_top(): {error_}")
+            # TODO if you don't like losing all the looped stuff in case of rollback,
+            # then maybe conn.commit() inside the `with` block?
             # conn.rollback()
             continue
 
