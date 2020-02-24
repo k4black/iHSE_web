@@ -373,7 +373,12 @@ function loadDay(day, func) {
         }
     };
 
-    xhttp.open("GET", "/day?day=" + day, true);
+    let query = '';
+    if (day != '') {
+        query = '?day=' + day;
+    }
+
+    xhttp.open("GET", "/day" + query, true);
     xhttp.send();
 }
 
