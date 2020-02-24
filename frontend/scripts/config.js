@@ -20,6 +20,8 @@ function loadConfig() {
                 $('#master')[0].value = data.master;
                 $('#lecture')[0].value = data.lecture;
                 $('#additional')[0].value = data.additional;
+
+                $('#groups')[0].value = data.groups;
             }
         }
     };
@@ -45,7 +47,9 @@ function saveConfig() {
         'total': parseInt($('#total')[0].value),
         'master': parseInt($('#master')[0].value),
         'lecture': parseInt($('#lecture')[0].value),
-        'additional': parseInt($('#additional')[0].value)
+        'additional': parseInt($('#additional')[0].value),
+
+        'groups': parseInt($('#groups')[0].value),
     };
 
     let data = JSON.stringify(config);

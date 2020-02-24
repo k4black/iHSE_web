@@ -724,13 +724,15 @@ def get_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         Response - result of request
     """
 
-    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL
+    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
 
     data = {
         'total': CREDITS_TOTAL,
         'master': CREDITS_MASTER,
         'lecture': CREDITS_LECTURE,
-        'additional': CREDITS_ADDITIONAL
+        'additional': CREDITS_ADDITIONAL,
+
+        'groups': NUMBER_TEAMS
     }
 
     json_data = json.dumps(data)
@@ -1221,7 +1223,7 @@ def post_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         None
     """
 
-    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL
+    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
 
     config = get_json_by_response(env)
 
@@ -1229,6 +1231,7 @@ def post_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     CREDITS_MASTER = config['master']
     CREDITS_LECTURE = config['lecture']
     CREDITS_ADDITIONAL = config['additional']
+    NUMBER_TEAMS = config['groups']
 
     write_config()
 
@@ -1406,12 +1409,12 @@ def post_register(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
     # Check registration code
     # user_type = gsheets.check_code(code)
 
-    user = sql.get_user_by_phone(phone)
+    # user = sql.get_user_by_phone(phone)
 
     team = random.randint(1, NUMBER_TEAMS)  # TODO: Sex distribution
+
     # Create new user
-    success = sql.register(code, name, surname, phone, sex, passw, team)
-    if user is not None and success:
+    if sql.register(code, name, surname, phone, sex, passw, team):
         # Auto login of user
         session_id = sql.login(phone, passw, env['HTTP_USER_AGENT'], env['REMOTE_ADDR'], get_datetime_str())
 
@@ -1433,6 +1436,10 @@ def post_register(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
                         # 1/2 year
                         # ('Location', '//ihse.tk/')
                     ],
+                    [])
+        else:
+            return ('401 Unauthorized',
+                    [('Access-Control-Allow-Origin', '*')],
                     [])
     else:
         return ('409 Conflict',
