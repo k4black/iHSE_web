@@ -153,7 +153,8 @@ function setClass() {
     setupData(document.querySelector('#class_popup .desc').firstElementChild, current_events[class_id].description);
     setupData(document.querySelector('#class_popup .anno').firstElementChild, event_class.annotation);
     setupData(document.querySelector('#class_popup .time').firstElementChild, current_events[class_id].time.replace('\n', ' - '));
-    setupData(document.querySelector('#class_popup .time').lastElementChild, document.querySelector('.selected').lastElementChild.textContent);
+    let selected_day = document.querySelector('.selected');
+    setupData(document.querySelector('#class_popup .time').lastElementChild, selected_day == null ? getToday() : selected_day.lastElementChild.textContent);
     setupData(document.querySelector('#class_popup .location').firstElementChild, current_events[class_id].place);
     setupData(document.querySelector('#class_popup .host').firstElementChild, current_events[class_id].host);
 

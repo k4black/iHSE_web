@@ -39,6 +39,8 @@ function setDays() {
 
     let topbar_html = '';
     let i = 0;
+    let full_year = (new Date().getFullYear());
+    let days_of_week = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
     for (let day_id in cache['days']) {
         let day = cache['days'][day_id];
 
@@ -55,7 +57,9 @@ function setDays() {
             topbar_html += '<div class="day">'
         }
 
-        topbar_html += '<div class="day__num">' + i + '</div>' +
+        let [dd, mm] = day.date.split('.');
+        let date = new Date( mm + '.' + dd + '.' + full_year);
+        topbar_html += '<div class="day__num">' + days_of_week[date.getDay()] + '</div>' +
             '<div class="day__name">' + day.date + '</div>' +
             '</div>';
 

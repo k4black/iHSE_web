@@ -697,6 +697,7 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     data['projects'] = True  # TODO: Notifacation
 
     data['total'] = CREDITS_TOTAL
+    data['today'] = get_date_str()  # TODO: remove. Only for debug???
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')

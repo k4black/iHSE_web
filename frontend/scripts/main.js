@@ -54,6 +54,9 @@ function getToday() {
     let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');
 
     dd_mm = cache['today'];  // Debug??
+    if (dd_mm == undefined) {
+        dd_mm = cache['user'].today;
+    }
     return dd_mm;
 }
 
