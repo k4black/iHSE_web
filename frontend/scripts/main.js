@@ -69,10 +69,15 @@ function getToday() {
  * Remove loading class on shadow-skeleton elements
  */
 function loadingEnd() {
-    let ls = document.querySelectorAll('.data__loading');
-    for (let i = 0; i < ls.length; i++) {
-        ls[i].classList.remove('data__loading');
-    }
+    document.querySelector('body').classList.add('loading_end');
+
+    // let ls = document.querySelectorAll('.data__loading');
+    // for (let i = 0; i < ls.length; i++) {
+    //     ls[i].classList.remove('data__loading');
+    // }
+}
+function loadingStart() {
+    document.querySelector('body').classList.remove('loading_end');
 }
 
 

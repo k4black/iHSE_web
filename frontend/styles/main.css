@@ -264,7 +264,12 @@ form {
 }
 
 
-.data__loading .loading__resource p, .data__loading .loading__resource h3, .data__loading .loading__resource span, .data__loading .loading__resource img, .data__loading .loading__resource .text_div, .data__loading .loading__resource .img_div  {
+
+body:not(.loading_end) .data__loading .loading__resource * {
+    transition: ease-out 300ms;
+}
+
+body:not(.loading_end) .data__loading .loading__resource p, body:not(.loading_end) .data__loading .loading__resource h3, body:not(.loading_end) .data__loading .loading__resource span, body:not(.loading_end) .data__loading .loading__resource img, body:not(.loading_end) .data__loading .loading__resource .text_div, body:not(.loading_end) .data__loading .loading__resource .img_div  {
     border-radius: 15px;
     animation-name: bg;
     animation-duration: 4s;
@@ -273,18 +278,19 @@ form {
 }
 
 
-.data__loading .loading__resource img, .data__loading .loading__resource .img_div {
+body:not(.loading_end) .data__loading .loading__resource img, body:not(.loading_end) .data__loading .loading__resource .img_div {
     background: #8a8a8a;
     border-radius: 50%;
     overflow: hidden;
     object-position: -100px -100px;
 }
 
-.data__loading .loading__resource p>*, .data__loading .loading__resource span>* {
-    visibility: hidden;
+body:not(.loading_end) .data__loading .loading__resource p>*, body:not(.loading_end) .data__loading .loading__resource span>* {
+    /*visibility: hidden;*/
+    color: #00000000!important;
 }
 
-.data__loading .loading__resource * {
+body:not(.loading_end) .data__loading .loading__resource * {
     color: #00000000!important;
 }
 

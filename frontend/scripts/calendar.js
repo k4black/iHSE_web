@@ -105,6 +105,8 @@ function setupDays() {   // TODO: Refactor
             var days = document.querySelectorAll('.day');
             for (let i = 0; i < days.length; i++) {
                 days[i].addEventListener('click', function() {
+                    loadingStart();
+
                     if (this.classList.contains('add_day')) {
                         addDay();
                     } else {
@@ -149,7 +151,7 @@ function setDay() {
         let time = processed_time[6] == '0' && processed_time[7] != '0' ? processed_time.slice(0, 6) + processed_time.slice(7) : processed_time;
         time = time[0] === '0' && time[1] !== '0' ? time.slice(1) : time;
 
-        time_html = '<div class="time">' +
+        time_html = '<div class="time loading__resource">' +
                         '<div class="bar">' + time + '</div>' +
                             '<div class="events">';
 
