@@ -53,24 +53,25 @@ function setProjects() { // If ok set up day field
         }
 
 
-        project_html = '<div class="project" ' + (cache['user']['project_id'] == project.id ? 'onclick="editProject(' + project.id + ')"' : 'onclick="editOthersProject(' + project.id + ');"') + '>' +
-            '<img src="images/rocket.jpeg">' +
-            '<div class="description">' +
+        project_html =
+            '<div class="project" ' + (cache['user']['project_id'] == project.id ? 'onclick="editProject(' + project.id + ')"' : 'onclick="editOthersProject(' + project.id + ');"') + '>' +
+                '<img src="images/' + (project.type === 'science' ? 'science.png' : (project.type === 'project' ? 'project.png': 'other.png')) + '">' +
+                '<div class="description">' +
 
-            '<div class="project__top_line">' +
-                '<span>' + project.title + '</span>' +
-                '<div style="display: inline-flex; flex-direction: row">' +
-                    '<span style="text-align:right; width: fit-content; margin-left: 5px">' + project.type + '</span>' +
-                    '<span style="text-align:right; width: fit-content; margin-left: 5px">' + project.def_type + '</span>' +
+                    '<div class="project__top_line">' +
+                        '<span>' + project.title + '</span>' +
+                        '<div style="display: inline-flex; flex-direction: row">' +
+                            // '<span style="text-align:right; width: fit-content; margin-left: 5px">' + project.type + '</span>' +
+                            '<span style="text-align:right; width: fit-content; margin-left: 5px">' + (project.def_type === 'TED' ? 'TED' : 'Презентация') + '</span>' +
+                        '</div>' +
+                    '</div>' +
+
+                    '<p class="project__names">' + names + '</p>' +
+
+                    '<p class="project__anno">' + project.annotation + '</p>' +
+                    // '<p class="project__desc">' + project.description + '</p>' +
+                    (cache['user']['project_id'] == project.id ? '<button class="project__edit_button"><i class="mobile__item__icon large material-icons">edit</i></button>' : '') +
                 '</div>' +
-            '</div>' +
-
-            '<p class="project__names">' + names + '</p>' +
-
-            '<p class="project__anno">' + project.annotation + '</p>' +
-            // '<p class="project__desc">' + project.description + '</p>' +
-            (cache['user']['project_id'] == project.id ? '<button class="project__edit_button"><i class="mobile__item__icon large material-icons">edit</i></button>' : '') +
-            '</div>' +
             '</div>';
         projects_html += project_html + '<hr class="border_line">';
     }

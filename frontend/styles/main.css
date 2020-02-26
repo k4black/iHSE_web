@@ -271,6 +271,7 @@ body:not(.loading_end) .data__loading .loading__resource * {
 
 body:not(.loading_end) .data__loading .loading__resource p, body:not(.loading_end) .data__loading .loading__resource h3, body:not(.loading_end) .data__loading .loading__resource span, body:not(.loading_end) .data__loading .loading__resource img, body:not(.loading_end) .data__loading .loading__resource .text_div, body:not(.loading_end) .data__loading .loading__resource .img_div  {
     border-radius: 15px;
+    border: none;
     animation-name: bg;
     animation-duration: 4s;
     animation-iteration-count: infinite;
@@ -282,6 +283,7 @@ body:not(.loading_end) .data__loading .loading__resource img, body:not(.loading_
     background: #8a8a8a;
     border-radius: 50%;
     overflow: hidden;
+    border: none;
     object-position: -100px -100px;
 }
 

@@ -78,7 +78,8 @@
 .project img {
     height: 60px;
     width: 60px;
-    border-radius: 50%;
+    /*border-radius: 50%;*/
+    /*border: 1px solid var(--header-colour);*/
 }
 
 .description div {
