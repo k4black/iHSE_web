@@ -182,3 +182,39 @@ button.update {
 
 
 
+
+.table thead th.data_cells .th-inner {
+  overflow: inherit;
+}
+
+/*.data_cells {*/
+/*    min-width: 40px;*/
+/*}*/
+th.data_cells {
+    position:relative;
+    box-sizing: border-box;
+    height: 120px;
+    min-width: 50px;
+    white-space: nowrap;
+}
+
+th.data_cells:not(.id) > div {
+    position:absolute;
+    bottom: 0;
+    left: 0;
+    padding-right: 16px!important;
+    transform: translate(35px, 7px) rotate(-78deg);
+    /*transform: rotate(-20deg);*/
+    transform-origin: left bottom;
+    width: 120px;
+}
+
+
+
+th[data-field=id] > div {
+    padding: 0px!important;
+}
+th[data-field=id] {
+    max-width: 10px;
+}
+

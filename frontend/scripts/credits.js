@@ -89,7 +89,7 @@ function getTableColumns(credits, days, events) {
         processed_days[day_id] = new Set();
 
         for (let event of Object.values(cache['events'])) {
-            if (events_by_id[event.id].day_id == day_id && event.host != '' && event.place != '') {  // TODO: Check not so regular event (dinner and etc)
+            if (events_by_id[event.id].day_id == day_id && event.type != 0) {  // TODO: Check not so regular event (dinner and etc)
                 processed_days[day_id].add(event.id);
             }
         }
@@ -118,7 +118,7 @@ function getTableColumns(credits, days, events) {
 
             columnsBottom.push({
                 field: 'date' + days[day_id].date + 'id' + event_id,
-                title: event_id,
+                title: events[event_id].title,
                 titleTooltip: 'Title: ' + events[event_id].title,
                 sortable: true,
                 align: 'center',
@@ -132,7 +132,7 @@ function getTableColumns(credits, days, events) {
                         console.log('click ' + event.currentTarget)
                     }
                 },
-                class: 'cell' + ' ' + event_type
+                class: 'cell' + ' ' + event_type + ' ' + 'data_cells',
             });
         }
         columnsBottom.push({
@@ -144,7 +144,7 @@ function getTableColumns(credits, days, events) {
             // formatter: function (val) {
             //     return '<div class="total total_cell">' + val + '</div>'
             // },
-            class: 'total_cell'
+            class: 'total_cell' + ' ' + 'data_cells'
         });
     }
 
