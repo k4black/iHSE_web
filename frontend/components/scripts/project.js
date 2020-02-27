@@ -115,8 +115,10 @@ function enrollProject() {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
-                cache['user']['project_id'] = cache['project']['id'];
-                loadProject(cache['project']['id'], setPopupProject);
+                location.reload();
+                // cache['user']['project_id'] = cache['project']['id'];
+                // loadProject(cache['project']['id'], setPopupProject);
+
             } else if (this.status === 409) {
                 alert('Невозможно записаться. у вас уже есть проект.')
             }
@@ -139,8 +141,9 @@ function deenrollProject() {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
-                cache['user']['project_id'] = 0;
-                loadProject(cache['project']['id'], setPopupProject);
+                location.reload();
+                // cache['user']['project_id'] = 0;
+                // loadProject(cache['project']['id'], setPopupProject);
             } else if (this.status === 409) {
                 alert('Невозможно отписаться. У вас нет проекта.');
             }
