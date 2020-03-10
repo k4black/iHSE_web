@@ -142,6 +142,7 @@ TODO: Database is commited (backup) to a cloud server, to faster set it up durin
 
 ## Docker
 Several docker containers witch interact with each other.
+@see docker/readme.md
 
 
 ## Testing 
