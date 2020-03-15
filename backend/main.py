@@ -70,7 +70,7 @@ def check_enroll_time(date: str, time_: str, year: str = '2020') -> bool:
     """
 
     can_enroll = datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))) <= \
-                 datetime.strptime(f'{date}.{year} {time_}', '%d.%m.%Y %M.%H') - timedelta(minutes=ENROLL_CLOSE_FOR)
+        datetime.strptime(f'{date}.{year} {time_}', '%d.%m.%Y %M.%H') - timedelta(minutes=ENROLL_CLOSE_FOR)
 
     current_day = get_date_str() == date
 
@@ -105,6 +105,7 @@ def generate_codes(num: int) -> tp.Set[str]:
 """                       uWSGI typing objects                   """
 """ ---===---==========================================---===--- """
 
+
 TQuery = tp.Dict[str, str]
 TEnvironment = tp.Dict[str, tp.Any]
 TCookie = tp.Dict[str, tp.Any]  # TODO: Specify
@@ -113,6 +114,7 @@ TStatus = str
 THeaders = tp.List[tp.Tuple[str, str]]
 TData = tp.Optional[tp.List[tp.Any]]
 TResponse = tp.Tuple[TStatus, THeaders, TData]
+
 
 """ ---===---==========================================---===--- """
 """                    uWSGI main input function                 """
@@ -178,6 +180,7 @@ def application(env: tp.Dict[str, tp.Any], start_response: tp.Callable[..., None
 """                 Sync functions to update data                """
 """ ---===---==========================================---===--- """
 
+
 cache_dict = {}  # Cache data by REQUEST_URI - save data_body and headers
 
 
@@ -198,17 +201,17 @@ def update_cache() -> None:
     return
 
     # Update gsheets cache
-    gsheets.update()
+    # gsheets.update()
 
     # Update events
-    events = gsheets.get_events()
-    sql.load_events(events)
+    # events = gsheets.get_events()
+    # sql.load_events(events)
 
     # Update cache
-    cache_dict.clear()
+    # cache_dict.clear()
 
     # SQL sync - wal checkpoint
-    sql.checkpoint()
+    # sql.checkpoint()
 
 
 def sync() -> None:
