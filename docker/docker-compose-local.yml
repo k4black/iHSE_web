@@ -51,57 +51,27 @@ services:
             PGDATA: /var/lib/postgresql/data/pgdata
 
 
-    elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
-        container_name: elasticsearch_docker
-        environment:
-            - discovery.type=single-node
-            - cluster.name=docker-cluster
-            - bootstrap.memory_lock=true
-            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-        ulimits:
-            memlock:
-                soft: -1
-                hard: -1
-        ports:
-            - 9200:9200
-        # volumes:
-        #     - ./kibana.yml:/usr/share/kibana/config/kibana.yml
-        restart: unless-stopped
-
-    kibana:
-        image: docker.elastic.co/kibana/kibana:7.6.1
-        container_name: kibana_docker
-        ports:
-            - 5601:5601
-        depends_on:
-            - elasticsearch
-
-#    logstash:
-#        image: docker.elastic.co/logstash/logstash:7.6.1
-#        container_name:  logstash_docker
-#        restart: unless-stopped
-##        log_opt:
-##            max-size: "10m"
-##            max-file: "10"
-##        command: logstash -f /config-dir/logstash.conf
-#        ports:
-#            - 5044:5044
-#        links:
-#            - elasticsearch
 
     filebeat:
-        image: docker.elastic.co/beats/filebeat:7.6.1
+        image: docker.elastic.co/beats/filebeat:7.6.0
         container_name: filebeat_docker
-#        user: root
         volumes:
-#            - ./config/beats/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml
-            - ../local_run/log/nginx:/var/log/nginx/
-
-#        command: filebeat -e -E output.elasticsearch.username=elastic -E output.elasticsearch.password=${ES_PASSWORD} -strict.perms=false
-        restart: unless-stopped
+            - ../local_run/log/nginx:/etc/log/nginx/  # nginx logs
+            - ../local_run/log/filebeat:/etc/filebeat
+            - ../local_run/tmp/filebeat:/tmp/filebeat
+            - ./filebeat/:/etc/pki/tls/certs/
+        links:
+            - elk
         depends_on:
-            #wait for the these services to come up. This ensures the logs are available and ES exists for indexing
-            - elasticsearch
-            - nginx
-#            - logstash
+            - elk
+        restart: unless-stopped
+        #entrypoint: ./time-to-start.sh
+
+    elk:
+        image: sebp/elk:760
+        container_name: elk_docker
+        ports:
+            - 5601:5601 #kibana
+            - 9200:9200 #elastic
+            - 5044:5044 #logstash beats filebeat
+        restart: unless-stopped

@@ -1,33 +1,93 @@
-filebeat.registry_file: /usr/share/filebeat/data/registry
-
-filebeat.config.prospectors:
-#prospectors dynamically loaded from the sub-directory
-  path: ${path.config}/prospectors.d/*.yml
-  reload.enabled: false
-
-filebeat.modules:
-- module: system
-  syslog:
-    enabled: true
-    var.paths: ["/var/log/host/system.log*"]
-
-- module: nginx
-  access:
-    enabled: true
-    var.paths: ["/var/log/nginx/access.log*"]
-  error:
-    enabled: true
-    var.paths: ["/var/log/nginx/error.log*"]
-
-#- module: mysql
+#filebeat.registry_file: /usr/share/filebeat/data/registry
+#
+#filebeat.config.prospectors:
+##prospectors dynamically loaded from the sub-directory
+#  path: ${path.config}/prospectors.d/*.yml
+#  reload.enabled: false
+#
+#filebeat.modules:
+#- module: system
+#  syslog:
+#    enabled: true
+#    var.paths: ["/var/log/host/system.log*"]
+#
+#- module: nginx
+#  access:
+#    enabled: true
+#    var.paths: ["/var/log/nginx/access.log*"]
 #  error:
-#    var.paths: ["/var/log/mysql/error.log*"]
-#  slowlog:
-#    var.paths: ["/var/log/mysql/mysql-slow.log*"]
+#    enabled: true
+#    var.paths: ["/var/log/nginx/error.log*"]
+#
+##- module: mysql
+##  error:
+##    var.paths: ["/var/log/mysql/error.log*"]
+##  slowlog:
+##    var.paths: ["/var/log/mysql/mysql-slow.log*"]
+#
+#
+#output.elasticsearch:
+#  hosts: ["elasticsearch:9200"]
+#
+#setup.kibana:
+#  host: "kibana:5601"
 
+#
+#prospectors:
+#    - input_type: log
+#      paths:
+#        - /hostfs/var/lib/docker/containers/*/*.log
+#      json.keys_under_root: true
+#      json.overwrite_keys: true
+#      close_inactive: 24h
+#      close_renamed: true
+#      pipeline: docker-logs
 
-output.elasticsearch:
-  hosts: ["elasticsearch:9200"]
+#filebeat.modules:
+#    - module: system
+#      syslog:
+#        enabled: true
+#        var.paths: ["/var/log/host/system.log*"]
+#
+#    - module: nginx
+#      access:
+#        enabled: true
+#        var.paths: ["/var/log/nginx/access.log*"]
+#      error:
+#        enabled: true
+#        var.paths: ["/var/log/nginx/error.log*"]
 
-setup.kibana:
-  host: "kibana:5601"
+prospectors:
+    - access:
+        enabled: true
+        paths: ["/var/log/nginx/access.log*"]
+        document-type: nginx-access
+    - error:
+        enabled: true
+        paths: ["/var/log/nginx/error.log*"]
+        document-type: nginx-error
+
+output:
+    logstash:
+        enabled: true
+        hosts:
+            - elk:5044
+        timeout: 15
+        tls:
+            certificate_authorities:
+                - /etc/pki/tls/certs/logstash-beats.crt
+            timeout: 15
+    file:
+        path: "/tmp/filebeat"
+
+filebeat:
+    inputs:
+        -
+          paths:
+            - /var/log/syslog
+            - /var/log/auth.log
+          document_type: syslog
+        -
+          paths:
+            - "/var/log/nginx/*.log"
+          document_type: nginx-any
