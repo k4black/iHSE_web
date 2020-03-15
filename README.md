@@ -26,6 +26,7 @@ This is the source code of the **website** for the education multi-disciplinary 
   - [Frontend](#frontend)
   - [Backend](#backend)
 - [Docker](#docker)
+- [Logging](#logging)
 - [Testing](#testing)
  
 
@@ -143,6 +144,19 @@ TODO: Database is commited (backup) to a cloud server, to faster set it up durin
 ## Docker
 Several docker containers witch interact with each other.
 @see docker/readme.md
+
+
+
+## Logging
+Using `ELK` stack + `Beats` services. 
+![logging](https://www.elastic.co/static/images/elk/elk-stack-elkb-diagram.svg)
+
+System collet all logs from nginx, uwsgi and postgres database.
+
+Full logging stat available on `ihse.tk:5601` (TODO).
+
+
+
 
 
 ## Testing 
