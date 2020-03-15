@@ -1758,7 +1758,7 @@ def post_create_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
                 [('Access-Control-Allow-Origin', '*')],
                 [])
 
-    if sql.enroll_user(event_id, user_obj['id'], get_datetime_str()):
+    if sql.enroll_user(event_id, user_obj['id'], event['date'], get_datetime_str()):
 
         return ('200 Ok',
                 [

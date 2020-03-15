@@ -1243,17 +1243,33 @@ def remove_class(class_id: int) -> bool:
         return True
 
 
-def enroll_user(class_id: int, user_id: TTableObject, time_: str = '0') -> bool:  # TODO?
+def enroll_user(class_id: int, user_id: TTableObject, date: str, time_: str = '0') -> bool:  # TODO?
     """ Enroll user in event
 
     Args:
         class_id: class id (event id) from bd
         user_id: user id form db
+        date: date in format dd.mm
         time_: time str
 
     Returns:
         True/False: Success or not
     """
+
+    try:
+        with conn.cursor() as cursor_:
+            cursor_.execute(f"select time from enrolls e join events e on event_id where day_id = (select day_id from days where date = %s) and user_id = %s;", (date, user_id,))
+            enrolls_times = cursor_.fetchall()  # enrolls of user for this day
+
+            for time in enrolls_times:
+                time1, time2 = time.split('\n')
+                # if time1 == TODO: Check other times
+    except psycopg2.Error as error_:
+        print(f"Error in sql.enroll_user(): {error_}")
+        conn.rollback()
+        return False
+    else:
+        conn.commit()
 
     class_: tp.Optional[tp.Tuple] = None
     try:
@@ -1266,6 +1282,7 @@ def enroll_user(class_id: int, user_id: TTableObject, time_: str = '0') -> bool:
         return False
     else:
         conn.commit()
+
 
     enrolled: tp.Optional[int] = None
     try:
