@@ -31,6 +31,7 @@ services:
         depends_on:
             - database
 
+
     # PostgreSQL server for backend
     # TODO
     database:
