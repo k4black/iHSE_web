@@ -15,10 +15,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker-compose build ./docker --file ./docker/docker-compose.yml > build.log
+      run: |
+        cd ./docker
+        docker-compose build > build.log
 
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         name: build.log
-        path: .
+        path: ./docker
