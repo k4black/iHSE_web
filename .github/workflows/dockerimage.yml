@@ -59,4 +59,3 @@ jobs:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         args: Hello from iHSE CI/CD Service!
-
