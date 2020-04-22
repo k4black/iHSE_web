@@ -52,3 +52,10 @@ jobs:
       with:
         name: build_lint_test
         path: ./logs
+
+    - name: send custom message with args
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        args: Hello from iHSE CI/CD Service!
