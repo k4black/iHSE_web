@@ -18,9 +18,11 @@ jobs:
       run: |
         cd ./docker
         docker-compose build > build.log
+        mkdir logs
+        mv build.log .logs/
 
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
       with:
         name: build.log
-        path: ./docker
+        path: ./docker/logs
