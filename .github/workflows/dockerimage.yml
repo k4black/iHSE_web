@@ -19,7 +19,7 @@ jobs:
       run: |
         docker-compose build > compose_build.log
         mkdir ../logs
-        mv build.log ../logs/
+        mv compose_build.log ../logs/
 
     - name: Set up Python 3.7
       uses: actions/setup-python@v1
