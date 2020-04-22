@@ -19,7 +19,7 @@ jobs:
         cd ./docker
         docker-compose build > build.log
         mkdir logs
-        mv build.log .logs/
+        mv build.log ./logs/
 
     - name: Upload artifact
       uses: actions/upload-artifact@v1.0.0
