@@ -25,9 +25,9 @@ services:
         container_name: uwsgi_docker
         restart: unless-stopped
         volumes:
-          - ../backend/:/var/app/backend/
-          - ../local_run/conf/:/var/conf/
-          - ../local_run/log/uwsgi/:/var/log/uwsgi/
+            - ../backend/:/var/app/backend/
+#          - ../local_run/conf/:/var/conf/
+            - ../local_run/log/uwsgi:/var/log/uwsgi
         depends_on:
             - database
 
@@ -41,14 +41,37 @@ services:
         container_name: database_docker
         restart: unless-stopped
         ports:
-          - 5431:5432
+            - 5431:5432
         volumes:
-          - ../local_run/pgdata:/var/lib/postgresql/data/pgdata
+            - ../local_run/pgdata:/var/lib/postgresql/data/pgdata
         environment:
             POSTGRES_DB: ihse
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: root
             PGDATA: /var/lib/postgresql/data/pgdata
+
+    filebeat:
+        build:
+            context: ./filebeat
+            dockerfile: filebeat.dockerfile
+        restart: unless-stopped
+        volumes:
+            - /var/lib/docker/containers:/root/logs/containers
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ../local_run/log/nginx:/root/logs/nginx
+        depends_on:
+            - nginx
+
+    elasticsearch:
+        image: elasticsearch:7.7.0
+        environment:
+            - discovery.type=single-node
+
+    kibana:
+        image: kibana:7.7.0
+        ports:
+            - 5601:5601
+
 
 
 
@@ -65,8 +88,8 @@ services:
 #        depends_on:
 #            - elk
 #        restart: unless-stopped
-#        #entrypoint: ./time-to-start.sh
-#
+        #entrypoint: ./time-to-start.sh
+
 #    elk:
 #        image: sebp/elk:760
 #        container_name: elk_docker
