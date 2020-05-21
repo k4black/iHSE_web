@@ -31,6 +31,7 @@ TIMEZONE_SHIFT = 3  # MST timezone
 ENROLL_CLOSE_FOR = 15  # Minutes
 
 
+
 def get_datetime_str() -> str:
     """ Return current time str. According to timezone
 
@@ -44,6 +45,13 @@ def get_datetime_str() -> str:
 def get_datetime_str_utc() -> str:
     """ Return current time str. UTC """
     return datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
+
+
+def logger(function, message, type_='ERROR'):  # TODO: move function to separate file
+    time_ = get_datetime_str_utc()
+
+    print(f'*** {type_} in {function}; {time_} ***')
+    print(f'*** {message} ***')
 
 
 def get_time_str() -> str:
@@ -200,8 +208,9 @@ def update_cache() -> None:
 
     # Update today
     TODAY = datetime.today().strftime('%d.%m')
-    print('Today ', TODAY)
-    print('sync time: ' + get_datetime_str())
+    # print('Today ', TODAY)
+    # print('sync time: ' + get_datetime_str())
+    logger('update_cache()', f'Update day', type_='LOG')
 
     return
 
@@ -226,10 +235,12 @@ def sync() -> None:
         Run every TIMEOUT seconds
     """
 
-    print('============ Sync start ============')
-    print('sync_time:', get_datetime_str())
+    # print('============ Sync start ============')
+    logger('sync()', f'==== Sync start ====', type_='LOG')
+    # print('sync_time:', get_datetime_str())
     # update_cache()  # Sync itself
-    print('============= Sync end =============')
+    # print('============= Sync end =============')
+    logger('sync()', f'==== Sync end ======', type_='LOG')
 
     start_sync(TIMEOUT)  # Update - to call again
 
@@ -252,9 +263,11 @@ def start_sync(delay: int) -> None:
 
 start_sync(0)  # Start sync
 
+
 """ ---===---==========================================---===--- """
 """                   Config file interactions                   """
 """ ---===---==========================================---===--- """
+
 
 CREDITS_TOTAL = 0
 CREDITS_MASTER = 0
@@ -266,7 +279,8 @@ NUMBER_TEAMS = 0
 def read_config() -> None:
     """Read and save config file (`config.ini`) """
 
-    print('========= Read config file =========')
+    # print('========= Read config file =========')
+    logger('read_config()', f'==== Read config file ====', type_='LOG')
 
     global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
 
@@ -281,14 +295,16 @@ def read_config() -> None:
 
         NUMBER_TEAMS = config['TEAMS']['number']
     except KeyError:
-        print('No config file. Using default values')
+        # print('No config file. Using default values')
+        logger('read_config()', f'No config file. Using default values', type_='LOG')
         CREDITS_TOTAL = 300
         CREDITS_MASTER = 15
         CREDITS_LECTURE = 15
         CREDITS_ADDITIONAL = 5
         NUMBER_TEAMS = 5
 
-    print('===== End config file reading ======')
+    # print('===== End config file reading ======')
+    logger('read_config()', f'==== End config file reading ====', type_='LOG')
 
 
 def write_config() -> None:
@@ -399,7 +415,7 @@ def get_user_by_response(cookie: TCookie) -> tp.Optional[sql.TTableObject]:
     """
 
     # Get session id or ''
-    print(f"Getting user by response sessid raw:{cookie.get('sessid', '')}")
+    # print(f"Getting user by response sessid raw:{cookie.get('sessid', '')}")
     # sessid = bytes.fromhex(cookie.get('sessid', ''))  # Get session id from cookie
     # print(f'Getting user by response sessid:{sessid}')
     sessid = cookie.get('sessid', '')
@@ -442,7 +458,7 @@ def get_json_by_response(env: TEnvironment) -> tp.Optional[tp.Dict[str, tp.Any]]
     # in the file like wsgi.input environment variable.
     request_body = env['wsgi.input'].read(request_body_size)
     request_body = request_body.decode("utf-8")
-    print(f'Log: decoding json from {request_body}')
+    # print(f'Log: decoding json from {request_body}')
     return json.loads(request_body)
 
 
@@ -522,7 +538,8 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         Response - result of request
     """
 
-    print("Admin try: ", cookie)
+    # print("Admin try: ", cookie)
+    logger('admin_panel()', f'Admin try with cookie {cookie}', type_='LOG')
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
@@ -533,10 +550,12 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
                 [('Access-Control-Allow-Origin', '*')],
                 [])
 
-    print("Admin try with user: ", user_obj)
+    # print("Admin try with user: ", user_obj)
+    logger('admin_panel()', f'Admin try with user: {user_obj}', type_='LOG')
     # TODO: ADMIN!
 
-    print(f'Admin want to {env["PATH_INFO"]}')
+    # print(f'Admin want to {env["PATH_INFO"]}')
+    logger('admin_panel()', f'Admin want to {env["PATH_INFO"]}', type_='LOG')
 
     if env['PATH_INFO'] == '/admin_get_config':
         return get_config(env, query, cookie)
@@ -564,12 +583,13 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     if env['PATH_INFO'] == '/admin_get_table':
         table_name = query['table']
-        print(f'Got get_table {table_name}')
+        # print(f'Got get_table {table_name}')
 
         if table_name in sql.table_fields.keys():
             data = sql.get_table(table_name)
         else:
-            print(' ========  400 Bad Request by admin  ======== ')
+            # print(' ========  400 Bad Request by admin  ======== ')
+            logger('admin_panel()', f'400 Bad Request by admin', type_='ERROR')
             return ('400 Bad Request',
                     [
                         # Because in js there is xhttp.withCredentials = true;
@@ -579,7 +599,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
                     ],
                     [])
 
-        print('Sending data table', data)
+        # print('Sending data table', data)
 
         # Send req data tables
         json_data = json.dumps(data)
@@ -598,11 +618,12 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     if env['PATH_INFO'] == '/admin_clear_table':
         table_name = query['table']
-        print(f'Clearing {table_name}')
+        # print(f'Clearing {table_name}')
 
         if table_name in sql.table_fields.keys():
             sql.clear_table(table_name)
         else:
+            logger('admin_panel()', f'400 Bad Request by admin', type_='ERROR')
             return ('400 Bad Request',
                     [
                         # Because in js there is xhttp.withCredentials = true;
@@ -624,8 +645,8 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/admin_send_data':  # Update or add row to some table
         table_name = query['table']
         # Get json from response
-        print('Update row (env) ', env)
-        print(f'Update row (raw)  {env["wsgi.input"]} len:{env.get("CONTENT_LENGTH", 0)}')
+        # print('Update row (env) ', env)
+        # print(f'Update row (raw)  {env["wsgi.input"]} len:{env.get("CONTENT_LENGTH", 0)}')
         obj = get_json_by_response(env)
 
         if 'id' not in obj.keys() or obj['id'] == '':
@@ -648,7 +669,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/admin_remove_data':  # Remove some row in some table
         table_name = query['table']
         obj_id = query['id']
-        print(f'Remove id:{obj_id} from {table_name}')
+        # print(f'Remove id:{obj_id} from {table_name}')
 
         if table_name in sql.table_fields.keys():
             sql.remove_in_table(obj_id, table_name)
@@ -665,7 +686,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/admin_codes':
         codes = generate_codes(20)
 
-        print('===codes===', codes)
+        # print('===codes===', codes)
 
         for code in codes:
             data = {'code': code, 'type': 0, 'used': False}
@@ -694,7 +715,7 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if user_obj is None:
         return wrong_cookie(env['HTTP_HOST'])
 
-    print(f'Got user :{user_obj}')
+    # print(f'Got user :{user_obj}')
 
     # Json account data
     data = user_obj
@@ -942,7 +963,7 @@ def get_class(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     data = sql.get_in_table(query['id'], 'classes')
 
-    print(f"got class: {data}")
+    # print(f"got class: {data}")
 
     # Json event data
     json_data = json.dumps(data)
@@ -978,10 +999,10 @@ def get_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     data = []
     if 'event_id' in query.keys():
         data = sql.get_enrolls_by_event_id(query['event_id'])
-        print('enrolls by event_id ', data)
+        # print('enrolls by event_id ', data)
     elif 'user_id' in query.keys():
         data = sql.get_enrolls_by_user_id(query['user_id'])
-        print('enrolls by user_id ', data)
+        # print('enrolls by user_id ', data)
 
     json_data = json.dumps(data)
     json_data = json_data.encode('utf-8')
@@ -1021,8 +1042,8 @@ def get_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         return wrong_cookie(env['HTTP_HOST'])
 
     feedback_template, feedback_data = sql.get_feedback(user_obj['id'], day)
-    print('feedback_template', feedback_template)
-    print('feedback_data', feedback_data)
+    # print('feedback_template', feedback_template)
+    # print('feedback_data', feedback_data)
 
     data = {'template': feedback_template, 'data': feedback_data}
 
@@ -1125,10 +1146,11 @@ def get_day(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     if day not in ['Template', '05.06', '06.06', '07.06', '08.06', '09.06', '10.06', '11.06', '12.06',
                    '13.06', '14.06', '15.06', '16.06', '17.06', '18.06']:
-        print('day overflow, falling back to the last day available')  # TODO: Remove or check in sql
+        # print('day overflow, falling back to the last day available')  # TODO: Remove or check in sql
+        logger('get_day()', f'day overflow, falling back to the last day available', type_='ERROR')
         day = '05.06'
 
-    print('get data days for ', day)
+    # print('get data days for ', day)
 
     data = sql.get_day(day)
 
@@ -1297,12 +1319,13 @@ def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     try:
         phone, passw = reg_data['phone'], reg_data['pass']
     except KeyError:
-        print('ERROR, No registration data.')
+        # print('ERROR, No registration data.')
+        logger('post_login()', f'No registration data in req.', type_='ERROR')
         return ('403 Forbidden',
                 [('Access-Control-Allow-Origin', '*')],
                 [])
 
-    print(phone)
+    # print(phone)
     phone = "+7" + phone[2:]
     phone = ''.join(i for i in phone if i.isdigit())
 
@@ -1314,7 +1337,7 @@ def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         sessid = session_id.hex()
         # sessid = bytes.hex(res[0])
         # sessid = bytes(res[0])
-        print(f'login with got:{sessid}')
+        # print(f'login with got:{sessid}')
 
         return ('200 OK',
                 [
@@ -1412,12 +1435,13 @@ def post_register(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
         passw = reg_data['pass']
         code = reg_data['code']
     except KeyError:
-        print('ERROR, No registration data.')
+        # print('ERROR, No registration data.')
+        logger('post_login()', f'No registration data in req.', type_='ERROR')
         return ('403 Forbidden',
                 [('Access-Control-Allow-Origin', '*')],
                 [])
 
-    print(phone)
+    # print(phone)
     phone = "+7" + phone[2:]
     phone = ''.join(i for i in phone if i.isdigit())
 
@@ -1438,7 +1462,7 @@ def post_register(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
             sessid = session_id.hex()
             # sessid = bytes.hex(res[0])
             # sessid = bytes(res[0])
-            print(f'login with got:{sessid}')
+            # print(f'login with got:{sessid}')
 
             return ('200 OK',
                     [
@@ -1537,7 +1561,7 @@ def post_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
 
     # Event code
     code = query['code']
-    print('Credits code: ', code)
+    # print('Credits code: ', code)
 
     event_id = 42  # TODO: Get event id from code
 
@@ -1550,6 +1574,7 @@ def post_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     if event_obj is not None:
         gsheets.save_credits(user_obj, event_obj)
         sql.checkin_user(user_obj, event_obj)
+        logger('post_credits()', f'Checkin user {user_obj} to {event_obj}', type_='LOG')
 
         return ('200 Ok',
                 [
@@ -1608,7 +1633,7 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
                  ('Access-Control-Allow-Credentials', 'true')],
                 [])
 
-    print('Checkin class. event', event)
+    # print('Checkin class. event', event)
 
     # Set up credits and enrolls attendance
     if event['type'] == 1 and event['total'] > 0:
@@ -1638,11 +1663,13 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         for credit in credits:
             sql.insert_to_table(credit, 'credits')
 
-        print('Checkin masterclass. event_id', event_id)
-        print('users_in_enrolls', users_in_enrolls)
-        print('users_in_checkins', users_in_checkins)
-        print('New enrolls: ', enrolls)
-        print('New credits: ', credits)
+        # print('Checkin masterclass. event_id', event_id)
+        # print('users_in_enrolls', users_in_enrolls)
+        # print('users_in_checkins', users_in_checkins)
+        # print('New enrolls: ', enrolls)
+        # print('New credits: ', credits)
+
+        logger('post_checkin()', f'Checkin users {users_in_checkins} to master event {event_id}', type_='LOG')
     else:
         # lecture
         enrolls = [{'class_id': event_id, 'user_id': int(checkin['id']), 'time': get_datetime_str(), 'attendance': True,
@@ -1658,9 +1685,11 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         for credit in credits:
             sql.insert_to_table(credit, 'credits')
 
-        print('Checkin lecture. event_id', event_id)
-        print('New enrolls: ', enrolls)
-        print('New credits: ', credits)
+        # print('Checkin lecture. event_id', event_id)
+        # print('New enrolls: ', enrolls)
+        # print('New credits: ', credits)
+
+        logger('post_checkin()', f'Checkin user {checkins} to lecture event {event_id}', type_='LOG')
 
     return ('200 Ok',
             [
