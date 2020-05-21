@@ -41,6 +41,11 @@ def get_datetime_str() -> str:
     return datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))).strftime('%Y-%m-%d %H:%M:%S') + ' MSK'
 
 
+def get_datetime_str_utc() -> str:
+    """ Return current time str. UTC """
+    return datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))).strftime('%Y-%m-%d %H:%M:%S') + ' UTC'
+
+
 def get_time_str() -> str:
     """ Return current time str. According to timezone
 
@@ -87,7 +92,7 @@ def generate_codes(num: int) -> tp.Set[str]:
     """
 
     # random.seed(0)
-    symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "0123456789" + "0123456789"
+    symbols = "ABCDEFGHJKLMNPQRSTUVWXYZ" + "123456789" + "123456789" + "123456789"
     symbols = [i for i in symbols]
 
     codes = set({})  # type: tp.Set[str]
