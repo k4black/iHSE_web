@@ -88,8 +88,37 @@ services:
 #        depends_on:
 #            - elk
 #        restart: unless-stopped
-        #entrypoint: ./time-to-start.sh
-
+#        #entrypoint: ./time-to-start.sh
+#        restart: unless-stopped
+#
+#
+#    metricbeat:
+#        image: docker.elastic.co/beats/metricbeat:7.6.0
+#        # https://github.com/docker/swarmkit/issues/1951
+#        hostname: "{{.Node.Hostname}}-metricbeat"
+#        user: root
+#        container_name: metricbeat_docker
+#        configs:
+#            - source: mb_config
+#              target: /usr/share/metricbeat/metricbeat.yml
+#        volumes:
+#            - /proc:/hostfs/proc:ro
+#            - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+#            - /:/hostfs:ro
+#            - /var/run/docker.sock:/var/run/docker.sock
+#            - ../local_run/tmp/metricbeat:/usr/share/metricbeat/data
+#        environment:
+#            - ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST:-node1}
+#            - KIBANA_HOST=${KIBANA_HOST:-node1}
+#            - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME:-elastic}
+#            - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme}
+#        # disable strict permission checks
+#        command: ["--strict.perms=false", "-system.hostfs=/hostfs"]
+#        links:
+#            - elk
+#        depends_on:
+#            - elk
+#
 #    elk:
 #        image: sebp/elk:760
 #        container_name: elk_docker
