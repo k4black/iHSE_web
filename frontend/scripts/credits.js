@@ -89,7 +89,7 @@ function getTableColumns(credits, days, events) {
         processed_days[day_id] = new Set();
 
         for (let event of Object.values(cache['events'])) {
-            if (events_by_id[event.id].day_id == day_id && event.host != '' && event.place != '') {  // TODO: Check not so regular event (dinner and etc)
+            if (events_by_id[event.id].day_id == day_id && event.type != 0) {  // TODO: Check not so regular event (dinner and etc)
                 processed_days[day_id].add(event.id);
             }
         }
@@ -105,9 +105,20 @@ function getTableColumns(credits, days, events) {
         });
 
         for (let event_id of processed_days[day_id]) {
+            let event_type = '';
+            if (events[event_id].type === 0) {
+                event_type = 'regular-event';
+            } else if (events[event_id].type === 1) {
+                event_type = 'master-event';
+            } else if (events[event_id].type === 2) {
+                event_type = 'lecture-event';
+            } else if (events[event_id].type === 3) {
+                event_type = 'fun-event';
+            }
+
             columnsBottom.push({
                 field: 'date' + days[day_id].date + 'id' + event_id,
-                title: event_id,
+                title: events[event_id].title,
                 titleTooltip: 'Title: ' + events[event_id].title,
                 sortable: true,
                 align: 'center',
@@ -121,7 +132,7 @@ function getTableColumns(credits, days, events) {
                         console.log('click ' + event.currentTarget)
                     }
                 },
-                class: 'cell'
+                class: 'cell' + ' ' + event_type + ' ' + 'data_cells',
             });
         }
         columnsBottom.push({
@@ -133,7 +144,7 @@ function getTableColumns(credits, days, events) {
             // formatter: function (val) {
             //     return '<div class="total total_cell">' + val + '</div>'
             // },
-            class: 'total_cell'
+            class: 'total_cell' + ' ' + 'data_cells'
         });
     }
 
@@ -154,6 +165,11 @@ function getTableData(credits, users, days, events) {
     let data = [];
 
     for (let user_id in users) {
+        console.log(users[user_id]);
+        if (users[user_id].user_type == 1 || users[user_id].user_type == 2) {
+            continue;  // Show only regular users
+        }
+
         let row = {};
 
         row['id'] = user_id;

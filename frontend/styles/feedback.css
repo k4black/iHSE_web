@@ -12,51 +12,93 @@
 
 
 
+.day:hover {
+    background: linear-gradient(0deg, #00000025 0%, #00000005 40%, #00000000 100%);
+
+}
+
+.day:hover .day__num {
+    background-color: #0083d4;
+}
 
 
 .day {
     width: auto;
-    display: flex;
     flex-direction: column;
-}
 
+    display: inline-flex;
+    transition: background-color 300ms ease-out;
+
+    cursor: pointer;
+}
 
 
 .day__num {
     vertical-align: middle;
-    line-height: 35px;
+    line-height: 37px; /* TODO: check*/
     width: 35px;
     height: 35px;
     text-align: center;
     margin: 5px 7px;
 
     background-color: #00000015;
-    color: white;
-    font-size: 18px;
+    color: var(--header-light-colour);
+    font-size: 15px;
     border-radius: 50%;
- }
+
+    transition: background-color 300ms ease-out;
+}
 
 .selected {
     background-color: #00000020;
-    background: linear-gradient(0deg, #00000030 0%, #00000020 60%, #00000010 80%, #00000000 100%);
+    background: linear-gradient(0deg, #00000030 0%, #00000020 60%, #00000010 80%, #00000000 100%) !important;
 }
 
 .selected .day__num {
-    background-color: #0085d6;
+    background-color: #0085d6 !important;
 }
 
 .today .day__num {
-    background-color: orange;
+    background-color: var(--accent-colour) !important;
 }
 
 .day__name {
     line-height: 15px;
     font-size: 12px;
     text-align: center;
-    color: #e3e6e5;
+    color: var(--subtext-light-colour);
 }
 
 
+.disabled {
+    cursor: default;
+}
+
+.disabled div {
+    color: var(--hint-light-colour);
+}
+
+.day.disabled:hover {
+    background: 0;
+}
+
+.day.disabled:hover .day__num {
+    background-color: #0085d6;
+/*  TODO: check right colour  */
+}
+
+.day.disabled .day__num {
+    background-color: #0085d6;
+}
+
+
+
+
+
+
+.feedback_title {
+    color: var(--header-colour);
+}
 
 
 .border {
@@ -67,9 +109,6 @@
 
 
 
-.day {
-    display: inline-block;
-}
 
 
 
@@ -102,11 +141,9 @@ textarea {
     border: 1px solid gainsboro;
     resize: none;
 
-
     min-height: 30px;
 
     display: none;
-
 }
 
 
@@ -168,8 +205,8 @@ h1 {
 }
 
 .rs-container .rs-selected {
-    background-color: #007ac5 !important;
-    border: 1px solid #0071b6 !important;
+    background-color: var(--main-colour)!important;
+    border: 1px solid var(--main-dark-colour) !important;
 }
 
 .rs-container {
@@ -223,8 +260,6 @@ h1 {
         z-index: 90;
         padding-left: calc(50% - 250px);
         padding-right: calc(50% - 250px);
-
-
     }
 }
 
@@ -239,7 +274,7 @@ h1 {
 
 .event .host {
     margin: 0 0 10px 0;
-    color: #595959;
+    color: var(--subtext-colour);
 
     font-size: 14px;
     font-style: italic;

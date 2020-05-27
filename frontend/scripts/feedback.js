@@ -36,8 +36,11 @@ function setDays() {
         today = days_list[0];
     }
 
+
     let topbar_html = '';
     let i = 0;
+    let full_year = (new Date().getFullYear());
+    let days_of_week = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
     for (let day_id in cache['days']) {
         let day = cache['days'][day_id];
 
@@ -48,11 +51,15 @@ function setDays() {
 
         if (day.date === today) {  // TODO: Today
             topbar_html += '<div class="day today selected">'
+        } else if (day.date > today) {
+            topbar_html += '<div class="day disabled">'
         } else {
             topbar_html += '<div class="day">'
         }
 
-        topbar_html += '<div class="day__num">' + i + '</div>' +
+        let [dd, mm] = day.date.split('.');
+        let date = new Date( mm + '.' + dd + '.' + full_year);
+        topbar_html += '<div class="day__num">' + days_of_week[date.getDay()] + '</div>' +
             '<div class="day__name">' + day.date + '</div>' +
             '</div>';
 
@@ -66,8 +73,16 @@ function setDays() {
     // Set onclick loading other day
     var days = document.querySelectorAll('.day');
     for (let i = 0; i < days.length; i++) {
+        if (days[i].classList.contains('disabled')) {
+            continue;
+        }
+
         days[i].addEventListener('click', function() {
-            document.querySelector('.selected').classList.remove('selected');
+            let selected = document.querySelector('.selected');
+            if (selected != null) {
+                selected.classList.remove('selected');
+            }
+
             this.classList.add('selected');
 
             loadFeedback(this.lastElementChild.textContent, setFeedback);
@@ -208,6 +223,10 @@ function saveFeedback() {
 
 
     // Process names
+    let existed_names = [];
+    for (let user in cache['names']) {
+        existed_names.push(user.name);
+    }
     let names = [];
     for (let user in cache['names']) {
         names.push(user.name);
@@ -222,7 +241,7 @@ function saveFeedback() {
             return;
         }
 
-        if (name in names) {
+        if (name in existed_names) {
             chosen_names.push(name);
         } else {
             alert('Невозможно выбрать пользователя <' + name + '>. Нет пользователя.');

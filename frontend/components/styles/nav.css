@@ -1,13 +1,6 @@
 
 
 /** Mobile navigation **/
-.title {
-    font-size: 25px;
-    margin-left: 20px;
-    vertical-align: middle;
-    height: 35px;
-    font-weight: 400;
-}
 
 
 .mobile {
@@ -29,7 +22,7 @@
     background: #00000045;
     width: 100vw;
     height: 100vh;
-    color: white;
+    /*color: var();*/
     display: block;
     justify-content: center;
     align-items: center;
@@ -50,7 +43,7 @@
     top: 0;
     left: 0;
     z-index: 100;
-    background: white;
+    background: var(--wrap-colour);
     width: 80vw;
     max-width: 300px;
     height: 100vh;
@@ -66,7 +59,7 @@
 .mobile__sidebar__account {
     width: 100%;
     height: 160px;
-    background: #007ac5;
+    background: var(--main-colour);
     padding: 15px;
     box-sizing: border-box;
 
@@ -82,7 +75,7 @@
 }
 
 .mobile__sidebar__account:hover {
-    background: #006cae;
+    background: var(--main-dark-colour);
 }
 
 
@@ -98,7 +91,7 @@
 
 .mobile__sidebar__name {
     font-size: 18px;
-    color: white;
+    color: var(--header-light-colour);
     margin: 0;
     margin-top: 10px;
     width: 100%;
@@ -109,7 +102,7 @@
 .mobile__sidebar__phone {
     transform: translateY(-10px);
     width: 100%;
-    color: #e3e6e5;
+    color: var(--subtext-light-colour);
     size: 16px;
     margin: 0;
     font-weight: normal;
@@ -140,35 +133,40 @@
     color: #595959;
     cursor: pointer;
     transition: 500ms;
+}
 
+.mobile__item i {
+    transition: 500ms;
 }
 
 .mobile__item:hover {
-    background: #D1D4D3;
-    /*color: #4f4f4f;*/
-
+    background: var(--grey-colour);
 }
 
+.mobile__item:hover i {
+    color: var(--dark-grey-colour);
+}
+
+
 .mobile__item__active {
-    background: #e2e2e2;
+    background: var(--light-grey-colour);
     /*color: #a5a5a5;*/
     pointer-events: none;
 }
 
 
 .mobile__item__icon {
-    height: 25px;
-    width: 25px;
+    height: 23px;
+    width: 23px;
 
     vertical-align: middle;
 
-    color: #dddddd;
-    font-size: 20px;
+    color: var(--grey-colour);
+    font-size: 23px;
 }
 
 .mobile__item__active .mobile__item__icon {
-
-    color: #9c9c9c;
+    color: var(--dark-grey-colour);
 }
 
 .mobile__item__name {
@@ -181,8 +179,8 @@
 }
 
 .mobile__item__notification {
-    color: white;
-    background-color: orange;
+    color: var(--text-light-colour);
+    background-color: var(--accent-colour);
     width: 20px;
     height: 20px;
     border-radius: 50%;

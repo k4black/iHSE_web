@@ -85,8 +85,11 @@
 
 
 .spoiler input, .spoiler div  {
-    position: relative!important;
+    /*position: relative!important;*/
     display: none; /* Скрываем содержимое */
+}
+.spoiler label {
+    position: relative;
 }
 .spoiler label::before {
     content: '►'; /* Текст перед заголовком */
@@ -103,7 +106,7 @@
 
 .spoiler>div {
     width: 100%;
-    display: flex;
+    /*display: flex;*/
     flex-direction: column;
     align-items: flex-start;
 

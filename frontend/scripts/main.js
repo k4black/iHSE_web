@@ -53,6 +53,10 @@ function getToday() {
     let today_date = new Date();  //January is 0!
     let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');
 
+    dd_mm = cache['today'];  // Debug??
+    if (dd_mm == undefined) {
+        dd_mm = cache['user'].today;
+    }
     return dd_mm;
 }
 
@@ -65,10 +69,15 @@ function getToday() {
  * Remove loading class on shadow-skeleton elements
  */
 function loadingEnd() {
-    let ls = document.querySelectorAll('.data__loading');
-    for (let i = 0; i < ls.length; i++) {
-        ls[i].classList.remove('data__loading');
-    }
+    document.querySelector('body').classList.add('loading_end');
+
+    // let ls = document.querySelectorAll('.data__loading');
+    // for (let i = 0; i < ls.length; i++) {
+    //     ls[i].classList.remove('data__loading');
+    // }
+}
+function loadingStart() {
+    document.querySelector('body').classList.remove('loading_end');
 }
 
 
@@ -152,8 +161,9 @@ function loadDays(func) {
         if (this.readyState === 4) {
             if (this.status === 200) {  // Ok
                 let days_raw = JSON.parse(this.responseText);
-                let days = groupByUnique(days_raw, 'id');
+                let days = groupByUnique(days_raw['days'], 'id');
                 cache['days'] = days;
+                cache['today'] = days_raw['today'];
 
                 func();
             } else if (this.status === 401) {  // Unauthorized
@@ -371,7 +381,12 @@ function loadDay(day, func) {
         }
     };
 
-    xhttp.open("GET", "/day?day=" + day, true);
+    let query = '';
+    if (day != '') {
+        query = '?day=' + day;
+    }
+
+    xhttp.open("GET", "/day" + query, true);
     xhttp.send();
 }
 

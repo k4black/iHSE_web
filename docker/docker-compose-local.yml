@@ -1,0 +1,132 @@
+version: '3.7'
+
+services:
+    # Nginx server for static frontend 
+    nginx:        
+        build:
+            context: ./nginx/
+            dockerfile: nginx_local.dockerfile
+        container_name: nginx_docker_local
+        restart: unless-stopped
+        ports:
+          - 80:80
+          - 443:443
+        volumes:
+          - ../frontend/:/var/app/frontend/
+          - ../local_run/log/nginx:/var/log/nginx/
+        depends_on:
+          - uwsgi
+
+    # uWSGI server for backend 
+    uwsgi:
+        build:
+            context: ./uwsgi/
+            dockerfile: uwsgi.dockerfile
+        container_name: uwsgi_docker
+        restart: unless-stopped
+        volumes:
+            - ../backend/:/var/app/backend/
+#          - ../local_run/conf/:/var/conf/
+            - ../local_run/log/uwsgi:/var/log/uwsgi
+        depends_on:
+            - database
+
+    # PostgreSQL server for backend
+    # TODO
+    database:
+        image: postgres:12.1
+#        build:
+#            context: ./postgres
+#            dockerfile: postgres.dockerfile
+        container_name: database_docker
+        restart: unless-stopped
+        ports:
+            - 5431:5432
+        volumes:
+            - ../local_run/pgdata:/var/lib/postgresql/data/pgdata
+        environment:
+            POSTGRES_DB: ihse
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: root
+            PGDATA: /var/lib/postgresql/data/pgdata
+
+    filebeat:
+        build:
+            context: ./filebeat
+            dockerfile: filebeat.dockerfile
+        container_name: filebeat_docker
+        restart: unless-stopped
+        volumes:
+            - /var/lib/docker/containers:/root/logs/containers
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ../local_run/log/nginx:/root/logs/nginx
+        depends_on:
+            - nginx
+
+    elasticsearch:
+        image: elasticsearch:7.7.0
+        container_name: elasticsearch_docker
+        environment:
+            - discovery.type=single-node
+
+    kibana:
+        image: kibana:7.7.0
+        container_name: kibana_docker
+        ports:
+            - 5601:5601
+
+
+
+
+#    filebeat:
+#        image: docker.elastic.co/beats/filebeat:7.6.0
+#        container_name: filebeat_docker
+#        volumes:
+#            - ../local_run/log/nginx:/etc/log/nginx/  # nginx logs
+#            - ../local_run/log/filebeat:/etc/filebeat
+#            - ../local_run/tmp/filebeat:/tmp/filebeat
+#            - ./filebeat/:/etc/pki/tls/certs/
+#        links:
+#            - elk
+#        depends_on:
+#            - elk
+#        restart: unless-stopped
+#        #entrypoint: ./time-to-start.sh
+#        restart: unless-stopped
+#
+#
+#    metricbeat:
+#        image: docker.elastic.co/beats/metricbeat:7.6.0
+#        # https://github.com/docker/swarmkit/issues/1951
+#        hostname: "{{.Node.Hostname}}-metricbeat"
+#        user: root
+#        container_name: metricbeat_docker
+#        configs:
+#            - source: mb_config
+#              target: /usr/share/metricbeat/metricbeat.yml
+#        volumes:
+#            - /proc:/hostfs/proc:ro
+#            - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+#            - /:/hostfs:ro
+#            - /var/run/docker.sock:/var/run/docker.sock
+#            - ../local_run/tmp/metricbeat:/usr/share/metricbeat/data
+#        environment:
+#            - ELASTICSEARCH_HOST=${ELASTICSEARCH_HOST:-node1}
+#            - KIBANA_HOST=${KIBANA_HOST:-node1}
+#            - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME:-elastic}
+#            - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD:-changeme}
+#        # disable strict permission checks
+#        command: ["--strict.perms=false", "-system.hostfs=/hostfs"]
+#        links:
+#            - elk
+#        depends_on:
+#            - elk
+#
+#    elk:
+#        image: sebp/elk:760
+#        container_name: elk_docker
+#        ports:
+#            - 5601:5601 #kibana
+#            - 9200:9200 #elastic
+#            - 5044:5044 #logstash beats filebeat
+#        restart: unless-stopped

@@ -1,5 +1,9 @@
 
-loadNames(function () {});
+
+document.addEventListener('load', function () {
+    loadNames(function () {});
+});
+
 
 
 
@@ -58,10 +62,15 @@ function setupBar(val) {
 
 
 function setupClasses() {
+    console.log('setupClasses');
     let class_events = document.querySelectorAll('[active-event]');
-    for (let i in class_events) {
+    for (let i = 0;  i < class_events.length; ++i) {
+        console.log('setupClass', class_events[i]);
+
         class_events[i].onclick = function (val) {
-            if (val.target.tagName != 'DIV') {
+            console.log('Clicked on', val);
+
+            if (val.target.tagName == 'BUTTON' || val.target.tagName == 'I') {
                 return;  // To not to click on other buttons
             }
 
@@ -144,7 +153,8 @@ function setClass() {
     setupData(document.querySelector('#class_popup .desc').firstElementChild, current_events[class_id].description);
     setupData(document.querySelector('#class_popup .anno').firstElementChild, event_class.annotation);
     setupData(document.querySelector('#class_popup .time').firstElementChild, current_events[class_id].time.replace('\n', ' - '));
-    setupData(document.querySelector('#class_popup .time').lastElementChild, current_events[class_id].date);
+    let selected_day = document.querySelector('.selected');
+    setupData(document.querySelector('#class_popup .time').lastElementChild, selected_day == null ? getToday() : selected_day.lastElementChild.textContent);
     setupData(document.querySelector('#class_popup .location').firstElementChild, current_events[class_id].place);
     setupData(document.querySelector('#class_popup .host').firstElementChild, current_events[class_id].host);
 

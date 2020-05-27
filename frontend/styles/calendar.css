@@ -19,28 +19,26 @@
 
 .day {
     width: auto;
-    display: flex;
     flex-direction: column;
-}
 
-.day {
-    display: inline-block;
-
+    display: inline-flex;
     transition: background-color 300ms ease-out;
+
+    cursor: pointer;
 }
 
 
 .day__num {
     vertical-align: middle;
-    line-height: 35px;
+    line-height: 37px; /* TODO: check*/
     width: 35px;
     height: 35px;
     text-align: center;
     margin: 5px 7px;
 
     background-color: #00000015;
-    color: white;
-    font-size: 18px;
+    color: var(--header-light-colour);
+    font-size: 15px;
     border-radius: 50%;
 
     transition: background-color 300ms ease-out;
@@ -55,15 +53,41 @@
     background-color: #0085d6 !important;
 }
 
+
+
+.disabled {
+    cursor: default;
+}
+
+.disabled div {
+    color: var(--hint-light-colour);
+}
+
+.day.disabled:hover {
+    /*background: 0;*/
+}
+
+.day.disabled:hover .day__num {
+    background-color: #0085d6;
+/*  TODO: check right colour  */
+}
+
+.day.disabled .day__num {
+    background-color: #0085d6;
+}
+
+
+
+
 .today .day__num {
-    background-color: orange !important;
+    background-color: var(--accent-colour) !important;
 }
 
 .day__name {
     line-height: 15px;
     font-size: 12px;
     text-align: center;
-    color: #e3e6e5;
+    color: var(--subtext-light-colour);
 }
 
 
@@ -111,10 +135,7 @@
         z-index: 90;
         padding-left: calc(50% - 250px);
         padding-right: calc(50% - 250px);
-
-
     }
-
 }
 
 
@@ -190,7 +211,7 @@
     height: 25px;
     border-radius: 50%;
 
-    color: black;
+    color: var(--header-colour);
 }
 
 

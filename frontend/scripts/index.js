@@ -22,19 +22,19 @@ var current_event = 0;
 
 window.addEventListener('load', function () {
     console.log('Load');
-
-    // Get today date
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, '0');
-    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-
-    if (today.getDate() < 5 || today.getMonth() + 1 < 6)
-        today = '05.06';
-    else
-        today = dd + '.' + mm;
+    //
+    // // Get today date
+    // var today = new Date();
+    // var dd = String(today.getDate()).padStart(2, '0');
+    // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    //
+    // if (today.getDate() < 5 || today.getMonth() + 1 < 6)
+    //     today = '05.06';
+    // else
+    //     today = dd + '.' + mm;
 
     // loadNames(function () {});
-    loadDay(today, setDay);
+    loadDay('', setDay);
 
     // setupBar(0.8);
 
@@ -64,7 +64,7 @@ function setDay() {
 
     let times = groupBy(events, 'time');
     let times_arr = Object.keys(times);
-    let processed_times_arr = times_arr.map(function (i) {return (i.length === 4 || i.length === 9) ? '0'+i : i}).map(function (i) {return i.length === 10 ? i.slice(0, 6)+'0'+i.slice(6) : i});
+    let processed_times_arr = times_arr.map(function (i) {return (i.length === 4 || i[4] == '\n') ? '0'+i : i}).map(function (i) {return i.length === 10 ? i.slice(0, 6)+'0'+i.slice(6) : i});
 
     for (let processed_time of processed_times_arr.sort()) {
         let time = processed_time[6] == '0' && processed_time[7] != '0' ? processed_time.slice(0, 6) + processed_time.slice(7) : processed_time;
@@ -75,8 +75,19 @@ function setDay() {
                             '<div class="events">';
 
         for (let event of times[time]) {
+            let event_type = '';
+            if (event.type === 0) {
+                event_type = 'regular-event';
+            } else if (event.type === 1) {
+                event_type = 'master-event';
+            } else if (event.type === 2) {
+                event_type = 'lecture-event';
+            } else if (event.type === 3) {
+                event_type = 'fun-event';
+            }
+
             event_html =
-                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 ? '' : 'active-event') + ' ' + (event.type === 1 ? 'active-event-master' : (event.type === 2 ? 'active-event-lecture' : '')) + ' >' +
+                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === 3 ? '' : 'active-event') + ' ' + event_type + ' >' +
                     // (event.type === 0 || event.type === '0' ? '' : '<a href="class.html?id=' + event.id + '">') +
                         '<p class="event__title">' + event.title + '</p>' +
 

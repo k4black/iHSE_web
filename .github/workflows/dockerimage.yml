@@ -1,0 +1,62 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      working-directory: ./docker
+      run: |
+        docker-compose build > compose_build.log
+        mkdir ../logs
+        mv compose_build.log ../logs/
+
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+
+    - name: Install dependencies
+      working-directory: ./backend
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Lint with flake8
+      working-directory: ./backend
+      run: |
+        pip install flake8 pytest pytest-html
+        flake8 main.py --exit-zero > ../logs/flake_main.log
+        flake8 sql.py --exit-zero > ../logs/flake_sql.log
+
+    - name: Generate coverage report
+      working-directory: ./
+      run: |
+        pip install pytest
+        pip install pytest-html
+        pytest ./backend/tests/ --html=tests.html --self-contained-html || true
+        mv tests.html ./logs/
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: build_lint_test
+        path: ./logs
+
+    - name: send custom message with args
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        args: Hello from iHSE CI/CD Service!
+

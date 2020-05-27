@@ -31,31 +31,6 @@ function setUsers() {
 
 
 
-/**
- * Get day information from server (first time)
- * Send http GET request and get today json schedule
- * than parse of json data and create html
- */
-
-function loadDayFirstTime(days_list) {
-    let urlParams = new URLSearchParams(window.location.search);
-    var dayNum = urlParams.get('day');
-
-    let today_date = new Date();  //January is 0!
-    let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');;
-
-    if (days_list.includes(dd_mm)) {
-        today = dd + '.' + mm;
-    } else {
-        today = days_list[0];
-    }
-    loadDay((dayNum != null ? dayNum : today), setDay);
-}
-
-
-
-
-
 
 var days;
 
@@ -70,28 +45,27 @@ function setupDays() {   // TODO: Refactor
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            days = JSON.parse( this.responseText );
+            let days_raw = JSON.parse( this.responseText );
 
-            cache['days'] = groupByUnique(days, 'id');
-
-            sortBy(days, 'date');
+            cache['days'] = groupByUnique(days_raw['days'], 'id');
+            cache['today'] = days_raw['today'];
 
             let days_list = [];
-            for (let day of days) {
-                days_list.push(day.date);
+            for (let day_id in cache['days']) {
+                days_list.push(cache['days'][day_id].date);
             }
 
-            let today_date = new Date();  //January is 0!
-            let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');
-
-            if (days_list.includes(dd_mm)) {
-                today = dd + '.' + mm;
+            let today = getToday();
+            if (days_list.includes(today)) {
+                today = today;
             } else {
                 today = days_list[0];
             }
 
             let topbar_html = '';
             let i = 0;
+            let full_year = (new Date().getFullYear());
+            let days_of_week = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
             for (let day_id in cache['days']) {
                 let day = cache['days'][day_id];
 
@@ -102,11 +76,16 @@ function setupDays() {   // TODO: Refactor
 
                 if (day.date === today) {  // TODO: Today
                     topbar_html += '<div class="day today selected">'
+                } else if (day.date < today) {
+                    topbar_html += '<div class="day disabled">'
                 } else {
                     topbar_html += '<div class="day">'
                 }
 
-                topbar_html += '<div class="day__num">' + i + '</div>' +
+                let [dd, mm] = day.date.split('.');
+                let date = new Date( mm + '.' + dd + '.' + full_year);
+                // console.log(mm + '.' + dd + full_year, '=', date);
+                topbar_html += '<div class="day__num">' + days_of_week[date.getDay()] + '</div>' +
                     '<div class="day__name">' + day.date + '</div>' +
                     '</div>';
 
@@ -126,6 +105,8 @@ function setupDays() {   // TODO: Refactor
             var days = document.querySelectorAll('.day');
             for (let i = 0; i < days.length; i++) {
                 days[i].addEventListener('click', function() {
+                    loadingStart();
+
                     if (this.classList.contains('add_day')) {
                         addDay();
                     } else {
@@ -137,7 +118,7 @@ function setupDays() {   // TODO: Refactor
                 });
             }
 
-            loadDayFirstTime(days_list);
+            loadDay(today, setDay);
         }
     };
 
@@ -164,19 +145,31 @@ function setDay() {
 
     let times = groupBy(events, 'time');
     let times_arr = Object.keys(times);
-    let processed_times_arr = times_arr.map(function (i) {return (i.length === 4 || i.length === 9) ? '0'+i : i}).map(function (i) {return i.length === 10 ? i.slice(0, 6)+'0'+i.slice(6) : i});
+    let processed_times_arr = times_arr.map(function (i) {return (i.length === 4 || i[4] == '\n') ? '0'+i : i}).map(function (i) {return i.length === 10 ? i.slice(0, 6)+'0'+i.slice(6) : i});
 
     for (let processed_time of processed_times_arr.sort()) {
         let time = processed_time[6] == '0' && processed_time[7] != '0' ? processed_time.slice(0, 6) + processed_time.slice(7) : processed_time;
         time = time[0] === '0' && time[1] !== '0' ? time.slice(1) : time;
 
-        time_html = '<div class="time">' +
+        time_html = '<div class="time loading__resource">' +
                         '<div class="bar">' + time + '</div>' +
                             '<div class="events">';
 
         for (let event of times[time]) {
+            let event_type = '';
+            if (event.type === 0) {
+                event_type = 'regular-event';
+            } else if (event.type === 1) {
+                event_type = 'master-event';
+            } else if (event.type === 2) {
+                event_type = 'lecture-event';
+            } else if (event.type === 3) {
+                event_type = 'fun-event';
+            }
+
+
             event_html =
-                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 ? '' : 'active-event') + ' ' + (event.type === 1 ? 'active-event-master' : (event.type === 2 ? 'active-event-lecture' : '')) + '>' +
+                '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === 3 ? '' : 'active-event') + ' ' + event_type + '>' +
                     // '<button class="admin_element remove_event"><i class="fa fa-times"></i></button>' +
                     '<button class="admin_element remove_event"><i class="material-icons">close</i></button>' +
                     // '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
@@ -255,9 +248,15 @@ function setupAdminButtons() {
             console.log('Edit Event ' + editButtons[i].parentElement.getAttribute('data-id'));
             let id = editButtons[i].parentElement.getAttribute('data-id');
 
-            let type = 0;
-            if ('active-event' in Object.values(editButtons[i].parentElement.attributes)) {
-                type = ('active-event-lecture' in Object.values(editButtons[i].parentElement.attributes)) ? 2 : 1;
+            let type = "0";
+            let attributes = Object.values(editButtons[i].parentElement.attributes).map(function (i) {return i.name});
+            // console.log('attributes', 'class' in attributes);
+            if (attributes.includes('master-event')) {
+                type = "1";
+            } else if (attributes.includes('lecture-event')) {
+                type = "2";
+            } else if (attributes.includes('fun-event')) {
+                type = "3";
             }
 
             let title = editButtons[i].parentElement.getElementsByClassName('event__title')[0].textContent;
@@ -309,11 +308,21 @@ function setupAdminButtons() {
 
     for (let i = 0; i < createButtons.length; ++i) {
         createButtons[i].addEventListener('click', function () {
-            // alert('clicked remove');
             let times = createButtons[i].parentElement.previousElementSibling.textContent.split('\n');
-            console.log('Create Event [' + times[0] + "," + times[1] + "]");
 
-            openCreateEvent(selectedDay, times[0], times[1] === undefined ? "" : times[1]);
+            let type = "0";
+            let attributes = Object.values(createButtons[i].previousElementSibling.attributes).map(function (i) {return i.name});
+            // console.log('attributes', 'class' in attributes);
+            if (attributes.includes('master-event')) {
+                type = "1";
+            } else if (attributes.includes('lecture-event')) {
+                type = "2";
+            } else if (attributes.includes('fun-event')) {
+                type = "3";
+            }
+            console.log('Create Event. type:' + type + ' [' + times[0] + "," + times[1] + "]");
+
+            openCreateEvent(selectedDay, type, times[0], times[1] === undefined ? "" : times[1]);
         });
     }
 
@@ -333,7 +342,7 @@ function setupAdminButtons() {
         }
 
         addTimeButtons[i].addEventListener('click', function () {
-            openCreateEvent(selectedDay, startTime, '');
+            openCreateEvent(selectedDay, '0', startTime, '');
         });
     }
 }
@@ -353,9 +362,9 @@ function openEditEvent(id, title, type, date, time1, time2, desc, names, locatio
     popup.style.display = 'block';
 }
 
-function openCreateEvent(date, time1, time2) {
+function openCreateEvent(date, type, time1, time2) {
     console.log('create event');
-    openEditEvent('', '', 0, date, time1, time2, '', '', '');
+    openEditEvent('', '', type, date, time1, time2, '', '', '');
 }
 
 function saveEvent() {

@@ -317,7 +317,8 @@ function setDistribution() {
 
     document.getElementById('teams').innerHTML = teams_html;
 
-
+    let total_users = 0;
+    let total_vacations = 0;
     for (let team in users) {
         let male_total = 0;
         let female_total = 0;
@@ -347,8 +348,8 @@ function setDistribution() {
         console.log('male_total', male_total, 'female_total', female_total);
         console.log('male_vacations', male_vacations, 'female_vacations', female_vacations);
 
-        document.getElementById('counter').innerText = '' + (male_total - male_vacations + female_total - female_vacations);
-        document.getElementById('counter_total').innerText = '' + (male_total + female_total);
+        total_users += male_total + female_total;
+        total_vacations += male_vacations + female_vacations;
 
         var ctx = document.getElementById('team' + team).getContext('2d');
         var myDoughnutChart = new Chart(ctx, {
@@ -376,6 +377,10 @@ function setDistribution() {
             }
         });
     }
+
+    document.getElementById('counter').innerText = '' + (total_users- total_vacations);
+    document.getElementById('counter_total').innerText = '' + (total_users);
+
 }
 
 

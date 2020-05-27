@@ -21,6 +21,6 @@ frontend:
 backend:
   - '*.py'
 
-# Add 'testing' label to any change to travis conf and tests itself
+# Add 'testing' label to any change to travis default_configs and tests itself
 testing:
   - tests/*

@@ -1,0 +1,10 @@
+# webserver
+uwsgi==2.0.18
+# interacting with PostgreSQL database
+psycopg2-binary==2.8.4
+# interacting with Google Sheets
+google-api-python-client==1.7.11
+google-auth-httplib2==0.0.3
+google-auth-oauthlib==0.4.1
+# other requirements
+configparser==4.0.2

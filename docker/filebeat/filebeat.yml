@@ -1,0 +1,49 @@
+filebeat.modules:
+  - module: elasticsearch
+  - module: nginx
+    access:
+      enabled: true
+
+      # Set custom paths for the log files. If left empty,
+      # Filebeat will choose the paths depending on your OS.
+
+      var.paths: ["/root/logs/nginx/access.log*"]
+    error:
+      enabled: true
+
+      # Set custom paths for the log files. If left empty,
+      # Filebeat will choose the paths depending on your OS.
+      var.paths: ["/root/logs/nginx/error.log*"]
+
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      templates:
+        - condition.or:
+            - contains:
+                docker.container.image: postgres
+            - contains:
+                docker.container.image: docker_uwsgi
+            - contains:
+                docker.container.image: docker_nginx
+          config:
+            - type: container
+              paths:
+                - /root/logs/containers/${data.docker.container.id}/*.log
+              exclude_lines: ["^\\s+[\\-`('.|_]"]  # drop asciiart lines
+
+#filebeat.inputs:
+#  - type: log
+#    paths:
+#      - /root/logs/nginx/*.log
+
+#    stream: all
+#      ids:
+#        - "*"
+#      enabled: true
+#      paths: "/usr/share/filebeat/logs/containers"
+#  scan_frequency: 10s
+#  close_inactive: 5m
+
+output.elasticsearch:
+    hosts: ["elasticsearch:9200"]

@@ -5,10 +5,54 @@
 /*@import url('https://fonts.google.com/sr?family=Myriad&token=AD');*/
 
 
-html, body {
 
+
+:root {
+    --bg-colour: #f7f7f7;
+    --wrap-colour: #ffffff;
+    --popup-colour: #e9e9e9;
+
+
+    --border-colour: #d1d4d3;
+
+
+    --light-grey-colour: #e2e2e2;
+    --grey-colour: #cacaca;
+    --dark-grey-colour: #9c9c9c;
+
+
+    --header-colour: #0d0d2f;
+    --text-colour: #1b202b;
+    --subtext-colour: #494949;
+    --hint-colour: #8a8a8a;
+
+    --header-light-colour: #ffffff;
+    --text-light-colour: #f1f1f1;
+    --subtext-light-colour: #e3e6e5;
+    --hint-light-colour: #b2b5b4;
+
+
+    --main-colour: #007ac5;
+    --main-dark-colour: #006cae;
+    --main-light-colour: #007dc9;
+    --accent-colour: #ffa500;
+    --danger-colour: #db2828;
+    --sub-colour: #00b3bc;
+    --ok-status: #22a91d;
+
+    --event-colour: #f0f0f0;
+    --event-master-colour: #c4dcf5;
+    --event-lecture-colour: #cbdbf7;
+    --event-fun-colour: #e0e0e0;  /* TODO: Check */
+}
+
+
+
+
+
+html, body {
     font-family: 'Hind', sans-serif;
-    /*font-family: 'Myriad', sans-serif;*/
+    /*font-family: 'Myriad', sans-serif; TODO: choose font*/
     /*font-weight: lighter;*/
     position: static;
 
@@ -21,6 +65,8 @@ html, body {
     /*padding-top: 60px;*/
     display: block;
     /*overflow-y: hidden;*/
+
+    background-color: var(--bg-colour);
 }
 
 * {
@@ -36,7 +82,7 @@ a {
 
 p {
     vertical-align: middle;
-    color: #0d0d2f;
+    color: var(--text-colour);
     margin: 0;
 }
 
@@ -60,13 +106,24 @@ button {
 
     /*font-family: Poppins-Medium;*/
     font-size: 15px;
-    color: #fff;
+    color: var(--header-light-colour);
     line-height: 1.2;
     text-transform: uppercase;
 
     z-index: 10;
-    background: #007ac5;
+    background: var(--main-light-colour);
+
+    transition: ease-out 300ms;
 }
+
+button:hover {
+    background: var(--main-dark-colour);
+}
+
+button * {
+    color: var(--header-light-colour);
+}
+
 
 label {
     font-size: 16px;
@@ -78,7 +135,7 @@ label {
 
 
 input {
-    color: #333333;
+    color: var(--text-colour);
     font-size: 15px;
     width: 100%;
     height: 35px;
@@ -97,7 +154,7 @@ input::-webkit-calendar-picker-indicator {
 
 
 form {
-    color: #9f9f9f;
+    /*color: #9f9f9f;*/
     display: flex;
 
     flex-direction: column;
@@ -136,9 +193,9 @@ form {
     overflow-x: hidden;
 
     max-width: 400px;
-    margin: 0 auto;
+    margin: 60px auto 0 auto;
 
-    margin-top: 60px;
+    background-color: var(--wrap-colour);
 }
 
 
@@ -161,7 +218,7 @@ form {
 .form {
     /*margin-top: 30px;*/
     max-width: 300px;
-    width: 60vw;
+    width: 70%;
     z-index: 10;
 
     min-height: 70vh;
@@ -188,7 +245,6 @@ form {
     15% {
         background-color: #bbbbbb;
     }
-
     35% {
         background-color: #d5d5d5;
     }
@@ -208,8 +264,14 @@ form {
 }
 
 
-.data__loading .loading__resource p, .data__loading .loading__resource h3, .data__loading .loading__resource span, .data__loading .loading__resource img, .data__loading .loading__resource .text_div, .data__loading .loading__resource .img_div  {
+
+body:not(.loading_end) .data__loading .loading__resource * {
+    transition: ease-out 300ms;
+}
+
+body:not(.loading_end) .data__loading .loading__resource p, body:not(.loading_end) .data__loading .loading__resource h3, body:not(.loading_end) .data__loading .loading__resource span, body:not(.loading_end) .data__loading .loading__resource img, body:not(.loading_end) .data__loading .loading__resource .text_div, body:not(.loading_end) .data__loading .loading__resource .img_div  {
     border-radius: 15px;
+    border: none;
     animation-name: bg;
     animation-duration: 4s;
     animation-iteration-count: infinite;
@@ -217,25 +279,27 @@ form {
 }
 
 
-.data__loading .loading__resource img, .data__loading .loading__resource .img_div {
+body:not(.loading_end) .data__loading .loading__resource img, body:not(.loading_end) .data__loading .loading__resource .img_div {
     background: #8a8a8a;
     border-radius: 50%;
     overflow: hidden;
+    border: none;
     object-position: -100px -100px;
 }
 
-.data__loading .loading__resource p>*, .data__loading .loading__resource span>* {
-    visibility: hidden;
+body:not(.loading_end) .data__loading .loading__resource p>*, body:not(.loading_end) .data__loading .loading__resource span>* {
+    /*visibility: hidden;*/
+    color: #00000000!important;
 }
 
-.data__loading .loading__resource * {
+body:not(.loading_end) .data__loading .loading__resource * {
     color: #00000000!important;
 }
 
 
 
 .border_line {
-    background-color: #D1D4D3;
+    background-color: var(--border-colour);
     width: 100%;
     height: 1px;
     border: none;
@@ -280,7 +344,7 @@ form {
     height: 56px;
     width: 56px;
     box-sizing: border-box;
-    background-color: #007ac5;
+    background-color: var(--main-colour);
     border-radius: 50%;
     transition: background-color 500ms ease-out;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
@@ -294,7 +358,7 @@ form {
 
 
 .mobile__floating__button:hover {
-    background: #007ac5;
+    background: var(--main-dark-colour);
 }
 
 
@@ -325,7 +389,7 @@ form {
     padding-left: 5px;
     padding-right: 5px;
 
-    background-color: #007ac5;
+    background-color: var(--main-colour);
 
     margin-top: 60px;
     width: 100%;
@@ -367,20 +431,23 @@ form {
 
 .shell {
     position: relative;
-    line-height: 1; }
+    line-height: 1;
+}
 .shell span {
     position: absolute;
     left: 3px;
     top: 1px;
     color: #ccc;
     pointer-events: none;
-    z-index: -1; }
+    z-index: -1;
+}
 .shell span i {
     font-style: normal;
     /* any of these 3 will work */
     color: transparent;
     opacity: 0;
-    visibility: hidden; }
+    visibility: hidden;
+}
 
 input.masked,
 .shell span {
@@ -388,7 +455,8 @@ input.masked,
     font-family: monospace;
     padding-right: 10px;
     background-color: transparent;
-    text-transform: uppercase; }
+    text-transform: uppercase;
+}
 
 
 
@@ -407,7 +475,6 @@ input.masked,
 
 /* Login register, etc inputs */
 .form__input {
-
     margin-bottom: 40px;
     display: block;
     position: relative;
@@ -456,7 +523,7 @@ input.masked,
     font-size: 15px;
 
     outline: none;
-    background-color: white;
+    background-color: var(--wrap-colour);
     border: none;
 }
 
@@ -505,7 +572,7 @@ body:not(.moderator) .moderator_element  {
     /*height: 500px;*/
     height: fit-content;
     margin: -220px 0 0 -345px;
-    background: #e9e9e9;
+    background: var(--popup-colour);
     border-radius: 10px;
 }
 
@@ -544,7 +611,9 @@ body:not(.moderator) .moderator_element  {
     height: 40px;
 }
 
-.popup_body a.close:hover {background-position: 0 12px}
+.popup_body a.close:hover {
+    background-position: 0 12px
+}
 
 
 
@@ -558,7 +627,7 @@ body:not(.moderator) .moderator_element  {
 /*@media device-aspect-ratio (min-device-aspect-ratio, max-device-aspect-ratio) {*/
 @media (min-width : 769px) {
     body {
-        background-color: #00000010;
+        /*background-color: #00000010;*/
     }
 
     .wrapper {
@@ -567,6 +636,5 @@ body:not(.moderator) .moderator_element  {
         border-radius: 5px;
         border: 1px #e3e6e5 solid;
         max-width: 500px;
-        background-color: white;
     }
 }
