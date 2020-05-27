@@ -43,10 +43,12 @@ services:
         ports:
             - 5431:5432
         volumes:
-            - ../local_run/pgdata:/var/lib/postgresql/data/pgdata
-            - ./postgres/:/var/lib/postgresql/data/tmp
+#            - ../local_run/postgres/data:/var/lib/postgresql/data/
+            - ../local_run/postgres/exports:/var/lib/postgresql/exports/
+            - ./postgres/templates/example.sql:/docker-entrypoint-initdb.d/example.sql
         environment:
             POSTGRES_DB: ihse
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: root
             PGDATA: /var/lib/postgresql/data/pgdata
+#            POSTGRES_INITDB_ARGS: --noclean
