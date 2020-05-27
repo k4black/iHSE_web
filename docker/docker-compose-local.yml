@@ -54,6 +54,7 @@ services:
         build:
             context: ./filebeat
             dockerfile: filebeat.dockerfile
+        container_name: filebeat_docker
         restart: unless-stopped
         volumes:
             - /var/lib/docker/containers:/root/logs/containers
@@ -64,11 +65,13 @@ services:
 
     elasticsearch:
         image: elasticsearch:7.7.0
+        container_name: elasticsearch_docker
         environment:
             - discovery.type=single-node
 
     kibana:
         image: kibana:7.7.0
+        container_name: kibana_docker
         ports:
             - 5601:5601
 
