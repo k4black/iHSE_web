@@ -44,6 +44,7 @@ services:
             - 5431:5432
         volumes:
             - ../local_run/pgdata:/var/lib/postgresql/data/pgdata
+            - ./postgres/:/var/lib/postgresql/data/tmp
         environment:
             POSTGRES_DB: ihse
             POSTGRES_USER: postgres
