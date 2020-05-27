@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+    # Nginx server for static frontend 
+    nginx:        
+        build:
+            context: ./nginx/
+            dockerfile: nginx_local.dockerfile
+        container_name: nginx_docker_local
+        restart: unless-stopped
+        ports:
+          - 80:80
+          - 443:443
+        volumes:
+          - ../frontend/:/var/app/frontend/
+          - ../local_run/log/nginx:/var/log/nginx/
+        depends_on:
+          - uwsgi
+
+    # uWSGI server for backend 
+    uwsgi:
+        build:
+            context: ./uwsgi/
+            dockerfile: uwsgi.dockerfile
+        container_name: uwsgi_docker
+        restart: unless-stopped
+        volumes:
+            - ../backend/:/var/app/backend/
+#          - ../local_run/conf/:/var/conf/
+            - ../local_run/log/uwsgi:/var/log/uwsgi
+        depends_on:
+            - database
+
+    # PostgreSQL server for backend
+    # TODO
+    database:
+        image: postgres:12.1
+#        build:
+#            context: ./postgres
+#            dockerfile: postgres.dockerfile
+        container_name: database_docker
+        restart: unless-stopped
+        ports:
+            - 5431:5432
+        volumes:
+            - ../local_run/pgdata:/var/lib/postgresql/data/pgdata
+        environment:
+            POSTGRES_DB: ihse
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: root
+            PGDATA: /var/lib/postgresql/data/pgdata
