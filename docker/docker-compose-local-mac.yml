@@ -43,7 +43,7 @@ services:
         ports:
             - 5431:5432
         volumes:
-#            - ../local_run/postgres/data:/var/lib/postgresql/data/
+            - ../local_run/postgres/data:/var/lib/postgresql/data/pgdata
             - ../local_run/postgres/exports:/var/lib/postgresql/exports/
             - ./postgres/templates/example.sql:/docker-entrypoint-initdb.d/example.sql
         environment:
