@@ -86,9 +86,9 @@ jobs:
 
             -   name: Zip all files for scp
                 run: |
-                    mkdir ../build
-                    cp -TR . ../build
-                    tar -cvf deploy.tar ../build/
+#                    mkdir ../build
+#                    cp -TR . ../build
+                    tar -cvf deploy.tar .
                     ls . | grep deploy.tar
 
             # SCP DEPLOY STEPS
@@ -124,6 +124,9 @@ jobs:
                     key: ${{ secrets.SSH_KEY }}
                     port: 22
                     script: |
+                        echo "Excract tar"
+                        tar --overwrite -xf /var/app/deploy.tar -C /var/app/
+                        rm /var/app/deploy.tar
                         echo "Runing /var/app/setup.sh"
                         sudo chmod +x /var/app/setup.sh
                         sudo /var/app/setup.sh
