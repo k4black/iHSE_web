@@ -94,7 +94,7 @@ jobs:
             # SCP DEPLOY STEPS
             -   uses: horochx/deploy-via-scp@master
                 with:
-                  local: ./
+                  local: ./deploy.tar
                   remote: /var/app/
                   host: ihse.tk
                   port: 22
