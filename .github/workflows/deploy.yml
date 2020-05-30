@@ -83,6 +83,11 @@ jobs:
 #                    METHOD: ftp
 #                    LOCAL_DIR: .
 #                    ARGS: --delete
+            - name: Run a multi-line script
+                run: |
+                    mkdir ../build
+                    cp -TR . ../build
+                    tar -cvf deploy.tar ../build/
 
             # SSH DEPLOY STEPS
             -   name: SCP-Deploy-Action
@@ -92,7 +97,7 @@ jobs:
                     username: ${{ secrets.SSH_USER }}
                     key: ${{ secrets.SSH_KEY }}
                     port: 22
-                    source: "."
+                    source: "deploy.tar"
                     target: "/var/app"
                     rm: true
 #                    overwrite: true
