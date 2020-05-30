@@ -4,13 +4,27 @@
 
 sudo apt-get update
 sudo mkdir /var/app/
-sudo chmod a-w /var/app/
+sudo chmod a+w /var/app/
 
 
 
 # ======== SSH user ========
-sudo adduser ubuntu-ssh
+echo "First use: <ssh-keygen -y -f ~/.ssh/ihse.pem>"
+sudo adduser --disabled-password --gecos "" ubuntu-ssh
 
+sudo mkdir /home/ubuntu-ssh/.ssh/
+sudo cp /home/ubuntu/.ssh/authorized_keys /home/ubuntu-ssh/.ssh/authorized_keys
+sudo chown ubuntu-ssh:ubuntu-ssh /home/ubuntu-ssh/.ssh/
+sudo chown ubuntu-ssh:ubuntu-ssh /home/ubuntu-ssh/.ssh/authorized_keys
+sudo chmod 700 /home/ubuntu-ssh/.ssh/
+sudo chmod 600 /home/ubuntu-ssh/.ssh/authorized_keys
+
+sudo nano /home/ubuntu-ssh/.ssh/authorized_keys
+
+
+
+
+sudo chown ubuntu-ssh:ubuntu-ssh /var/app/
 
 
 
