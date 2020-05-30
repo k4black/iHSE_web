@@ -7,6 +7,9 @@ sudo mkdir /var/app/
 sudo chmod a+w /var/app/
 
 
+sudo touch /etc/sudoers.d/90-cloudimg-ubuntu
+sudo echo "aychedee ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/90-cloudimg-ubuntu
+
 
 # ======== SSH user ========
 echo "First use: <ssh-keygen -y -f ~/.ssh/ihse.pem>"
@@ -19,7 +22,11 @@ sudo chown ubuntu-ssh:ubuntu-ssh /home/ubuntu-ssh/.ssh/authorized_keys
 sudo chmod 700 /home/ubuntu-ssh/.ssh/
 sudo chmod 600 /home/ubuntu-ssh/.ssh/authorized_keys
 
+
+echo "@see https://askubuntu.com/questions/192050/how-to-run-sudo-command-with-no-password"
 sudo nano /home/ubuntu-ssh/.ssh/authorized_keys
+sudo usermod -aG sudo ubuntu-ssh
+sudo usermod -aG admin ubuntu-ssh
 
 
 
@@ -46,7 +53,8 @@ sudo systemctl start docker
 
 echo "  docker installed with version: $(docker --version)"
 
-usermod -aG docker user
+sudo usermod -aG docker ubuntu
+sudo usermod -aG docker ubuntu-ssh
 
 
 # Docker compose

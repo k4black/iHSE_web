@@ -26,10 +26,11 @@ services:
         restart: unless-stopped
         #        entrypoint:  "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
         volumes:
+            - ../frontend/:/var/app/frontend/
             - /etc/letsencrypt/:/etc/letsencrypt/
             - /var/lib/letsencrypt/:/var/lib/letsencrypt/
             - /var/log/letsencrypt/:/var/log/letsencrypt/
-        command: certonly --webroot --webroot-path=/var/www/html --email all@ihse.tk --agree-tos --no-eff-email --force-renewal -d ihse.tk
+        command: certonly --webroot --webroot-path=/var/app/frontend --email all@ihse.tk --agree-tos --no-eff-email --force-renewal -d ihse.tk
         depends_on:
             - nginx
 

@@ -126,6 +126,6 @@ jobs:
                         tar --overwrite -xf /var/app/deploy.tar -C /var/app/
                         rm /var/app/deploy.tar
                         echo "Runing /var/app/setup.sh"
-                        sudo chmod +x /var/app/setup.sh
+                        chmod +x /var/app/setup.sh
                         sudo /var/app/setup.sh
               
