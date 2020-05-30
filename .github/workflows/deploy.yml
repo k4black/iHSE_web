@@ -86,8 +86,6 @@ jobs:
 
             -   name: Zip all files for scp
                 run: |
-#                    mkdir ../build
-#                    cp -TR . ../build
                     tar -cvf deploy.tar .
                     ls . | grep deploy.tar
 
