@@ -20,17 +20,40 @@ services:
         depends_on:
             - uwsgi
 
-    certbot:
-        image: certbot/certbot
-        container_name: certbot_docker
-        restart: unless-stopped
-        #        entrypoint:  "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+#    certbot:
+#        image: certbot/certbot
+#        container_name: certbot_docker
+#        restart: unless-stopped
+#        #        entrypoint:  "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+#        volumes:
+#            - ../frontend/:/var/app/frontend/
+#            - /etc/letsencrypt/:/etc/letsencrypt/
+#            - /var/lib/letsencrypt/:/var/lib/letsencrypt/
+#            - /var/log/letsencrypt/:/var/log/letsencrypt/
+#        command: certonly --webroot --webroot-path=/var/app/frontend --email all@ihse.tk --agree-tos --no-eff-email -d ihse.tk -d www.ihse.tk
+#        depends_on:
+#            - nginx
+
+    letsencrypt:
+        container_name: letsencrypt_docker
+        image: gordonchan/auto-letsencrypt
+        links:
+            - server
         volumes:
-            - ../frontend/:/var/app/frontend/
-            - /etc/letsencrypt/:/etc/letsencrypt/
-            - /var/lib/letsencrypt/:/var/lib/letsencrypt/
-            - /var/log/letsencrypt/:/var/log/letsencrypt/
-        command: certonly --webroot --webroot-path=/var/app/frontend --email all@ihse.tk --agree-tos --no-eff-email -d ihse.tk -d www.ihse.tk
+            - /var/log/letsencrypt/:/var/log/letsencrypt
+            - /var/run/docker.sock:/var/run/docker.sock
+            - /etc/letsencrypt:/etc/letsencrypt
+            - /var/lib/letsencrypt:/var/lib/letsencrypt
+            - ../frontend/:/tmp/letsencrypt/www
+            - /etc/ihse/certs:/etc/nginx/certs
+        environment:
+            - EMAIL=all@ihse.tk
+            - SERVER_CONTAINER=server
+            - WEBROOT_PATH=/tmp/letsencrypt/www
+            - CERTS_PATH=/etc/nginx/certs
+            - DOMAINS=ihse.tk www.ihse.tk
+#            - CHECK_FREQ=7
+        restart: unless-stopped
         depends_on:
             - nginx
 
