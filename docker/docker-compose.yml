@@ -30,7 +30,7 @@ services:
             - /etc/letsencrypt/:/etc/letsencrypt/
             - /var/lib/letsencrypt/:/var/lib/letsencrypt/
             - /var/log/letsencrypt/:/var/log/letsencrypt/
-        command: certonly --webroot --webroot-path=/var/app/frontend --email all@ihse.tk --agree-tos --no-eff-email --force-renewal -d ihse.tk
+        command: certonly --webroot --webroot-path=/var/app/frontend --email all@ihse.tk --agree-tos --no-eff-email -d ihse.tk -d www.ihse.tk
         depends_on:
             - nginx
 
