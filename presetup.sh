@@ -65,6 +65,7 @@ echo "@see https://www.digitalocean.com/community/tutorials/how-to-set-up-vsftpd
 sudo apt-get -y install vsftpd
 sudo adduser ubuntu-ftp
 sudo chown ubuntu-ftp:ubuntu-ftp /var/app/
+sudo chmod a+w /var/app/
 
 # Config file
 #sudo nano /etc/vsftpd.conf
