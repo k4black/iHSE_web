@@ -1,6 +1,6 @@
 FROM postgres:12.1
 
-EXPOSE 5431
+EXPOSE 5432
 
 USER root
 # TODO: archive in case of big files!

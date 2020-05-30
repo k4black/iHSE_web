@@ -1,5 +1,5 @@
 version: '3.7'
-
+    
 services:
     # Nginx server for static frontend 
     nginx:        
@@ -9,13 +9,13 @@ services:
         container_name: nginx_docker_local
         restart: unless-stopped
         ports:
-          - 80:80
-          - 443:443
+            - 80:80
+            - 443:443
         volumes:
-          - ../frontend/:/var/app/frontend/
-          - ../local_run/log/nginx:/var/log/nginx/
+            - ../frontend/:/var/app/frontend/
+            - ../local_run/log/nginx:/var/log/nginx/
         depends_on:
-          - uwsgi
+            - uwsgi
 
     # uWSGI server for backend 
     uwsgi:
@@ -26,13 +26,12 @@ services:
         restart: unless-stopped
         volumes:
             - ../backend/:/var/app/backend/
-#          - ../local_run/conf/:/var/conf/
+#                - ../local_run/ihse/:/var/ihse/
             - ../local_run/log/uwsgi:/var/log/uwsgi
         depends_on:
             - database
 
     # PostgreSQL server for backend
-    # TODO
     database:
         image: postgres:12.1
 #        build:
@@ -41,11 +40,11 @@ services:
         container_name: database_docker
         restart: unless-stopped
         ports:
-            - 5431:5432
+            - 5432:5432
         volumes:
             - ../local_run/postgres/data:/var/lib/postgresql/data/pgdata
             - ../local_run/postgres/exports:/var/lib/postgresql/exports/
-            - ./postgres/templates/example.sql:/docker-entrypoint-initdb.d/example.sql
+            - ./postgres/templates/example.sql:/docker-entrypoint-initdb.d/example.sql  # Change for others docker-compose
         environment:
             POSTGRES_DB: ihse
             POSTGRES_USER: postgres

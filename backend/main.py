@@ -14,7 +14,7 @@ from http.cookies import SimpleCookie
 
 import configparser
 
-# Sqlite import
+# sublibs import
 from utils import sql, gsheets
 
 sys.path.append('/home/ubuntu/iHSE_web')

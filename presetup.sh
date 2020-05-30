@@ -1,28 +1,78 @@
-# This actions should be tacken ONLY ONE TIME, when server is setuping
+# This actions should be taken ONLY ONE TIME, when server is setting up
 
-
-# FTP server
-echo "Setup FTP server"
-
-
-echo "https://www.digitalocean.com/community/tutorials/how-to-set-up-vsftpd-for-a-user-s-directory-on-ubuntu-16-04"
 
 
 sudo apt-get update
-sudo apt-get install vsftpd
-
-
-sudo adduser ubuntu-ftp
-
 sudo mkdir /var/app/
-sudo chown ubuntu-ftp:ubuntu-ftp /var/app/
 sudo chmod a-w /var/app/
 
 
-sudo nano /etc/vsftpd.conf
 
-# TODO: Automatic push to config file
-/etc/vsftpd/vsftpd.conf
+
+# ======== Docker setup ========
+echo "Setup Docker"
+echo "@see https://habr.com/ru/post/445448/"
+# nginx+cerbot in docker
+
+
+# Docker
+echo "  docker"
+
+sudo apt-get remove docker docker-engine docker.io containerd runc
+sudo apt-get -y install docker.io
+
+# Docker autorun
+sudo systemctl enable docker
+sudo systemctl start docker
+
+echo "  docker installed with version: $(docker --version)"
+
+usermod -aG docker user
+
+
+# Docker compose
+echo "  docker-compose"
+
+sudo curl -L "https://github.com/docker/compose/releases/download/1.25.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+echo "  docker-compose installed with version: $(docker-compose --version)"
+
+
+
+
+# ======== Database folders setup ========
+echo "Setup database folders"
+
+sudo mkdir /var/lib/postgresql/data
+sudo chmod +rw /var/lib/postgresql/data  # TODO: check
+
+
+
+
+# ======== FTP server ========   # TODO: USE CD user with scp or ssh git pull
+echo "Setup FTP server"
+echo "@see https://www.digitalocean.com/community/tutorials/how-to-set-up-vsftpd-for-a-user-s-directory-on-ubuntu-16-04"
+
+
+sudo apt-get -y install vsftpd
+sudo adduser ubuntu-ftp
+sudo chown ubuntu-ftp:ubuntu-ftp /var/app/
+
+# Config file
+#sudo nano /etc/vsftpd.conf
+
+#ip
+ip=$(curl ipinfo.io/ip)
+echo "  Public IP: $ip"
+
+# /etc/vsftpd/vsftpd.conf or /etc/vsftpd.conf
+ftp_conf="/etc/vsftpd.conf"
+touch $ftp_conf
+
+echo "
 listen=YES
 pam_service_name=vsftpd
 userlist_enable=YES
@@ -34,46 +84,28 @@ anonymous_enable=NO
 pasv_enable=YES
 pasv_min_port=1024
 pasv_max_port=1048
-pasv_address=[SERVER IP ADRESS]
+pasv_address=$ip
 local_root=/var/app
+" >> $ftp_conf
 
 
 
 
-# Docker
-echo "Setup Docker"
+# ======== Softlinks to logs and etc  ========
+echo "Setup logs Softlinks"
 
-sudo apt-get remove docker docker-engine docker.io containerd runc
-
-sudo apt install docker.io
-
-sudo systemctl start docker
-sudo systemctl enable docker
-
-$ docker --version
+# TODO: Log softlinks
 
 
 
 
 
-# Docker compose
-echo "Setup Docker-compose"
-
-sudo curl -L "https://github.com/docker/compose/releases/download/1.25.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-
-sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
-
-$ docker-compose --version
 
 
 
-# database
 
-echo "Setup database"
 
-sudo mkdir /var/lib/postgresql/data
-sudo chmod +rw /var/lib/postgresql/data  # TODO: check
+
 
 
 
@@ -83,27 +115,20 @@ sudo chmod +rw /var/lib/postgresql/data  # TODO: check
 
 echo "https://certbot.eff.org/lets-encrypt/ubuntuxenial-nginx"
 sudo apt-get update
-sudo apt-get install software-properties-common
+sudo apt-get -y install software-properties-common
 sudo add-apt-repository universe
 sudo add-apt-repository ppa:certbot/certbot
 sudo apt-get update
 
-
-udo apt-get install certbot python-certbot-nginx
-
+sudo apt-get -y install certbot python-certbot-nginx
 
 certbot register --email me@example.com
 
-
-
 sudo certbot --nginx  # This Setup directly nginx sertificate  # TODO: Add to docker
-sudo certbot certonly --ngin  x  # Only got certificate
-
+sudo certbot certonly --nginx  # Only got certificate
 
 certbot certonly --dry-run -d example.com -d www.example.com  # TEST get sert
-
 certbot certonly -d example.com -d www.example.com # TRYLY got sert
-
 certbot certonly -d example.com -d www.example.com -d shop.example.com  # Add subdomen
 
 openssl x509 -text -in /etc/letsencrypt/live/example.com/cert.pem # Check sert

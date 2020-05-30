@@ -1,6 +1,6 @@
 # This actions run every deploying of new version
 
-echo "setup file" > /var/tmp/test.txt
+# echo "setup file" > /var/tmp/test.txt
 
 cd /var/app/docker
 echo "Building docker containers. "

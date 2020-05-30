@@ -1,21 +1,37 @@
 version: '3.7'
 
 services:
-    # Nginx server for static frontend 
-    nginx:        
+    # Nginx server for static frontend
+    nginx:
         build:
-            context: ./nginx
-            dockerfile: nginx.dockerfile
-        container_name: nginx_docker
+            context: ./nginx/
+            dockerfile: nginx_local.dockerfile
+        container_name: nginx_docker_local
         restart: unless-stopped
         ports:
-          - 80:80
-          - 443:443
+            - 80:80
+            - 443:443
         volumes:
-          - ../frontend/:/var/app/frontend/
-          - /var/log/nginx:/var/log/nginx
+            - ../frontend/:/var/app/frontend/
+            - /var/log/nginx:/var/log/nginx
+            - /etc/letsencrypt/:/etc/letsencrypt/
+            - /var/lib/letsencrypt/:/var/lib/letsencrypt/
+        #        command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
         depends_on:
-          - uwsgi
+            - uwsgi
+
+    certbot:
+        image: certbot/certbot
+        container_name: certbot_docker
+        restart: unless-stopped
+        #        entrypoint:  "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+        volumes:
+            - /etc/letsencrypt/:/etc/letsencrypt/
+            - /var/lib/letsencrypt/:/var/lib/letsencrypt/
+            - /var/log/letsencrypt/:/var/log/letsencrypt/
+        command: certonly --webroot --webroot-path=/var/www/html --email all@ihse.tk --agree-tos --no-eff-email --force-renewal -d ihse.tk
+        depends_on:
+            - nginx
 
     # uWSGI server for backend 
     uwsgi:
@@ -25,9 +41,9 @@ services:
         container_name: uwsgi_docker
         restart: unless-stopped
         volumes:
-          - ../backend/:/var/app/backend/
-          - /var/conf/:/var/conf/
-          - /var/log/uwsgi.log:/var/log/uwsgi.log
+            - ../backend/:/var/app/backend/
+#            - /var/conf/:/var/conf/
+            - /var/log/uwsgi.log:/var/log/uwsgi.log
         depends_on:
             - database
 
@@ -41,9 +57,11 @@ services:
         container_name: database_docker
         restart: unless-stopped
         ports:
-          - 5431:5432
+            - 5432:5432
         volumes:
-          - /var/lib/postgresql/data:/var/lib/postgresql/data/pgdata
+            - /var/lib/postgresql/data/pgdata:/var/lib/postgresql/data/pgdata
+            - /var/lib/postgresql/exports/:/var/lib/postgresql/exports/
+            - ./postgres/templates/example.sql:/docker-entrypoint-initdb.d/example.sql  # Change for others docker-compose
         environment:
             POSTGRES_DB: ihse
             POSTGRES_USER: postgres
