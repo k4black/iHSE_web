@@ -89,6 +89,17 @@ jobs:
                     mkdir ../build
                     cp -TR . ../build
                     tar -cvf deploy.tar ../build/
+                    ls . | grep deploy.tar
+
+            -   name: Running setup bash script
+                uses: appleboy/ssh-action@master
+                with:
+                    host: ihse.tk
+                    username: ${{ secrets.SSH_USER }}
+                    key: ${{ secrets.SSH_KEY }}
+                    port: 22
+                    script: |
+                        echo "TESTING SSH. OK"
 
             # SSH DEPLOY STEPS
             -   name: SCP-Deploy-Action
@@ -98,8 +109,9 @@ jobs:
                     username: ${{ secrets.SSH_USER }}
                     key: ${{ secrets.SSH_KEY }}
                     port: 22
-                    source: "deploy.tar"
-                    target: "/var/app"
+#                    source: "deploy.tar"
+                    souece: .
+                    target: "/var/app/"
                     rm: true
 #                    overwrite: true
 
