@@ -65,6 +65,12 @@ services:
         depends_on:
             - nginx
 
+    logstash:
+        build:
+            context: ./logstash/
+            dockerfile: logstash.dockerfile
+        container_name: ihse_logstash
+
     elasticsearch:
         image: elasticsearch:7.7.0
         container_name: elasticsearch_docker

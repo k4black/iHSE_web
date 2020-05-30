@@ -1,5 +1,6 @@
 filebeat.modules:
   - module: elasticsearch
+  - module: logstash
   - module: nginx
     access:
       enabled: true
@@ -45,5 +46,8 @@ filebeat.autodiscover:
 #  scan_frequency: 10s
 #  close_inactive: 5m
 
-output.elasticsearch:
-    hosts: ["elasticsearch:9200"]
+#output.elasticsearch:
+#    hosts: ["elasticsearch:9200"]
+
+output.logstash:
+    hosts: ["logstash:5044"]
