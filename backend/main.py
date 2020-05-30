@@ -1,5 +1,4 @@
 import json
-import time
 import sys
 from itertools import groupby
 import typing as tp
@@ -15,7 +14,7 @@ from http.cookies import SimpleCookie
 import configparser
 
 # sublibs import
-from utils import sql, gsheets
+from utils import sql  #, gsheets
 
 sys.path.append('/home/ubuntu/iHSE_web')
 
@@ -210,7 +209,7 @@ def update_cache() -> None:
     TODAY = datetime.today().strftime('%d.%m')
     # print('Today ', TODAY)
     # print('sync time: ' + get_datetime_str())
-    logger('update_cache()', f'Update day', type_='LOG')
+    logger('update_cache()', 'Update day', type_='LOG')
 
     return
 
@@ -236,11 +235,11 @@ def sync() -> None:
     """
 
     # print('============ Sync start ============')
-    logger('sync()', f'==== Sync start ====', type_='LOG')
+    logger('sync()', '==== Sync start ====', type_='LOG')
     # print('sync_time:', get_datetime_str())
     # update_cache()  # Sync itself
     # print('============= Sync end =============')
-    logger('sync()', f'==== Sync end ======', type_='LOG')
+    logger('sync()', '==== Sync end ======', type_='LOG')
 
     start_sync(TIMEOUT)  # Update - to call again
 
@@ -280,7 +279,7 @@ def read_config() -> None:
     """Read and save config file (`config.ini`) """
 
     # print('========= Read config file =========')
-    logger('read_config()', f'==== Read config file ====', type_='LOG')
+    logger('read_config()', '==== Read config file ====', type_='LOG')
 
     global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
 
@@ -296,7 +295,7 @@ def read_config() -> None:
         NUMBER_TEAMS = config['TEAMS']['number']
     except KeyError:
         # print('No config file. Using default values')
-        logger('read_config()', f'No config file. Using default values', type_='LOG')
+        logger('read_config()', 'No config file. Using default values', type_='LOG')
         CREDITS_TOTAL = 300
         CREDITS_MASTER = 15
         CREDITS_LECTURE = 15
@@ -304,7 +303,7 @@ def read_config() -> None:
         NUMBER_TEAMS = 5
 
     # print('===== End config file reading ======')
-    logger('read_config()', f'==== End config file reading ====', type_='LOG')
+    logger('read_config()', '==== End config file reading ====', type_='LOG')
 
 
 def write_config() -> None:
@@ -539,7 +538,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     """
 
     # print("Admin try: ", cookie)
-    logger('admin_panel()', f'Admin try with cookie {cookie}', type_='LOG')
+    logger('admin_panel()', 'Admin try with cookie {cookie}', type_='LOG')
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
@@ -589,7 +588,7 @@ def admin_panel(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
             data = sql.get_table(table_name)
         else:
             # print(' ========  400 Bad Request by admin  ======== ')
-            logger('admin_panel()', f'400 Bad Request by admin', type_='ERROR')
+            logger('admin_panel()', '400 Bad Request by admin', type_='ERROR')
             return ('400 Bad Request',
                     [
                         # Because in js there is xhttp.withCredentials = true;
@@ -1278,22 +1277,16 @@ def post_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     # if user_obj[2] is None:  # No User
     #     return user_obj
 
-    if True:  # TODO: Cherck rights
-
-        return ('200 OK',
-                [
-                    # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                    # To receive cookie
-                    ('Access-Control-Allow-Credentials', 'true'),
-                    # ('Location', '//ihse.tk/')
-                ],
-                [])
-
-    else:
-        return ('405 Method Not Allowed',
-                [('Access-Control-Allow-Origin', '*')],
-                [])
+    # TODO: Cherck rights
+    return ('200 OK',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true'),
+                # ('Location', '//ihse.tk/')
+            ],
+            [])
 
 
 def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
@@ -1320,7 +1313,7 @@ def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         phone, passw = reg_data['phone'], reg_data['pass']
     except KeyError:
         # print('ERROR, No registration data.')
-        logger('post_login()', f'No registration data in req.', type_='ERROR')
+        logger('post_login()', 'No registration data in req.', type_='ERROR')
         return ('403 Forbidden',
                 [('Access-Control-Allow-Origin', '*')],
                 [])
@@ -1436,7 +1429,7 @@ def post_register(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
         code = reg_data['code']
     except KeyError:
         # print('ERROR, No registration data.')
-        logger('post_login()', f'No registration data in req.', type_='ERROR')
+        logger('post_login()', 'No registration data in req.', type_='ERROR')
         return ('403 Forbidden',
                 [('Access-Control-Allow-Origin', '*')],
                 [])
@@ -1560,7 +1553,7 @@ def post_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     # TODO: CREDITS
 
     # Event code
-    code = query['code']
+    # code = query['code']
     # print('Credits code: ', code)
 
     event_id = 42  # TODO: Get event id from code
@@ -1572,7 +1565,7 @@ def post_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
 
     event_obj = sql.get_event(event_id)
     if event_obj is not None:
-        gsheets.save_credits(user_obj, event_obj)
+        # gsheets.save_credits(user_obj, event_obj)
         sql.checkin_user(user_obj, event_obj)
         logger('post_credits()', f'Checkin user {user_obj} to {event_obj}', type_='LOG')
 
@@ -2090,7 +2083,7 @@ def post_deenroll_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> 
         Response - result of request
     """
 
-    project_id = query['project_id']
+    # project_id = query['project_id']
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)

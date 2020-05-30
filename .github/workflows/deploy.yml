@@ -70,22 +70,10 @@ jobs:
                     ls -la .
                     ls -la components/
 
-            # FTP DEPLOY STEPS
-            -   name: List output files
-                run: ls
-
-#            -   name: FTP-Deploy-Action
-#                uses: SamKirkland/FTP-Deploy-Action@2.0.0
-#                env:
-#                    FTP_SERVER: ihse.tk
-#                    FTP_USERNAME: ${{ secrets.FTP_USER }}
-#                    FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-#                    METHOD: ftp
-#                    LOCAL_DIR: .
-#                    ARGS: --delete
-
+            # ZIP FILES FOR DEPLOY
             -   name: Zip all files for scp
                 run: |
+                    ls
                     tar -cvf deploy.tar .
                     ls . | grep deploy.tar
 
@@ -98,20 +86,6 @@ jobs:
                   port: 22
                   user: ${{ secrets.SSH_USER }}
                   key: ${{ secrets.SSH_KEY }}
-
-            # SSH DEPLOY STEPS
-#            -   name: SCP-Deploy-Action
-#                uses: appleboy/scp-action@master
-#                with:
-#                    host: ihse.tk
-#                    username: ${{ secrets.SSH_USER }}
-#                    key: ${{ secrets.SSH_KEY }}
-#                    port: 22
-##                    source: "deploy.tar"
-#                    souece: .
-#                    target: "/var/app/"
-#                    rm: true
-##                    overwrite: true
 
             # SSH DEPLOY STEPS
             -   name: Running setup bash script

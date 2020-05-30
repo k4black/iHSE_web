@@ -64,13 +64,12 @@ services:
         restart: unless-stopped
         volumes:
             - ../backend/:/var/app/backend/
-#            - /var/conf/:/var/conf/
+            - /var/conf/ihse.ini:/var/conf/ihse.ini
             - /var/log/uwsgi.log:/var/log/uwsgi.log
         depends_on:
             - database
 
     # PostgreSQL server for backend
-    # TODO
     database:
         image: postgres:12.1
 #        build:

@@ -26,7 +26,7 @@ services:
         restart: unless-stopped
         volumes:
             - ../backend/:/var/app/backend/
-#            - ../local_run/ihse/:/var/ihse/
+            - ../local_run/conf/ihse.ini:/var/conf/ihse.ini
             - ../local_run/log/uwsgi:/var/log/uwsgi
         depends_on:
             - database

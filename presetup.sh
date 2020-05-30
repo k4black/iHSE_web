@@ -6,6 +6,10 @@ sudo apt-get update
 sudo mkdir /var/app/
 sudo chmod a+w /var/app/
 
+#ip
+ip=$(curl ipinfo.io/ip)
+echo "Public IP: $ip"
+
 
 sudo touch /etc/sudoers.d/90-cloudimg-ubuntu
 sudo echo "aychedee ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/90-cloudimg-ubuntu
@@ -79,42 +83,10 @@ sudo chmod +rw /var/lib/postgresql/data  # TODO: check
 
 
 
-# ======== FTP server ========   # TODO: USE CD user with scp or ssh git pull
-echo "Setup FTP server"
-echo "@see https://www.digitalocean.com/community/tutorials/how-to-set-up-vsftpd-for-a-user-s-directory-on-ubuntu-16-04"
+# ======== Softlinks to logs and etc  ========
+echo "Setup logs Softlinks"
 
-
-sudo apt-get -y install vsftpd
-sudo adduser ubuntu-ftp
-sudo chown ubuntu-ftp:ubuntu-ftp /var/app/
-sudo chmod a+w /var/app/
-
-# Config file
-#sudo nano /etc/vsftpd.conf
-
-#ip
-ip=$(curl ipinfo.io/ip)
-echo "  Public IP: $ip"
-
-# /etc/vsftpd/vsftpd.conf or /etc/vsftpd.conf
-ftp_conf="/etc/vsftpd.conf"
-touch $ftp_conf
-
-echo "
-listen=YES
-pam_service_name=vsftpd
-userlist_enable=YES
-tcp_wrappers=YES
-
-anonymous_enable=NO
-
-# Additional configuration
-pasv_enable=YES
-pasv_min_port=1024
-pasv_max_port=1048
-pasv_address=$ip
-local_root=/var/app
-" >> $ftp_conf
+# TODO: Log softlinks
 
 
 
@@ -123,6 +95,7 @@ local_root=/var/app
 echo "Setup logs Softlinks"
 
 # TODO: Log softlinks
+
 
 
 
