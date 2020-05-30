@@ -83,7 +83,8 @@ jobs:
 #                    METHOD: ftp
 #                    LOCAL_DIR: .
 #                    ARGS: --delete
-            - name: Run a multi-line script
+
+            -   name: Zip all files for scp
                 run: |
                     mkdir ../build
                     cp -TR . ../build
