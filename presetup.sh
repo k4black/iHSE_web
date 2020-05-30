@@ -8,6 +8,11 @@ sudo chmod a-w /var/app/
 
 
 
+# ======== SSH user ========
+sudo adduser ubuntu-ssh
+
+
+
 
 # ======== Docker setup ========
 echo "Setup Docker"
