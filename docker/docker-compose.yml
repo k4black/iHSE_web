@@ -6,7 +6,7 @@ services:
         build:
             context: ./nginx/
             dockerfile: nginx_local.dockerfile
-        container_name: nginx_docker_local
+        container_name: nginx_docker
         restart: unless-stopped
         ports:
             - 80:80
@@ -37,8 +37,6 @@ services:
     letsencrypt:
         container_name: letsencrypt_docker
         image: gordonchan/auto-letsencrypt
-        links:
-            - server
         volumes:
             - /var/log/letsencrypt/:/var/log/letsencrypt
             - /var/run/docker.sock:/var/run/docker.sock
@@ -48,10 +46,10 @@ services:
             - /etc/ihse/certs:/etc/nginx/certs
         environment:
             - EMAIL=all@ihse.tk
-            - SERVER_CONTAINER=server
+            - SERVER_CONTAINER=nginx_docker
             - WEBROOT_PATH=/tmp/letsencrypt/www
             - CERTS_PATH=/etc/nginx/certs
-            - DOMAINS=ihse.tk www.ihse.tk
+            - DOMAINS=ihse.tk
 #            - CHECK_FREQ=7
         restart: unless-stopped
         depends_on:
