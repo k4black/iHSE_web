@@ -240,27 +240,12 @@ try:
                 time_to text default ''
             );
         """)
-
-        # cursor.execute("""
-        #                     create table if not exists project_users (
-        #                         user_id serial,
-        #                         project_id serial,
-        #                         foreign key (user_id) references users(id)
-        #                         foreign key (project_id) references projects(id)
-        #                     );
-        #                     """)
-
-
 except psycopg2.Error as error:
-#     print(f"Error encountered while startup-reinitializing the database: {error}")
-#     print(f"Things may have gone terribly wrong and rolled-back now. Proceed at you own peril!!!!!!!!!!!!!!!!!")
     logger('sql', f'Error encountered while startup-reinitializing the database: {error}', type_='ERROR')
     conn.rollback()
-
 conn.commit()
 
 TTableObject = tp.Dict[str, tp.Any]
-
 
 table_fields: tp.Dict[str, tp.List[str]] = {
     'users': ['id', 'code', 'user_type', 'phone', 'name', 'sex', 'pass', 'team', 'project_id', 'avatar'],
