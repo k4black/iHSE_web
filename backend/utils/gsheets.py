@@ -1,3 +1,5 @@
+# type: ignore
+
 import pickle
 import os.path
 import json
