@@ -22,41 +22,23 @@ def get(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         Response - result of request
     """
 
-    if env['PATH_INFO'] == '/account':
-        return get_account(env, query, cookie)
+    functions = {
+        '/account': get_account,
+        '/user': get_user,
+        '/names': get_names,
+        '/day': get_day,
+        '/feedback': get_feedback,
+        '/class': get_class,
+        '/event': get_event,
+        '/enrolls': get_enrolls,
+        '/days': get_days,
+        '/projects': get_projects,
+        '/project': get_project,
+        '/credits': get_credits,
+    }
 
-    if env['PATH_INFO'] == '/user':
-        return get_user(env, query, cookie)
-
-    if env['PATH_INFO'] == '/names':
-        return get_names(env, query, cookie)
-
-    if env['PATH_INFO'] == '/day':
-        return get_day(env, query, cookie)
-
-    if env['PATH_INFO'] == '/feedback':
-        return get_feedback(env, query, cookie)
-
-    if env['PATH_INFO'] == '/class':
-        return get_class(env, query, cookie)
-
-    if env['PATH_INFO'] == '/event':
-        return get_event(env, query, cookie)
-
-    if env['PATH_INFO'] == '/enrolls':
-        return get_enrolls(env, query, cookie)
-
-    if env['PATH_INFO'] == '/days':  # Get days list
-        return get_days(env, query, cookie)
-
-    if env['PATH_INFO'] == '/projects':
-        return get_projects(env, query, cookie)
-
-    if env['PATH_INFO'] == '/project':
-        return get_project(env, query, cookie)
-
-    if env['PATH_INFO'] == '/credits':
-        return get_credits(env, query, cookie)
+    if env['PATH_INFO'] in functions:
+        return functions[env['PATH_INFO']](env, query, cookie)
 
     return http.not_allowed()
 

@@ -1,6 +1,5 @@
 import typing as tp
 import random
-import json
 
 import utils.http as http
 from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse
@@ -23,44 +22,23 @@ def post(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         Response - result of request
     """
 
-    if env['PATH_INFO'] == '/login':
-        return post_login(env, query, cookie)
+    functions = {
+        '/post_login': post_login,
+        '/post_register': post_register,
+        '/post_feedback': post_feedback,
+        '/post_project': post_project,
+        '/post_edit_project': post_edit_project,
+        '/post_deenroll_project': post_deenroll_project,
+        '/post_logout': post_logout,
+        '/post_credits': post_credits,
+        '/post_checkin': post_checkin,
+        '/post_mark_enrolls': post_mark_enrolls,
+        '/post_create_enroll': post_create_enroll,
+        '/post_remove_enroll': post_remove_enroll,
+    }
 
-    if env['PATH_INFO'] == '/register':
-        return post_register(env, query, cookie)
-
-    if env['PATH_INFO'] == '/feedback':
-        return post_feedback(env, query, cookie)
-
-    if env['PATH_INFO'] == '/project':
-        return post_project(env, query, cookie)
-
-    if env['PATH_INFO'] == '/edit_project':
-        return post_edit_project(env, query, cookie)
-
-    if env['PATH_INFO'] == '/enroll_project':
-        return post_enroll_project(env, query, cookie)
-
-    if env['PATH_INFO'] == '/deenroll_project':
-        return post_deenroll_project(env, query, cookie)
-
-    if env['PATH_INFO'] == '/logout':
-        return post_logout(env, query, cookie)
-
-    if env['PATH_INFO'] == '/credits':
-        return post_credits(env, query, cookie)
-
-    if env['PATH_INFO'] == '/checkin':
-        return post_checkin(env, query, cookie)
-
-    if env['PATH_INFO'] == '/mark_enrolls':
-        return post_mark_enrolls(env, query, cookie)
-
-    if env['PATH_INFO'] == '/create_enroll':
-        return post_create_enroll(env, query, cookie)
-
-    if env['PATH_INFO'] == '/remove_enroll':
-        return post_remove_enroll(env, query, cookie)
+    if env['PATH_INFO'] in functions:
+        return functions[env['PATH_INFO']](env, query, cookie)
 
     if env['PATH_INFO'] == '/enroll':
         # TODO: Remove on release - admin

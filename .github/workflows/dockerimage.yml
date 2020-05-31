@@ -27,17 +27,15 @@ jobs:
         python-version: 3.7
 
     - name: Install dependencies
-      working-directory: ./backend
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r docker/uwsgi/requirements.txt
 
     - name: Lint with flake8
       working-directory: ./backend
       run: |
         pip install flake8 pytest pytest-html
-        flake8 main.py --exit-zero > ../logs/flake_main.log
-        flake8 sql.py --exit-zero > ../logs/flake_sql.log
+        flake8 . --exit-zero --exclude="*gsheets.py *test_*.py" > ../logs/flake.log
 
     - name: Generate coverage report
       working-directory: ./

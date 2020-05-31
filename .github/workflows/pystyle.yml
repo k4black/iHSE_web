@@ -38,8 +38,8 @@ jobs:
                     pip install mypy
                     mypy .
 
-            -   name: Test with pycodestyle
-                working-directory: ./backend
-                run: |
-                    pip install pycodestyle
-                    pycodestyle . --max-line-length=120 --exclude="*gsheets.py *test_*.py"
+#            -   name: Test with pycodestyle
+#                working-directory: ./backend
+#                run: |
+#                    pip install pycodestyle
+#                    pycodestyle . --max-line-length=120 --exclude="*gsheets.py *test_*.py"

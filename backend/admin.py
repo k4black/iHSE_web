@@ -1,5 +1,3 @@
-import json
-
 import utils.http as http
 from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse
 from utils.http import get_user_by_response, get_json_by_response
@@ -24,7 +22,6 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         Response - result of request
     """
 
-    # print("Admin try: ", cookie)
     logger('admin_panel()', 'Admin try with cookie {cookie}', type_='LOG')
 
     # Safety get user_obj
@@ -34,11 +31,7 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if user_obj['user_type'] == 0:
         return http.unauthorized()
 
-    # print("Admin try with user: ", user_obj)
     logger('admin_panel()', f'Admin try with user: {user_obj}', type_='LOG')
-    # TODO: ADMIN!
-
-    # print(f'Admin want to {env["PATH_INFO"]}')
     logger('admin_panel()', f'Admin want to {env["PATH_INFO"]}', type_='LOG')
 
     if env['PATH_INFO'] == '/admin_get_config':
@@ -55,7 +48,6 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     if env['PATH_INFO'] == '/admin_get_table':
         table_name = query['table']
-        # print(f'Got get_table {table_name}')
 
         if table_name in sql.table_fields.keys():
             data = sql.get_table(table_name)
@@ -95,7 +87,6 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/admin_remove_data':  # Remove some row in some table
         table_name = query['table']
         obj_id = query['id']
-        # print(f'Remove id:{obj_id} from {table_name}')
 
         if table_name in sql.table_fields.keys():
             sql.remove_in_table(obj_id, table_name)
@@ -171,4 +162,3 @@ def get_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     }
 
     return http.ok(host=env['HTTP_HOST'], json_dict=data)
-
