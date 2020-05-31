@@ -35,7 +35,14 @@ jobs:
       working-directory: ./backend
       run: |
         pip install flake8 pytest pytest-html
-        flake8 . --exit-zero --exclude="*gsheets.py *test_*.py" > ../logs/flake.log
+        flake8 . --exit-zero --max-complexity=10 --max-line-length=120 --exclude="*gsheets.py *test_*.py" > ../logs/flake.log
+
+    - name: Test with mypy
+      continue-on-error: true
+      working-directory: ./backend
+      run: |
+        pip install mypy
+        mypy . > ../logs/mypy.log
 
     - name: Generate coverage report
       working-directory: ./
