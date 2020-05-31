@@ -1,7 +1,7 @@
 import json
 from itertools import groupby
 
-from utils.http import *
+import utils.http as http
 from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse
 from utils.http import get_user_by_response, get_json_by_response
 from utils.auxiliary import logger, get_datetime_str, check_enroll_time, get_date_str
@@ -58,11 +58,7 @@ def get(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if env['PATH_INFO'] == '/credits':
         return get_credits(env, query, cookie)
 
-    return ('405 Method Not Allowed',
-            [('Access-Control-Allow-Origin', '*'),
-             ('Allow', '')],
-            [])  # TODO: Allow
-
+    return http.not_allowed()
 
 
 def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
@@ -81,7 +77,7 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return wrong_cookie(env['HTTP_HOST'])
+        return http.wrong_cookie(host=env['HTTP_HOST'])
 
     # print(f'Got user :{user_obj}')
 
@@ -96,19 +92,7 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     data['total'] = CREDITS_TOTAL
     data['today'] = get_date_str()  # TODO: remove. Only for debug???
 
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                # To receive cookie
-                ('Access-Control-Allow-Credentials', 'true'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(host=env['HTTP_HOST'], json_dict=data)
 
 
 def get_names(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
@@ -125,19 +109,7 @@ def get_names(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     """
 
     data = sql.get_names()
-
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', '*'),
-                # To receive cookie
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(json_dict=data)
 
 
 def get_account(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
@@ -156,25 +128,13 @@ def get_account(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return wrong_cookie(env['HTTP_HOST'])
+        return http.wrong_cookie(host=env['HTTP_HOST'])
 
     # Json account data
     data = user_obj
     data['total'] = CREDITS_TOTAL
 
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                # To receive cookie
-                ('Access-Control-Allow-Credentials', 'true'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(host=env['HTTP_HOST'], json_dict=data)
 
 
 def get_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
@@ -193,23 +153,10 @@ def get_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return wrong_cookie(env['HTTP_HOST'])
+        return http.wrong_cookie(host=env['HTTP_HOST'])
 
     data = sql.get_credits_by_user_id(user_obj['id'])
-
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                # To receive cookie
-                ('Access-Control-Allow-Credentials', 'true'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(host=env['HTTP_HOST'], json_dict=data)
 
 
 def get_days(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
@@ -229,19 +176,7 @@ def get_days(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     data = {'days': days, 'today': get_date_str()}
 
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', '*'),
-                # To receive cookie
-                # ('Access-Control-Allow-Credentials', 'true'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(json_dict=data)
 
 
 # @cache
@@ -261,19 +196,7 @@ def get_event(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     data = sql.get_in_table(query['id'], 'events')
 
     # Json event data
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                # To receive cookie
-                # ('Access-Control-Allow-Credentials', 'true'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(host=env['HTTP_HOST'], json_dict=data)
 
 
 # @cache
@@ -292,23 +215,8 @@ def get_class(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     data = sql.get_in_table(query['id'], 'classes')
 
-    # print(f"got class: {data}")
-
     # Json event data
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                # Because in js there is xhttp.withCredentials = true;
-                # ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                ('Access-Control-Allow-Origin', '*'),
-                # To receive cookie
-                # ('Access-Control-Allow-Credentials', 'true'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(json_dict=data)
 
 
 # @cache
@@ -333,20 +241,7 @@ def get_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         data = sql.get_enrolls_by_user_id(query['user_id'])
         # print('enrolls by user_id ', data)
 
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                # Because in js there is xhttp.withCredentials = true;
-                # ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                ('Access-Control-Allow-Origin', '*'),
-                # To receive cookie
-                # ('Access-Control-Allow-Credentials', 'true'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(json_dict=data)
 
 
 def get_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
@@ -368,24 +263,12 @@ def get_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return wrong_cookie(env['HTTP_HOST'])
+        return http.wrong_cookie(host=env['HTTP_HOST'])
 
     feedback_template, feedback_data = sql.get_feedback(user_obj['id'], day)
-    # print('feedback_template', feedback_template)
-    # print('feedback_data', feedback_data)
 
     data = {'template': feedback_template, 'data': feedback_data}
-
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                ('Access-Control-Allow-Origin', '*'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(json_dict=data)
 
 
 # @cache
@@ -405,16 +288,7 @@ def get_projects(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     data = sql.get_table('projects')
     data = [obj for obj in data if obj['id'] != 0]
 
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                ('Access-Control-Allow-Origin', '*'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(json_dict=data)
 
 
 # @cache
@@ -435,16 +309,7 @@ def get_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     data = sql.get_in_table(project_id, 'projects')
 
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                ('Access-Control-Allow-Origin', '*'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(json_dict=data)
 
 
 # @cache
@@ -486,15 +351,6 @@ def get_day(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     data = sorted(data, key=lambda x: x['time'])
     groups = groupby(data, key=lambda x: x['time'])
 
-    processed_data = [{'time': time_, 'events': [event for event in group_]} for time_, group_ in groups]
+    data = [{'time': time_, 'events': [event for event in group_]} for time_, group_ in groups]
 
-    json_data = json.dumps(processed_data)  # creating real json here
-    json_data = json_data.encode('utf-8')
-
-    return ('200 OK',
-            [
-                ('Access-Control-Allow-Origin', '*'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])
+    return http.ok(json_dict=data)

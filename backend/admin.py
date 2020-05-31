@@ -1,6 +1,6 @@
 import json
 
-from utils.http import *
+import utils.http as http
 from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse
 from utils.http import get_user_by_response, get_json_by_response
 from utils.auxiliary import logger, generate_codes
@@ -30,11 +30,9 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
-        return wrong_cookie(env['HTTP_HOST'])
+        return http.wrong_cookie(host=env['HTTP_HOST'])
     if user_obj['user_type'] == 0:
-        return ('401 Unauthorized',
-                [('Access-Control-Allow-Origin', '*')],
-                [])
+        return http.unauthorized()
 
     # print("Admin try with user: ", user_obj)
     logger('admin_panel()', f'Admin try with user: {user_obj}', type_='LOG')
@@ -53,19 +51,7 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         data = sql.get_credits_short()
 
         # Send req data tables
-        json_data = json.dumps(data)
-        json_data = json_data.encode('utf-8')
-
-        return ('200 OK',
-                [
-                    # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                    # To receive cookie
-                    ('Access-Control-Allow-Credentials', 'true'),
-                    ('Content-type', 'application/json'),
-                    ('Content-Length', str(len(json_data)))
-                ],
-                [json_data])
+        return http.ok(host=env['HTTP_HOST'], json_dict=data)
 
     if env['PATH_INFO'] == '/admin_get_table':
         table_name = query['table']
@@ -74,65 +60,26 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         if table_name in sql.table_fields.keys():
             data = sql.get_table(table_name)
         else:
-            # print(' ========  400 Bad Request by admin  ======== ')
             logger('admin_panel()', '400 Bad Request by admin', type_='ERROR')
-            return ('400 Bad Request',
-                    [
-                        # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                        # To receive cookie
-                        ('Access-Control-Allow-Credentials', 'true')
-                    ],
-                    [])
-
-        # print('Sending data table', data)
+            return http.bad_request(host=env['HTTP_HOST'])
 
         # Send req data tables
-        json_data = json.dumps(data)
-        json_data = json_data.encode('utf-8')
-
-        return ('200 OK',
-                [
-                    # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                    # To receive cookie
-                    ('Access-Control-Allow-Credentials', 'true'),
-                    ('Content-type', 'application/json'),
-                    ('Content-Length', str(len(json_data)))
-                ],
-                [json_data])
+        return http.ok(host=env['HTTP_HOST'], json_dict=data)
 
     if env['PATH_INFO'] == '/admin_clear_table':
         table_name = query['table']
-        # print(f'Clearing {table_name}')
 
         if table_name in sql.table_fields.keys():
             sql.clear_table(table_name)
         else:
             logger('admin_panel()', '400 Bad Request by admin', type_='ERROR')
-            return ('400 Bad Request',
-                    [
-                        # Because in js there is xhttp.withCredentials = true;
-                        ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                        # To receive cookie
-                        ('Access-Control-Allow-Credentials', 'true')
-                    ],
-                    [])
+            return http.bad_request(host=env['HTTP_HOST'])
 
-        return ('200 OK',
-                [
-                    # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                    # To receive cookie
-                    ('Access-Control-Allow-Credentials', 'true')
-                ],
-                [])
+        return http.ok(host=env['HTTP_HOST'])
 
     if env['PATH_INFO'] == '/admin_send_data':  # Update or add row to some table
         table_name = query['table']
         # Get json from response
-        # print('Update row (env) ', env)
-        # print(f'Update row (raw)  {env["wsgi.input"]} len:{env.get("CONTENT_LENGTH", 0)}')
         obj = get_json_by_response(env)
 
         if 'id' not in obj.keys() or obj['id'] == '':
@@ -143,14 +90,7 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
             if table_name in sql.table_fields.keys():
                 sql.update_in_table(obj, table_name)
 
-        return ('200 OK',
-                [
-                    # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                    # To receive cookie
-                    ('Access-Control-Allow-Credentials', 'true')
-                ],
-                [])
+        return http.ok(host=env['HTTP_HOST'])
 
     if env['PATH_INFO'] == '/admin_remove_data':  # Remove some row in some table
         table_name = query['table']
@@ -160,27 +100,16 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         if table_name in sql.table_fields.keys():
             sql.remove_in_table(obj_id, table_name)
 
-        return ('200 OK',
-                [
-                    # Because in js there is xhttp.withCredentials = true;
-                    ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                    # To receive cookie
-                    ('Access-Control-Allow-Credentials', 'true')
-                ],
-                [])
+        return http.ok(host=env['HTTP_HOST'])
 
     if env['PATH_INFO'] == '/admin_codes':
         codes = generate_codes(20)
-
-        # print('===codes===', codes)
 
         for code in codes:
             data = {'code': code, 'type': 0, 'used': False}
             sql.insert_to_table(data, 'codes')
 
-        return ('200 OK',
-                [('Access-Control-Allow-Origin', '*')],
-                [])
+        return http.ok()
 
 
 def post_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
@@ -215,15 +144,7 @@ def post_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     write_config()
 
     # TODO: Cherck rights
-    return ('200 OK',
-            [
-                # Because in js there is xhttp.withCredentials = true;
-                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                # To receive cookie
-                ('Access-Control-Allow-Credentials', 'true'),
-                # ('Location', '//ihse.tk/')
-            ],
-            [])
+    return http.ok(host=env['HTTP_HOST'])
 
 
 def get_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
@@ -249,17 +170,5 @@ def get_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         'groups': NUMBER_TEAMS
     }
 
-    json_data = json.dumps(data)
-    json_data = json_data.encode('utf-8')
+    return http.ok(host=env['HTTP_HOST'], json_dict=data)
 
-    return ('200 OK',
-            [
-                # Because in js there is xhttp.withCredentials = true;
-                # ('Access-Control-Allow-Origin', '*'),
-                ('Access-Control-Allow-Origin', f"//{env['HTTP_HOST']}"),
-                # To receive cookie
-                ('Access-Control-Allow-Credentials', 'true'),
-                ('Content-type', 'application/json'),
-                ('Content-Length', str(len(json_data)))
-            ],
-            [json_data])

@@ -90,7 +90,6 @@ def get_json_by_response(env: TEnvironment) -> tp.Optional[tp.Dict[str, tp.Any]]
 """ ---===---==========================================---===--- """
 
 
-# TODO: switch to {env['HTTP_HOST']} in Origin
 def wrong_cookie(host: str):
     return (
         '401 Unauthorized',
@@ -101,5 +100,129 @@ def wrong_cookie(host: str):
             # Clear user sessid cookie
             ('Set-Cookie', f"sessid=none; Path=/; Domain={host}; HttpOnly; Max-Age=0;"),
         ],
+        []
+    )
+
+
+def conflict():
+    return (
+        '409 Conflict',
+        [('Access-Control-Allow-Origin', '*')],
+        []
+    )
+
+
+def not_allowed(host: tp.Optional[str] = None):
+    if host:
+        return (
+            '405 Method Not Allowed',
+            [
+                ('Access-Control-Allow-Origin', f"//{host}"),
+                ('Access-Control-Allow-Credentials', 'true'),
+                # ('Allow', '')]  # TODO: Allowed methods
+            ],
+            []
+        )
+    else:
+        return (
+            '405 Method Not Allowed',
+            [
+                ('Access-Control-Allow-Origin', '*'),
+                # ('Allow', '')]  # TODO: Allowed methods
+            ],
+            []
+        )
+
+
+def bad_request(host: tp.Optional[str] = None):
+    if host:
+        return (
+            '400 Bad Request',
+            [
+                # Because in js there is xhttp.withCredentials = true;
+                ('Access-Control-Allow-Origin', f"//{host}"),
+                # To receive cookie
+                ('Access-Control-Allow-Credentials', 'true')
+            ],
+            []
+        )
+    else:
+        return (
+            '400 Bad Request',
+            [('Access-Control-Allow-Origin', '*')],
+            []
+        )
+
+
+def ok(host: tp.Optional[str] = None, json_dict: tp.Optional[tp.Dict[tp.Any, tp.Any]] = None):
+    if host:
+        if json_dict:
+            json_data = json.dumps(json_dict).encode('utf-8')
+            return (
+                '200 OK',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', f"//{host}"),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true'),
+                    # To receive json
+                    ('Content-type', 'application/json'),  # TODO: Check text/plant
+                    ('Content-Length', str(len(json_data)))
+                ],
+                [json_data]
+            )
+        else:
+            return (
+                '200 OK',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', f"//{host}"),
+                    # To receive cookie
+                    ('Access-Control-Allow-Credentials', 'true')
+                ],
+                []
+            )
+    else:
+        if json_dict:
+            json_data = json.dumps(json_dict).encode('utf-8')
+            return (
+                '200 OK',
+                [
+                    # Because in js there is xhttp.withCredentials = true;
+                    ('Access-Control-Allow-Origin', '*'),
+                    # To receive json
+                    ('Content-type', 'application/json'),  # TODO: check
+                    ('Content-Length', str(len(json_data)))
+                ],
+                [json_data]
+            )
+        else:
+            return (
+                '200 OK',
+                [('Access-Control-Allow-Origin', '*')],
+                []
+            )
+
+
+def unauthorized():
+    return (
+        '401 Unauthorized',
+        [('Access-Control-Allow-Origin', '*')],
+        []
+    )
+
+
+def forbidden():
+    return (
+        '403 Forbidden',
+        [('Access-Control-Allow-Origin', '*')],
+        []
+    )
+
+
+def gone():
+    return (
+        '410 Gone',
+        [('Access-Control-Allow-Origin', '*')],
         []
     )
