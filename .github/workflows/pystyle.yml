@@ -18,10 +18,9 @@ jobs:
                     python-version: 3.7
 
             -   name: Install dependencies
-                working-directory: ./backend
                 run: |
                     python -m pip install --upgrade pip
-                    pip install -r requirements.txt
+                    pip install -r docker/uwsgi/requirements.txt
 
             -   name: Lint with flake8
                 working-directory: ./backend

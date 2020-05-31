@@ -729,8 +729,6 @@ def post_deenroll_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> 
         Response - result of request
     """
 
-    # project_id = query['project_id']
-
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
