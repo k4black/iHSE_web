@@ -6,12 +6,7 @@ from datetime import datetime
 import psycopg2
 from psycopg2 import IntegrityError, DataError, ProgrammingError, OperationalError
 
-
-def logger(function, message, type_='ERROR'):
-    time_ = datetime.now().strftime('%Y-%m-%d %H:%M:%S') + ' UTC'  # TODO: Use time function from main
-
-    print(f'*** {type_} in {function}; {time_} ***')
-    print(f'*** {message} ***')
+from utils.auxiliary import logger
 
 
 """ ---===---==========================================---===--- """

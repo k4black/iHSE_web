@@ -37,6 +37,7 @@ In short, it will make life easier for the camp organizers.
 
 
 ### Opportunities for a Participant:
+(common camp participant)  
 
 * Schedule  
 During the camp, participants attend various lectures, master classes and entertainment events. The site provides an opportunity to view the schedule for each day and information on each event separately.
@@ -99,6 +100,9 @@ Statistics on the number of people in each of the units and their division by ge
 * Configuration  
 Allows you to configure the number of default credits received for different types of events. As well as set a requirement for the number of credits collected.
 
+* Logging  
+Access to logs, some charts, dashboards and statistics in Kibana HTTP GUI.
+
 
 
 ## Branches 
@@ -151,9 +155,24 @@ Several docker containers witch interact with each other.
 Using `ELK` stack + `Beats` services. 
 ![logging](https://www.elastic.co/static/images/elk/elk-stack-elkb-diagram.svg)
 
-System collet all logs from nginx, uwsgi and postgres database.
+System collect all logs from nginx, uwsgi and postgres database.
 
-Full logging stat available on `ihse.tk:5601` (TODO).
+ELK stack can be shortly described as linear stack:
+* **Logs**: Server logs that need to be analyzed are identified
+* **Beats**: Server logs that need to be analyzed are identified
+* **Logstash**: Collect logs and events data. It even parses and transforms data
+    * 5000 - TCP input
+* **ElasticSearch**: The transformed data from Logstash is Store, Search, and indexed.
+    * 9200 - HTTP
+    * 9300 - TCP transport
+* **Kibana**: Kibana uses Elasticsearch DB to Explore, Visualize, and Share
+    * 5601 - HTTP 
+
+![logging](https://www.guru99.com/images/tensorflow/082918_1504_ELKStackTut2.png)
+
+
+Full logging stat available on `ihse.tk:5601`.
+
 
 
 
