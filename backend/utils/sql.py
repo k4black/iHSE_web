@@ -267,9 +267,8 @@ def tuples_to_dicts(data_raw: tp.List[tp.Tuple[tp.Any]], table: str,
     return data
 
 
-# flake8: noqa: C901
 def dict_to_tuple(data_raw: TTableObject, table: str, ignore_id: bool = False,
-                  empty_placeholder: tp.Optional[tp.Any] = None) -> tp.Tuple[tp.Any, ...]:
+                  empty_placeholder: tp.Optional[tp.Any] = None) -> tp.Tuple[tp.Any, ...]:  # noqa: C901
     global table_fields
 
     data: tp.List[tp.Any] = []
@@ -761,7 +760,7 @@ def get_sessions() -> tp.List[TTableObject]:
     except psycopg2.Error as error_:
         logger('sql.get_sessions()', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
-        return []  # type: tp.List[TTableObject]
+        return []
 
     for index, element in enumerate(sessions_list):
         sessions_list[index] = ((element[0]).hex(), *element[1:])
@@ -921,12 +920,12 @@ def get_day(date: str) -> tp.List[TTableObject]:
     except psycopg2.Error as error_:
         logger(f'sql.get_day({date})', f'Select day; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
-        return []  # type: tp.List[TTableObject]
+        return []
     else:
         conn.commit()
 
     if day is None:
-        return []  # type: tp.List[TTableObject]
+        return []
 
     day_id = int(day[0])  # TODO: maybe [0] is not needed
 
@@ -937,7 +936,7 @@ def get_day(date: str) -> tp.List[TTableObject]:
     except psycopg2.Error as error_:
         logger(f'sql.get_day({date})', f'Select events; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
-        return []  # type: tp.List[TTableObject]
+        return []
     else:
         conn.commit()
 
@@ -1388,12 +1387,12 @@ def get_credits_by_user_id(user_id: int) -> tp.List[TTableObject]:
     except psycopg2.Error as error_:
         logger(f'sql.get_credits_by_user_id({user_id})', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
-        return []  # type: tp.List[TTableObject]
+        return []
     else:
         conn.commit()
 
     if not credits_list:
-        return []  # type: tp.List[TTableObject]
+        return []
 
     return tuples_to_dicts(credits_list, '',
                            custom_fields=['id', 'user_id', 'event_id', 'value', 'type', 'title', 'day_id'])
@@ -1418,7 +1417,7 @@ def get_credits_short() -> tp.List[TTableObject]:
     except psycopg2.Error as error_:
         logger('sql.get_credits_short()', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
-        return []  # type: tp.List[TTableObject]
+        return []
     else:
         conn.commit()
 
