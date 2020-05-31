@@ -28,79 +28,162 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
         return http.wrong_cookie(host=env['HTTP_HOST'])
+
+    logger('admin_panel()', f'Admin try with user: {user_obj}', type_='LOG')
+
     if user_obj['user_type'] == 0:
         return http.unauthorized()
 
-    logger('admin_panel()', f'Admin try with user: {user_obj}', type_='LOG')
     logger('admin_panel()', f'Admin want to {env["PATH_INFO"]}', type_='LOG')
 
-    if env['PATH_INFO'] == '/admin_get_config':
-        return get_config(env, query, cookie)
+    functions = {
+        '/admin_get_config': get_config,
+        '/admin_post_config': post_config,
 
-    if env['PATH_INFO'] == '/admin_post_config':
-        return post_config(env, query, cookie)
+        '/admin_get_credits': get_credits,
 
-    if env['PATH_INFO'] == '/admin_get_credits':
-        data = sql.get_credits_short()
+        '/admin_get_table': get_table,
+        '/admin_clear_table': clear_table,
+        '/admin_send_data': send_data,
+        '/admin_remove_data': remove_data,
 
-        # Send req data tables
-        return http.ok(host=env['HTTP_HOST'], json_dict=data)
+        '/admin_codes': codes
+    }
 
-    if env['PATH_INFO'] == '/admin_get_table':
-        table_name = query['table']
+    if env['PATH_INFO'] in functions:
+        return functions[env['PATH_INFO']](env, query, cookie)
 
+
+def get_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Returns:
+        TODO: add description
+    """
+
+    data = sql.get_credits_short()
+    # Send req data tables
+    return http.ok(host=env['HTTP_HOST'], json_dict=data)
+
+
+def get_table(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Returns:
+        TODO: add description
+    """
+
+    table_name = query['table']
+
+    if table_name in sql.table_fields.keys():
+        data = sql.get_table(table_name)
+    else:
+        logger('admin_panel()', '400 Bad Request by admin', type_='ERROR')
+        return http.bad_request(host=env['HTTP_HOST'])
+
+    # Send req data tables
+    return http.ok(host=env['HTTP_HOST'], json_dict=data)
+
+
+def clear_table(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Returns:
+        TODO: add description
+    """
+
+    table_name = query['table']
+
+    if table_name in sql.table_fields.keys():
+        sql.clear_table(table_name)
+    else:
+        logger('admin_panel()', '400 Bad Request by admin', type_='ERROR')
+        return http.bad_request(host=env['HTTP_HOST'])
+
+    return http.ok(host=env['HTTP_HOST'])
+
+
+def send_data(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Returns:
+        TODO: add description
+    """
+    table_name = query['table']
+    # Get json from response
+    obj = get_json_by_response(env)
+
+    if 'id' not in obj.keys() or obj['id'] == '':
         if table_name in sql.table_fields.keys():
-            data = sql.get_table(table_name)
-        else:
-            logger('admin_panel()', '400 Bad Request by admin', type_='ERROR')
-            return http.bad_request(host=env['HTTP_HOST'])
+            sql.insert_to_table(obj, table_name)
 
-        # Send req data tables
-        return http.ok(host=env['HTTP_HOST'], json_dict=data)
-
-    if env['PATH_INFO'] == '/admin_clear_table':
-        table_name = query['table']
-
+    else:
         if table_name in sql.table_fields.keys():
-            sql.clear_table(table_name)
-        else:
-            logger('admin_panel()', '400 Bad Request by admin', type_='ERROR')
-            return http.bad_request(host=env['HTTP_HOST'])
+            sql.update_in_table(obj, table_name)
 
-        return http.ok(host=env['HTTP_HOST'])
+    return http.ok(host=env['HTTP_HOST'])
 
-    if env['PATH_INFO'] == '/admin_send_data':  # Update or add row to some table
-        table_name = query['table']
-        # Get json from response
-        obj = get_json_by_response(env)
 
-        if 'id' not in obj.keys() or obj['id'] == '':
-            if table_name in sql.table_fields.keys():
-                sql.insert_to_table(obj, table_name)
+def remove_data(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """
 
-        else:
-            if table_name in sql.table_fields.keys():
-                sql.update_in_table(obj, table_name)
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
 
-        return http.ok(host=env['HTTP_HOST'])
+    Returns:
+        TODO: add description
+    """
 
-    if env['PATH_INFO'] == '/admin_remove_data':  # Remove some row in some table
-        table_name = query['table']
-        obj_id = query['id']
+    table_name = query['table']
+    obj_id = query['id']
 
-        if table_name in sql.table_fields.keys():
-            sql.remove_in_table(obj_id, table_name)
+    if table_name in sql.table_fields.keys():
+        sql.remove_in_table(obj_id, table_name)
 
-        return http.ok(host=env['HTTP_HOST'])
+    return http.ok(host=env['HTTP_HOST'])
 
-    if env['PATH_INFO'] == '/admin_codes':
-        codes = generate_codes(20)
 
-        for code in codes:
-            data = {'code': code, 'type': 0, 'used': False}
-            sql.insert_to_table(data, 'codes')
+def codes(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """
 
-        return http.ok()
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Returns:
+        TODO: add description
+    """
+
+    codes = generate_codes(20)
+
+    for code in codes:
+        data = {'code': code, 'type': 0, 'used': False}
+        sql.insert_to_table(data, 'codes')
+
+    return http.ok(host=env['HTTP_HOST'])
 
 
 def post_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:

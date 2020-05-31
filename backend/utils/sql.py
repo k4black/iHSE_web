@@ -267,6 +267,7 @@ def tuples_to_dicts(data_raw: tp.List[tp.Tuple[tp.Any]], table: str,
     return data
 
 
+# flake8: noqa: C901
 def dict_to_tuple(data_raw: TTableObject, table: str, ignore_id: bool = False,
                   empty_placeholder: tp.Optional[tp.Any] = None) -> tp.Tuple[tp.Any, ...]:
     global table_fields
@@ -586,7 +587,7 @@ def get_names() -> tp.List[TTableObject]:
     except psycopg2.Error as error_:
         logger('sql.get_names()', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
-        return []  # type: tp.List[TTableObject]
+        return []
     else:
         return tuples_to_dicts(users_list, '', custom_fields=['id', 'name', 'team', 'project_id'])
 
@@ -637,49 +638,32 @@ def register(code: str, name: str, surname: str, phone: str, sex: bool, passw: s
         Success reg or not
     """
 
-    # Check code
     try:
+        # Check code
         with conn.cursor() as cursor_:
             cursor_.execute('SELECT * FROM codes WHERE code = %s AND used = false;', (code,))
             existing_user = cursor_.fetchone()
             if existing_user is None:
                 return False
-    except psycopg2.Error as error_:
-        logger('sql.register()', f'Check code; {error_}. Rolling back.', type_='ERROR')
-        conn.rollback()
-        return False
 
-    # Check user exist
-    try:
+        # Check user exist
         with conn.cursor() as cursor_:
             cursor_.execute('SELECT * FROM users WHERE phone = %s AND pass = %s;', (phone, passw))
             existing_user = cursor_.fetchone()
             if existing_user is not None:
                 return False
-    except psycopg2.Error as error_:
-        logger('sql.register()', f'Check user; {error_}. Rolling back.', type_='ERROR')
-        conn.rollback()
-        return False
 
-    # Update code
-    try:
+        # Update code
         with conn.cursor() as cursor_:
             cursor_.execute('UPDATE codes SET used = true WHERE code = %s;', (code,))
-    except psycopg2.Error as error_:
-        logger('sql.register()', f'Update code; {error_}. Rolling back.', type_='ERROR')
-        conn.rollback()
-        return False
-    else:
-        conn.commit()
 
-    # Create user
-    sql_string = 'INSERT INTO users (code, user_type, phone, name, sex, pass, team) ' \
-                 'VALUES (%s, %s, %s, %s, %s, %s, %s);'
-    try:
+        # Create user
         with conn.cursor() as cursor_:
+            sql_string = 'INSERT INTO users (code, user_type, phone, name, sex, pass, team) ' \
+                         'VALUES (%s, %s, %s, %s, %s, %s, %s);'
             cursor_.execute(sql_string, (code, type_, phone, name + ' ' + surname, sex, passw, team))
     except psycopg2.Error as error_:
-        logger('sql.register()', f'Create user; {error_}. Rolling back.', type_='ERROR')
+        logger('sql.register()', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return False
     else:
@@ -1080,36 +1064,23 @@ def edit_event(event_obj: TTableObject) -> bool:
 
         day_id = day[0]
 
-    if int(event_obj['type']) == 1 or int(event_obj['type']) == 2:
-        # Now it's class. Check class exist
-        try:
+    try:
+        # check event type
+        if int(event_obj['type']) == 1 or int(event_obj['type']) == 2:
+            # Now it's class. Check class exist
             with conn.cursor() as cursor_:
-                cursor_.execute('INSERT INTO classes (id, total, annotation) VALUES (%s, 0, '') ON CONFLICT DO NOTHING',
-                                (event_obj['id'],))
-        except psycopg2.Error as error_:
-            logger('sql.edit_event()', f'Insert classes; {error_}. Rolling back.', type_='ERROR')
-            conn.rollback()
-            return False
+                cursor_.execute(
+                    'INSERT INTO classes (id, total, annotation) VALUES (%s, 0, '') ON CONFLICT DO NOTHING',
+                    (event_obj['id'],))
         else:
-            conn.commit()
-
-    else:
-        # Mb was a class. Remove
-        try:
+            # Mb was a class. Remove
             with conn.cursor() as cursor_:
                 cursor_.execute('delete FROM classes where id = %s', (event_obj['id'],))
-        except psycopg2.Error as error_:
-            logger('sql.edit_event()', f'Select classes; {error_}. Rolling back.', type_='ERROR')
-            conn.rollback()
-            return False
-        else:
-            conn.commit()
 
-    sql_string = 'update events set type = %s, title = %s, description = %s, host = %s, ' \
-                 'place = %s, time = %s, day_id = %s where id = %s;'
-
-    try:
+        # Update events
         with conn.cursor() as cursor_:
+            sql_string = 'update events set type = %s, title = %s, description = %s, host = %s, ' \
+                         'place = %s, time = %s, day_id = %s where id = %s;'
             cursor_.execute(sql_string,
                             (event_obj['type'],
                              event_obj['title'],
@@ -1263,24 +1234,19 @@ def enroll_user(class_id: int, user_id: TTableObject, date: str, time_: str = '0
         conn.commit()
 
     class_: tp.Optional[tp.Tuple] = None
+    enrolled: tp.Optional[int] = None
     try:
+        # Select class
         with conn.cursor() as cursor_:
             cursor_.execute('select * from class where id = %s;', (class_id,))
             class_ = cursor_.fetchone()
-    except psycopg2.Error as error_:
-        logger(f'sql.enroll_user({class_id}, {user_id})', f'Select class; {error_}. Rolling back.', type_='ERROR')
-        conn.rollback()
-        return False
-    else:
-        conn.commit()
 
-    enrolled: tp.Optional[int] = None
-    try:
+        # Count enrolls
         with conn.cursor() as cursor_:
             cursor_.execute('select count(*) from enrolls where class_id = %s;', (class_id,))
             enrolled = cursor_.fetchone()[0]
     except psycopg2.Error as error_:
-        logger(f'sql.enroll_user({class_id}, {user_id})', f'Count enrolls; {error_}. Rolling back.', type_='ERROR')
+        logger(f'sql.enroll_user({class_id}, {user_id})', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return False
     else:
@@ -1664,10 +1630,11 @@ def get_feedback(user_id: int, date: str) -> tp.Tuple[tp.List[TTableObject], tp.
     day_id = day[0]
     events_list: tp.Optional[tp.List[tp.Tuple]] = None
 
-    sql_string = 'SELECT e.id, e.type, e.title, e.host, e.day_id FROM enrolls en JOIN events e ON en.class_id = e.id ' \
-                 'WHERE en.user_id = %s AND en.attendance = true AND e.day_id = %s;'
     try:
         with conn.cursor() as cursor_:
+            sql_string = 'SELECT e.id, e.type, e.title, e.host, e.day_id FROM enrolls en ' \
+                         'JOIN events e ON en.class_id = e.id ' \
+                         'WHERE en.user_id = %s AND en.attendance = true AND e.day_id = %s;'
             cursor_.execute(sql_string, (user_id, day_id))
             events_list = cursor_.fetchall()
     except psycopg2.Error as error_:
