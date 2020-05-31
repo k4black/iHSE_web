@@ -310,7 +310,8 @@ def dict_to_tuple(data_raw: TTableObject, table: str, ignore_id: bool = False,
     return tuple(data)
 
 
-def tuple_to_dict(data_raw: tp.Tuple[tp.Any], table: str, empty_placeholder: tp.Optional[tp.Any] = None) -> TTableObject:
+def tuple_to_dict(data_raw: tp.Tuple[tp.Any], table: str,
+                  empty_placeholder: tp.Optional[tp.Any] = None) -> TTableObject:
     global table_fields
 
     data: tp.Dict[str, tp.Any] = {}
@@ -645,7 +646,7 @@ def register(code: str, name: str, surname: str, phone: str, sex: bool, passw: s
                 return False
     except psycopg2.Error as error_:
         logger('sql.register()', f'Check code; {error_}. Rolling back.', type_='ERROR')
-        # conn.rollback()
+        conn.rollback()
         return False
 
     # Check user exist
@@ -867,8 +868,8 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0') -> tp.O
         return existing_session[0]
 
     # Create new session
-    sql_string = f"INSERT INTO sessions (id, user_id, user_type, user_agent, last_ip, time) " \
-                 f"VALUES (default, %s, %s, %s, %s, %s) RETURNING id;"
+    sql_string = "INSERT INTO sessions (id, user_id, user_type, user_agent, last_ip, time) " \
+                 "VALUES (default, %s, %s, %s, %s, %s) RETURNING id;"
     try:
         with conn.cursor() as cursor_:
             session_id = cursor_.execute(sql_string, (user[0], user[2], agent, ip, time_))
@@ -1372,7 +1373,7 @@ def remove_enroll(enroll_id: int) -> bool:
 
     try:
         with conn.cursor() as cursor_:
-            cursor_.execute(f'select * from enrolls where id = %s;', (enroll_id,))
+            cursor_.execute('select * from enrolls where id = %s;', (enroll_id,))
             enroll = cursor_.fetchone()
     except psycopg2.Error as error_:
         logger(f'sql.remove_enroll({enroll_id})', f'Select enroll; {error_}. Rolling back.', type_='ERROR')
@@ -1386,8 +1387,8 @@ def remove_enroll(enroll_id: int) -> bool:
 
     try:
         with conn.cursor() as cursor_:
-            cursor_.execute(f'delete from enrolls where id = %s;', (enroll_id,))
-            cursor_.execute(f'delete from credits where user_id = %s and class_id = %s;', (enroll[2], enroll[1]))
+            cursor_.execute('delete from enrolls where id = %s;', (enroll_id,))
+            cursor_.execute('delete from credits where user_id = %s and class_id = %s;', (enroll[2], enroll[1]))
     except psycopg2.Error as error_:
         logger(f'sql.remove_enroll({enroll_id})', f'Delete enroll and credits; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
@@ -1428,7 +1429,8 @@ def get_credits_by_user_id(user_id: int) -> tp.List[TTableObject]:
     if not credits_list:
         return []  # type: tp.List[TTableObject]
 
-    return tuples_to_dicts(credits_list, '', custom_fields=['id', 'user_id', 'event_id', 'value', 'type', 'title', 'day_id'])
+    return tuples_to_dicts(credits_list, '',
+                           custom_fields=['id', 'user_id', 'event_id', 'value', 'type', 'title', 'day_id'])
 
 
 def get_credits_short() -> tp.List[TTableObject]:
@@ -1454,7 +1456,8 @@ def get_credits_short() -> tp.List[TTableObject]:
     else:
         conn.commit()
 
-    return tuples_to_dicts(credits_list, '', custom_fields=['id', 'user_id', 'event_id', 'value', 'type', 'title', 'day_id'])
+    return tuples_to_dicts(credits_list, '',
+                           custom_fields=['id', 'user_id', 'event_id', 'value', 'type', 'title', 'day_id'])
 
 
 def pay_credit(user_id: int, event_id: int, value: int = 0, time_: str = '0') -> bool:
@@ -1470,7 +1473,7 @@ def pay_credit(user_id: int, event_id: int, value: int = 0, time_: str = '0') ->
 
     try:
         with conn.cursor() as cursor_:
-            cursor_.execute(f'SELECT * FROM credits WHERE event_id = %s AND user_id = %s;', (event_id, user_id))
+            cursor_.execute('SELECT * FROM credits WHERE event_id = %s AND user_id = %s;', (event_id, user_id))
             credits_ = cursor_.fetchall()
     except psycopg2.Error as error_:
         logger('sql.pay_credit()', f'Select credit; {error_}. Rolling back.', type_='ERROR')
