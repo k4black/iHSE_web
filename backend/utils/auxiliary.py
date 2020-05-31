@@ -1,6 +1,5 @@
 import typing as tp
 import random
-import json
 from datetime import datetime, timezone, timedelta
 
 
@@ -53,6 +52,7 @@ def get_date_str() -> str:
 """                          Logging                             """
 """ ---===---==========================================---===--- """
 
+
 def logger(function, message, type_='ERROR'):  # TODO: move function to separate file
     time_ = get_datetime_str_utc()
 
@@ -63,6 +63,9 @@ def logger(function, message, type_='ERROR'):  # TODO: move function to separate
 """ ---===---==========================================---===--- """
 """                         Auxiliary                            """
 """ ---===---==========================================---===--- """
+
+
+CODE_SYMBOLS = "ABCDEFGHJKLMNPQRSTUVWXYZ" + "123456789" + "123456789" + "123456789"
 
 
 def check_enroll_time(date: str, time_: str, year: str = '2020') -> bool:
@@ -89,14 +92,10 @@ def generate_codes(num: int) -> tp.Set[str]:
         time str in format dd.mm
     """
 
-    # random.seed(0)
-    symbols = "ABCDEFGHJKLMNPQRSTUVWXYZ" + "123456789" + "123456789" + "123456789"
-    symbols = [i for i in symbols]
-
     codes = set({})  # type: tp.Set[str]
     for i in range(num):
-        choose5 = ''.join(random.choices(symbols, k=5))
-        control1 = symbols[hash(choose5) % len(symbols)]
+        choose5 = ''.join(random.choices(CODE_SYMBOLS, k=5))
+        control1 = CODE_SYMBOLS[hash(choose5) % len(CODE_SYMBOLS)]
 
         code = choose5 + control1
         codes.add(code)
@@ -113,8 +112,6 @@ def check_code(code: str) -> bool:
         valid code or not
     """
 
-    symbols = "ABCDEFGHJKLMNPQRSTUVWXYZ" + "123456789" + "123456789" + "123456789"
-    symbols = [i for i in symbols]
-    control1 = symbols[hash(code[:5]) % len(symbols)]
+    control1 = CODE_SYMBOLS[hash(code[:5]) % len(CODE_SYMBOLS)]
 
     return control1 == code[5:]

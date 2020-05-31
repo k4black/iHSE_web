@@ -1,5 +1,3 @@
-import typing as tp
-
 import configparser
 
 from utils.auxiliary import logger

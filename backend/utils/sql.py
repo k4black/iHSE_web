@@ -24,11 +24,11 @@ while not init_successful:
     except psycopg2.Error as error_:
         logger('sql', f'Initialization error: {error_}', type_='ERROR')
         init_successful = False
-        logger('sql', f'Initialization waiting for 3 seconds', type_='LOG')
+        logger('sql', 'Initialization waiting for 3 seconds', type_='LOG')
         time.sleep(3)
         continue
     init_successful = True
-logger('sql', f'psycopg2.connect() initialized successfully', type_='LOG')
+logger('sql', 'psycopg2.connect() initialized successfully', type_='LOG')
 
 
 def checkpoint():
@@ -41,22 +41,10 @@ def checkpoint():
     with conn.cursor() as cursor_:
         try:
             cursor_.execute("VACUUM FULL;")  # Repack database file and re ANALYZE
-        except psycopg2.Error as err:
-            # print("Checkpoint error:", err)
-            logger('sql.checkpoint', 'unexpected VACUUM error', type_='ERROR')
+        except psycopg2.Error as error_:
+            logger('sql.checkpoint', f'VACUUM error; {error_}', type_='ERROR')
     conn.commit()
     conn.set_isolation_level(old_isolation_level)
-    conn.commit()
-
-    return
-
-    pass
-    # conn_sqlite.execute("PRAGMA wal_checkpoint(TRUNCATE)")  # WAL
-    with conn.cursor() as cursor_:
-        try:
-            cursor_.execute("VACUUM ANALYZE;")  # Repack database file and re ANALYZE
-        except psycopg2.Error as err:
-            print("Checkpoint error:", err)
     conn.commit()
 
 
@@ -764,7 +752,7 @@ def clear_users() -> bool:
             cursor_.execute('delete from enrolls;')
             cursor_.execute('delete from users;')
     except psycopg2.Error as error_:
-        logger(f'sql.clear_users()', f'{error_}. Rolling back.', type_='ERROR')
+        logger('sql.clear_users()', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return False
     else:
@@ -852,7 +840,7 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0') -> tp.O
             cursor_.execute(f"select * from users where phone = '{phone}' and pass = {passw};")
             user = cursor_.fetchone()
     except psycopg2.Error as error_:
-        logger(f'sql.login()', f'Check user existence; {error_}. Rolling back.', type_='ERROR')
+        logger('sql.login()', f'Check user existence; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return None
     else:
@@ -867,7 +855,7 @@ def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0') -> tp.O
             cursor_.execute('SELECT * FROM sessions WHERE user_id = %s AND user_agent = %s;', (user[0], agent))
             existing_session = cursor_.fetchone()
     except psycopg2.Error as error_:
-        logger(f'sql.login()', f'Create session; {error_}. Rolling back.', type_='ERROR')
+        logger('sql.login()', f'Create session; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return None
     else:
@@ -920,7 +908,7 @@ def logout(sess_id: int) -> bool:
         with conn.cursor() as cursor_:
             cursor_.execute(f'delete from sessions where id = bytea \'\\x{sess_id}\';')
     except psycopg2.Error as error_:
-        logger(f'sql.logout()', f'{error_}. Rolling back.', type_='ERROR')
+        logger('sql.logout()', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return False
     else:
@@ -982,7 +970,7 @@ def get_event_with_date(event_id: int) -> tp.Optional[TTableObject]:
     """
     event: tp.Optional[tp.Tuple] = None
 
-    sql_string = f'SELECT e.id, e.type, d.date, e.time FROM events e JOIN days d ON e.day_id = d.id WHERE e.id = %s;'
+    sql_string = 'SELECT e.id, e.type, d.date, e.time FROM events e JOIN days d ON e.day_id = d.id WHERE e.id = %s;'
 
     try:
         with conn.cursor() as cursor_:
@@ -1039,7 +1027,7 @@ def insert_event(event_obj: TTableObject) -> tp.Optional[int]:
             event_id = cursor_.fetchone()[0]
     except psycopg2.Error as error_:
         # print(f"Error in sql.insert_event(): {error_}")
-        logger(f'sql.insert_event()', f'{error_}. Rolling back.', type_='ERROR')
+        logger('sql.insert_event()', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return None
     else:
@@ -1131,7 +1119,7 @@ def edit_event(event_obj: TTableObject) -> bool:
                              day_id,
                              event_obj['id']))
     except psycopg2.Error as error_:
-        logger(f'sql.edit_event()', f'Update events; {error_}. Rolling back.', type_='ERROR')
+        logger('sql.edit_event()', f'Update events; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return False
     else:
@@ -1359,7 +1347,7 @@ def get_enrolls_by_user_id(user_id: int) -> tp.List[TTableObject]:
             cursor_.execute('select * from enrolls where user_id = %s;', (user_id,))
             enrolls = cursor_.fetchall()
     except psycopg2.Error as error_:
-        logger('sql.get_enrolls_by_user_id({user_id})', f'{error_}. Rolling back.', type_='ERROR')
+        logger(f'sql.get_enrolls_by_user_id({user_id})', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return []
     else:
@@ -1387,7 +1375,7 @@ def remove_enroll(enroll_id: int) -> bool:
             cursor_.execute(f'select * from enrolls where id = %s;', (enroll_id,))
             enroll = cursor_.fetchone()
     except psycopg2.Error as error_:
-        logger('sql.remove_enroll({enroll_id})', f'Select enroll; {error_}. Rolling back.', type_='ERROR')
+        logger(f'sql.remove_enroll({enroll_id})', f'Select enroll; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return False
     else:
@@ -1401,7 +1389,7 @@ def remove_enroll(enroll_id: int) -> bool:
             cursor_.execute(f'delete from enrolls where id = %s;', (enroll_id,))
             cursor_.execute(f'delete from credits where user_id = %s and class_id = %s;', (enroll[2], enroll[1]))
     except psycopg2.Error as error_:
-        logger('sql.remove_enroll({enroll_id})', f'Delete enroll and credits; {error_}. Rolling back.', type_='ERROR')
+        logger(f'sql.remove_enroll({enroll_id})', f'Delete enroll and credits; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return False
     else:
@@ -1431,7 +1419,7 @@ def get_credits_by_user_id(user_id: int) -> tp.List[TTableObject]:
             cursor_.execute(sql_string, (user_id, ))
             credits_list = cursor_.fetchall()
     except psycopg2.Error as error_:
-        logger('sql.get_credits_by_user_id({user_id})', f'{error_}. Rolling back.', type_='ERROR')
+        logger(f'sql.get_credits_by_user_id({user_id})', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return []  # type: tp.List[TTableObject]
     else:
@@ -1606,7 +1594,7 @@ def save_project(project: tp.Dict[str, tp.Any]) -> bool:
                     cursor_.execute('UPDATE users SET project_id = %s WHERE name = %s and project_id = 0;',
                                     (project_id, name))
         except psycopg2.Error as error_:
-            logger(f'sql.save_project()', f'{error_}. Rolling back.', type_='ERROR')
+            logger('sql.save_project()', f'{error_}. Rolling back.', type_='ERROR')
             conn.rollback()
             return False
         else:
@@ -1630,7 +1618,7 @@ def enroll_project(user_id: int, project_id: int) -> bool:
         with conn.cursor() as cursor_:
             cursor_.execute('UPDATE users SET project_id = %s WHERE id = %s;', (project_id, user_id))
     except psycopg2.Error as error_:
-        logger(f'sql.enroll_project()', f'{error_}. Rolling back.', type_='ERROR')
+        logger('sql.enroll_project()', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return False
     else:
@@ -1680,7 +1668,6 @@ def get_feedback(user_id: int, date: str) -> tp.Tuple[tp.List[TTableObject], tp.
             cursor_.execute(sql_string, (user_id, day_id))
             events_list = cursor_.fetchall()
     except psycopg2.Error as error_:
-        # print(f"Error in sql.get_feedback(): {error_}")
         logger(f'sql.get_feedback({user_id}, {date})', f'Select visited events; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return [], []
@@ -1767,8 +1754,7 @@ def post_top(user_id: int, date: str, users_list: tp.List[str]) -> None:
         except psycopg2.Error as error_:
             logger(f'sql.post_top({user_id})', f'Select user; {error_}. Rolling back.', type_='ERROR')
             # TODO if you don't like losing all the looped stuff in case of rollback,
-            # then maybe conn.commit() inside the `with` block?
-            # conn.rollback()
+            conn.rollback()
             continue
 
         if user is None:

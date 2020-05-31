@@ -2,10 +2,10 @@ import typing as tp
 import random
 
 import utils.http as http
-from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse
-from utils.http import get_user_by_response, get_json_by_response
-from utils.auxiliary import logger, get_datetime_str, check_enroll_time
-from utils.config import CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
+from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse  # noqa: F401
+from utils.http import get_user_by_response, get_json_by_response  # noqa: F401
+from utils.auxiliary import logger, get_datetime_str, check_enroll_time  # noqa: F401
+from utils.config import CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS  # noqa: F401
 from utils import sql
 
 

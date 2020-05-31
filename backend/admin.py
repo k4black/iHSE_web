@@ -1,6 +1,6 @@
 import utils.http as http
-from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse
-from utils.http import get_user_by_response, get_json_by_response
+from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse  # noqa: F401
+from utils.http import get_user_by_response, get_json_by_response  # noqa: F401
 from utils.auxiliary import logger, generate_codes
 from utils.config import write_config
 from utils import sql
