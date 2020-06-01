@@ -243,12 +243,6 @@ select {
 
 
 
-.data__loading button {
-    pointer-events: none;
-}
-
-
-
 
 #scan {
     cursor: pointer;

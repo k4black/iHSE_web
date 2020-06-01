@@ -8,15 +8,15 @@
 
     <title>Админ-статистика | iHSE</title>
 
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/admin.css">
-    <link rel="stylesheet" href="styles/index.css">
-    <link rel="stylesheet" href="styles/distribution.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <link rel="stylesheet" href="../components/styles/admin.css">
+    <link rel="stylesheet" href="../styles/index.css">
+    <link rel="stylesheet" href="../components/styles/distribution.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     <!--  https://github.com/Grible/timetable.js  -->
-    <link rel="stylesheet" href="libs/timetable.js.css">
+    <link rel="stylesheet" href="../libs/timetable.js.css">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
@@ -73,15 +73,16 @@
 
 
     <canvas id="attendance"></canvas>
+    <!--  TODO: Attendance AND checkins  -->
 
 </div>
 
 
 
 <!-- STD logic -->
-<script defer async src="scripts/main.js"></script>
+<script defer async src="../scripts/main.js"></script>
 <!-- Libs -->
-<script defer async src="libs/timetable.min.js"></script>
+<script defer async src="../libs/timetable.min.js"></script>
 <!-- Onpage logic -->
 <script defer async src="scripts/distribution.js"></script>
 

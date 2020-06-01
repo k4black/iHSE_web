@@ -287,7 +287,13 @@ function loadEvents(func) {
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let events_raw = JSON.parse(this.responseText);
+            let events_raw;
+            try {
+                events_raw = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error', e);
+                events_raw = [];
+            }
             let events = groupByUnique(events_raw, 'id');
 
             cache['events'] = events;
@@ -319,7 +325,13 @@ function loadUsers(func) {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
-                let users = JSON.parse(this.responseText);
+                let users;
+                try {
+                    users = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error', e);
+                    users = [];
+                }
                 let objs = groupByUnique(users, 'id');
 
                 cache['users'] = objs;
@@ -347,7 +359,13 @@ function loadTop(func) {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
-                let top = JSON.parse(this.responseText);
+                let top;
+                try {
+                    top = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error', e);
+                    top = [];
+                }
                 let objs = groupByUnique(top, 'id');
 
                 cache['top'] = objs;
@@ -378,7 +396,13 @@ function loadAllFeedback(func) {
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let feedback = JSON.parse(this.responseText);
+            let feedback;
+            try {
+                feedback = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error', e);
+                feedback = [];
+            }
 
             cache['feedback'] = feedback;
 

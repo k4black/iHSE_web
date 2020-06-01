@@ -249,9 +249,13 @@ function loadTable(tableName, func) {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
-                // loadingEventEnd();
-
-                let obj_raw = JSON.parse(this.responseText);
+                let obj_raw;
+                try {
+                    obj_raw = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error', e);
+                    obj_raw = [];
+                }
                 objs = groupByUnique(obj_raw, 'id');
                 cache[tableName] = objs;
 
