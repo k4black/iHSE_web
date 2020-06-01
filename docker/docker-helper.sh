@@ -34,7 +34,11 @@ if [ "$2" = "start" ]
     then echo "starting..."
     if [ -d "../local_run" ]
         then echo "local_run exists, setting permissions..."
-        chown -R 1000:0 ../local_run
+        chown -R 1000:0 ../local_run/logstash
+        chown -R 1000:0 ../local_run/elasticsearch
+        chown -R 999:999 ../local_run/postgres
+        chown -R 0:0 ../local_run/nginx
+        chown -R 0:0 ../local_run/uwsgi
         echo "permission set"
     fi
     if [ ! -d "../local_run" ]
