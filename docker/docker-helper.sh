@@ -7,6 +7,7 @@
 #
 #exec /docker-entrypoint.sh "$@"
 
+# TODO: think about postgres backup there and as admin button/
 
 #The $EUID environment variable holds the current user's UID. Root's UID is 0. Use something like this in your script:
 
@@ -71,6 +72,8 @@ fi
 # Run docker-compose
 if [ "$command" = "start" ]
     then echo "starting..."
+    # TODO: think copy old logs
+    # TODO: think delete extremely long and menage olg logs
 
     if [ "$local" = true ] ; then
         if [ ! -d "../local_run" ] ; then
@@ -115,3 +118,4 @@ if [ "$command" = "stop" ]
     echo "gracefully stopped all containers"
     echo "local_run contains all mounted data, manage permissions there according to your needs"
 fi;
+

@@ -26,7 +26,7 @@ services:
         restart: unless-stopped
         volumes:
             - ../backend/:/var/app/backend/
-            - ../local_run/conf/ihse.ini:/var/conf/ihse.ini
+            - ../local_run/ihse/conf/:/var/conf/ihse/
             - ../local_run/log/uwsgi:/var/log/uwsgi
         depends_on:
             - database
@@ -50,4 +50,3 @@ services:
             POSTGRES_USER: postgres
             POSTGRES_PASSWORD: root
             PGDATA: /var/lib/postgresql/data/pgdata
-#            POSTGRES_INITDB_ARGS: --noclean
