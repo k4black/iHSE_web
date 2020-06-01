@@ -23,18 +23,21 @@ def post(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     """
 
     functions = {
-        '/post_login': post_login,
-        '/post_register': post_register,
-        '/post_feedback': post_feedback,
-        '/post_project': post_project,
-        '/post_edit_project': post_edit_project,
-        '/post_deenroll_project': post_deenroll_project,
-        '/post_logout': post_logout,
-        '/post_credits': post_credits,
-        '/post_checkin': post_checkin,
-        '/post_mark_enrolls': post_mark_enrolls,
-        '/post_create_enroll': post_create_enroll,
-        '/post_remove_enroll': post_remove_enroll,
+        '/login': post_login,
+        '/register': post_register,
+        '/logout': post_logout,
+
+        '/feedback': post_feedback,
+
+        '/project': post_project,
+        '/edit_project': post_edit_project,
+        '/deenroll_project': post_deenroll_project,
+
+        '/credits': post_credits,
+        '/checkin': post_checkin,
+        '/mark_enrolls': post_mark_enrolls,
+        '/create_enroll': post_create_enroll,
+        '/remove_enroll': post_remove_enroll,
     }
 
     if env['PATH_INFO'] in functions:

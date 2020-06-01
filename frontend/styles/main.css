@@ -296,6 +296,16 @@ body:not(.loading_end) .data__loading .loading__resource * {
     color: #00000000!important;
 }
 
+body:not(.loading_end) .data__loading .loading__resource button {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+body:not(.loading_end) .data__loading .loading__resource button * {
+    color: #00000000!important;
+}
+
+
 
 
 .border_line {

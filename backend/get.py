@@ -25,14 +25,19 @@ def get(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         '/account': get_account,
         '/user': get_user,
         '/names': get_names,
-        '/day': get_day,
+
         '/feedback': get_feedback,
+
         '/class': get_class,
         '/event': get_event,
         '/enrolls': get_enrolls,
+
         '/days': get_days,
+        '/day': get_day,
+
         '/projects': get_projects,
         '/project': get_project,
+
         '/credits': get_credits,
     }
 

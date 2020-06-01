@@ -7,6 +7,7 @@ RUN python3.7 -m pip install --no-cache-dir -r /tmp/requirements.txt
 RUN mkdir -p /var/conf/
 # COPY uwsgi.ini /var/conf/uwsgi.ini
 ADD uwsgi.ini /var/conf/
+#ADD ihse.ini /var/conf/
 
 ENV PYTHONPATH "${PYTHONPATH}:/var/app/backend/"
 

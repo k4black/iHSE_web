@@ -117,13 +117,18 @@
 
 
 
-
-
 /*@media (min-width: 40rem) {*/
 /*@media (min-width: 1180px) {*/
 /*@media not handheld {*/
 /*@media device-aspect-ratio (min-device-aspect-ratio, max-device-aspect-ratio) {*/
 @media (min-width : 769px) {
+
+    header.header {
+        height: 75px;
+        background: none;
+        z-index: 120;
+        pointer-events: none;
+    }
 
     .title {
         display: none;
@@ -131,5 +136,9 @@
 
     .hamburger__button {
         display: none;
+    }
+
+    .arrow {
+        pointer-events:auto;
     }
 }

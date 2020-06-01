@@ -90,9 +90,7 @@ def update_cache() -> None:
     """
 
     # Update today
-    # print('Today ', TODAY)
-    # print('sync time: ' + get_datetime_str())
-    logger('update_cache()', 'Update day', type_='LOG')
+    logger('update_cache()', '', type_='LOG')
 
     return
 
@@ -117,17 +115,14 @@ def sync() -> None:
         Run every TIMEOUT seconds
     """
 
-    # print('============ Sync start ============')
     logger('sync()', '==== Sync start ====', type_='LOG')
-    # print('sync_time:', get_datetime_str())
-    # update_cache()  # Sync itself
-    # print('============= Sync end =============')
+    update_cache()  # Sync itself
     logger('sync()', '==== Sync end ======', type_='LOG')
 
     start_sync(TIMEOUT)  # Update - to call again
 
 
-def start_sync(delay: int) -> None:
+def start_sync(delay: int) -> Timer:
     """ Start sync() in new thread
     This function will run every TIMEOUT seconds
 
@@ -142,8 +137,11 @@ def start_sync(delay: int) -> None:
     th.setDaemon(True)  # Can close without trouble
     th.start()
 
+    return th
+
 
 start_sync(0)  # Start sync
+
 
 """ ---===---==========================================---===--- """
 """                  Cache function and methods                  """

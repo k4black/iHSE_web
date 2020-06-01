@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # This actions run every deploying of new version
 
 # echo "setup file" > /var/tmp/test.txt

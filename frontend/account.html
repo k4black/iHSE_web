@@ -17,12 +17,11 @@
 <!--    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>-->
 
 </head>
-<body class="data__loading">
+<body class="">
 
 
 <!-- TODO: Exit button (logout) -->
 <!--# set var="title" value="Аккаунт" -->
-<!-- # set var="enable_menu" value="true" -->
 <!--#include virtual="/components/header.html" -->
 
 <!-- TODO: think: Do we need menu button? Or just back button -->
@@ -45,9 +44,9 @@
 <!--</header>-->
 
 
-<div class="topbar loading__resource">
+<div class="topbar data__loading">
 <!--    <img class="topbar__avatar" src="images/avatar.png">-->
-    <div style="display: inline-flex; flex-direction: row">
+    <div class="loading__resource" style="display: inline-flex; flex-direction: row">
         <div class="img_div topbar__avatar"></div>
         <div class="description">
             <p class="topbar__name">Гость</p>
@@ -65,7 +64,7 @@
 <!--<hr class="border_line">-->
 
 
-<div class="wrapper">
+<div class="wrapper data__loading">
 
     <!--#include virtual="/components/project.html" -->
 
@@ -73,7 +72,7 @@
 
         <div class="text_div credits__description">
             <p>Кредиты:</p>
-            <p class="credits__title">0\300</p>
+            <p class="credits__title">0 / 300</p>
         </div>
 
         <div class="progress"></div>

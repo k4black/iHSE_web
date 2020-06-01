@@ -69,14 +69,11 @@ function getToday() {
  * Remove loading class on shadow-skeleton elements
  */
 function loadingEnd() {
+    console.log('LOADING END')
     document.querySelector('body').classList.add('loading_end');
-
-    // let ls = document.querySelectorAll('.data__loading');
-    // for (let i = 0; i < ls.length; i++) {
-    //     ls[i].classList.remove('data__loading');
-    // }
 }
 function loadingStart() {
+    console.log('LOADING START')
     document.querySelector('body').classList.remove('loading_end');
 }
 
@@ -160,7 +157,14 @@ function loadDays(func) {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) {  // Ok
-                let days_raw = JSON.parse(this.responseText);
+                let days_raw;
+                try {
+                    days_raw = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error:', e);
+                    days_raw = {};
+                }
+
                 let days = groupByUnique(days_raw['days'], 'id');
                 cache['days'] = days;
                 cache['today'] = days_raw['today'];
@@ -191,7 +195,13 @@ function loadUser(func) {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) {  // Ok
-                user = JSON.parse(this.responseText);
+                let user;
+                try {
+                    user = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error:', e);
+                    user = {};
+                }
 
                 cache['user'] = user;
 
@@ -220,14 +230,18 @@ function loadProject(project_id, func) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) {  // Ok
-                let project = JSON.parse(this.responseText);
-
-                cache['project'] = project;
-
-                func();
+        if (this.readyState === 4 && this.status === 200) {  // Ok
+            let project;
+            try {
+                project = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error:', e);
+                project = {};
             }
+
+            cache['project'] = project;
+
+            func();
         }
     };
 
@@ -248,14 +262,18 @@ function loadEnrollsByClassId(class_id, func) {
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) {
-                let enrolls_raw = JSON.parse(this.responseText);
-                let enrolls = groupByUnique(enrolls_raw, 'id');
-                cache['enrolls'] = enrolls;
-
-                func();
+        if (this.readyState === 4 && this.status === 200) {
+            let enrolls_raw;
+            try {
+               enrolls_raw = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error:', e);
+                enrolls_raw = [];
             }
+            let enrolls = groupByUnique(enrolls_raw, 'id');
+            cache['enrolls'] = enrolls;
+
+            func();
         }
     };
 
@@ -276,16 +294,20 @@ function loadNames(func) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields
-                // loadingEventEnd();
-
-                let names_raw = JSON.parse(this.responseText);
-                names = groupByUnique(names_raw, 'id');
-                cache['names'] = names;
-
-                func();
+        if (this.readyState === 4 && this.status === 200) { // If ok set up fields
+            let names_raw;
+            try {
+               names_raw = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error:', e);
+                names_raw = [];
             }
+
+            names = groupByUnique(names_raw, 'id');
+            cache['names'] = names;
+
+            func();
+
         }
     };
 
@@ -307,14 +329,17 @@ function loadClass(class_id, func) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields
-                let event_class = JSON.parse(this.responseText);
-
-                cache['class'] = event_class;
-
-                func();
+        if (this.readyState === 4 && this.status === 200) { // If ok set up fields
+            let event_class;
+            try {
+               event_class = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error:', e);
+                event_class = {};
             }
+
+            cache['class'] = event_class;
+            func();
         }
     };
 
@@ -336,14 +361,18 @@ function loadEvent(event_id, func) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
-        if (this.readyState === 4) {
-            if (this.status === 200) { // If ok set up fields
-                let event = JSON.parse(this.responseText);
-
-                cache['event'] = event;
-
-                func();
+        if (this.readyState === 4 && this.status === 200) { // If ok set up fields
+            let event;
+            try {
+               event = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error:', e);
+                event = {};
             }
+
+            cache['event'] = event;
+
+            func();
         }
     };
 
@@ -367,7 +396,13 @@ function loadDay(day, func) {
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let day_data = JSON.parse(this.responseText);
+            let day_data;
+            try {
+               day_data = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error:', e);
+                day_data = [];
+            }
 
             let current_events = {};
             for (let time of day_data) {
@@ -402,7 +437,14 @@ function loadProjects(func) {
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let projects_data = JSON.parse(this.responseText);
+            let projects_data;
+            try {
+               projects_data = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error:', e);
+                projects_data = [];
+            }
+
             let projects = groupByUnique(projects_data, 'id');
 
             cache['projects'] = projects;
@@ -430,7 +472,13 @@ function loadFeedback(date, func) {
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let feedback = JSON.parse(this.responseText);
+            let feedback;
+            try {
+               feedback = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error:', e);
+                feedback = {};
+            }
 
             cache['feedback'] = feedback;
 
@@ -466,7 +514,14 @@ function loadCredits(func) {
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let credits_raw = JSON.parse(this.responseText);
+            let credits_raw;
+            try {
+               credits_raw = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error:', e);
+                credits_raw = [];
+            }
+
             let credits = groupByUnique(credits_raw, 'id');
 
             cache['credits'] = credits;

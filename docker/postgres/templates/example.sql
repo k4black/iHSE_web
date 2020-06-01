@@ -737,7 +737,7 @@ COPY public.users (id, code, user_type, phone, name, sex, pass, team, project_id
 7	SOG6Q4	0	79266784848	Александр Никифоров	t	105934	3	3	non
 5	MPJ840	0	79776664529	Оксана Антипова	f	105934	2	1	non
 4	VW4946	0	79645266448	Евгения Зитцева	t	105934	4	2	non
-8	TYW7H9	0	79984772664	Анастасия Кревенко	f	105934	5	2	non
+8	TYW7H9	0	79984772664	Анастасия Кривенко	f	105934	5	2	non
 0	TECODE	2	72345678900	Admin Userer	t	105934	0	0	non
 \.
 

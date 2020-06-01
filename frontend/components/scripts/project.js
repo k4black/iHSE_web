@@ -64,7 +64,7 @@ function setPopupProject() {
         let user = names[id];
 
         if (user['project_id'] == project_id) {
-            users_html += '<p class="user ' + (user['id'] == cache['user']['id'] ? 'current_user' : '') + '">' + user.name + ' [' + user.team + ']</p>';
+            users_html += '<p class="user' + (user['id'] == cache['user']['id'] ? 'current_user' : '') + '">' + user.name + ' [' + user.team + ']</p>';
         }
     }
 

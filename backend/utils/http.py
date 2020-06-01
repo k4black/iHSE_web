@@ -154,7 +154,7 @@ def bad_request(host: tp.Optional[str] = None):
         )
 
 
-def ok(host: tp.Optional[str] = None, json_dict: tp.Optional[tp.Dict[tp.Any, tp.Any]] = None):
+def ok(host: tp.Optional[str] = None, json_dict: tp.Optional[tp.Any] = None):
     if host:
         if json_dict:
             json_data = json.dumps(json_dict).encode('utf-8')

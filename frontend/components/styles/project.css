@@ -312,14 +312,16 @@ select {
     flex-direction: column;
 }
 
-
-.names .user p {
-    color: #0d0d2f;
-    font-size: 16px;
+.names .user {
+    display: inline-block!important;
+    color: #0d0d2f!important;
+    font-size: 16px!important;
+    font-weight: normal!important;
 }
 
-.names .user.current_user p {
-    color: #151552;
+.names .user.current_user {
+    color: #151552!important;
     /*font-style: italic;*/
-    font-weight: 400;
+    font-weight: 400!important;
 }
+
