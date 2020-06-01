@@ -9,14 +9,24 @@
 
 window.addEventListener('load', function () {
     createBar();
-    // loadAccount();
 
-    // loadDays();
+    const urlParams = new URLSearchParams(window.location.search);
+    let id = urlParams.get('id');
 
-    loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
-    loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
-    loadDays(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
-    loadNames(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+    if (id == null) {
+        // Load self user
+        loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+        loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+        loadDays(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+        loadNames(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+    } else {
+        // Load other user
+        loadOtherUser(id, function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
+        loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
+        loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
+        loadDays(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
+        loadNames(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
+    }
 });
 
 
@@ -97,7 +107,15 @@ function setAccount() {
     loadingEnd(); // TODO: Check
     // console.log(this.responseText);
 
-    let user = cache['user'];
+    const urlParams = new URLSearchParams(window.location.search);
+    let id = urlParams.get('id');
+    let user
+    if (id == null) {
+        user = cache['user'];
+    } else {
+        user = cache['other'];
+    }
+
 
     // Load project
     loadProject(user['project_id'], setProject);

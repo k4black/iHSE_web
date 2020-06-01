@@ -218,3 +218,11 @@ th[data-field=id] {
     max-width: 10px;
 }
 
+
+
+.user_ref {
+    /*color: var(--subtext-colour);*/
+    color: #2c3e50;
+    /*font-style: italic;*/
+    font-weight: 500;
+}

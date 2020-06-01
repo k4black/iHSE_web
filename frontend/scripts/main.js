@@ -191,7 +191,6 @@ function loadDays(func) {
  */
 function loadUser(func) {
     let xhttp = new XMLHttpRequest();
-
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) {  // Ok
@@ -212,6 +211,33 @@ function loadUser(func) {
     };
 
     xhttp.open("GET", "/user", true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+
+function loadOtherUser(user_id, func) {
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) {  // Ok
+                try {
+                    user = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error:', e);
+                    user = {};
+                }
+
+                cache['other'] = user;
+
+                func();
+            } else if (this.status === 401) {  // Unauthorized
+
+            }
+        }
+    };
+
+    xhttp.open("GET", "/user?id=" + user_id, true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
 }

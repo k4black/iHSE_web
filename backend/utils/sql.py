@@ -606,10 +606,39 @@ def get_user_by_phone(phone: str) -> tp.Optional[TTableObject]:
 
     try:
         with conn.cursor() as cursor_:
-            cursor_.execute(f"select * from users where phone = '{phone}';")
+            cursor_.execute("select * from users where phone = %s;", (phone,))
             user = cursor_.fetchone()
+            if not user:
+                return None
     except psycopg2.Error as error_:
         logger('sql.get_user_by_phone()', f'{error_}. Rolling back.', type_='ERROR')
+        conn.rollback()
+        return None
+    else:
+        return tuple_to_dict(user, 'users')
+
+
+def get_user_by_id(user_id: int) -> tp.Optional[TTableObject]:
+    """ Get user obj by id
+
+    Args:
+        user_id: user_id - int
+
+    Returns:
+        user_obj: (id, user_type, phone, name, pass, team, credits, avatar, project_id)
+                     or None if there is no such user
+    """
+
+    user: tp.Optional[tp.Tuple] = None
+
+    try:
+        with conn.cursor() as cursor_:
+            cursor_.execute("select * from users where id = %s;", (user_id,))
+            user = cursor_.fetchone()
+            if not user:
+                return None
+    except psycopg2.Error as error_:
+        logger('sql.get_user_by_id()', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return None
     else:

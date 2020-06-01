@@ -65,7 +65,8 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if user_obj is None:
         return http.wrong_cookie(host=env['HTTP_HOST'])
 
-    # print(f'Got user :{user_obj}')
+    if 'id' in query:
+        user_obj = sql.get_user_by_id(query['id'])
 
     # Json account data
     data = user_obj

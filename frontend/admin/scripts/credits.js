@@ -173,7 +173,7 @@ function getTableData(credits, users, days, events) {
         let row = {};
 
         row['id'] = user_id;
-        row['name'] = users[user_id].name;
+        row['name'] = '<a class="user_ref" href="/account.html?id='+user_id+'">' + users[user_id].name + '</a>';
         row['group'] = users[user_id].team;
 
         // To avoid undef
