@@ -58,6 +58,7 @@ fi
 
 
 # Choose compose
+# TODO: docker-compose-local-mac
 conf_file="./docker-compose.yml"
 if [ "$local" = true ] ; then
     conf_file="./docker-compose-local.yml"
@@ -67,7 +68,7 @@ if [ ! -z $file ] ; then
 fi
 
 
-# Run docker-compose 
+# Run docker-compose
 if [ "$command" = "start" ]
     then echo "starting..."
 
@@ -92,6 +93,9 @@ if [ "$command" = "start" ]
         chown -R 0:0 ../local_run/nginx
         chown -R 0:0 ../local_run/uwsgi
         echo "permission set"
+    else
+        echo "ERROR. Unimplemented error for prod server"
+        exit 0
     fi
 
     echo "starting Compose..."

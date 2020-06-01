@@ -1,6 +1,9 @@
+import typing as tp
+
 import utils.http as http
 from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse  # noqa: F401
 from utils.http import get_user_by_response, get_json_by_response  # noqa: F401
+import utils.config as config
 from utils.auxiliary import logger, generate_codes
 from utils.config import write_config
 from utils import sql
@@ -198,26 +201,24 @@ def post_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         Send:
             200 Ok: if user exist and session created correctly
                     and send cookie with sess id
-            401 Unauthorized: if wrong name of pass
 
     Returns:
         Response - result of request
         None
     """
 
-    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
-
     config = get_json_by_response(env)
 
-    CREDITS_TOTAL = config['total']
-    CREDITS_MASTER = config['master']
-    CREDITS_LECTURE = config['lecture']
-    CREDITS_ADDITIONAL = config['additional']
-    NUMBER_TEAMS = config['groups']
+    config_dict = {}  # type: tp.Dict[str, tp.Any]
+    config_dict['CREDITS_TOTAL'] = config['total']
+    config_dict['CREDITS_MASTER'] = config['master']
+    config_dict['CREDITS_LECTURE'] = config['lecture']
+    config_dict['CREDITS_ADDITIONAL'] = config['additional']
+    config_dict['NUMBER_TEAMS'] = config['groups']
 
-    write_config()
+    config.set_config(config_dict)
+    config.write_config()
 
-    # TODO: Cherck rights
     return http.ok(host=env['HTTP_HOST'])
 
 
@@ -233,15 +234,14 @@ def get_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         Response - result of request
     """
 
-    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
+    conf_dict = config.get_config()
 
     data = {
-        'total': CREDITS_TOTAL,
-        'master': CREDITS_MASTER,
-        'lecture': CREDITS_LECTURE,
-        'additional': CREDITS_ADDITIONAL,
-
-        'groups': NUMBER_TEAMS
+        'total': conf_dict['CREDITS_TOTAL'],
+        'master': conf_dict['CREDITS_MASTER'],
+        'lecture': conf_dict['CREDITS_LECTURE'],
+        'additional': conf_dict['CREDITS_ADDITIONAL'],
+        'groups': conf_dict['NUMBER_TEAMS']
     }
 
     return http.ok(host=env['HTTP_HOST'], json_dict=data)

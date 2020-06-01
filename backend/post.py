@@ -5,7 +5,7 @@ import utils.http as http
 from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse  # noqa: F401
 from utils.http import get_user_by_response, get_json_by_response  # noqa: F401
 from utils.auxiliary import logger, get_datetime_str, check_enroll_time  # noqa: F401
-from utils.config import CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS  # noqa: F401
+import utils.config as config
 from utils import sql
 
 
@@ -202,7 +202,7 @@ def post_register(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
 
     # user = sql.get_user_by_phone(phone)
 
-    team = random.randint(1, NUMBER_TEAMS)  # TODO: Sex distribution
+    team = random.randint(1, config.get_config()['NUMBER_TEAMS'])  # TODO: Sex distribution
 
     # Create new user
     if sql.register(code, name, surname, phone, sex, passw, team):
@@ -355,7 +355,7 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     if event is None:  # No such event
         return http.not_allowed(host=env['HTTP_HOST'])
 
-    # print('Checkin class. event', event)
+    config_dict = config.get_config()
 
     # Set up credits and enrolls attendance
     if event['type'] == 1 and event['total'] > 0:
@@ -364,7 +364,7 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         enrolls = sql.get_enrolls_by_event_id(event_id)
 
         users_in_enrolls = {enroll['user_id'] for enroll in enrolls if not enroll['attendance']}  # type: tp.Set[int]
-        users_in_checkins = {int(checkin['id']): min(int(checkin['bonus']), CREDITS_ADDITIONAL) for checkin in
+        users_in_checkins = {int(checkin['id']): min(int(checkin['bonus']), config_dict['CREDITS_ADDITIONAL']) for checkin in
                              checkins}  # type: tp.Dict[int, int]
 
         users_to_set_credits = {k for k in users_in_checkins.keys() if k in users_in_enrolls}  # type: tp.Set[int]
@@ -379,9 +379,13 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
             sql.update_in_table(enrolls[i], 'enrolls')
 
         # TODO: Minus balls if not attendant
-        credits = [{'user_id': int(checkin['id']), 'event_id': event_id, 'time': get_datetime_str(),
-                    'value': CREDITS_MASTER + min(int(checkin['bonus']), CREDITS_ADDITIONAL)} for checkin in checkins if
-                   int(checkin['id']) in users_to_set_credits]  # type: tp.List[sql.TTableObject]
+        credits = [{'user_id': int(checkin['id']),
+                    'event_id': event_id,
+                    'time': get_datetime_str(),
+                    'value':
+                        config_dict['CREDITS_MASTER'] + min(int(checkin['bonus']), config_dict['CREDITS_ADDITIONAL'])}
+                   for checkin in checkins
+                   if int(checkin['id']) in users_to_set_credits]  # type: tp.List[sql.TTableObject]
         for credit in credits:
             sql.insert_to_table(credit, 'credits')
 
@@ -389,14 +393,16 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
     else:
         # lecture
         enrolls = [{'class_id': event_id, 'user_id': int(checkin['id']), 'time': get_datetime_str(), 'attendance': True,
-                    'bonus': min(int(checkin['bonus']), CREDITS_ADDITIONAL)} for checkin in
+                    'bonus': min(int(checkin['bonus']), config_dict['CREDITS_ADDITIONAL'])} for checkin in
                    checkins]  # type: tp.List[sql.TTableObject]
         for enroll in enrolls:
             sql.update_in_table(enroll, 'enrolls')
 
-        credits = [{'user_id': int(checkin['id']), 'event_id': event_id,
+        credits = [{'user_id': int(checkin['id']),
+                    'event_id': event_id,
                     'time': get_datetime_str(),
-                    'value': CREDITS_LECTURE + min(int(checkin['bonus']), CREDITS_ADDITIONAL)}
+                    'value': config_dict['CREDITS_LECTURE'] + min(int(checkin['bonus']),
+                                                                  config_dict['CREDITS_ADDITIONAL'])}
                    for checkin in checkins]  # type: tp.List[sql.TTableObject]
         for credit in credits:
             sql.insert_to_table(credit, 'credits')
@@ -433,6 +439,7 @@ def post_mark_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
         return http.wrong_cookie(host=env['HTTP_HOST'])
 
     enrolls = get_json_by_response(env)
+    config_dict = config.get_config()
 
     if enrolls is not None:
 
@@ -442,7 +449,7 @@ def post_mark_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
 
             if enroll['attendance'] in (True, 'true'):
                 sql.pay_credit(enroll['user_id'], enroll['event_id'],
-                               CREDITS_MASTER + min(CREDITS_ADDITIONAL, enroll['bonus']),
+                               config_dict['CREDITS_MASTER'] + min(config_dict['CREDITS_ADDITIONAL'], enroll['bonus']),
                                get_datetime_str())
                 # TODO: CREDITS_MASTER CREDITS_LECTURE check
 

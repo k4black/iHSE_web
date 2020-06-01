@@ -1,9 +1,11 @@
+import typing as tp
+
 import configparser
 
 from utils.auxiliary import logger
 
 
-CONFIG_PATH = '/var/conf/ihse.ini'
+CONFIG_PATH = '/var/conf/ihse/ihse.ini'
 
 
 """ ---===---==========================================---===--- """
@@ -18,13 +20,45 @@ CREDITS_ADDITIONAL = 0  # Maximum allowed additional credits
 NUMBER_TEAMS = 0
 
 
+def get_config() -> tp.Dict[str, int]:
+    """ Get global config values """
+
+    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
+
+    return {
+        'CREDITS_TOTAL': CREDITS_TOTAL,
+        'CREDITS_MASTER': CREDITS_MASTER,
+        'CREDITS_LECTURE': CREDITS_LECTURE,
+        'CREDITS_ADDITIONAL': CREDITS_ADDITIONAL,
+
+        'NUMBER_TEAMS': NUMBER_TEAMS,
+    }
+
+
+def set_config(config_dict: tp.Dict[str, int]) -> None:
+    """ Set global config values """
+
+    global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
+
+    CREDITS_TOTAL = config_dict['CREDITS_TOTAL']
+    CREDITS_MASTER = config_dict['CREDITS_MASTER']
+    CREDITS_LECTURE = config_dict['CREDITS_LECTURE']
+    CREDITS_ADDITIONAL = config_dict['CREDITS_ADDITIONAL']
+
+    NUMBER_TEAMS = config_dict['NUMBER_TEAMS']
+
+
 def read_config() -> None:
-    """Read and save config file (`config.ini`) """
+    """Read and save config file (`ihse.ini`) """
 
     # print('========= Read config file =========')
     logger('read_config()', '==== Read config file ====', type_='LOG')
 
     global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
+
+    # Check file exist. or auto create
+    with open(CONFIG_PATH, "w+") as f:
+        pass
 
     config = configparser.ConfigParser()
     config.read(CONFIG_PATH)
@@ -37,8 +71,7 @@ def read_config() -> None:
 
         NUMBER_TEAMS = int(config['TEAMS']['number'])
     except KeyError:
-        # print('No config file. Using default values')
-        logger('read_config()', 'No config file. Using default values', type_='LOG')
+        logger('read_config()', 'No config file. Using default values', type_='ERROR')
         CREDITS_TOTAL = 300
         CREDITS_MASTER = 15
         CREDITS_LECTURE = 15
@@ -50,7 +83,7 @@ def read_config() -> None:
 
 
 def write_config() -> None:
-    """Write current configuration to config file (`config.ini`) """
+    """Write current configuration to config file (`ihse.ini`) """
 
     global CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS
 

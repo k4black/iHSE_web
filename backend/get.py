@@ -2,9 +2,9 @@ from itertools import groupby
 
 import utils.http as http
 from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse  # noqa: F401
-from utils.http import get_user_by_response, get_json_by_response  # noqa: F401
+import utils.config as config
 from utils.auxiliary import logger, get_datetime_str, check_enroll_time, get_date_str  # noqa: F401
-from utils.config import CREDITS_TOTAL, CREDITS_MASTER, CREDITS_LECTURE, CREDITS_ADDITIONAL, NUMBER_TEAMS  # noqa: F401
+from utils.http import get_user_by_response, get_json_by_response  # noqa: F401
 from utils import sql
 
 
@@ -75,7 +75,7 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     data['feedback'] = False
     data['projects'] = True  # TODO: Notifacation
 
-    data['total'] = CREDITS_TOTAL
+    data['total'] = config.get_config()['CREDITS_TOTAL']
     data['today'] = get_date_str()  # TODO: remove. Only for debug???
 
     return http.ok(host=env['HTTP_HOST'], json_dict=data)
@@ -118,7 +118,7 @@ def get_account(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
     # Json account data
     data = user_obj
-    data['total'] = CREDITS_TOTAL
+    data['total'] = config.get_config()['CREDITS_TOTAL']
 
     return http.ok(host=env['HTTP_HOST'], json_dict=data)
 
