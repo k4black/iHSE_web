@@ -20,17 +20,47 @@
 
 #trap _term SIGTERM
 
+
+function help {
+    echo "usage: docker-helper.sh start/stop [-l local] [-d demonized]"
+}
+
+
+
+# Check command  
+command=$1;  shift ;
+if [ ! "$command" = "start" ] &&  [ ! "$command" = "stop" ] ; then
+    echo "Unknown command $command."
+    help
+    exit 3
+fi
+
+
+# Parse command line args
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -l|--local) local=true ;;
+        -d|--demonized) demonized=true ;;
+        -h|--help) help; exit 0 ;;
+        *) echo "Unknown argument $1."; help; exit 3 ;;
+    esac
+    shift
+done
+
+
+
+
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root/sudo"
   exit 0
 fi
 
 conf_file="./docker-compose.yml"
-if [ "$1" = "local" ]
-    then conf_file="./docker-compose-local.yml"
+if [ "$local" = true ] ; then
+    conf_file="./docker-compose-local.yml"
 fi
 
-if [ "$2" = "start" ]
+if [ "$command" = "start" ]
     then echo "starting..."
     if [ -d "../local_run" ]
         then echo "local_run exists, setting permissions..."
@@ -59,16 +89,18 @@ if [ "$2" = "start" ]
         echo "permission set"
     fi
     echo "starting Compose..."
-    if [ "$3" = "attached" ]
-        then docker-compose -f "$conf_file" up
-    else
+
+    if [ "$demonized" = true ] ; then
         docker-compose -f "$conf_file" up -d
+        echo "demonized."
+    else
+        docker-compose -f "$conf_file" up
     fi
 fi
 
-if [ "$2" = "stop" ]
+if [ "$command" = "stop" ]
     then echo "stopping..."
-#    if [ "$2" = "local" ]
+#    if [ "$local" = true ] ; then
     docker-compose -f "$conf_file" stop
 #    fi
     echo "gracefully stopped all containers"
