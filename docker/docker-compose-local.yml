@@ -13,7 +13,7 @@ services:
             - 443:443
         volumes:
             - ../frontend/:/var/app/frontend/
-            - ../local_run/log/nginx:/var/log/nginx/
+            - ../local_run/nginx/logs:/var/log/nginx/
         depends_on:
             - uwsgi
 
@@ -26,8 +26,8 @@ services:
         restart: unless-stopped
         volumes:
             - ../backend/:/var/app/backend/
-            - ../local_run/conf/ihse.ini:/var/conf/ihse.ini
-            - ../local_run/log/uwsgi:/var/log/uwsgi
+#            - ../local_run/conf/ihse.ini:/var/conf/ihse.ini
+            - ../local_run/uwsgi/logs:/var/log/uwsgi
         depends_on:
             - database
 
@@ -43,7 +43,7 @@ services:
         ports:
             - 5432:5432
         volumes:
-            - ../local_run/postgres/data:/var/lib/postgresql/data/pgdata
+            - ../local_run/postgres/pgdata:/var/lib/postgresql/data/pgdata
             - ../local_run/postgres/exports:/var/lib/postgresql/exports/
             - ./postgres/templates/example.sql:/docker-entrypoint-initdb.d/example.sql  # Change for others docker-compose
         environment:
@@ -76,8 +76,8 @@ services:
         container_name: elasticsearch_docker
         restart: unless-stopped
         volumes:
-            - ../local_run/elasticsearch/:/usr/share/elasticsearch/data/
-            - ../local_run/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+            - ../local_run/elasticsearch/data/:/usr/share/elasticsearch/data/
+#            - ../local_run/conf/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
         environment:
             - discovery.type=single-node
 
@@ -85,11 +85,12 @@ services:
         image: kibana:7.7.0
         container_name: kibana_docker
         restart: unless-stopped
-        volumes:
-            - ../local_run/conf/kibana.yml:/usr/share/kibana/config/kibana.yml
+#        volumes:
+#            - ../local_run/conf/kibana.yml:/usr/share/kibana/config/kibana.yml
         ports:
             - 5601:5601
 
+# ниже точно не работает!!!
 
 #
 #    metricbeat:
