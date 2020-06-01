@@ -9,9 +9,12 @@
 
 /** ===============  LOGIC and REQUESTS  =============== */
 
-
-document.addEventListener('load', function () {
-    loadUsers(setUsers)
+// and here's the trick (works everywhere)
+function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}
+// use like
+r(function(){
+    loadUsers(setUsers);
+    loadPlaces(setPlaces);
 });
 
 
@@ -501,4 +504,51 @@ function loadUsers(func) {
     xhttp.open("GET", "/admin_get_table?" + "table=" + 'users', true);
     xhttp.withCredentials = true; // To send Cookie;
     xhttp.send();
+}
+
+/**
+ * Get places information from server
+ * Save list to global 'cache['places']'
+ *
+ * Run func on OK status
+ */
+function loadPlaces(func) {
+    console.log('LOAD PLACES')
+    let xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function () {
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up fields
+                let places;
+                try {
+                    places = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error', e);
+                    places = []
+                }
+
+                cache['places'] = places;
+
+                func();
+            }
+        }
+    };
+
+    xhttp.open("GET", "/admin_get_places", true);
+    xhttp.withCredentials = true; // To send Cookie;
+    xhttp.send();
+}
+
+
+/**
+ * Loading places in list
+ */
+function setPlaces() {
+    let datalist_html = "";
+
+    for (let place of cache['places']) {
+        datalist_html += '<option value="' + place + '">';
+    }
+
+    document.querySelector('#places_datalist').innerHTML = datalist_html;
 }

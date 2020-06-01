@@ -34,6 +34,7 @@
 
 <div class="wrapper">
     <div class="fields">
+        <h2>Config</h2>
         <div class="">
             <i class="large material-icons">attach_money</i>
             <label for="total">Total credits: </label>
@@ -72,7 +73,27 @@
 <!--            <input id="total" type="number">-->
         </div>
 
-        <button id="save" onclick="saveConfig()"><i class="large material-icons">save</i>Save</button>
+        <button class="save" onclick="saveConfig()"><i class="large material-icons">save</i>Save</button>
+    </div>
+
+    <div class="fields">
+        <h2>Places</h2>
+        <div class="">
+            <i class="large material-icons">place</i>
+            <label for="places">Places list: </label>
+            <textarea id="places" placeholder="place1&#10place2&#10..." rows="7"></textarea>
+        </div>
+
+        <button class="save" onclick="savePlaces()"><i class="large material-icons">save</i>Save</button>
+    </div>
+
+    <div class="fields">
+        <h2>Days</h2>
+        <textarea>
+            TODO
+        </textarea>
+
+<!--        <button class="save" onclick="savePlaces()"><i class="large material-icons">save</i>Save</button>-->
     </div>
 
 </div>

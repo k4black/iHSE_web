@@ -4,6 +4,7 @@
 
 $(function() {
     loadConfig();
+    loadPlaces();
 });
 
 
@@ -14,7 +15,7 @@ function loadConfig() {
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4) {
             if (this.status === 200) {
-                data = JSON.parse(this.responseText);
+                let data = JSON.parse(this.responseText);
 
                 $('#total')[0].value = data.total;
                 $('#master')[0].value = data.master;
@@ -55,6 +56,55 @@ function saveConfig() {
     let data = JSON.stringify(config);
 
     xhttp.open("POST", "/admin_post_config", true);
+    //xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Content-Type', 'text/plain');
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send(data);
+}
+
+
+
+
+function loadPlaces() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                let places;
+                try {
+                    places = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error', e)
+                    places = []
+                }
+
+                $('#places')[0].value = places.join('\n');
+            }
+        }
+    };
+
+    xhttp.open("GET", "/admin_get_places", true);
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}
+
+
+function savePlaces() {
+    var xhttp = new XMLHttpRequest();
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                alert('ok');
+            }
+        }
+    };
+
+    let places = $('#places')[0].value.split('\n');
+    let data = JSON.stringify(places);
+
+    xhttp.open("POST", "/admin_post_places", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie

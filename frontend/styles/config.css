@@ -11,7 +11,13 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    width: auto;
 
+    margin-bottom: 50px;
+}
+
+.fields>button {
+    min-width: 350px;
 }
 
 .fields div {

@@ -5,7 +5,6 @@ from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, 
 from utils.http import get_user_by_response, get_json_by_response  # noqa: F401
 import utils.config as config
 from utils.auxiliary import logger, generate_codes
-from utils.config import write_config
 from utils import sql
 
 
@@ -42,6 +41,9 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     functions = {
         '/admin_get_config': get_config,
         '/admin_post_config': post_config,
+
+        '/admin_get_places': get_places,
+        '/admin_post_places': post_places,
 
         '/admin_get_credits': get_credits,
 
@@ -136,13 +138,14 @@ def send_data(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     # Get json from response
     obj = get_json_by_response(env)
 
-    if 'id' not in obj.keys() or obj['id'] == '':
-        if table_name in sql.table_fields.keys():
+    if table_name in sql.table_fields.keys():
+        if 'id' not in obj.keys() or obj['id'] == '':
             sql.insert_to_table(obj, table_name)
-
-    else:
-        if table_name in sql.table_fields.keys():
+        else:
             sql.update_in_table(obj, table_name)
+
+        if table_name == 'events':
+            config.add_place(obj['place'])
 
     return http.ok(host=env['HTTP_HOST'])
 
@@ -217,7 +220,6 @@ def post_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     config_dict['NUMBER_TEAMS'] = config_raw['groups']
 
     config.set_config(config_dict)
-    config.write_config()
 
     return http.ok(host=env['HTTP_HOST'])
 
@@ -243,5 +245,42 @@ def get_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         'additional': conf_dict['CREDITS_ADDITIONAL'],
         'groups': conf_dict['NUMBER_TEAMS']
     }
+
+    return http.ok(host=env['HTTP_HOST'], json_dict=data)
+
+
+def post_places(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """ Places HTTP request
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Returns:
+        Response - result of request
+        None
+    """
+
+    places_raw = get_json_by_response(env)
+    config.set_places(places_raw)
+
+    return http.ok(host=env['HTTP_HOST'])
+
+
+def get_places(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """ Places HTTP request
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Returns:
+        Response - result of request
+    """
+
+    places = config.get_places()
+    data = places
 
     return http.ok(host=env['HTTP_HOST'], json_dict=data)
