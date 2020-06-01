@@ -114,6 +114,8 @@ button {
     background: var(--main-light-colour);
 
     transition: ease-out 300ms;
+    cursor: pointer;
+
 }
 
 button:hover {

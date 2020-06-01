@@ -123,13 +123,6 @@
 /*@media device-aspect-ratio (min-device-aspect-ratio, max-device-aspect-ratio) {*/
 @media (min-width : 769px) {
 
-    header.header {
-        height: 75px;
-        background: none;
-        z-index: 120;
-        pointer-events: none;
-    }
-
     .title {
         display: none;
     }

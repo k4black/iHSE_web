@@ -413,3 +413,17 @@ body {
     display: flex; /* Показываем спойлер */
     padding: 10px; /* Поля вокруг текста */
 }
+
+
+
+
+
+@media (min-width : 769px) {
+
+    header.header {
+        height: 75px;
+        background: none;
+        z-index: 120;
+        pointer-events: none;
+    }
+}

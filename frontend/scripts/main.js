@@ -195,7 +195,6 @@ function loadUser(func) {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) {  // Ok
-                let user;
                 try {
                     user = JSON.parse(this.responseText);
                 } catch (e) {
