@@ -207,14 +207,14 @@ def post_config(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         None
     """
 
-    config = get_json_by_response(env)
+    config_raw = get_json_by_response(env)
 
     config_dict = {}  # type: tp.Dict[str, tp.Any]
-    config_dict['CREDITS_TOTAL'] = config['total']
-    config_dict['CREDITS_MASTER'] = config['master']
-    config_dict['CREDITS_LECTURE'] = config['lecture']
-    config_dict['CREDITS_ADDITIONAL'] = config['additional']
-    config_dict['NUMBER_TEAMS'] = config['groups']
+    config_dict['CREDITS_TOTAL'] = config_raw['total']
+    config_dict['CREDITS_MASTER'] = config_raw['master']
+    config_dict['CREDITS_LECTURE'] = config_raw['lecture']
+    config_dict['CREDITS_ADDITIONAL'] = config_raw['additional']
+    config_dict['NUMBER_TEAMS'] = config_raw['groups']
 
     config.set_config(config_dict)
     config.write_config()
