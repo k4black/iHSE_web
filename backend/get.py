@@ -66,7 +66,7 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         return http.wrong_cookie(host=env['HTTP_HOST'])
 
     if 'id' in query:  # Request other's user boi
-        if user_obj['user_type'] > 0:  # Check admin rights 
+        if user_obj['user_type'] > 0:  # Check admin rights
             user_obj = sql.get_user_by_id(query['id'])
         else:
             return http.forbidden(host=env['HTTP_HOST'])

@@ -4,8 +4,8 @@
 window.addEventListener('load', function () {
     loadDays(setDays);
 
-    loadEvents(function () {checkLoading(countHostFeedback, ['events', 'feedback'])});
-    loadAllFeedback(function () {checkLoading(countHostFeedback, ['events', 'feedback'])});
+    loadEvents(function () {checkLoading(function () {countHostFeedback(); countDaysFeedback()}, ['events', 'feedback'])});
+    loadAllFeedback(function () {checkLoading(function () {countHostFeedback(); countDaysFeedback()}, ['events', 'feedback'])});
 
     loadTop(function () {checkLoading(countTop, ['users', 'top'])});
     loadUsers(function () {checkLoading(countTop, ['users', 'top'])});
@@ -77,6 +77,70 @@ function countTop() {
                     }
                 }]
             }
+        }
+    });
+}
+
+
+function countDaysFeedback() {
+
+    // let feedback_days = Object.values(cache['days']).filter(function (i) {
+    //     return i['feedback'] == true;
+    // })
+    // let feedback_counts = [];
+    // for (let day of feedback_days) {
+    //     let feedback_arr = Object.values(cache['feedback']).filter(function (i) {
+    //         return cache['events'][i['event_id']].day_id == day.id;
+    //     });
+    //
+    //     feedback_counts = feedback_counts.concat(feedback_arr.length)
+    // }
+
+    let feedback_days = Object.values(cache['days']);
+    let feedback_counts = [];
+    for (let day of feedback_days) {
+        if (day['feedback'] == true) {
+            let feedback_arr = Object.values(cache['feedback']).filter(function (i) {
+                return cache['events'][i['event_id']].day_id == day.id;
+            });
+
+            feedback_counts = feedback_counts.concat(feedback_arr.length)
+        } else {
+            feedback_counts = feedback_counts.concat(0)
+        }
+    }
+
+
+
+    var ctx = document.getElementById('count_feedback').getContext('2d');
+    document.getElementById('count_feedback').height = 100;
+    var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+
+        // The data for our dataset
+        data: {
+            labels: feedback_days.map(function (i) {return i['date'] + ' ' + i['title']}),
+            datasets: [{
+                label: 'Количество отзывов',
+                // backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                data: feedback_counts
+            }]
+        },
+
+        // Configuration options go here
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        // max: 10,  // TODO: Total height
+                        stepSize: 1
+                    }
+                }]
+            },
+            // responsive: true,
+            // maintainAspectRatio: false
         }
     });
 }
@@ -180,7 +244,7 @@ function countHostFeedback() {
                             max: 10
                         }
                     }]
-                }
+                },
             }
         });
     }
