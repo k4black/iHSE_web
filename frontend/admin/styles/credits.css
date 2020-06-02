@@ -187,9 +187,7 @@ button.update {
   overflow: inherit;
 }
 
-/*.data_cells {*/
-/*    min-width: 40px;*/
-/*}*/
+
 th.data_cells {
     position:relative;
     box-sizing: border-box;

@@ -20,7 +20,7 @@ CREDITS_LECTURE = 0
 CREDITS_ADDITIONAL = 0  # Maximum allowed additional credits
 NUMBER_TEAMS = 0
 
-PLACES = set({})  # type: tp.Set[str]
+PLACES = []  # type: tp.List[str]
 
 
 def get_config() -> tp.Dict[str, int]:
@@ -121,7 +121,7 @@ def add_place(place: str) -> None:
 
     logger('add_place()', f'Adding place = {place}', 'LOG')
     if place not in PLACES:
-        PLACES.add(place)
+        PLACES.append(place)
         write_places()
 
 
@@ -130,14 +130,14 @@ def set_places(places: tp.List[str]) -> None:
 
     global PLACES
 
-    PLACES = set(places)
+    PLACES = places
     write_places()
 
 
 def get_places() -> tp.List[str]:
     """ Get places """
     global PLACES
-    return list(PLACES)
+    return PLACES
 
 
 def read_places() -> tp.List[str]:
@@ -149,8 +149,11 @@ def read_places() -> tp.List[str]:
     with open(PLACES_PATH, "a+") as f:
         pass
 
+    PLACES = []
     with open(PLACES_PATH, "r") as f:
-        PLACES = set(f.readlines())
+        for place in sorted(f.readlines()):
+            if place != '\n':
+                PLACES.append(place[:-1] if place[-1] == '\n' else place)
 
     return list(PLACES)
 
@@ -161,7 +164,7 @@ def write_places() -> None:
     global PLACES
 
     with open(PLACES_PATH, 'w') as f:
-        for place in list(PLACES):
+        for place in sorted(PLACES):
             f.write(place + '\n')
 
 
