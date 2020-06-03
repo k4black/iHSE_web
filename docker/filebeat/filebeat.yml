@@ -19,14 +19,15 @@ filebeat.modules:
 filebeat.autodiscover:
   providers:
     - type: docker
+#      host: "tcp://127.0.0.1:2375"
       templates:
         - condition.or:
             - contains:
-                docker.container.image: postgres
+                docker.container.name: ihse_postgres
             - contains:
-                docker.container.image: docker_uwsgi
+                docker.container.name: ihse_uwsgi
             - contains:
-                docker.container.image: docker_nginx
+                docker.container.name: ihse_nginx
           config:
             - type: container
               paths:
@@ -51,3 +52,6 @@ filebeat.autodiscover:
 
 output.logstash:
     hosts: ["logstash:5044"]
+#
+#output.console:
+#    pretty: true
