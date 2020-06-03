@@ -6,7 +6,7 @@ services:
         build:
             context: ./nginx/
             dockerfile: nginx_local.dockerfile
-        container_name: nginx_docker_local
+        container_name: ihse_nginx_docker
         restart: unless-stopped
         ports:
             - 80:80
@@ -22,7 +22,7 @@ services:
         build:
             context: ./uwsgi/
             dockerfile: uwsgi.dockerfile
-        container_name: uwsgi_docker
+        container_name: ihse_uwsgi
         restart: unless-stopped
         volumes:
             - ../backend/:/var/app/backend/
@@ -38,7 +38,7 @@ services:
 #        build:
 #            context: ./postgres
 #            dockerfile: postgres.dockerfile
-        container_name: database_docker
+        container_name: ihse_database
         restart: unless-stopped
         ports:
             - 5432:5432
@@ -56,7 +56,7 @@ services:
         build:
             context: ./filebeat
             dockerfile: filebeat.dockerfile
-        container_name: filebeat_docker
+        container_name: ihse_filebeat
         restart: unless-stopped
         volumes:
             - /var/lib/docker/containers:/root/logs/containers
@@ -73,7 +73,7 @@ services:
 
     elasticsearch:
         image: elasticsearch:7.7.0
-        container_name: elasticsearch_docker
+        container_name: ihse_elasticsearch
         restart: unless-stopped
         volumes:
             - ../local_run/elasticsearch/data/:/usr/share/elasticsearch/data/
@@ -83,7 +83,7 @@ services:
 
     kibana:
         image: kibana:7.7.0
-        container_name: kibana_docker
+        container_name: ihse_kibana
         restart: unless-stopped
 #        volumes:
 #            - ../local_run/conf/kibana.yml:/usr/share/kibana/config/kibana.yml

@@ -6,7 +6,7 @@ services:
         build:
             context: ./nginx/
             dockerfile: nginx_local.dockerfile
-        container_name: nginx_docker
+        container_name: ihse_nginx
         restart: unless-stopped
         ports:
             - 80:80
@@ -22,7 +22,7 @@ services:
 
 #    certbot:
 #        image: certbot/certbot
-#        container_name: certbot_docker
+#        container_name: ihse_certbot
 #        restart: unless-stopped
 #        #        entrypoint:  "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 #        volumes:
@@ -46,7 +46,7 @@ services:
             - /etc/ihse/certs:/etc/nginx/certs
         environment:
             - EMAIL=all@ihse.tk
-            - SERVER_CONTAINER=nginx_docker
+            - SERVER_CONTAINER=ihse_nginx
             - WEBROOT_PATH=/tmp/letsencrypt/www
             - CERTS_PATH=/etc/nginx/certs
             - DOMAINS=ihse.tk
@@ -60,7 +60,7 @@ services:
         build:
             context: ./uwsgi
             dockerfile: uwsgi.dockerfile
-        container_name: uwsgi_docker
+        container_name: ihse_uwsgi
         restart: unless-stopped
         volumes:
             - ../backend/:/var/app/backend/
@@ -75,7 +75,7 @@ services:
 #        build:
 #            context: ./postgres
 #            dockerfile: postgres.dockerfile
-        container_name: database_docker
+        container_name: ihse_database
         restart: unless-stopped
         ports:
             - 5432:5432

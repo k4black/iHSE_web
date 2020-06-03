@@ -6,7 +6,7 @@ services:
         build:
             context: ./nginx/
             dockerfile: nginx_local.dockerfile
-        container_name: nginx_docker_local
+        container_name: ihse_nginx_local
         restart: unless-stopped
         ports:
             - 80:80
@@ -22,7 +22,7 @@ services:
         build:
             context: ./uwsgi/
             dockerfile: uwsgi.dockerfile
-        container_name: uwsgi_docker
+        container_name: ihse_uwsgi
         restart: unless-stopped
         volumes:
             - ../backend/:/var/app/backend/
@@ -37,7 +37,7 @@ services:
 #        build:
 #            context: ./postgres
 #            dockerfile: postgres.dockerfile
-        container_name: database_docker
+        container_name: ihse_database
         restart: unless-stopped
         ports:
             - 5432:5432
