@@ -522,32 +522,32 @@ ALTER TABLE ONLY public.vacations ALTER COLUMN id SET DEFAULT nextval('public.va
 --
 
 COPY public.classes (id, total, annotation) FROM stdin;
-8	0	
-11	0	
-13	0	
-21	0	
-22	0	
-23	0	
-24	0	
-27	0	
-28	0	
-30	0	
-29	0	
-35	0	
-36	0	
-37	0	
-38	0	
-39	0	
-42	0	
-43	0	
-44	0	
-45	0	
-47	0	
-48	0	
-49	0	
-50	0	
-51	0	
-53	0	
+8	0
+11	10
+13	0
+21	0
+22	0
+23	0
+24	0
+27	0
+28	0
+30	0
+29	0
+35	0
+36	0
+37	0
+38	0
+39	0
+42	0
+43	0
+44	0
+45	0
+47	0
+48	0
+49	0
+50	0
+51	0
+53	0
 \.
 
 
@@ -584,6 +584,21 @@ COPY public.codes (id, code, type, used) FROM stdin;
 --
 
 COPY public.credits (id, user_id, event_id, "time", value) FROM stdin;
+2	5	11	2020-06-02 09:46:30 MSK	15
+1	4	11	2020-06-02 13:42:30 MSK	10
+3	8	11	2020-06-02 13:42:30 MSK	10
+4	7	11	2020-06-02 11:16:31 MSK	10
+5	13	11	2020-06-02 13:42:30 MSK	12
+6	14	11	2020-06-02 11:16:31 MSK	10
+7	5	12	2020-06-02 11:16:31 MSK	5
+8	1	5	2020-06-02 11:16:31 MSK	3
+9	5	21	2020-06-02 11:16:31 MSK	10
+10	4	21	2020-06-02 11:16:31 MSK	10
+11	1	21	2020-06-02 11:16:31 MSK	10
+12	7	21	2020-06-02 11:16:31 MSK	12
+13	11	21	2020-06-02 11:16:31 MSK	10
+14	6	21	2020-06-02 11:16:31 MSK	10
+15	1	21	2020-06-02 11:16:31 MSK	12
 \.
 
 
@@ -593,7 +608,7 @@ COPY public.credits (id, user_id, event_id, "time", value) FROM stdin;
 
 COPY public.days (id, date, title, feedback) FROM stdin;
 0	NO DAY		f
-1	05.06		f
+1	05.06		t
 2	06.06		f
 4	08.06		f
 5	09.06		f
@@ -610,6 +625,23 @@ COPY public.days (id, date, title, feedback) FROM stdin;
 --
 
 COPY public.enrolls (id, class_id, user_id, "time", attendance, bonus) FROM stdin;
+1	11	2	2020-06-02 13:46:30 MSK	f	0
+2	11	4	2020-06-02 11:16:30 MSK	t	0
+3	11	5	2020-06-02 09:46:30 MSK	t	5
+4	11	8	2020-06-02 13:42:30 MSK	t	0
+5	11	7	2020-06-02 11:16:31 MSK	t	0
+6	11	15	2020-06-02 13:42:30 MSK	f	2
+7	11	13	2020-06-02 13:42:30 MSK	t	2
+8	11	14	2020-06-02 11:16:31 MSK	t	0
+9	21	5	2020-06-02 11:16:31 MSK	t	0
+10	21	4	2020-06-02 11:16:31 MSK	t	0
+11	21	1	2020-06-02 11:16:31 MSK	t	0
+12	21	7	2020-06-02 11:16:31 MSK	t	2
+13	21	11	2020-06-02 11:16:31 MSK	t	0
+14	21	15	2020-06-02 11:16:31 MSK	f	0
+15	21	13	2020-06-02 11:16:31 MSK	f	0
+16	21	6	2020-06-02 11:16:31 MSK	t	0
+17	21	1	2020-06-02 11:16:31 MSK	t	2
 \.
 
 
@@ -692,7 +724,7 @@ COPY public.feedback (id, user_id, event_id, score, entertain, useful, understan
 --
 
 COPY public.projects (id, title, type, def_type, direction, description, annotation) FROM stdin;
-0	NO PROJECT					
+0	NO PROJECT
 1	Умные остановки	project	presentation	media	Описание проекта умных остановок, который довольно большой. Тут должны описываться общие этапы.	Делаем умные остановки для нижнего
 2	Цифровой Нижний	science	TED	IT	Модульная система обеспечивающая связь между администрацией и жителями Нижнего Новгорода.	Связь между администрацией и жителями.
 3	Неформальный Нижний Новгород	other	TED	tourism	Этот проект будет посвящен местам в Нижнем Новгороде, о которых вы не задумывались ранее, но которые будут интересны всем вам. 	Путеводитель по Нижнему.
@@ -714,6 +746,7 @@ COPY public.sessions (id, user_id, user_type, user_agent, last_ip, "time") FROM 
 \\x9bce19a65bc96e1d592a005c086f52a7	7	0	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36	172.18.0.1	2020-02-24 09:07:38 MSK
 \\xcf29ac0d999518ee1bc72b81067e0316	8	0	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36	172.18.0.1	2020-02-24 09:08:48 MSK
 \\xcb06c48662d5364106228b7adaf2bb08	0	2	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36	172.18.0.1	2020-02-24 09:08:50 MSK
+\\x8418c3d0cf736af59518f750b405582f	0	2	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36	172.18.0.1	2020-05-27 23:16:17 MSK
 \.
 
 
@@ -737,7 +770,14 @@ COPY public.users (id, code, user_type, phone, name, sex, pass, team, project_id
 7	SOG6Q4	0	79266784848	Александр Никифоров	t	105934	3	3	non
 5	MPJ840	0	79776664529	Оксана Антипова	f	105934	2	1	non
 4	VW4946	0	79645266448	Евгения Зитцева	t	105934	4	2	non
-8	TYW7H9	0	79984772664	Анастасия Кривенко	f	105934	5	2	non
+9	TYR3H9	0	79984772665	Максим Варганов	t	105934	5	1	non
+10	TTW7H9	0	79984772666	Игнатий Макридинов	t	105934	5	0	non
+11	HYW7Y9	0	79984772667	Ольга Поликова	f	105934	5	0	non
+12	18RGL4	0	79984772668	Иннокентий Мотыльков	t	105934	1	0	non
+13	64RTD4	0	79984772669	Жанна Абрамова	f	105934	1	0	non
+14	Q920M7	0	79984772677	Галина Залетская	f	105934	2	0	non
+15	05RGL4	0	79984772678	Дарья Чернигова	f	105934	2	1	non
+8	TYW7Y4	0	79984772664	Анастасия Кревенко	f	105934	5	2	non
 0	TECODE	2	72345678900	Admin Userer	t	105934	0	0	non
 \.
 
@@ -761,7 +801,7 @@ SELECT pg_catalog.setval('public.codes_id_seq', 20, true);
 -- Name: credits_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.credits_id_seq', 1, false);
+SELECT pg_catalog.setval('public.credits_id_seq', 15, true);
 
 
 --
@@ -775,7 +815,7 @@ SELECT pg_catalog.setval('public.days_id_seq', 9, true);
 -- Name: enrolls_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.enrolls_id_seq', 1, false);
+SELECT pg_catalog.setval('public.enrolls_id_seq', 17, true);
 
 
 --
@@ -810,7 +850,7 @@ SELECT pg_catalog.setval('public.top_id_seq', 1, false);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 8, true);
+SELECT pg_catalog.setval('public.users_id_seq', 15, true);
 
 
 --
