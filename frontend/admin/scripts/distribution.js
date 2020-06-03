@@ -12,7 +12,7 @@ window.addEventListener('load', function () {
     loadVacations(function () {checkLoading(function () {setDistribution(); setDays()}, ['vacations', 'users', 'days'])});
 
 
-    loadDaysCredits(function () {checkLoading(setCredits, ['users', 'credits', 'days'])});
+    loadDaysCredits(function () {checkLoading(setCredits, ['users', 'credits', 'days'])});  // TODO: Check loading
 
     loadEvents(setHosts);
     loadEnrolls(function () {});
@@ -81,7 +81,8 @@ function countDay() {
                 yAxes: [{
                     ticks: {
                         min: 0,
-                        // max: 100
+                        // max: 100,
+                        stepSize: 1
                     }
                 }]
             }
@@ -122,21 +123,34 @@ function setHosts() {
         for (let host of event.host.split(', ')) {
 
             if (hosts[host] == undefined) {
-                hosts[host] = {'master': 0, 'lecture': 0};
+                hosts[host] = {'regular': 0, 'master': 0, 'lecture': 0, 'fun': 0};
                 hosts_total[host] = 0;
             }
 
             hosts_total[host]++;
+            if (event.type == 0) {
+                hosts[host]['regular']++;
+            } else
             if (event.type == 1) {
                 hosts[host]['master']++;
-            }
-
+            } else
             if (event.type == 2) {
                 hosts[host]['lecture']++;
+            } else
+            if (event.type == 3) {
+                hosts[host]['fun']++;
             }
         }
     }
 
+    let hosts_total_array = Object.entries(hosts_total).sort(function (a, b) {return a[1] < b[1] ? 1 : -1});
+
+    // let host_list = Object.values(cache['users']).filter(function (i) {return i['user_type'] > 0}).map(function (i) {return i.name});
+    // hosts_total_array = hosts_total_array.sort(function (a, b) {return a[0][1] < b[0]});
+    //
+    //
+    // let value_for_hosts = hosts_total_array.map(function (i) {return i[0] in host_list ? i[1] : 0;})
+    // let value_for_nothosts = hosts_total_array.map(function (i) {return i[0] in host_list ? 0 : i[1];})
 
     var ctx = document.getElementById('hosts').getContext('2d');
     var chart = new Chart(ctx, {
@@ -145,23 +159,44 @@ function setHosts() {
 
         // The data for our dataset
         data: {
-            labels: Object.keys(hosts_total),
-            datasets: [{
-                label: 'Количество занятий',
-                data: Object.values(hosts_total),
-                backgroundColor: '#006cae'
-            }]
+            labels: hosts_total_array.map(function (i) {return i[0];}),
+            datasets: [
+                {
+                    label: 'Количество Обычных Занятий',
+                    data: hosts_total_array.map(function (i) {return hosts[i[0]]['regular'];}),
+                    backgroundColor: '#596266'
+                    // backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                },
+                {
+                    label: 'Количество Мастерклассов',
+                    data: hosts_total_array.map(function (i) {return hosts[i[0]]['master'];}),
+                    backgroundColor: '#006cae'
+                    // backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                },
+                {
+                    label: 'Количество Лекций',
+                    data: hosts_total_array.map(function (i) {return hosts[i[0]]['lecture'];}),
+                    backgroundColor: '#ff6384'
+                    // backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                },
+                {
+                    label: 'Количество Развлекательных',
+                    data: hosts_total_array.map(function (i) {return hosts[i[0]]['fun'];}),
+                    backgroundColor: '#ffce56'
+                    // backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                },
+            ],
         },
 
         // Configuration options go here
         options: {
             scales: {
                 xAxes: [{
-                    ticks: {
-                        min: 0,
-                        // max: 100
-                    }
-                }]
+                    stacked: true,
+                }],
+                yAxes: [{
+                    stacked: true,
+                }],
             }
         }
     });
@@ -271,8 +306,6 @@ function setCredits() {
             }
         }
     });
-
-
 
     var ctx = document.getElementById('credits').getContext('2d');
     var creditsChart = new Chart(ctx, {

@@ -33,10 +33,10 @@
     <h3>Участники</h3>
     <div style="width:60%; display: flex; justify-content: space-around; align-items: center">
         <h4 style="margin: 0">Человек в системе:</h4>
-        <p id="counter" style="font-size: 18px">12</p>
+        <p id="counter" style="font-size: 18px">-</p>
 
         <h4 style="margin: 0">Человек в лагере:</h4>
-        <p id="counter_total" style="font-size: 18px">12</p>
+        <p id="counter_total" style="font-size: 18px">-</p>
     </div>
 
     <!--  Teams vacations   -->
@@ -45,21 +45,22 @@
     <div class="timetable"></div>
 
     <hr class="border_line">
-    <h3>Успеваемость</h3>
 
+    <h3>Успеваемость</h3>
     <!--  Credits achivment percentage users  -->
+    <!--  TODO: In one chart  -->
     <canvas id="percentage"></canvas>
     <canvas id="credits"></canvas>
 
 
     <hr class="border_line">
+
     <h3>Вожатые</h3>
-
-
     <!--  Host  -->
     <canvas id="hosts"></canvas>
 
     <hr class="border_line">
+
     <div style="display: flex; flex-direction: row; align-items: center">
         <h3 style="margin-right: 10px">Занятия</h3>
         <select id="days" onchange="countDay()">

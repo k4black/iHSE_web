@@ -1,7 +1,7 @@
-
+loadNames(function () {});  // TODO: Check
 
 document.addEventListener('load', function () {
-    loadNames(function () {});
+
 });
 
 
@@ -199,8 +199,6 @@ function setClass() {
 
 
 let enrolls;
-var names;
-
 
 
 /**
@@ -261,7 +259,7 @@ function setEnrolls() {
     // Set up enrolls on this event
     let users_list = '';
     for (let i in enrolls) {
-        let name = names[enrolls[i].user_id];
+        let name = cache['names'][enrolls[i].user_id];
         let close = '<button class="danger_button"><i class="mobile__item__icon large material-icons">clear</i></button>';
         let checkbox = '<input type="checkbox" ' + (enrolls[i].attendance === false || enrolls[i].attendance === 'false' ? '' : 'checked') + '>';
 

@@ -54,7 +54,11 @@ var current_class;
  * Read day data from cache and create html schedule
  */
 function setDay() {
-    loadingEnd(); // TODO: Check
+    let current_time = new Date().toLocaleTimeString('en-US', { hour12: false,
+                                             hour: "numeric",
+                                             minute: "numeric"});
+    current_time = current_time.slice(0, 2) + '.' + current_time.slice(3);
+    console.log('CURRENT TIME', current_time);
 
     let events = Object.values(cache['events']);
 
@@ -68,9 +72,11 @@ function setDay() {
 
     for (let processed_time of processed_times_arr.sort()) {
         let time = processed_time[6] == '0' && processed_time[7] != '0' ? processed_time.slice(0, 6) + processed_time.slice(7) : processed_time;
+        let active_time_bool = time.slice(0, 5) > current_time;
         time = time[0] === '0' && time[1] !== '0' ? time.slice(1) : time;
 
-        time_html = '<div class="time">' +
+
+        time_html = (active_time_bool ? '<div class="time active_time">' : '<div class="time inactive_time">')+
                         '<div class="bar">' + time + '</div>' +
                             '<div class="events">';
 
@@ -112,5 +118,18 @@ function setDay() {
     document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
 
     setupClasses();
+
+    // Scroll to active event time
+    try {
+        document.getElementsByClassName('active_time')[0].scrollIntoViewIfNeeded(true);
+    } catch (e) {
+        document.getElementsByClassName('active_time')[0].getElementById('myID').scrollIntoView({
+            behavior: 'auto',
+            block: 'center',
+            inline: 'center'
+        });
+    }
+
+    loadingEnd(); // TODO: Check
 }
 
