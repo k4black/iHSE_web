@@ -118,6 +118,7 @@ function setAccount() {
 
 
     // Load project
+    startProjectLoading();
     loadProject(user['project_id'], setProject);
 
     // Setup user bio

@@ -70,6 +70,15 @@
 
 
 
+.politics {
+    margin: 5px 15px 0 15px;
+    font-size: 12px;
+    color: var(--hint-light-colour);
+}
+.politics a {
+    font-style: italic;
+}
+
 
 @media (min-width : 769px) {
     .wrapper {

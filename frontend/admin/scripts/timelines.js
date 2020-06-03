@@ -54,8 +54,13 @@ function loadAndCreateTimeline(timeline) {  // TODO: refactor
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-
-            var day_data = JSON.parse( this.responseText );
+            let day_data;
+            try {
+                day_data = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error', e);
+                day_data = [];
+            }
 
 
             let current_events = {};
@@ -139,9 +144,13 @@ function buildTimeline(locations, events) {
         }
     }
 
-    console.log(' hour ', start_hours, end_hours, Math.min.apply(Math, start_hours), Math.max.apply(Math, end_hours));
+    let start_hour = Math.min.apply(Math, start_hours);
+    let end_hour = Math.max.apply(Math, end_hours) + 1 == 23 ? 0 : Math.max.apply(Math, end_hours) + 1;
 
-    timetable.setScope(Math.min.apply(Math, start_hours), Math.max.apply(Math, end_hours) + 1 == 23 ? 0 : Math.max.apply(Math, end_hours) + 1);
+
+    console.log(' hour ', start_hours, end_hours, start_hour, end_hour, start_hour == Infinity ? 8 : start_hour, -end_hour == Infinity ? 23 : end_hour);
+
+    timetable.setScope(start_hour == Infinity ? 8 : start_hour, -end_hour == Infinity ? 23 : end_hour);
     timetable.addLocations(locations);
 
     for (let i in events) {

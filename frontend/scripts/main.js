@@ -343,7 +343,6 @@ function loadNames(func) {
 
 
 
-
 /**
  * Get class information from server by class_id (event_id)
  * Save enrolls list to global 'cache['class']'

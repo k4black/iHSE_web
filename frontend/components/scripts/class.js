@@ -13,13 +13,16 @@ document.addEventListener('load', function () {
  */
 function showClass() {
     openState = true;
-    document.getElementById('class_popup').style.display = 'block';
+    // document.getElementById('class_popup').style.display = 'block';
+    document.getElementById('class_popup').classList.add('active');
+
     // console.log("Open menu");
 }
 
 function hideClass() {
     openState = false;
-    document.getElementById('class_popup').style.display = 'none';
+    // document.getElementById('class_popup').style.display = 'none';
+    document.getElementById('class_popup').classList.remove('active');
     // console.log("Close menu");
 }
 
@@ -60,6 +63,19 @@ function setupBar(val) {
 
 
 
+function startClassLoading() {
+    let loader = document.getElementsByClassName('class_popup__loading')[0];
+    loader.style.display = 'flex';
+    loader.nextElementSibling.style.display = 'none';
+}
+
+function endClassLoading() {
+    let loader = document.getElementsByClassName('class_popup__loading')[0];
+    loader.style.display = 'none';
+    loader.nextElementSibling.style.display = 'block';
+}
+
+
 
 function setupClasses() {
     console.log('setupClasses');
@@ -79,7 +95,12 @@ function setupClasses() {
 
             console.log('clicked event with id: ', class_events[i].getAttribute('data-id'));
 
+            // Pre setup class title
+            console.log('class', class_events[i].getElementsByClassName('event__title')[0])
+            document.querySelector('#class_popup .class_popup__header__title').innerText = class_events[i].getElementsByClassName('event__title')[0].textContent;
+
             // loadClass(class_events[i].getAttribute('data-id'));
+            startClassLoading();
             loadClass(class_events[i].getAttribute('data-id'), function () {checkLoading(function () {
                 setEnrolls();
                 setClass();
@@ -144,6 +165,7 @@ function setupData(elem, data) {
  * Set class fields in the popup class info
  */
 function setClass() {
+
     let current_events = cache['events'];
     let event_class = cache['class'];
     let class_id = event_class.id;
@@ -166,8 +188,11 @@ function setClass() {
     }
 
     document.querySelector('#scan').addEventListener('click', function () {
-        window.location = '/scan.html?event=' + event_class['id'];
+        window.location = '/admin/scan.html?event=' + event_class['id'];
     });
+
+
+    endClassLoading();
 }
 
 

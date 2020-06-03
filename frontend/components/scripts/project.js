@@ -7,12 +7,24 @@ loadNames(function () {});
 
 function editOthersProject(project_id) {
     document.querySelector('body').classList.remove('edit_mode');
+
+    // Pre setup project title
+    document.querySelector('#project_popup .project_popup__header__title').innerText = document.querySelectorAll('[project-id="' + project_id + '"]')[0].getElementsByTagName('span')[0].textContent;
+
+    startProjectLoading();
     loadProject(project_id, setPopupProject);
+    showProject();
 }
 
 function editProject(project_id) {
     document.querySelector('body').classList.add('edit_mode');
+
+    // Pre setup project title
+    document.querySelector('#project_popup .project_popup__header__title').innerText = document.querySelectorAll('[project-id="' + project_id + '"]')[0].getElementsByTagName('span')[0].textContent;
+
+    startProjectLoading();
     loadProject(project_id, setPopupProject);
+    showProject();
 }
 
 
@@ -23,13 +35,15 @@ function editProject(project_id) {
  */
 function showProject() {
     openState = true;
-    document.getElementById('project_popup').style.display = 'block';
+    // document.getElementById('project_popup').style.display = 'block';
+    document.getElementById('project_popup').classList.add('active');
     // console.log("Open menu");
 }
 
 function hideProject() {
     openState = false;
-    document.getElementById('project_popup').style.display = 'none';
+    // document.getElementById('project_popup').style.display = 'none';
+    document.getElementById('project_popup').classList.remove('active');
     // console.log("Close menu");
 }
 
@@ -42,6 +56,21 @@ function setupData(elem, data) {
     elem.firstElementChild.innerHTML = data;
     elem.lastElementChild.value = data;
 }
+
+
+
+function startProjectLoading() {
+    let loader = document.getElementsByClassName('project_popup__loading')[0];
+    loader.style.display = 'flex';
+    loader.nextElementSibling.style.display = 'none';
+}
+
+function endProjectLoading() {
+    let loader = document.getElementsByClassName('project_popup__loading')[0];
+    loader.style.display = 'none';
+    loader.nextElementSibling.style.display = 'block';
+}
+
 
 
 /**
@@ -94,8 +123,7 @@ function setPopupProject() {
         deenrollProject();
     };
 
-
-    showProject();
+    endProjectLoading();
 }
 
 
@@ -192,6 +220,8 @@ function saveProject() {
     cache['project']['description'] = desc;
 
     let data = JSON.stringify(cache['project']);
+
+    showProject();
 
     xhttp.open("POST", "/edit_project", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');

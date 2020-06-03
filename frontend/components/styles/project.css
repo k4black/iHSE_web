@@ -1,8 +1,23 @@
 
 
+/*#project_popup {*/
+/*    display: none;*/
+/*}*/
+
 #project_popup {
-    display: none;
+    display: block;
+    transition: opacity 0.2s ease-out;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    z-index: -10;
 }
+#project_popup.active {
+    opacity: 1;
+    height: auto;
+    z-index: 1000;
+}
+
 
 
 #project_popup .project_popup__body {
@@ -56,6 +71,27 @@
     /*overflow-y: scroll;*/
     height: calc(100% - 70px);
 }
+
+
+
+
+.project_popup__loading {
+    display: flex;
+    width: 100%;
+    height: 90%;
+    justify-content: center;
+    align-items: center;
+}
+
+.project_popup__loading img {
+    display: inline-block;
+    height: 70px;
+    width: 70px;
+}
+
+
+
+
 
 .project_popup__container {
     overflow-y: scroll;
