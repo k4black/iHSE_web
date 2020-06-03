@@ -29,10 +29,12 @@ function countDay() {
     console.log('day_id', day_id);
 
     let events_attendance = {};
+    let events_no_attendance = {};
     for (let event_id in cache['events']) {
         let event = cache['events'][event_id];
         if (event.day_id == day_id && event.type != 0) {
             events_attendance[event_id] = 0;
+            events_no_attendance[event_id] = 0;
         }
     }
 
@@ -45,6 +47,8 @@ function countDay() {
         for (let enroll of enrolls_by_class_id[event_id]) {
             if (enroll.attendance == true) {
                 events_attendance[event_id]++;
+            } else {
+                events_no_attendance[event_id]++;
             }
         }
     }
@@ -54,11 +58,17 @@ function countDay() {
         processed_events_attendance[cache['events'][event_id].title] = events_attendance[event_id];
     }
 
+    let processed_events_no_attendance = {};
+    for (let event_id in events_no_attendance) {
+        processed_events_no_attendance[cache['events'][event_id].title] = events_no_attendance[event_id];
+    }
+
     console.log('processed_events_attendance', processed_events_attendance);
 
     // attendance
     if (attendanceChart !== undefined) {
         attendanceChart.clear();
+        attendanceChart.destroy();
     }
     var ctx = document.getElementById('attendance').getContext('2d');
     attendanceChart = new Chart(ctx, {
@@ -68,23 +78,34 @@ function countDay() {
         // The data for our dataset
         data: {
             labels: Object.keys(processed_events_attendance),
-            datasets: [{
-                label: 'Количество посещений',
-                data: Object.values(processed_events_attendance),
-                backgroundColor: '#006cae'
-            }]
+            datasets: [
+                {
+                    label: 'Количество посещений',
+                    data: Object.values(processed_events_attendance),
+                    backgroundColor: '#006cae'
+                },
+                {
+                    label: 'Количество записей без посещения',
+                    data: Object.values(processed_events_no_attendance),
+                    backgroundColor: '#ff6384'
+                },
+            ]
         },
 
         // Configuration options go here
         options: {
             scales: {
-                yAxes: [{
+                xAxes: [{
                     ticks: {
                         min: 0,
-                        // max: 100,
+                        // max: 100
                         stepSize: 1
-                    }
-                }]
+                    },
+                    stacked: true,
+                }],
+                yAxes: [{
+                    stacked: true,
+                }],
             }
         }
     });

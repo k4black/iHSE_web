@@ -86,6 +86,7 @@ function loadDaysCredits(func) {
 
 
 // ['id', 'user_id', 'event_id', 'value', 'type', 'title', 'day_id']
+var credits_chart = undefined;
 
 function setCredits(team) {
     let credits_by_user_id = groupBy(Object.values(cache['credits']).filter(function (i) {return cache['users'][i['user_id']].team == team}), 'user_id');
@@ -125,9 +126,12 @@ function setCredits(team) {
     let total = cache['user'].total;
     let users_credits_array = Object.entries(sum_for_users).sort(function (a, b) {return a[1] < b[1] ? 1 : -1});
 
-
+    if (credits_chart != undefined) {
+        credits_chart.clear();
+        credits_chart.destroy();
+    }
     var ctx = document.getElementById('credits').getContext('2d');
-    var percentageChart = new Chart(ctx, {
+    credits_chart = new Chart(ctx, {
         // The type of chart we want to create
         type: 'horizontalBar',
 
@@ -184,6 +188,8 @@ function setCredits(team) {
 
 }
 
+
+var distribution_pie = undefined;
 function setDistribution(team) {
     let users_by_id = cache['users'];
 
@@ -223,9 +229,12 @@ function setDistribution(team) {
 
     total_users += male_total + female_total;
     total_vacations += male_vacations + female_vacations;
-
+    if (distribution_pie !== undefined) {
+        distribution_pie.clear();
+        distribution_pie.destroy();
+    }
     var ctx = document.getElementById('team_pie').getContext('2d');
-    var myDoughnutChart = new Chart(ctx, {
+    distribution_pie = new Chart(ctx, {
         type: 'doughnut',
         data: {
             datasets: [{
