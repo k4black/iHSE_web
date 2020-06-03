@@ -145,7 +145,15 @@ def get_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     if user_obj is None:
         return http.wrong_cookie(host=env['HTTP_HOST'])
 
-    data = sql.get_credits_by_user_id(user_obj['id'])
+    user_id = user_obj['id']
+
+    if 'id' in query:  # Request other's user credits
+        if user_obj['user_type'] > 0:  # Check admin rights
+            user_id = query['id']
+        else:
+            return http.forbidden()
+
+    data = sql.get_credits_by_user_id(user_id)
     return http.ok(host=env['HTTP_HOST'], json_dict=data)
 
 

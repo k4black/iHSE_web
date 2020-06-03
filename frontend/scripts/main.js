@@ -529,7 +529,7 @@ function loadFeedback(date, func) {
 /**
  * Get credits information from server by user cookies
  * Send http GET request and get projects json schedule
- * Save enrolls list to global 'cache['projects']'
+ * Save enrolls list to global 'cache['credits']'
  *
  * Run func on OK status
  */ 

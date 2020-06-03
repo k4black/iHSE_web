@@ -657,7 +657,7 @@ def post_edit_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
         return http.wrong_cookie(host=env['HTTP_HOST'])
 
     # Check current user can edit
-    if user_obj['type'] == 0 and user_obj['project_id'] != project_obj['id']:
+    if user_obj['user_type'] == 0 and user_obj['project_id'] != project_obj['id']:
         return http.not_allowed()
 
     sql.update_in_table(project_obj, 'projects')

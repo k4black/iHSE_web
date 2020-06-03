@@ -23,7 +23,7 @@ window.addEventListener('load', function () {
         // Load other user
         loadOtherUser(id, function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
         loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
-        loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
+        loadOtherCredits(id, function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
         loadDays(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
         loadNames(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
     }
@@ -55,12 +55,10 @@ window.addEventListener('load', function () {
  * Get project information from cache
  * And set up it to html
  */
-function setProject() {
+function setProject(user) {
     console.log('check setProject ', cache['project']);
 
-    let project_elem = document.querySelector('.account__project');
-
-    if (cache['user'].project_id == 0) {
+    if (user.project_id == 0) {
         // Create  project button
 
         document.querySelector('.account__project__create').addEventListener('click', function () {
@@ -69,6 +67,9 @@ function setProject() {
         });
         return;
     }
+
+    let project_elem = document.querySelector('.account__project');
+    project_elem.setAttribute('project-id', user.project_id );
 
     project_elem.classList.remove('no_project');
 
@@ -80,10 +81,10 @@ function setProject() {
     document.querySelector('.project__def_type').innerHTML = (project.def_type === 'TED' ? 'TED' : 'Презентация');
     let names_test = '';
     for (let user_id in cache['names']) {
-        let user = cache['names'][user_id];
+        let current_user = cache['names'][user_id];
 
         if (user.project_id == project.id) {
-            names_test += user.name + ' ';
+            names_test += current_user.name + '; ';
         }
     }
     document.querySelector('.project__names').innerHTML = names_test;
@@ -91,7 +92,11 @@ function setProject() {
     document.querySelector('.project__anno').innerHTML = project.annotation;
 
     // Edit button
-    document.querySelector('.project__edit_button').onclick = function () {editProject(project['id'])};
+    if (cache['user'].id == user.id || cache['user'].user_type != 0) {
+        document.querySelector('.project__edit_button').onclick = function () {editProject(project['id'])};
+    } else {
+        document.querySelector('.project__edit_button').onclick = function () {editOthersProject(project['id'])};
+    }
 }
 
 
@@ -116,10 +121,9 @@ function setAccount() {
         user = cache['other'];
     }
 
-
     // Load project
     startProjectLoading();
-    loadProject(user['project_id'], setProject);
+    loadProject(user['project_id'], function () {setProject(user)});
 
     // Setup user bio
     topbar.querySelector('.topbar__name').innerText = user.name;
@@ -446,22 +450,35 @@ function setCredits() {
 
 
 
-/** ===============  ANIMATIONS  =============== */
+/**
+ * Get credits information from server by user cookies
+ * Send http GET request and get projects json schedule
+ * Save enrolls list to global 'cache['credits']'
+ *
+ * Run func on OK status
+ */
+function loadOtherCredits(user_id, func) {
+    let xhttp = new XMLHttpRequest();
 
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
+            let credits_raw;
+            try {
+               credits_raw = JSON.parse(this.responseText);
+            } catch (e) {
+                console.log('error:', e);
+                credits_raw = [];
+            }
 
+            let credits = groupByUnique(credits_raw, 'id');
 
-// /**
-//  * Add code field animations
-//  * Hint Rise up when there is some text or cursor inside it
-//  */
-// var code = document.querySelector('#code');
-// code.addEventListener('focus', function () {
-//     code.closest('div').querySelector("label").classList.add('active');
-// });
-//
-// code.addEventListener('blur', function () {
-//     if (code.value != "")
-//         return;
-//
-//     code.closest('div').querySelector("label").classList.remove('active');
-// });
+            cache['credits'] = credits;
+
+            func();
+        }
+    };
+
+    xhttp.open("GET", "/credits?id=" + user_id, true);
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send();
+}
