@@ -1,0 +1,62 @@
+version: '3.7'
+
+volumes:
+    ihse_db:
+    ihse_db_exports:
+    ihse_conf:
+    ihse_nginx_logs:
+    ihse_uwsgi_logs:
+
+
+services:
+    # Nginx server for static frontend 
+    nginx:
+        build:
+            context: ./nginx/
+            dockerfile: nginx_local.dockerfile
+        container_name: ihse_nginx
+        restart: unless-stopped
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - ../frontend/:/var/app/frontend/
+            - ihse_nginx_logs:/var/log/nginx/
+#            - ../local_run/nginx/logs:/var/log/nginx/
+        depends_on:
+            - uwsgi
+
+    # uWSGI server for backend 
+    uwsgi:
+        build:
+            context: ./uwsgi/
+            dockerfile: uwsgi.dockerfile
+        container_name: ihse_uwsgi
+        restart: unless-stopped
+        volumes:
+            - ../backend/:/var/app/backend/
+            - ihse_conf:/var/conf/ihse/
+            - ihse_uwsgi_logs:/var/log/uwsgi/
+        depends_on:
+            - database
+
+    # PostgreSQL server for backend
+    # TODO
+    database:
+        image: postgres:12.1
+#        build:
+#            context: ./postgres
+#            dockerfile: postgres.dockerfile
+        container_name: ihse_postgres
+        restart: unless-stopped
+        ports:
+            - 5432:5432
+        volumes:
+            - ihse_db:/var/lib/postgresql/data/pgdata/
+            - ihse_db_exports:/var/lib/postgresql/exports/
+            - ./postgres/templates/example.sql:/docker-entrypoint-initdb.d/example.sql  # Change for others docker-compose
+        environment:
+            POSTGRES_DB: ihse
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: root
+            PGDATA: /var/lib/postgresql/data/pgdata
