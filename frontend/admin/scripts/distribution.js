@@ -7,12 +7,10 @@ window.addEventListener('load', function () {
 
     // setupToolbar();
     // setupTabs();
-    loadDays(function () {checkLoading(function () {setDistribution(); setDays()}, ['vacations', 'users', 'days'])});
-    loadUsers(function () {checkLoading(function () {setDistribution(); setDays()}, ['vacations', 'users', 'days'])});
-    loadVacations(function () {checkLoading(function () {setDistribution(); setDays()}, ['vacations', 'users', 'days'])});
-
-
-    loadDaysCredits(function () {checkLoading(setCredits, ['users', 'credits', 'days'])});  // TODO: Check loading
+    loadDays(function () {checkLoading(function () {setDistribution(); setDays(); setCredits()}, ['vacations', 'users', 'days', 'credits'])});
+    loadUsers(function () {checkLoading(function () {setDistribution(); setDays(); setCredits()}, ['vacations', 'users', 'days', 'credits'])});
+    loadVacations(function () {checkLoading(function () {setDistribution(); setDays(); setCredits()}, ['vacations', 'users', 'days', 'credits'])});
+    loadDaysCredits(function () {checkLoading(function () {setDistribution(); setDays(); setCredits()}, ['vacations', 'users', 'days', 'credits'])});
 
     loadEvents(setHosts);
     loadEnrolls(function () {});
@@ -99,7 +97,8 @@ function countDay() {
                     ticks: {
                         min: 0,
                         // max: 100
-                        stepSize: 1
+                        // stepSize: 1
+                        precision: 0
                     },
                     stacked: true,
                 }],
@@ -214,6 +213,10 @@ function setHosts() {
             scales: {
                 xAxes: [{
                     stacked: true,
+                    ticks: {
+                        min: 0,
+                        precision: 0
+                    }
                 }],
                 yAxes: [{
                     stacked: true,
@@ -256,6 +259,20 @@ function loadDaysCredits(func) {
 
 
 
+function _median(values){
+    if(values.length ===0) {
+        return 0;
+    }
+    values.sort(function(a,b){return a-b;});
+    let half = Math.floor(values.length / 2);
+
+    if (values.length % 2) {
+        return values[half];
+    }
+
+    return (values[half - 1] + values[half]) / 2.0;
+}
+
 function setCredits() {
     let credits_by_id = cache['credits'];
     let credits_by_day_id = groupBy(Object.values(credits_by_id), 'day_id');
@@ -264,36 +281,54 @@ function setCredits() {
 
     let sum_for_days = {};
     let mean_for_days = {};
+    let median_for_days = {};
     for (let day_id in days) {
         sum_for_days[days[day_id].date] = 0;
         mean_for_days[days[day_id].date] = 0;
     }
 
-    let users_counter = 0;
-    for (let user_id in cache['users']) {
-        if (cache['users'][user_id].type != 0) {
-            ++users_counter;
-        }
-    }
+    let users = Object.values(cache['users']).filter(function (i) {return i['user_type'] == 0});
+    let users_counter = users.length;
+    // for (let user_id in cache['users']) {
+    //     if (cache['users'][user_id].type != 0) {
+    //         ++users_counter;
+    //     }
+    // }
 
+    let last_day = undefined;
     for (let day_id in credits_by_day_id) {
         let credits_by_user_id = groupBy(credits_by_day_id[day_id], 'user_id');
 
+        let users_credits = [];
         let counter_for_day = 0;
-        for (let user_id in credits_by_user_id) {
+
+        for (let user_id of users.map(function (i) {return i.id})) {
             let sum_for_user = 0;
-            for (let credit of credits_by_user_id[user_id]) {
-                sum_for_user += credit.value;
-                mean_for_days[days[day_id].date] += credit.value;
+            if (user_id in credits_by_user_id) {
+                for (let credit of credits_by_user_id[user_id]) {
+                    sum_for_user += credit.value;
+                    mean_for_days[days[day_id].date] += credit.value;
+                }
             }
 
+            users_credits.push(sum_for_user);
             if (sum_for_user >= cache['user'].total) {
                 ++counter_for_day;
             }
         }
 
-        sum_for_days[days[day_id].date] = 100.0 * counter_for_day / Object.keys(cache['users']).length;
-        mean_for_days[days[day_id].date] = credits_by_day_id[day_id].length === 0 ? 0 : mean_for_days[days[day_id].date] / users_counter;
+        console.log('users_credits', users_credits);
+        let current_day = days[day_id].date;
+
+        sum_for_days[current_day] = 100.0 * counter_for_day / users_counter;
+        mean_for_days[current_day] = credits_by_day_id[day_id].length === 0 ? 0 : mean_for_days[current_day] / users_counter;
+        median_for_days[current_day] = _median(users_credits);
+
+        if (last_day !== undefined) {
+            mean_for_days[current_day] += mean_for_days[last_day];
+            median_for_days[current_day] += median_for_days[last_day];  // TODO: Check/ It's wrong
+        }
+        last_day = current_day;
     }
 
     console.log('sum_for_days', sum_for_days);
@@ -336,11 +371,18 @@ function setCredits() {
         // The data for our dataset
         data: {
             labels: Object.keys(mean_for_days),
-            datasets: [{
-                label: 'Среднее кредиты',
-                backgroundColor: '#006cae',
-                data: Object.values(mean_for_days)
-            }]
+            datasets: [
+                {
+                    label: 'Среднее кредиты',
+                    backgroundColor: '#006cae',
+                    data: Object.values(mean_for_days)
+                },
+                {
+                    label: 'Медианные кредиты',
+                    backgroundColor: '#ff6384',
+                    data: Object.values(median_for_days)
+                },
+            ]
         },
 
         // Configuration options go here

@@ -175,7 +175,8 @@ function setCredits(team) {
                     ticks: {
                         min: 0,
                         // max: 10
-                        stepSize: 1
+                        // stepSize: 1
+                        precision: 0
                     },
                     stacked: true,
                 }],

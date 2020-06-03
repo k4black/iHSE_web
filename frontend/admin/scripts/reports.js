@@ -37,21 +37,39 @@ function countTop() {
 
 
     let top_counter = {};
+    let top_self_counter = {};  // self team
+    let top_others_counter = {};  //others team
     for (let user_id in users) {
         top_counter[user_id] = 0;
+        top_self_counter[user_id] = 0;
+        top_others_counter[user_id] = 0;
     }
     for (let top of Object.values(top_by_id)) {
-        top_counter[top['chosen_1']]++;
-        top_counter[top['chosen_2']]++;
-        top_counter[top['chosen_3']]++;
-    }
+        for (let i of [1, 2, 3]) {
+            top_counter[top['chosen_' + i]]++;
 
-    let top_counter_not_empty = {};
-    for (let user_id in top_counter) {
-        if (top_counter[user_id] != 0) {
-            top_counter_not_empty[users[user_id].name] = top_counter[user_id];
+            if (users[top['user_id']].team == users[top['chosen_' + i]].team) {
+                top_self_counter[top['chosen_' + i]]++;
+            } else {
+                top_others_counter[top['chosen_' + i]]++;
+            }
         }
     }
+
+
+    let top_counter_not_empty = {};
+    let top_self_counter_not_empty = {};
+    let top_others_counter_not_empty = {};
+    for (let user_id in top_counter) {
+        if (top_counter[user_id] != 0) {
+            top_counter_not_empty[user_id] = top_counter[user_id];
+            top_self_counter_not_empty[user_id] = top_self_counter[user_id];
+            top_others_counter_not_empty[user_id] = top_others_counter[user_id];
+        }
+    }
+
+    let top_counter_not_empty_array = Object.entries(top_counter_not_empty).sort(function (a, b) {return a[1] < b[1] ? 1 : -1});
+
 
     var ctx = document.getElementById('top_feedback').getContext('2d');
     var topChart = new Chart(ctx, {
@@ -59,12 +77,19 @@ function countTop() {
 
         // The data for our dataset
         data: {
-            labels: Object.keys(top_counter_not_empty),  // TODO: sort
-            datasets: [{
-                label: 'Количество выбранных',
-                data: Object.values(top_counter_not_empty),
-                backgroundColor: '#006cae'
-            }]
+            labels: top_counter_not_empty_array.map(function (i) {return users[i[0]].name;}),
+            datasets: [
+                {
+                    label: 'Выбранно своим отрядом',
+                    data: top_counter_not_empty_array.map(function (i) {return top_self_counter_not_empty[i[0]];}),
+                    backgroundColor: '#006cae'
+                },
+                {
+                    label: 'Выбранно другими отрядами',
+                    data: top_counter_not_empty_array.map(function (i) {return top_others_counter_not_empty[i[0]];}),
+                    backgroundColor: '#ff6384'
+                },
+            ]
         },
 
         // Configuration options go here
@@ -73,9 +98,15 @@ function countTop() {
                 xAxes: [{
                     ticks: {
                         min: 0,
-                        // max: 100
-                    }
-                }]
+                        // max: 100,
+                        // stepSize: 1
+                        precision: 0
+                    },
+                    stacked: true,
+                }],
+                yAxes: [{
+                    stacked: true,
+                }],
             }
         }
     });
@@ -135,7 +166,8 @@ function countDaysFeedback() {
                     ticks: {
                         min: 0,
                         // max: 10,  // TODO: Total height
-                        stepSize: 1
+                        // stepSize: 1
+                        precision: 0
                     }
                 }]
             },
