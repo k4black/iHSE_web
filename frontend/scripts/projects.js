@@ -27,6 +27,12 @@ window.addEventListener('load', function () {
  * Parse of cached projects data and create html
  */
 function setProjects() { // If ok set up day field
+    // TODO: check user is loaded
+    if ('user' in cache && cache['user'].project_id == 0) {
+        document.getElementById('create_project').style.display = 'flex';
+    }
+
+
     console.log('setProjects run with cache: ', cache);
 
     loadingEnd(); // TODO: Check

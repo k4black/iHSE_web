@@ -108,6 +108,10 @@ function setupDays() {   // TODO: Refactor
             var days = document.querySelectorAll('.day');
             for (let i = 0; i < days.length; i++) {
                 days[i].addEventListener('click', function() {
+                    if (this.classList.contains('selected')) {
+                        return;
+                    }
+
                     loadingStart();
 
                     if (this.classList.contains('add_day')) {

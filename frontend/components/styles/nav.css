@@ -172,7 +172,8 @@
 .mobile__item__name {
     margin-left: 25px;
 
-    height: 20px;
+    /*height: 20px;*/
+    margin-top: 3px;
     vertical-align: middle;
 
     /*font-weight: bold;*/

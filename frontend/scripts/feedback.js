@@ -8,8 +8,10 @@
 
 window.addEventListener('load', function () {
     // loadDays(setDays);
+    loadingStart();
     loadDays(function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
     loadFeedback('05.06', function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
+    document.querySelector('.feedback_title').innerHTML = '05.06'; // TODO: load title from cache
     // TODO: remove '05.06'
     loadNames(setNames);
 
@@ -41,7 +43,7 @@ function setDays() {
     let i = 0;
     let full_year = (new Date().getFullYear());
     let days_of_week = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-    for (let day_id in cache['days']) {
+    for (let day_id in cache['days']) {  // TODO: Sort years
         let day = cache['days'][day_id];
 
         if (!day['feedback'] || day_id == 0) {
@@ -49,9 +51,9 @@ function setDays() {
             continue;
         }
 
-        if (day.date === today) {  // TODO: Today
+        if (day.date === '05.06') {  // TODO: Today
             topbar_html += '<div class="day today selected">'
-        } else if (day.date > today) {
+        } else if (day.date >= today) {
             topbar_html += '<div class="day disabled">'
         } else {
             topbar_html += '<div class="day">'
@@ -69,6 +71,7 @@ function setDays() {
 
     document.querySelector('.topbar').innerHTML = topbar_html;
 
+    let days_by_date = groupByUnique(Object.values(cache['days']), 'date');
 
     // Set onclick loading other day
     var days = document.querySelectorAll('.day');
@@ -78,6 +81,12 @@ function setDays() {
         }
 
         days[i].addEventListener('click', function() {
+            if (this.classList.contains('selected')) {
+                return;
+            }
+
+            loadingStart();
+
             let selected = document.querySelector('.selected');
             if (selected != null) {
                 selected.classList.remove('selected');
@@ -86,7 +95,7 @@ function setDays() {
             this.classList.add('selected');
 
             loadFeedback(this.lastElementChild.textContent, setFeedback);
-            document.querySelector('.feedback_title').innerHTML = this.lastElementChild.textContent; // TODO: load title from cache
+            document.querySelector('.feedback_title').innerHTML = days_by_date[this.lastElementChild.textContent].date + (days_by_date[this.lastElementChild.textContent].title != '' ? ': ' + days_by_date[this.lastElementChild.textContent].title : '')  // this.lastElementChild.textContent; // TODO: load title from cache
         });
     }
 }
@@ -128,7 +137,7 @@ function setFeedback() {
         console.log('feedback data for event ' + event, feedback);
 
         events_html +=
-            '<div class="event" event-id="' + event.id + '">' +
+            '<div class="event loading__resource" event-id="' + event.id + '">' +
                 '<h3>' + event.title + '</h3>' +
                 '<p class="host">' + event.host + '</p>' +
                 '<div class="event_feature">' +
@@ -154,6 +163,10 @@ function setFeedback() {
                     '<textarea id="event' + event.id + 'comment" placeholder="Что было плохо? Что сделать лучше?"></textarea>' +
                 '</div>' +
             '</div>';
+    }
+
+    if (events_html == '') {
+        events_html = '<div class="no_event"><p>Кажется, что вы не посетили ни одного мероприятия в этот день. Очень жаль</p> &#128549;</div>'
     }
 
     document.querySelector('.events').innerHTML = events_html;
@@ -183,6 +196,8 @@ function setFeedback() {
             document.querySelector('#event' + event.id + 'comment').value = '';
         }
     }
+
+    loadingEnd();
 }
 
 

@@ -50,12 +50,13 @@ function checkLoading(foo, waiting_list) {
  * Get string of today date (dd.mm)
  */
 function getToday() {
-    let today_date = new Date();  //January is 0!
-    let dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');
-
-    dd_mm = cache['today'];  // Debug??
+    let dd_mm = cache['today'];  // Debug??
     if (dd_mm == undefined) {
         dd_mm = cache['user'].today;
+    }
+    if (dd_mm == undefined) {
+        let today_date = new Date();  //January is 0!
+        dd_mm = String(today_date.getDate()).padStart(2, '0') + String(today_date.getMonth() + 1).padStart(2, '0');
     }
     return dd_mm;
 }

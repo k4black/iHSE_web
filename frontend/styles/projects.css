@@ -14,6 +14,12 @@
 
 
 
+#create_project {
+    display: none;
+}
+
+
+
 .project {
     position: relative;
     display: flex;

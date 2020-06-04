@@ -51,8 +51,9 @@
 
 
 html, body {
-    font-family: 'Hind', sans-serif;
-    /*font-family: 'Myriad', sans-serif; TODO: choose font*/
+    /*font-family: 'Hind', sans-serif;*/
+    font-family: 'Myriad', sans-serif;
+    /*TODO: choose font*/
     /*font-weight: lighter;*/
     position: static;
 
@@ -375,7 +376,7 @@ body:not(.loading_end) .data__loading .loading__resource button * {
 
 
 .mobile__floating__button__icon {
-    font-family: 'Hind', sans-serif;
+    /*font-family: 'Hind', sans-serif;*/
     vertical-align: middle;
     transform: translateY(-80%);
     color: white;

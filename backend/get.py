@@ -76,8 +76,8 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     del data['pass']
 
     data['calendar'] = True
-    data['feedback'] = False
-    data['projects'] = True  # TODO: Notifacation
+    data['feedback'] = False  # TODO: Notifacation
+    data['projects'] = user_obj['project_id'] == 0 or user_obj['project_id'] == '0'
 
     data['total'] = config.get_config()['CREDITS_TOTAL']
     data['today'] = get_date_str()  # TODO: remove. Only for debug???
