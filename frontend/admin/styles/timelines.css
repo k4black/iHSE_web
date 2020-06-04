@@ -10,60 +10,86 @@
 
 .timetable .time-entry {
     border: 0.5px #9a9a9a solid!important;
-
 }
 
 
 .timetable .time-entry.master-event {
-    background-color: #91a9cd;
+    background-color: var(--admin-master-event);
     cursor: pointer;
     border-radius: 5px;
 }
 
 .timetable .time-entry.master-event:hover {
-    background-color: #8499ba;
+    background-color: var(--admin-master-event);
+    filter: brightness(85%);
 }
 
 .timetable .time-entry.lecture-event {
-    background-color: #91a9cd;
+    background-color: var(--admin-lecture-event);
     cursor: pointer;
     border-radius: 5px;
 }
 
 .timetable .time-entry.lecture-event:hover {
-    background-color: #91a9cd;
-    cursor: pointer;
-    border-radius: 5px;
+    background-color: var(--admin-lecture-event);
+    filter: brightness(85%);
 }
 
 
 
 .timetable .time-entry.regular-event {
-    background-color: #bbbdbc;
+    background-color: var(--admin-regular-event);
     cursor: default;
     border-radius: 5px;
 }
 
 .timetable .time-entry.regular-event:hover {
-    background-color: #acaead;
-    cursor: default;
-    border-radius: 5px;
+    background-color: var(--admin-regular-event);
+    filter: brightness(85%);
 }
 
 
-
 .timetable .time-entry.fun-event {
-    background-color: #bd9763;
+    background-color: var(--admin-fun-event);
     cursor: default;
     border-radius: 5px;
 }
 
 .timetable .time-entry.fun-event:hover {
-    background-color: #b3874a;
-    cursor: default;
-    border-radius: 5px;
+    background-color: var(--admin-fun-event);
+    filter: brightness(85%);
 }
 
+
+
+
+#legend {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#legend span {
+    width: 50px;
+    border-radius: 5px;
+    margin-left: 15px;
+    margin-right: 5px;
+    border: 0.5px #9a9a9a solid;
+}
+
+
+#legend_regular {
+    background-color: var(--admin-regular-event);
+}
+#legend_master {
+    background-color: var(--admin-master-event);
+}
+#legend_lecture  {
+    background-color: var(--admin-lecture-event);
+}
+#legend_fun {
+    background-color: var(--admin-fun-event);
+}
 
 
 

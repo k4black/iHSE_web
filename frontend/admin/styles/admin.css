@@ -1,5 +1,37 @@
 
 
+:root {
+    --admin-female-sex: #c954ec;
+    --admin-female-sex-dark: #9e61a9;
+    --admin-male-sex: #4177e4;
+    --admin-male-sex-dark: #5969b5;
+
+    --admin-enroll-active: #006cae;
+    --admin-enroll-inactive: #ff6384;
+    --admin-regular-event: #6f7a7f;
+    --admin-master-event: #006cae;
+    --admin-lecture-event: #ff6384;
+    /*--admin-lecture-event: #ef5272;*/
+    /*--admin-fun-event: #ffce56;*/
+    --admin-fun-event: #ffbd12;
+
+    --admin-special-event: #c551fd;
+
+
+    --admin-feedback-overall: #ff6384;
+    --admin-feedback-entertain: #36a2eb;
+    --admin-feedback-useful: #cc65fe;
+    --admin-feedback-understand: #ffce56;
+
+    --admin-feedback-self: #006cae;
+    --admin-feedback-others: #ff6384;
+
+}
+
+
+
+
+
 
 .user_type, .event_type, .bool_type {
     width: 85px;

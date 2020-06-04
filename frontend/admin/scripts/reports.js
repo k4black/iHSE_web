@@ -71,6 +71,7 @@ function countTop() {
     let top_counter_not_empty_array = Object.entries(top_counter_not_empty).sort(function (a, b) {return a[1] < b[1] ? 1 : -1});
 
 
+    var style = getComputedStyle(document.body);
     var ctx = document.getElementById('top_feedback').getContext('2d');
     var topChart = new Chart(ctx, {
         type: 'horizontalBar',
@@ -82,12 +83,14 @@ function countTop() {
                 {
                     label: 'Выбранно своим отрядом',
                     data: top_counter_not_empty_array.map(function (i) {return top_self_counter_not_empty[i[0]];}),
-                    backgroundColor: '#006cae'
+                    // backgroundColor: '#006cae'
+                    backgroundColor: style.getPropertyValue('--admin-feedback-self').trim(),
                 },
                 {
                     label: 'Выбранно другими отрядами',
                     data: top_counter_not_empty_array.map(function (i) {return top_others_counter_not_empty[i[0]];}),
-                    backgroundColor: '#ff6384'
+                    // backgroundColor: '#ff6384'
+                    backgroundColor: style.getPropertyValue('--admin-feedback-others').trim(),
                 },
             ]
         },
@@ -250,6 +253,7 @@ function countHostFeedback() {
 
     document.querySelector('.hosts_feedback').innerHTML = host_html;
 
+    var style = getComputedStyle(document.body);
     for (let host in hosts_count) {
         // console.log('host', host, 'data_pre', hosts_mean[host], 'data', [hosts_mean[host]['score'], hosts_mean[host]['entertain'], hosts_mean[host]['useful'], hosts_mean[host]['understand']])
         var ctx = document.getElementById('host' + hashCode(host)).getContext('2d');
@@ -262,8 +266,15 @@ function countHostFeedback() {
                 labels: ['Общее', 'Интересно', 'Полезно', 'Понятно'],
                 datasets: [{
                     label: 'Средние оценки',
-                    backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
-                    data: [hosts_mean_score[host], hosts_mean_entertain[host], hosts_mean_useful[host], hosts_mean_understand[host]]
+                    data: [hosts_mean_score[host], hosts_mean_entertain[host], hosts_mean_useful[host], hosts_mean_understand[host]],
+
+                    // backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                    backgroundColor: [
+                        style.getPropertyValue('--admin-feedback-overall').trim(),
+                        style.getPropertyValue('--admin-feedback-entertain').trim(),
+                        style.getPropertyValue('--admin-feedback-useful').trim(),
+                        style.getPropertyValue('--admin-feedback-understand').trim(),
+                    ]
                 }]
             },
 
@@ -337,6 +348,7 @@ function countDayFeedback() {
 
         document.getElementById('comments' + event_id).innerHTML = comments_html == '' ? '[нет комментариев]' : comments_html;
 
+        var style = getComputedStyle(document.body);
         var ctx = document.getElementById('event' + event_id).getContext('2d');
         var chart = new Chart(ctx, {
             // The type of chart we want to create
@@ -347,8 +359,15 @@ function countDayFeedback() {
                 labels: ['Общее', 'Интересно', 'Полезно', 'Понятно'],
                 datasets: [{
                     label: 'Средние оценки',
-                    backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
-                    data: [mean_score['score'], mean_score['entertain'], mean_score['useful'], mean_score['understand']]
+                    data: [mean_score['score'], mean_score['entertain'], mean_score['useful'], mean_score['understand']],
+
+                    // backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                    backgroundColor: [
+                        style.getPropertyValue('--admin-feedback-overall').trim(),
+                        style.getPropertyValue('--admin-feedback-entertain').trim(),
+                        style.getPropertyValue('--admin-feedback-useful').trim(),
+                        style.getPropertyValue('--admin-feedback-understand').trim(),
+                    ]
                 }]
             },
 

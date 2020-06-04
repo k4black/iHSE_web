@@ -130,6 +130,7 @@ function setCredits(team) {
         credits_chart.clear();
         credits_chart.destroy();
     }
+    var style = getComputedStyle(document.body);
     var ctx = document.getElementById('credits').getContext('2d');
     credits_chart = new Chart(ctx, {
         // The type of chart we want to create
@@ -147,22 +148,26 @@ function setCredits(team) {
                 {
                     label: 'Особые кредиты',
                     data: users_credits_array.map(function (i) {return sum_for_users_split[i[0]]['regular'];}),
-                    backgroundColor: '#cc65fe'
+                    // backgroundColor: '#cc65fe'
+                    backgroundColor: style.getPropertyValue('--admin-special-event').trim(),
                 },
                 {
                     label: 'Мастерклассы кредиты',
                     data: users_credits_array.map(function (i) {return sum_for_users_split[i[0]]['master'];}),
-                    backgroundColor: '#006cae'
+                    // backgroundColor: '#006cae'
+                    backgroundColor: style.getPropertyValue('--admin-master-event').trim(),
                 },
                 {
                     label: 'Лекционные кредиты',
                     data: users_credits_array.map(function (i) {return sum_for_users_split[i[0]]['lecture'];}),
-                    backgroundColor: '#ff6384'
+                    // backgroundColor: '#ff6384'
+                    backgroundColor: style.getPropertyValue('--admin-lecture-event').trim(),
                 },
                 {
                     label: 'Развлекательные кредиты',
                     data: users_credits_array.map(function (i) {return sum_for_users_split[i[0]]['fun'];}),
-                    backgroundColor: '#ffce56'
+                    // backgroundColor: '#ffce56'
+                    backgroundColor: style.getPropertyValue('--admin-fun-event').trim(),
                 },
             ]
         },
@@ -234,14 +239,20 @@ function setDistribution(team) {
         distribution_pie.clear();
         distribution_pie.destroy();
     }
+    var style = getComputedStyle(document.body);
     var ctx = document.getElementById('team_pie').getContext('2d');
     distribution_pie = new Chart(ctx, {
         type: 'doughnut',
         data: {
             datasets: [{
                 data: [male_total - male_vacations, female_total - female_vacations, male_vacations, female_vacations],
-                // data: [12, 23, 3, 0],  // TODO: Real values
-                backgroundColor: ['#4177e4', '#c954ec', '#5969b5', '#9e61a9']
+                // backgroundColor: ['#4177e4', '#c954ec', '#5969b5', '#9e61a9']
+                backgroundColor: [
+                    style.getPropertyValue('--admin-male-sex').trim(),
+                    style.getPropertyValue('--admin-female-sex').trim(),
+                    style.getPropertyValue('--admin-male-sex-dark').trim(),
+                    style.getPropertyValue('--admin-female-sex-dark').trim(),
+                ]
             }],
 
             // These labels appear in the legend and in the tooltips when hovering different arcs

@@ -68,6 +68,8 @@ function countDay() {
         attendanceChart.clear();
         attendanceChart.destroy();
     }
+
+    var style = getComputedStyle(document.body);
     var ctx = document.getElementById('attendance').getContext('2d');
     attendanceChart = new Chart(ctx, {
         // The type of chart we want to create
@@ -80,12 +82,14 @@ function countDay() {
                 {
                     label: 'Количество посещений',
                     data: Object.values(processed_events_attendance),
-                    backgroundColor: '#006cae'
+                    // backgroundColor: '#006cae'
+                    backgroundColor: style.getPropertyValue('--admin-enroll-active').trim(),
                 },
                 {
                     label: 'Количество записей без посещения',
                     data: Object.values(processed_events_no_attendance),
-                    backgroundColor: '#ff6384'
+                    // backgroundColor: '#ff6384'
+                    backgroundColor: style.getPropertyValue('--admin-enroll-inactive').trim()
                 },
             ]
         },
@@ -171,6 +175,7 @@ function setHosts() {
     //
     // let value_for_hosts = hosts_total_array.map(function (i) {return i[0] in host_list ? i[1] : 0;})
     // let value_for_nothosts = hosts_total_array.map(function (i) {return i[0] in host_list ? 0 : i[1];})
+    var style = getComputedStyle(document.body);
 
     var ctx = document.getElementById('hosts').getContext('2d');
     var chart = new Chart(ctx, {
@@ -184,26 +189,26 @@ function setHosts() {
                 {
                     label: 'Количество Обычных Занятий',
                     data: hosts_total_array.map(function (i) {return hosts[i[0]]['regular'];}),
-                    backgroundColor: '#596266'
-                    // backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                    // backgroundColor: '#596266'
+                    backgroundColor: style.getPropertyValue('--admin-regular-event').trim(),
                 },
                 {
                     label: 'Количество Мастерклассов',
                     data: hosts_total_array.map(function (i) {return hosts[i[0]]['master'];}),
-                    backgroundColor: '#006cae'
-                    // backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                    // backgroundColor: '#006cae'
+                    backgroundColor: style.getPropertyValue('--admin-master-event').trim(),
                 },
                 {
                     label: 'Количество Лекций',
                     data: hosts_total_array.map(function (i) {return hosts[i[0]]['lecture'];}),
-                    backgroundColor: '#ff6384'
-                    // backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                    // backgroundColor: '#ff6384'
+                    backgroundColor: style.getPropertyValue('--admin-lecture-event').trim(),
                 },
                 {
                     label: 'Количество Развлекательных',
                     data: hosts_total_array.map(function (i) {return hosts[i[0]]['fun'];}),
-                    backgroundColor: '#ffce56'
-                    // backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56'],
+                    // backgroundColor: '#ffce56'
+                    backgroundColor: style.getPropertyValue('--admin-fun-event').trim(),
                 },
             ],
         },
@@ -452,6 +457,7 @@ function setDistribution() {
 
         total_users += male_total + female_total;
         total_vacations += male_vacations + female_vacations;
+        var style = getComputedStyle(document.body);
 
         var ctx = document.getElementById('team' + team).getContext('2d');
         var myDoughnutChart = new Chart(ctx, {
@@ -459,8 +465,13 @@ function setDistribution() {
             data: {
                 datasets: [{
                     data: [male_total - male_vacations, female_total - female_vacations, male_vacations, female_vacations],
-                    // data: [12, 23, 3, 0],  // TODO: Real values
-                    backgroundColor: ['#4177e4', '#c954ec', '#5969b5', '#9e61a9']
+                    // backgroundColor: ['#4177e4', '#c954ec', '#5969b5', '#9e61a9']
+                    backgroundColor: [
+                        style.getPropertyValue('--admin-male-sex').trim(),
+                        style.getPropertyValue('--admin-female-sex').trim(),
+                        style.getPropertyValue('--admin-male-sex-dark').trim(),
+                        style.getPropertyValue('--admin-female-sex-dark').trim(),
+                    ]
                 }],
 
                 // These labels appear in the legend and in the tooltips when hovering different arcs
