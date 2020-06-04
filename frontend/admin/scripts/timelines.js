@@ -161,7 +161,11 @@ function buildTimeline(locations, events) {
         let [hours1, min1] = time1.split('.');
         let hours2, min2;
         if (time2 === undefined) {
-            [hours2, min2] = [parseInt(hours1) + 1, min1];
+            [hours2, min2] = [parseInt(hours1), parseInt(min1) + 30];
+            if (min2 >= 60) {
+                min2 -= 60;
+                hours2 += 1;
+            }
         } else {
             [hours2, min2] = time2.split('.');
         }

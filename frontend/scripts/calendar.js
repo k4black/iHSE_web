@@ -289,9 +289,15 @@ function setupAdminButtons() {
             // alert('clicked remove');
             console.log('Copy Event ' + copyButtons[i].parentElement.getAttribute('data-id'));
 
-            let type = 0;
-            if ('active-event' in Object.values(copyButtons[i].parentElement.attributes)) {
-                type = ('active-event-lecture' in Object.values(copyButtons[i].parentElement.attributes)) ? 2 : 1;
+            let type = "0";
+            let attributes = Object.values(editButtons[i].parentElement.attributes).map(function (i) {return i.name});
+            // console.log('attributes', 'class' in attributes);
+            if (attributes.includes('master-event')) {
+                type = "1";
+            } else if (attributes.includes('lecture-event')) {
+                type = "2";
+            } else if (attributes.includes('fun-event')) {
+                type = "3";
             }
 
             let title = copyButtons[i].parentElement.getElementsByClassName('event__title')[0].textContent;

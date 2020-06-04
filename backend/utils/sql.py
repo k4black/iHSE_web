@@ -1,6 +1,7 @@
 """Module for basic PostgreSQL interaction via psycopg2"""
 import time
 import typing as tp
+import copy
 
 import psycopg2
 
@@ -350,7 +351,17 @@ def insert_to_table(data: TTableObject, table_name: str) -> tp.Optional[int]:
 
     if table_name == 'events':
         # Class event
-        return insert_event(data)
+        if 'date' in data:
+            # If several dates - split by ', '
+            last_id = None
+            for date in data['date'].split(', '):
+                current_event = copy.copy(data)
+                current_event['date'] = date
+
+                last_id = insert_event(current_event)
+            return last_id
+        else:
+            return insert_event(data)
 
     hundred: tp.Optional[tp.Tuple[int]]
     fields = ', '.join([field for field in table_fields[table_name] if field != 'id'])
@@ -1071,8 +1082,6 @@ def edit_event(event_obj: TTableObject) -> bool:
         event_obj: event obj (id, type, title, description, host, place, time, day_id)
     """
 
-    # TODO: Check Changed type -> create or delete
-
     if 'day_id' in event_obj.keys():
         day_id = event_obj['day_id']
     else:
@@ -1093,12 +1102,12 @@ def edit_event(event_obj: TTableObject) -> bool:
         day_id = day[0]
 
     try:
-        # check event type
+        # Check Changed type -> create or delete
         if int(event_obj['type']) == 1 or int(event_obj['type']) == 2:
             # Now it's class. Check class exist
             with conn.cursor() as cursor_:
                 cursor_.execute(
-                    'INSERT INTO classes (id, total, annotation) VALUES (%s, 0, '') ON CONFLICT DO NOTHING',
+                    'INSERT INTO classes (id, total, annotation) VALUES (%s, 0, \'\') ON CONFLICT DO NOTHING',
                     (event_obj['id'],))
         else:
             # Mb was a class. Remove
