@@ -23,6 +23,9 @@ function loadConfig() {
                 $('#additional')[0].value = data.additional;
 
                 $('#groups')[0].value = data.groups;
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
         }
     };
@@ -80,6 +83,9 @@ function loadPlaces() {
                 }
 
                 $('#places')[0].value = places.join('\n');
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
         }
     };

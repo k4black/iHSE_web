@@ -109,10 +109,26 @@ body {
     align-items: center;
 
     height: 60px;
-    margin: auto 0;
+    margin: 5px 0 10px 0;
 }
 
 .credits__description p:first-child {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+.team__description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    height: 60px;
+    margin: 10px 0 5px 0;
+}
+
+.team__description p:first-child {
     font-size: 18px;
     font-weight: bold;
 }

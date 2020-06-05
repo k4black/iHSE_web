@@ -2,18 +2,22 @@
 
 <script>
     function backButton() {
-        switch (String(document.referrer).split("/").pop()) {
+        switch (String(document.location.pathname).split("/").pop()) {
             case "register.html":
                 window.location.href = "../login.html";
                 break;
 
-            case "create.html":
-                window.location.href = "../projects.html";
-                break;
+            // case "create.html":
+            //     window.location.href = "../projects.html";
+            //     break;
 
             default:
                 //TODO: .split("/")[2] feels like костыль, need to do smth with it?
-                window.location.href = String.prototype.concat("http://", String(document.referrer).split("/")[2], "/");
+                if (String(document.referrer) != "") {
+                    window.location.href = String.prototype.concat("http://", String(document.referrer).split("/")[2], "/");
+                } else {
+                    window.location.href = document.location.origin;
+                }
                 break;
         }
     // window.location.href = document.referrer;

@@ -260,6 +260,9 @@ function loadTable(tableName, func) {
                 cache[tableName] = objs;
 
                 func();
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
         }
     };

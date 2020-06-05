@@ -130,6 +130,8 @@ function setAccount() {
     phone = '+' + phone[0] + ' (' + phone.slice(1, 4) + ') ' + phone.slice(4, 7) + '-' + phone.slice(7);
     topbar.querySelector('.topbar__phone').innerText = phone;
 
+    document.querySelector('.team__title').innerText = user.team;
+
     //setup.sh avatar
     if (user.avatar != null && user.avatar != undefined && user.avatar != '')
         topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";

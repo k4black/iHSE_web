@@ -255,19 +255,24 @@ function loadDaysCredits(func) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let credits_raw;
-            try {
-                credits_raw = JSON.parse(this.responseText);
-            } catch (e) {
-                console.log('error', e)
-                credits_raw = [];
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up day field
+                let credits_raw;
+                try {
+                    credits_raw = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error', e)
+                    credits_raw = [];
+                }
+                let credits = groupByUnique(credits_raw, 'id');
+
+                cache['credits'] = credits;
+
+                func();
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
-            let credits = groupByUnique(credits_raw, 'id');
-
-            cache['credits'] = credits;
-
-            func();
         }
     };
 
@@ -537,6 +542,9 @@ function loadUsers(func) {
                 cache['users'] = objs;
 
                 func();
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
         }
     };
@@ -571,6 +579,9 @@ function loadVacations(func) {
                 cache['vacations'] = objs;
 
                 func();
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
         }
     };
@@ -593,19 +604,24 @@ function loadEvents(func) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let events_raw;
-            try {
-                events_raw = JSON.parse(this.responseText);
-            } catch (e) {
-                console.log('error', e)
-                events_raw = [];
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up day field
+                let events_raw;
+                try {
+                    events_raw = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error', e)
+                    events_raw = [];
+                }
+                let events = groupByUnique(events_raw, 'id');
+
+                cache['events'] = events;
+
+                func();
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
-            let events = groupByUnique(events_raw, 'id');
-
-            cache['events'] = events;
-
-            func();
         }
     };
 
@@ -621,19 +637,24 @@ function loadEnrolls(func) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let enrolls_raw;
-            try {
-                enrolls_raw = JSON.parse(this.responseText);
-            } catch (e) {
-                console.log('error', e)
-                enrolls_raw = [];
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up day field
+                let enrolls_raw;
+                try {
+                    enrolls_raw = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error', e)
+                    enrolls_raw = [];
+                }
+                let enrolls = groupByUnique(enrolls_raw, 'id');
+
+                cache['enrolls'] = enrolls;
+
+                func();
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
-            let enrolls = groupByUnique(enrolls_raw, 'id');
-
-            cache['enrolls'] = enrolls;
-
-            func();
         }
     };
 

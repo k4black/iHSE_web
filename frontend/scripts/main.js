@@ -199,8 +199,9 @@ function loadDays(func) {
                 cache['today'] = days_raw['today'];
 
                 func();
-            } else if (this.status === 401) {  // Unauthorized
-
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
         }
     };
@@ -524,18 +525,20 @@ function loadFeedback(date, func) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let feedback;
-            try {
-               feedback = JSON.parse(this.responseText);
-            } catch (e) {
-                console.log('error:', e);
-                feedback = {};
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up day field
+                let feedback;
+                try {
+                    feedback = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error:', e);
+                    feedback = {};
+                }
+
+                cache['feedback'] = feedback;
+
+                func();
             }
-
-            cache['feedback'] = feedback;
-
-            func();
         }
     };
 

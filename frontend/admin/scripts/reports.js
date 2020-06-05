@@ -399,19 +399,24 @@ function loadEvents(func) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let events_raw;
-            try {
-                events_raw = JSON.parse(this.responseText);
-            } catch (e) {
-                console.log('error', e);
-                events_raw = [];
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up day field
+                let events_raw;
+                try {
+                    events_raw = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error', e);
+                    events_raw = [];
+                }
+                let events = groupByUnique(events_raw, 'id');
+
+                cache['events'] = events;
+
+                func();
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
-            let events = groupByUnique(events_raw, 'id');
-
-            cache['events'] = events;
-
-            func();
         }
     };
 
@@ -450,6 +455,9 @@ function loadUsers(func) {
                 cache['users'] = objs;
 
                 func();
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
         }
     };
@@ -484,6 +492,9 @@ function loadTop(func) {
                 cache['top'] = objs;
 
                 func();
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
         }
     };
@@ -508,18 +519,23 @@ function loadAllFeedback(func) {
     let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) { // If ok set up day field
-            let feedback;
-            try {
-                feedback = JSON.parse(this.responseText);
-            } catch (e) {
-                console.log('error', e);
-                feedback = [];
+        if (this.readyState === 4) {
+            if (this.status === 200) { // If ok set up day field
+                let feedback;
+                try {
+                    feedback = JSON.parse(this.responseText);
+                } catch (e) {
+                    console.log('error', e);
+                    feedback = [];
+                }
+
+                cache['feedback'] = feedback;
+
+                func();
+            } else if (this.status === 401) {
+                alert('You have to be admin to use that page!\nThe incident will be reported.');
+                window.location.href = document.location.origin;
             }
-
-            cache['feedback'] = feedback;
-
-            func();
         }
     };
 
