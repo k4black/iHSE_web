@@ -82,6 +82,10 @@ def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         # print('ERROR, No registration data.')
         logger('post_login()', 'No registration data in req.', type_='ERROR')
         return http.forbidden()
+    try:
+        remember = reg_data['remember']
+    except KeyError:
+        remember = True
 
     # print(phone)
     phone = "+7" + phone[2:]
@@ -97,6 +101,8 @@ def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         # sessid = bytes(res[0])
         # print(f'login with got:{sessid}')
 
+        expires = 'Max-Age=15768000;' if remember else ''
+
         return ('200 OK',
                 [
                     # Because in js there is xhttp.withCredentials = true;
@@ -104,7 +110,7 @@ def post_login(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
                     # To receive cookie
                     ('Access-Control-Allow-Credentials', 'true'),
                     ('Set-Cookie',
-                     "sessid=" + sessid + f"; Path=/; Domain={env['HTTP_HOST']}; HttpOnly; Max-Age=15768000;"),
+                     f"sessid={sessid}; Path=/; Domain={env['HTTP_HOST']}; HttpOnly;{expires}"),
                     # 1/2 year
                     # ('Location', '//ihse.tk/')
                 ],

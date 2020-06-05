@@ -6,9 +6,12 @@
     color: #333333;
     font-size: 30px;
     text-align: center;
-    margin-bottom: 30px;
+    /*margin-bottom: 30px;*/
+    margin-bottom: 100px;
     font-weight: bold;
 }
+
+
 .login__icon {
     display: block;
     position: static;
@@ -67,6 +70,42 @@
     text-decoration: none;
 }
 
+
+
+
+
+.login__button {
+    margin-top: 100px;
+}
+
+
+
+
+.remember_checkbox {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 40px;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+
+.remember_checkbox label {
+    position: inherit;
+    font-size: 12px;
+    color: var(--hint-light-colour);
+}
+
+.remember_checkbox input {
+    position: inherit;
+    margin: 0;
+    padding: 0;
+    width: 22px;
+    height: 45px;
+}
 
 
 

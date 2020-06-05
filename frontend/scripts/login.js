@@ -29,7 +29,6 @@ document.querySelector('#btn').addEventListener('click', function () {
     }
 
     var xhttp = new XMLHttpRequest();
-    
     xhttp.onreadystatechange = function() {
         if (this.readyState === 1) {  // Opened
             setLoading();
@@ -58,7 +57,7 @@ document.querySelector('#btn').addEventListener('click', function () {
     };
 
     // Pass not password but hashcode of it
-    let login_data = {'phone': phone.value, 'pass': hashCode(pass.value)};
+    let login_data = {'phone': phone.value, 'pass': hashCode(pass.value), 'remember': !document.getElementById('not_remember').checked};
     let data = JSON.stringify(login_data);
 
     xhttp.open("POST", "/login", true);
