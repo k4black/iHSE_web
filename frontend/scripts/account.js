@@ -10,8 +10,7 @@
 window.addEventListener('load', function () {
     createBar();
 
-    const urlParams = new URLSearchParams(window.location.search);
-    let id = urlParams.get('id');
+    let id = getQueryParam('id');
 
     if (id == null) {
         // Load self user
@@ -83,7 +82,7 @@ function setProject(user) {
     for (let user_id in cache['names']) {
         let current_user = cache['names'][user_id];
 
-        if (user.project_id == project.id) {
+        if (current_user.project_id == project.id) {
             names_test += current_user.name + '; ';
         }
     }
@@ -433,7 +432,7 @@ function setCredits() {
                                     '<i class="mobile__item__icon large material-icons">' + (credit.type == 1 ? 'edit' : credits.type == 2 ? 'school' : 'event') + '</i>' +
                                     '<p>' + credit.title + '</p>' +
                                 '</div>' +
-                                '<p class="' + (credits.value > 0 ? 'credits_positive' : 'credits_negative') + '">' + (credit.value > 0 ? '+' : '-') + credit.value + '</p>' +
+                                '<p class="' + (credit.value > 0 ? 'credits_positive' : 'credits_negative') + '">' + (credit.value > 0 ? '+' : '-') + credit.value + '</p>' +
                             '</div>';
         }
 

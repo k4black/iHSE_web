@@ -15,7 +15,11 @@ window.addEventListener('load', function () {
 
 
 
+function countQueryTeam(team) {
+    document.getElementById('teams').value = team;
 
+    countTeam();
+}
 
 function countTeam() {
     let team = document.getElementById('teams').value;
@@ -29,9 +33,146 @@ function countTeam() {
         options_html += '<option value="' + user['id'] + '">' + user['name'] + '</option>'
     }
     document.getElementById('users').innerHTML = options_html;
-    //    TODO: clear charts
+    document.getElementById('users').onchange(function (i) {
+        console.log('CHANGE', i);
+    })
 
+
+    setQueryParam('team', team);
     setCredits(team);
+}
+
+
+
+var user_credits = undefined;
+var user_events = undefined;
+function countUser() {
+    let current_user_id = document.getElementById('users').value;
+    if (current_user_id == '') {
+        return;
+    }
+
+    console.log('current_user_id', current_user_id);
+    let current_user = cache['users'][current_user_id];
+
+    console.log('current_user', current_user);
+
+    if (current_user.avatar != null && current_user.avatar != '') {
+        document.querySelector('#user_profile img').style.backgroundImage = "url('" + current_user.avatar + "')";
+    } else {
+        document.querySelector('#user_profile img').style.backgroundImage = '/images/avatar.png';
+    }
+
+    document.querySelector('#user_profile a').setAttribute('href', '/account.html?id='+current_user_id);
+    let phone = current_user.phone;
+    document.querySelector('#user_profile .phone').innerHTML = '+' + phone[0] + ' (' + phone.slice(1, 4) + ') ' + phone.slice(4, 7) + '-' + phone.slice(7);
+    document.querySelector('#user_profile .name').innerHTML = current_user.name;
+
+    if (user_credits != undefined) {
+        user_credits.clear();
+        user_credits.destroy();
+    }
+
+    let credits_by_day_id = groupBy(Object.values(cache['credits']).filter(function (i) {return i.user_id == current_user_id}), 'day_id');  // TODO: sql join add date field
+
+    let credits_sum = {};
+    let total_sum = 0;
+    for (let day_id in cache['days']) {
+        let date = cache['days'][day_id].date;
+        credits_sum[date] = {'special': 0, 'master': 0, 'lecture': 0, 'fun': 0};
+
+        console.log('credits_by_day_id[day_id]', credits_by_day_id[day_id]);
+        if (day_id in credits_by_day_id) {
+            for (let credit of credits_by_day_id[day_id]) {
+                total_sum += credit.value;
+
+                if (credit.type == 0) {
+                    credits_sum[date]['special'] += credit['value'];
+                } else if (credit.type == 1) {
+                    credits_sum[date]['master'] += credit['value'];
+                } else if (credit.type == 2) {
+                    credits_sum[date]['lecture'] += credit['value'];
+                } else if (credit.type == 3) {
+                    credits_sum[date]['fun'] += credit['value'];
+                }
+            }
+        }
+    }
+
+    document.querySelector('#user_profile .credits').innerHTML = total_sum + ' / ' + cache['user'].total;
+
+    var style = getComputedStyle(document.body);
+    var ctx = document.getElementById('user_credits').getContext('2d');
+    user_credits = new Chart(ctx, {
+        // The type of chart we want to create
+        type: 'bar',
+
+        // The data for our dataset
+        data: {
+            labels: Object.keys(credits_sum),
+            datasets: [
+                {
+                    label: 'Особые кредиты',
+                    data: Object.values(credits_sum).map(function (i) {return i['special'];}),
+                    // backgroundColor: '#cc65fe'
+                    backgroundColor: style.getPropertyValue('--admin-special-event').trim(),
+                },
+                {
+                    label: 'Мастерклассы кредиты',
+                    data: Object.values(credits_sum).map(function (i) {return i['master'];}),
+                    // backgroundColor: '#006cae'
+                    backgroundColor: style.getPropertyValue('--admin-master-event').trim(),
+                },
+                {
+                    label: 'Лекционные кредиты',
+                    data: Object.values(credits_sum).map(function (i) {return i['lecture'];}),
+                    // backgroundColor: '#ff6384'
+                    backgroundColor: style.getPropertyValue('--admin-lecture-event').trim(),
+                },
+                {
+                    label: 'Развлекательные кредиты',
+                    data: Object.values(credits_sum).map(function (i) {return i['fun'];}),
+                    // backgroundColor: '#ffce56'
+                    backgroundColor: style.getPropertyValue('--admin-fun-event').trim(),
+                },
+            ],
+        },
+
+        // Configuration options go here
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                display: false
+            },
+            title: {
+                display: true,
+                text: 'Кредиты в день'
+            },
+            scales: {
+                xAxes: [{
+                    stacked: true,
+                    ticks: {
+                        min: 0,
+                        precision: 0
+                    }
+                }],
+                yAxes: [{
+                    stacked: true,
+                }],
+            }
+        }
+    });
+
+
+
+
+    if (user_events != undefined) {
+        user_events.clear();
+        user_events.destroy();
+    }
+
+
 }
 
 
@@ -50,6 +191,11 @@ function setTeams() {
     document.getElementById('teams').innerHTML = options_html;
 
     console.log('options_html', options_html)
+
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let team = urlParams.get('team');
+    countQueryTeam(team);
 }
 
 
@@ -88,7 +234,10 @@ function loadDaysCredits(func) {
 // ['id', 'user_id', 'event_id', 'value', 'type', 'title', 'day_id']
 var credits_chart = undefined;
 
+
+
 function setCredits(team) {
+
     let credits_by_user_id = groupBy(Object.values(cache['credits']).filter(function (i) {return cache['users'][i['user_id']].team == team}), 'user_id');
 
     let users = Object.values(cache['users']).filter(function (i) {return i['team'] == team});
@@ -98,7 +247,7 @@ function setCredits(team) {
     for (let user of users) {
         let user_id = user.id;
         sum_for_users[user_id] = 0;
-        sum_for_users_split[user_id] = {'regular': 0, 'master': 0, 'lecture': 0, 'fun': 0};
+        sum_for_users_split[user_id] = {'special': 0, 'master': 0, 'lecture': 0, 'fun': 0};
 
         console.log('credits_by_user_id[user_id]', credits_by_user_id[user_id])
         if (user_id in credits_by_user_id) {
@@ -106,7 +255,7 @@ function setCredits(team) {
                 sum_for_users[user_id] += credit['value'];
 
                 if (credit.type == 0) {
-                    sum_for_users_split[user_id]['regular'] += credit['value'];
+                    sum_for_users_split[user_id]['special'] += credit['value'];
                 } else
                 if (credit.type == 1) {
                     sum_for_users_split[user_id]['master'] += credit['value'];
@@ -147,7 +296,7 @@ function setCredits(team) {
                 // },
                 {
                     label: 'Особые кредиты',
-                    data: users_credits_array.map(function (i) {return sum_for_users_split[i[0]]['regular'];}),
+                    data: users_credits_array.map(function (i) {return sum_for_users_split[i[0]]['special'];}),
                     // backgroundColor: '#cc65fe'
                     backgroundColor: style.getPropertyValue('--admin-special-event').trim(),
                 },

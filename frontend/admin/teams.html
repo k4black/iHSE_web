@@ -9,7 +9,7 @@
     <title>Админ-статистика | iHSE</title>
 
     <link rel="stylesheet" href="../styles/main.css">
-    <link rel="stylesheet" href="styles/admin.css">
+    <link rel="stylesheet" href="styles/database.css">
     <link rel="stylesheet" href="../styles/index.css">
     <link rel="stylesheet" href="styles/teams.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -65,12 +65,17 @@
             </select>
         </div>
 
-        <div style="display: flex; flex-direction: row; align-items: center; padding: 5px 25px 5px 25px">
+        <div  id="user_profile" style="display: flex; flex-direction: row; align-items: center; align-content: space-between; padding: 5px 25px 5px 25px">
             <div style="display: flex; flex-direction: column; align-items: center">
-                <img src="../images/avatar.png" height="75" width="75"/>
+                <img src="../images/avatar.png" height="140" width="140" style="margin-bottom: 10px"/>
+                <span class="phone">+7 (XXX) XXX-XXXX</span>
+                <span class="name">Имя Фамилия</span>
+                <span class="credits">0 / 300</span>
                 <span><a href="#">[Profile link]</a></span>
             </div>
-            <canvas id="user_chart"></canvas>
+
+            <div class="user_chart"><canvas id="user_credits"></canvas></div>
+            <div class="user_chart"><canvas id="user_events"></canvas></div>
         </div>
 
     </div>

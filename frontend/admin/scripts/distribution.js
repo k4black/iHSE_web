@@ -7,61 +7,78 @@ window.addEventListener('load', function () {
 
     // setupToolbar();
     // setupTabs();
-    loadDays(function () {checkLoading(function () {setDistribution(); setDays(); setCredits()}, ['vacations', 'users', 'days', 'credits'])});
-    loadUsers(function () {checkLoading(function () {setDistribution(); setDays(); setCredits()}, ['vacations', 'users', 'days', 'credits'])});
-    loadVacations(function () {checkLoading(function () {setDistribution(); setDays(); setCredits()}, ['vacations', 'users', 'days', 'credits'])});
-    loadDaysCredits(function () {checkLoading(function () {setDistribution(); setDays(); setCredits()}, ['vacations', 'users', 'days', 'credits'])});
+    loadDays(function () {checkLoading(function () {setDistribution(); setDays(); setCredits(); setHosts()}, ['vacations', 'users', 'days', 'credits', 'enrolls', 'events'])});
+    loadUsers(function () {checkLoading(function () {setDistribution(); setDays(); setCredits(); setHosts()}, ['vacations', 'users', 'days', 'credits', 'enrolls', 'events'])});
+    loadVacations(function () {checkLoading(function () {setDistribution(); setDays(); setCredits(); setHosts()}, ['vacations', 'users', 'days', 'credits', 'enrolls', 'events'])});
+    loadDaysCredits(function () {checkLoading(function () {setDistribution(); setDays(); setCredits(); setHosts()}, ['vacations', 'users', 'days', 'credits', 'enrolls', 'events'])});
+    loadEnrolls(function () {checkLoading(function () {setDistribution(); setDays(); setCredits(); setHosts()}, ['vacations', 'users', 'days', 'credits', 'enrolls', 'events'])});
+    loadEvents(function () {checkLoading(function () {setDistribution(); setDays(); setCredits(); setHosts()}, ['vacations', 'users', 'days', 'credits', 'enrolls', 'events'])});
 
-    loadEvents(setHosts);
-    loadEnrolls(function () {});
 });
 
 
 
 
 var attendanceChart = undefined;
-
 function countDay() {
     let day_id = document.getElementById('days').value;
+    setQueryParam('day_id', day_id);
 
-    console.log('day_id', day_id);
+    let enrolls_by_class_id = groupBy(Object.values(cache['enrolls']).filter(function (i) {return cache['events'][i.class_id].day_id == day_id}), 'class_id');
+    let events_for_day_by_event_id = Object.values(cache['events']).filter(function (i) {return i.day_id == day_id && i.type != 0});
+    events_for_day_by_event_id = groupByUnique(events_for_day_by_event_id, 'id')
 
-    let events_attendance = {};
-    let events_no_attendance = {};
-    for (let event_id in cache['events']) {
-        let event = cache['events'][event_id];
-        if (event.day_id == day_id && event.type != 0) {
-            events_attendance[event_id] = 0;
-            events_no_attendance[event_id] = 0;
+
+    let enrolls_data = [];
+    for (let event_id in events_for_day_by_event_id) {
+        if (event_id in enrolls_by_class_id) {
+            let enrolls_no_attendance = enrolls_by_class_id[event_id].filter(function (i) {
+                return i.attendance == false
+            }).length;
+            let enrolls_with_attendance = enrolls_by_class_id[event_id].filter(function (i) {
+                return i.attendance == true
+            }).length;
+
+            enrolls_data.push({
+                'label': events_for_day_by_event_id[event_id].title,
+                'with_attendance': enrolls_with_attendance,
+                'no_attendance': enrolls_no_attendance,
+                'attendance': enrolls_with_attendance+enrolls_no_attendance,
+            });
+        } else {
+            enrolls_data.push({
+                'label': events_for_day_by_event_id[event_id].title,
+                'with_attendance': 0,
+                'no_attendance': 0,
+                'attendance': 0,
+            });
         }
     }
 
-    let enrolls_by_class_id = groupBy(Object.values(cache['enrolls']), 'class_id');
-    for (let event_id in cache['events']) {
-        if (enrolls_by_class_id[event_id] == undefined) {
-            continue;
+
+    // merge same titles events
+    console.log(enrolls_data);
+    e = enrolls_data;
+    let enrolls_data_tmp = [];
+    for (let [key, array] of Object.entries(groupBy(e, 'label'))) {
+        let tmp = {
+            'label': key,
+            'with_attendance': 0,
+            'no_attendance': 0,
+            'attendance': 0,
         }
-
-        for (let enroll of enrolls_by_class_id[event_id]) {
-            if (enroll.attendance == true) {
-                events_attendance[event_id]++;
-            } else {
-                events_no_attendance[event_id]++;
-            }
+        for (let i of array) {
+            tmp['attendance'] += i['attendance'];
+            tmp['no_attendance'] += i['no_attendance'];
+            tmp['with_attendance'] += i['with_attendance'];
         }
+        enrolls_data_tmp.push(tmp);
     }
+    enrolls_data = enrolls_data_tmp;
 
-    let processed_events_attendance = {};
-    for (let event_id in events_attendance) {
-        processed_events_attendance[cache['events'][event_id].title] = events_attendance[event_id];
-    }
 
-    let processed_events_no_attendance = {};
-    for (let event_id in events_no_attendance) {
-        processed_events_no_attendance[cache['events'][event_id].title] = events_no_attendance[event_id];
-    }
+    enrolls_data = enrolls_data.sort(function (a, b) {return - a['attendance'] + b['attendance']});
 
-    console.log('processed_events_attendance', processed_events_attendance);
 
     // attendance
     if (attendanceChart !== undefined) {
@@ -77,17 +94,17 @@ function countDay() {
 
         // The data for our dataset
         data: {
-            labels: Object.keys(processed_events_attendance),
+            labels: enrolls_data.map(function (i) {return i.label}),
             datasets: [
                 {
                     label: 'Количество посещений',
-                    data: Object.values(processed_events_attendance),
+                    data: enrolls_data.map(function (i) {return i.with_attendance}),
                     // backgroundColor: '#006cae'
                     backgroundColor: style.getPropertyValue('--admin-enroll-active').trim(),
                 },
                 {
                     label: 'Количество записей без посещения',
-                    data: Object.values(processed_events_no_attendance),
+                    data: enrolls_data.map(function (i) {return i.no_attendance}),
                     // backgroundColor: '#ff6384'
                     backgroundColor: style.getPropertyValue('--admin-enroll-inactive').trim()
                 },
@@ -128,6 +145,12 @@ function setDays() {
     }
 
     document.getElementById('days').innerHTML = options_html;
+
+    let day_id = getQueryParam('day_id');
+    if (day_id != null) {
+        document.getElementById('days').value = day_id;
+        countDay();
+    }
 }
 
 
@@ -137,21 +160,17 @@ function setHosts() {
     let events = cache['events'];
 
     let hosts = {};
-    let hosts_total = {};
-
     for (let event of Object.values(events)) {
         if (event.host === '') {
             continue;
         }
 
         for (let host of event.host.split(', ')) {
-
             if (hosts[host] == undefined) {
-                hosts[host] = {'regular': 0, 'master': 0, 'lecture': 0, 'fun': 0};
-                hosts_total[host] = 0;
+                hosts[host] = {'regular': 0, 'master': 0, 'lecture': 0, 'fun': 0, 'sum': 0, 'name': host};
             }
 
-            hosts_total[host]++;
+            hosts[host]['sum']++;
             if (event.type == 0) {
                 hosts[host]['regular']++;
             } else
@@ -167,16 +186,11 @@ function setHosts() {
         }
     }
 
-    let hosts_total_array = Object.entries(hosts_total).sort(function (a, b) {return a[1] < b[1] ? 1 : -1});
 
-    // let host_list = Object.values(cache['users']).filter(function (i) {return i['user_type'] > 0}).map(function (i) {return i.name});
-    // hosts_total_array = hosts_total_array.sort(function (a, b) {return a[0][1] < b[0]});
-    //
-    //
-    // let value_for_hosts = hosts_total_array.map(function (i) {return i[0] in host_list ? i[1] : 0;})
-    // let value_for_nothosts = hosts_total_array.map(function (i) {return i[0] in host_list ? 0 : i[1];})
+    hosts = Object.values(hosts).sort(function (a, b) {return - a.sum + b.sum});
+
+
     var style = getComputedStyle(document.body);
-
     var ctx = document.getElementById('hosts').getContext('2d');
     var chart = new Chart(ctx, {
         // The type of chart we want to create
@@ -184,29 +198,29 @@ function setHosts() {
 
         // The data for our dataset
         data: {
-            labels: hosts_total_array.map(function (i) {return i[0];}),
+            labels: hosts.map(function (i) {return i.name}),
             datasets: [
                 {
                     label: 'Количество Обычных Занятий',
-                    data: hosts_total_array.map(function (i) {return hosts[i[0]]['regular'];}),
+                    data: hosts.map(function (i) {return i.regular}),
                     // backgroundColor: '#596266'
                     backgroundColor: style.getPropertyValue('--admin-regular-event').trim(),
                 },
                 {
                     label: 'Количество Мастерклассов',
-                    data: hosts_total_array.map(function (i) {return hosts[i[0]]['master'];}),
+                    data: hosts.map(function (i) {return i.master}),
                     // backgroundColor: '#006cae'
                     backgroundColor: style.getPropertyValue('--admin-master-event').trim(),
                 },
                 {
                     label: 'Количество Лекций',
-                    data: hosts_total_array.map(function (i) {return hosts[i[0]]['lecture'];}),
+                    data: hosts.map(function (i) {return i.lecture}),
                     // backgroundColor: '#ff6384'
                     backgroundColor: style.getPropertyValue('--admin-lecture-event').trim(),
                 },
                 {
                     label: 'Количество Развлекательных',
-                    data: hosts_total_array.map(function (i) {return hosts[i[0]]['fun'];}),
+                    data: hosts.map(function (i) {return i.fun}),
                     // backgroundColor: '#ffce56'
                     backgroundColor: style.getPropertyValue('--admin-fun-event').trim(),
                 },

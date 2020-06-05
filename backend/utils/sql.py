@@ -1391,7 +1391,7 @@ def remove_enroll(enroll_id: int) -> bool:
     try:
         with conn.cursor() as cursor_:
             cursor_.execute('delete from enrolls where id = %s;', (enroll_id,))
-            cursor_.execute('delete from credits where user_id = %s and class_id = %s;', (enroll[2], enroll[1]))
+            cursor_.execute('delete from credits where user_id = %s and event_id = %s;', (enroll[2], enroll[1]))
     except psycopg2.Error as error_:
         logger(f'sql.remove_enroll({enroll_id})', f'Delete enroll and credits; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
@@ -1596,7 +1596,7 @@ def save_project(project: tp.Dict[str, tp.Any]) -> bool:
         # TODO same stuff, batch
         try:
             with conn.cursor() as cursor_:
-                for name in project['names']:
+                for name in project['users']:
                     cursor_.execute('UPDATE users SET project_id = %s WHERE name = %s and project_id = 0;',
                                     (project_id, name))
         except psycopg2.Error as error_:

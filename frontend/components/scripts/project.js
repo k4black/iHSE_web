@@ -194,8 +194,9 @@ function saveProject() {
     xhttp.onreadystatechange = function () {
         if (this.readyState === 4) {
             if (this.status === 200) { // If ok set up fields
-                loadProject(cache['project']['id'], setPopupProject);
+                // loadProject(cache['project']['id'], setPopupProject);
                 // hideProject();
+                window.location.reload(false);
             } else if (this.status === 405) {
                 alert('Вы не участник этого проекта. Нельзя его редактировать.')
             }
@@ -208,7 +209,13 @@ function saveProject() {
     let dirs = document.querySelector('.dirs').lastElementChild.value;
     let desc = document.querySelector('.desc').lastElementChild.value;
 
-    if (desc == '' || type == '' || def_type == '' || dirs == '' || desc == '') {
+    let project = cache['project'];
+    if (desc == project.description && type == project.type && def_type == project.def_type && anno == project.annotation) {
+        alert('Вы не изменили поля. Сохранять нечего.');
+        return;
+    }
+
+    if (desc == '' || type == '' || def_type == '' || dirs == '' || anno == '') {
         alert('Вы должны заполнить все поля!');
         return;
     }

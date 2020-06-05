@@ -620,8 +620,8 @@ def post_project(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         return http.conflict()
 
     # Check current user in the project
-    if user_obj['name'] not in project_obj['names']:
-        project_obj['names'].append(user_obj['name'])
+    if user_obj['name'] not in project_obj['users']:
+        project_obj['users'].append(user_obj['name'])
 
     if sql.save_project(project_obj):  # If user exist
         return http.ok(host=env['HTTP_HOST'])

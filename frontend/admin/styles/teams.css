@@ -12,3 +12,11 @@ select {
     height: 30px;
     font-size: 16px;
 }
+
+
+
+
+.user_chart {
+    width: 450px;
+    height: 250px;
+}

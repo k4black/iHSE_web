@@ -117,18 +117,14 @@ function countTop() {
 
 
 function countDaysFeedback() {
+    let day_id = getQueryParam('day_id');
 
-    // let feedback_days = Object.values(cache['days']).filter(function (i) {
-    //     return i['feedback'] == true;
-    // })
-    // let feedback_counts = [];
-    // for (let day of feedback_days) {
-    //     let feedback_arr = Object.values(cache['feedback']).filter(function (i) {
-    //         return cache['events'][i['event_id']].day_id == day.id;
-    //     });
-    //
-    //     feedback_counts = feedback_counts.concat(feedback_arr.length)
-    // }
+    if (day_id != null) {
+        document.getElementById('days').value = day_id;
+        countDayFeedback();
+    }
+
+
 
     let feedback_days = Object.values(cache['days']);
     let feedback_counts = [];
@@ -297,6 +293,8 @@ function countHostFeedback() {
 
 function countDayFeedback() {
     let day_id = document.getElementById('days').value;
+    setQueryParam('day_id', day_id);
+
 
 
     let feedback = Object.values(cache['feedback']).filter(function (i) {
@@ -342,7 +340,7 @@ function countDayFeedback() {
             mean_score['understand'] += feedback_obj['understand'] / len;
 
             if (feedback_obj['comment'] != '') {
-                comments_html += '<p>' + feedback_obj['comment'] + '</p>'
+                comments_html += '<p>&bull;' + feedback_obj['comment'] + '</p>'
             }
         }
 

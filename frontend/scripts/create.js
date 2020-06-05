@@ -40,20 +40,21 @@ document.querySelector('#btn').addEventListener('click', function() {
         return name.value;
     });
 
-    let user_names_allowed = [];
+    let user_names_allowed = new Set();
     for (let user_id in cache['names']) {
         let user = cache['names'][user_id];
 
         if (user['project_id'] == 0) {
-            user_names_allowed.push(user['name']);
+            user_names_allowed.add(user['name']);
         }
     }
 
     for (let name of names) {
-        if (name in user_names_allowed) {
+        if (user_names_allowed.has(name)) {
             // ok
         } else {
-            alert('You can not add user <' + name + '> to your project.\nNo such user or user already has project!');
+            alert('You can not add user <' + name + '> to your project.\nNo such user or user already had project!');
+            console.log('user_names_allowed', user_names_allowed);
             return;
         }
     }
