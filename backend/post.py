@@ -1,5 +1,7 @@
 import typing as tp
 import random
+import requests
+import json
 
 import utils.http as http
 from utils.http import TQuery, TEnvironment, TCookie, TStatus, THeaders, TData, TResponse  # noqa: F401
@@ -26,6 +28,7 @@ def post(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         '/login': post_login,
         '/register': post_register,
         '/logout': post_logout,
+        '/notification': post_notification,
 
         '/feedback': post_feedback,
 
@@ -278,6 +281,43 @@ def post_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
 
     else:
         return http.not_allowed()
+
+
+from pyfcm import FCMNotification
+push_service = FCMNotification(api_key="AAAAbDg5f5A:APA91bH9Z_jFxSGbhrxD0LC4SXCGKYlMj16Nz5bBIUqTITZkvtZ_2UsS8VqDuCPqXFxJidvbH5BRxSFsiQJMF2mBYbdpjMbwMY3QndOFUe2mjaoCVZGkZWjUp9LXnFXFdt6BfAflTPz6")
+
+
+def post_notification(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """ Sing in current user to pushup notifications
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Returns:
+        Response - result of request
+        None; Only http answer
+    """
+
+    # TODO: Save to sql
+
+    user_obj = get_user_by_response(cookie)
+    if user_obj is None:
+        return http.wrong_cookie(env['HTTP_HOST'])
+
+    key_obj = get_json_by_response(env)
+
+
+    registration_id = key_obj['token']
+    message_title = "Uber update"
+    message_body = f"Hi {user_obj['name']}, your customized news for today is ready"
+    result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title,
+                                               message_body=message_body)
+
+    print('!!!!!!result!!!!!!!', result)
+
+    return http.ok(env['HTTP_HOST'])
 
 
 def post_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
