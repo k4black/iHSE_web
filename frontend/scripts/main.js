@@ -318,6 +318,7 @@ function loadUser(func) {
             if (this.status === 200) {  // Ok
                 try {
                     user = JSON.parse(this.responseText);
+                    user['enrolls'] = groupByUnique(user['enrolls'],'class_id')
                 } catch (e) {
                     console.log('error:', e);
                     user = {};

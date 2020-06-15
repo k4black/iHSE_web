@@ -48,6 +48,10 @@ function setDay() {
     current_time = current_time.slice(0, 2) + '.' + current_time.slice(3);
     console.log('CURRENT TIME', current_time);
 
+    let enrolled_classes_id = Object.values(cache['user'].enrolls).map(function (x) {return x.class_id});
+    let attended_classes_id = Object.values(cache['user'].enrolls).filter(function (x) {return x.attendance}).map(function (x) {return x.class_id});
+
+
     let events = Object.values(cache['events']);
 
     var day_html = "";
@@ -80,9 +84,15 @@ function setDay() {
                 event_type = 'fun-event';
             }
 
+            let enrolled = enrolled_classes_id.includes(event.id);
+            let attended = attended_classes_id.includes(event.id);
+            // TODO: add missed
+
             event_html =
                 '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === 3 ? '' : 'active-event') + ' ' + event_type + ' >' +
                     // (event.type === 0 || event.type === '0' ? '' : '<a href="class.html?id=' + event.id + '">') +
+                        (enrolled || attended ? '<i class="enroll_icon mobile__item__icon large material-icons">' + (attended ? 'alarm_on' : 'alarm') + '</i>' : '') +
+
                         '<p class="event__title">' + event.title + '</p>' +
 
                         (event.description === undefined ? "" : '<p class="event__desc">' + event.description + '</p>') +

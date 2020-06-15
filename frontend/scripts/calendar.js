@@ -157,6 +157,10 @@ function setDay() {
     }
 
 
+    let enrolled_classes_id = Object.values(cache['user'].enrolls).map(function (x) {return x.class_id});
+    let attended_classes_id = Object.values(cache['user'].enrolls).filter(function (x) {return x.attendance}).map(function (x) {return x.class_id});
+
+
     let events = Object.values(cache['events']);
 
     var day_html = "";
@@ -187,6 +191,10 @@ function setDay() {
                 event_type = 'fun-event';
             }
 
+            let enrolled = enrolled_classes_id.includes(event.id);
+            let attended = attended_classes_id.includes(event.id);
+            // TODO: add missed
+
 
             event_html =
                 '<div class="event" data-id="' + event.id + '" ' + (event.type === 0 || event.type === 3 ? '' : 'active-event') + ' ' + event_type + '>' +
@@ -195,6 +203,7 @@ function setDay() {
                     // '<button class="admin_element edit_event"><i class="fa fa-wrench"></i></button>' +
                     '<button class="admin_element edit_event"><i class="material-icons" style="font-size:20px">build</i></button>' +
                     '<button class="admin_element copy_event"><i class="material-icons" style="font-size:20px">file_copy</i></button>' +
+                    (enrolled || attended ? '<i class="enroll_icon mobile__item__icon large material-icons">' + (attended ? 'alarm_on' : 'alarm') + '</i>' : '') +
 
                     '<p class="event__title">' + event.title + '</p>' +
 

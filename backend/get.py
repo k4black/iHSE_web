@@ -75,12 +75,15 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     data = user_obj
     del data['pass']
 
+    data['enrolls'] = [{'class_id': enroll['class_id'], 'attendance': enroll['attendance'], 'bonus': enroll['bonus']} for enroll in sql.get_enrolls_by_user_id(user_obj['id'])]  # TODO: Think do it that way ot not
+
     data['calendar'] = True
     data['feedback'] = False  # TODO: Notifacation
     data['projects'] = user_obj['project_id'] == 0 or user_obj['project_id'] == '0'
 
     data['total'] = config.get_config()['CREDITS_TOTAL']
     data['today'] = get_date_str()  # TODO: remove. Only for debug???
+
 
     return http.ok(host=env['HTTP_HOST'], json_dict=data)
 

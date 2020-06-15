@@ -114,6 +114,14 @@ footer div {
     margin-bottom: 10px;
 
     align-items: self-start;
+        position: relative;
+}
+
+.event .enroll_icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: var(--hint-light-colour);
 }
 
 .event:last-child {
@@ -165,6 +173,7 @@ footer div {
     line-height: 1em;
     font-size: 20px;
     font-weight: bold;
+    margin-right: 17.5px!important;
     color: var(--header-colour);
 }
 
