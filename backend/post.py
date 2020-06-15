@@ -402,7 +402,7 @@ def post_mark_enrolls(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
             sql.update_in_table(enroll, 'enrolls')
 
             if enroll['attendance'] in (True, 'true'):
-                sql.pay_credit(enroll['user_id'], enroll['event_id'],
+                sql.pay_credit(enroll['user_id'], enroll['class_id'],
                                config_dict['CREDITS_MASTER'] + min(config_dict['CREDITS_ADDITIONAL'], enroll['bonus']),
                                get_datetime_str())
                 # TODO: CREDITS_MASTER CREDITS_LECTURE check
@@ -488,7 +488,7 @@ def post_remove_enroll(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRe
             user_obj['user_type'] == 0 and enroll['user_id'] == user_obj['id'] or user_obj['user_type'] >= 1):
         # Check admin or user remove himself
 
-        event = sql.get_event_with_date(enroll['event_id'])
+        event = sql.get_event_with_date(enroll['class_id'])
 
         if not check_enroll_time(event['date'], event['time']):  # Close for 15 min
             return http.gone()

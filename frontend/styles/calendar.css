@@ -215,14 +215,32 @@
 }
 
 
+/*.remove_event {*/
+/*    right: -3px;*/
+/*    background-color: #ff1e1c;*/
+/*}*/
+
+/*.remove_event:hover {*/
+/*    background-color: #e10003;*/
+/*}*/
+
 .remove_event {
     right: -3px;
-    background-color: #ff1e1c;
+    border: 2px solid var(--danger-colour);
+    background-color: transparent;
 }
 
 .remove_event:hover {
-    background-color: #e10003;
+    background-color: var(--hint-light-colour);
 }
+
+
+.remove_event * {
+    margin-top: -2.5px;
+    margin-left: -2px;
+    color: var(--danger-colour)!important;
+}
+
 
 
 .edit_event {

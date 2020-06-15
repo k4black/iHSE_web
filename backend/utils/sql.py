@@ -1293,13 +1293,15 @@ def enroll_user(class_id: int, user_id: TTableObject, date: str, time_: str = '0
 
     try:
         with conn.cursor() as cursor_:
-            cursor_.execute('select time from enrolls e join events e on event_id where '
-                            'day_id = (select day_id from days where date = %s) and user_id = %s;', (date, user_id,))
+            cursor_.execute('select ev.time from enrolls en join events ev on en.class_id = ev.id where '
+                            'ev.day_id = (select day_id from days where date = %s) and en.user_id = %s;', (date, user_id,))
             enrolls_times = cursor_.fetchall()  # enrolls of user for this day
 
-            for time_str in enrolls_times:
-                time1, time2 = time_str.split('\n')
-                # if time1 == TODO: Check other times
+            # Check have no other enrolls
+            if enrolls_times is not None:
+                for time_str in enrolls_times:
+                    time1, time2 = time_str[0].split('\n')
+                    # if time1 == TODO: Check other times
     except psycopg2.Error as error_:
         logger(f'sql.enroll_user({class_id}, {user_id})', f'Check time; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
@@ -1312,7 +1314,7 @@ def enroll_user(class_id: int, user_id: TTableObject, date: str, time_: str = '0
     try:
         # Select class
         with conn.cursor() as cursor_:
-            cursor_.execute('select * from class where id = %s;', (class_id,))
+            cursor_.execute('select * from classes where id = %s;', (class_id,))
             class_ = cursor_.fetchone()
 
         # Count enrolls
@@ -1326,14 +1328,18 @@ def enroll_user(class_id: int, user_id: TTableObject, date: str, time_: str = '0
     else:
         conn.commit()
 
-    if not class_ or not enrolled or enrolled >= class_[1]:  # No such event or too many people
+    print('!!!!!! class_', class_)
+    print('!!!!!! enrolled', enrolled)
+
+    if class_ is None or enrolled is None or enrolled >= class_[1]:  # No such event or too many people
+        print('!!!!!! No such event or too many people')
         return False
 
     sql_string = 'insert into enrolls (class_id, user_id, time, attendance, bonus) values (%s, %s, %s, false, 0);'
 
     try:
         with conn.cursor() as cursor_:
-            cursor_.execute(sql_string, (class_id, user_id, time))
+            cursor_.execute(sql_string, (class_id, user_id, time_))
     except psycopg2.Error as error_:
         logger(f'sql.enroll_user({class_id}, {user_id})', f'Insert enroll; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()

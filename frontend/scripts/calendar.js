@@ -10,12 +10,6 @@
 /** ===============  LOGIC and REQUESTS  =============== */
 
 
-runAfterLoading(function () {
-    loadUsers(setUsers);
-    loadPlaces(setPlaces);
-});
-
-
 
 
 
@@ -155,6 +149,14 @@ var current_events;
 function setDay() {
     loadingEnd(); // TODO: Check
 
+    // TODO: refactor
+    // load for admin
+    if (cache['user'].user_type != 0){
+        loadUsers(setUsers);
+        loadPlaces(setPlaces);
+    }
+
+
     let events = Object.values(cache['events']);
 
     var day_html = "";
@@ -223,7 +225,10 @@ function setDay() {
     document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
 
     setupClasses();
-    setupAdminButtons();
+    if (cache['user'].user_type == 2) {
+        console.warn('ADMIN');
+        setupAdminButtons();
+    }
 }
 
 

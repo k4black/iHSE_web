@@ -74,12 +74,28 @@ def check_enroll_time(date: str, time_: str, year: str = '2020') -> bool:
         bool can enroll or deenroll on the event
     """
 
-    can_enroll = datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))) <= \
-        datetime.strptime(f'{date}.{year} {time_}', '%d.%m.%Y %M.%H') - timedelta(minutes=ENROLL_CLOSE_FOR)
+    time_ = time_.split('\n')[0]
+    start_time = datetime.strptime(f'{date}.{year} {time_}', '%d.%m.%Y %H.%M')
 
-    current_day = get_date_str() == date
+    # print('STR LINE: ', f"{date}.{year} {time_}")
+    #
+    # now_time = datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))).replace(tzinfo=None)
+    #
+    # can_enroll = now_time <= start_time - timedelta(minutes=ENROLL_CLOSE_FOR)
 
-    return can_enroll and current_day
+    current_time = datetime.now(timezone(timedelta(hours=TIMEZONE_SHIFT))).strftime('%H.%M')
+    now_time = datetime.strptime(f'{get_date_str()}.{year} {current_time}', '%d.%m.%Y %H.%M')
+
+    can_enroll = now_time <= start_time - timedelta(minutes=ENROLL_CLOSE_FOR)
+
+    print(f"{now_time} <= {start_time} - 15")
+
+    is_current_day = get_date_str() == date
+
+    logger('check_enroll_time()', f'can_enroll = {can_enroll} and is_current_day = {is_current_day}', 'LOG')
+
+
+    return can_enroll and is_current_day
 
 
 def generate_codes(num: int) -> tp.Set[str]:

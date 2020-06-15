@@ -1,8 +1,7 @@
+
+
 loadNames(function () {});  // TODO: Check
 
-document.addEventListener('load', function () {
-
-});
 
 
 
@@ -128,28 +127,28 @@ function setupClasses() {
 
 function setupEnrollButtons() {
     if (user === undefined) {
-        document.querySelector('#deenroll').style.display = 'none';
-        document.querySelector('#enroll').style.display = 'none';
+        document.getElementById('deenroll').style.display = 'none';
+        document.getElementById('enroll').style.display = 'none';
         return;
     }
 
-    document.querySelector('#enroll').onclick = function (val) {
+    document.getElementById('enroll').onclick = function (val) {
         createEnroll();
     };
-    document.querySelector('#deenroll').onclick = function (val) {
+    document.getElementById('deenroll').onclick = function (val) {
         removeEnrollByUser();
     };
 
     for (let id in cache['enrolls']) {
         if (cache['enrolls'][id].user_id === user.id) {
-            document.querySelector('#deenroll').style.display = 'block';
-            document.querySelector('#enroll').style.display = 'none';
+            document.getElementById('deenroll').style.display = 'block';
+            document.getElementById('enroll').style.display = 'none';
             return;
         }
     }
 
-    document.querySelector('#deenroll').style.display = 'none';
-    document.querySelector('#enroll').style.display = 'block';
+    document.getElementById('deenroll').style.display = 'none';
+    document.getElementById('enroll').style.display = 'block';
 }
 
 
@@ -223,18 +222,33 @@ function setEnrolls() {
     }
     console.log('enrolls ', enrolls);
 
+
     setupData(document.querySelector('#class_popup .count').lastElementChild,attendance + ' посетило; ' + Object.keys(enrolls).length + ' записалсь');
+
+
+    // Check current user's attendance
+    let check_user = false;
+    let attend_user = false;
+    for (let id in enrolls) {
+        try {
+            if (enrolls[id].user_id === user.id) {
+                check_user = true;
+                if (enrolls[id].attendance) {
+                    attend_user = true;
+                }
+                break;
+            }
+        } catch (e) {
+
+        }
+    }
 
 
     // Hide when there is no enrollment (total === 0)
     if (cache['class'].total == 0) {
         document.querySelector('.class_popup__enroll_section').style.display = 'none';
-        document.querySelector('#enroll').style.display = 'none';
-        document.querySelector('#deenroll').style.display = 'none';
     } else {
         document.querySelector('.class_popup__enroll_section').style.display = 'block';
-        document.querySelector('#enroll').style.display = 'block';
-        document.querySelector('#deenroll').style.display = 'block';
 
 
         setupData(document.querySelector('#class_popup .count').firstElementChild, Object.keys(enrolls).length + ' / ' + cache['class'].total);
@@ -244,21 +258,66 @@ function setEnrolls() {
     }
 
 
-    // Check current user's attendance
-    let check_user = false;
-    for (let id in enrolls) {
-        try {
-            if (enrolls[id].user_id === user.id) {
-                check_user = true;
-                break;
-            }
-        } catch (e) {
 
+    console.log((check_user ? 'Current user enrolled' : 'Current user NOT enrolled'));
+    // setupData(document.querySelector('#class_popup .status').firstElementChild, (check_user ? 'Вы записаны на мероприятие!' : ''));
+
+
+    // Drop buttons
+    document.getElementById('deenroll').style.display = 'none';
+    document.getElementById('enroll').style.display = 'none';
+
+    // Set status of enrolls
+    for (let e of document.querySelectorAll('.enroll_alert')) {e.style.display = 'none';}
+
+    if (attend_user) {
+        document.querySelector('.enroll_visited_alert').style.display = 'block';
+    } else
+
+    if (cache['class'].total != 0) {
+        let date = cache['days'][cache['events'][cache['class'].id].day_id].date;
+
+        if (cache['today'] == date) {
+            console.log('today event!');
+
+            let event_time = cache['events'][cache['class'].id].time.split('\n')[0];
+            let date = new Date();
+            date.setMinutes(date.getMinutes() + 15);
+            let current_time_15 = date.toLocaleTimeString('en-GB', { hour12: false,
+                                             hour: "numeric",
+                                             minute: "numeric"}).split(':').join('.');
+
+            console.warn('event_time', event_time);
+            console.warn('current_time + 15', current_time_15);
+
+            if (check_user) {
+                document.querySelector('.enroll_enrolled_alert').style.display = 'block';
+                document.getElementById('deenroll').style.display = 'block';
+            } else if (current_time_15 < event_time) {
+                document.querySelector('.enroll_15_alert').style.display = 'block';
+                document.getElementById('enroll').style.display = 'block';
+            } else {
+                document.querySelector('.enroll_close_alert').style.display = 'block';
+            }
+        } else if (cache['today'] < date) {
+            document.querySelector('.enroll_day_alert').style.display = 'block';
+        } else if (cache['today'] > date) {
+            if (check_user) {
+                if (attend_user) {
+                    document.querySelector('.enroll_visited_alert').style.display = 'block';
+                } else {
+                    document.querySelector('.enroll_lost_alert').style.display = 'block';
+                }
+            }
         }
     }
 
-    console.log((check_user ? 'Current user enrolled' : 'Current user NOT enrolled'));
-    setupData(document.querySelector('#class_popup .status').firstElementChild, (check_user ? 'Вы записаны на мероприятие!' : ''));
+
+    // If not admin - exit
+    if (cache['user'].user_type == 0) {
+        return;
+    }
+
 
     // Set up enrolls on this event
     let users_list = '';
@@ -303,9 +362,9 @@ function createEnroll() {
                 // loadEnrolls(current_event);
                 loadEnrollsByClassId(current_event, setEnrolls);
             } else if (this.status === 401) {
-                alert('Запись невозможна. Нет свободных мест!');
+                alert('Запись невозможна. \nНет свободных мест!');
             } else if (this.status === 410) {
-                alert('Запись невозможна. Только за 15 минут до мероприятия.');
+                alert('Запись невозможна. \nЭто можно сделать только в день мероприятия. \nЗапись закрывается за 15 минут до времени начала.');
             }
         }
     };
@@ -319,14 +378,16 @@ function createEnroll() {
 
 
 function removeEnrollByUser() {
-    let enroll_id = -1;
+    let enroll_id = null;
+    let enrolls = cache['enrolls'];
     for (let id in enrolls) {
-        if (enrolls[id].event_id === current_class.id && enrolls[id].user_id === user.id) {
+        if (enrolls[id].class_id == cache['class'].id && enrolls[id].user_id == cache['user'].id) {
             enroll_id = id;
+            break;
         }
     }
 
-    if (enroll_id === -1) {
+    if (enroll_id == null) {
         alert('Вы не записаны на мероприятие!');
         return;
     }
@@ -347,7 +408,7 @@ function removeEnroll(enroll_id) {
                 // loadEnrolls(current_event);
                 loadEnrollsByClassId(current_event, setEnrolls);
             } else if (this.status === 410) {
-                alert('Удалить запись невозможно. Только за 15 минут до мероприятия.');
+                alert('Удалить запись невозможно. \nЭто можно сделать Только за 15 минут до мероприятия.');
             }
         }
     };
@@ -411,6 +472,7 @@ function saveEnrolls() {
 
 
 function saveClass() {
+    console.warn('SaveClass');
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function () {
@@ -426,6 +488,7 @@ function saveClass() {
     let anno = document.querySelector('#anno').value;
 
     if (cache['class'].annotation === anno && cache['class'].total === total) {
+        alert('Ничего не изменилось. Нужно поменять аннотацию или класс чтобы сохранить класс.')
         return;
     }
 

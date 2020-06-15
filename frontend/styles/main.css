@@ -40,7 +40,8 @@
     /*--accent-colour: #f47c2c;*/
     --danger-colour: #db2828;
     --sub-colour: #00b3bc;
-    --ok-status: #22a91d;
+    --ok-colour: #22a91d;
+    --warn-colour: #b16211;
 
     --event-colour: #f0f0f0;
     --event-master-colour: #c4dcf5;

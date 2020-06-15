@@ -81,21 +81,43 @@
                     <hr class="border_line">
                     <button id="enroll" class="enroll__button"><i class="mobile__item__icon large material-icons">person_add</i></button>
                     <button id="deenroll" class="enroll__button danger_button"><i class="mobile__item__icon large material-icons">person_add_disabled</i></button>
-                    <button id="save" class="moderator_element enroll__button"><i class="mobile__item__icon large material-icons">save</i></button>
+                    <button id="save" class="moderator_element enroll__button" onclick="saveClass(); saveEnrolls()"><i class="mobile__item__icon large material-icons">save</i></button>
                 </div>
     <!--                <div id="container"></div>-->
 
 
-                <div class="class_popup__enroll_section loading__resource" style="visibility: visible">
-                    <p class="enroll_alert">Запись закроектся за 15 минут до мероприятия.</p>
-
-                    <div class="class_popup__block loading__resource">
-                        <i class="mobile__item__icon large material-icons ok_status">done</i>
-                        <div class="status">
-                            <p>Вы записаны на мероприятие!</p>
-                        </div>
+                <div class="class_popup__alert_section loading__resource" style="visibility: visible">
+                    <div class="enroll_alert enroll_close_alert class_popup__block loading__resource">
+                        <i class="mobile__item__icon large material-icons">alarm_off</i>
+                        <p class="status_warn">Запись на мероприятие закрыта.</p>
                     </div>
 
+                    <div class="enroll_alert enroll_15_alert class_popup__block loading__resource">
+                        <i class="mobile__item__icon large material-icons">alarm</i>
+                        <p class="status_hint">Запись закроется за 15 минут до мероприятия.</p>
+                    </div>
+
+                    <div class="enroll_alert enroll_day_alert class_popup__block loading__resource">
+                        <i class="mobile__item__icon large material-icons">alarm_off</i>
+                        <p class="status_hint">Запись откроется в день мероприятия.</p></p>
+                    </div>
+
+                    <div class="enroll_alert enroll_enrolled_alert class_popup__block loading__resource">
+                        <i class="mobile__item__icon large material-icons ok_status">alarm_add</i>
+                        <p class="status_ok">Вы записаны на мероприятие!</p>
+                    </div>
+
+                    <div class="enroll_alert enroll_visited_alert class_popup__block loading__resource">
+                        <i class="mobile__item__icon large material-icons ok_status">alarm_on</i>
+                        <p class="status_ok">Вы посетили мероприятие!</p>
+                    </div>
+
+                    <div class="enroll_alert enroll_lost_alert class_popup__block loading__resource">
+                        <i class="mobile__item__icon large material-icons ok_status">alarm_off</i>
+                        <p class="status_warn">Вы записались, но не посетили мероприятие!</p>
+                    </div>
+                </div>
+                <div class="class_popup__enroll_section loading__resource" style="visibility: visible">
                     <div class="class_popup__block loading__resource">
                         <i class="mobile__item__icon large material-icons">group</i>
                         <div class="count">

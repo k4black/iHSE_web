@@ -34,7 +34,7 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     logger('admin_panel()', f'Admin try with user: {user_obj}', type_='LOG')
 
     if user_obj['user_type'] == 0:
-        return http.forbiden()
+        return http.not_allowed()
 
     logger('admin_panel()', f'Admin want to {env["PATH_INFO"]}', type_='LOG')
 
