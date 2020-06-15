@@ -179,7 +179,7 @@ function buildTimeline(locations, events) {
                     alert('You clicked on the ' + events[i].id + '=' + events[i].title + ' event in ' + events[i].place + '. This is an example of a click handler');
 
                     // document.querySelector('#class_popup').style.display = 'block';
-                    showClass();
+                    showClass(events[i].id);
                 }
             },
             data: {

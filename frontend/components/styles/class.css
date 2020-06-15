@@ -6,6 +6,16 @@
     /*opacity:0;*/
     /*transition: visibility 0s linear 10.5s, opacity 10.5s linear;*/
 /*}*/
+::-webkit-scrollbar {
+    display: none;
+}
+
+
+#class_popup .border_line {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
 
 #class_popup {
     display: block;
@@ -31,7 +41,6 @@
     padding: 0;
     border-radius: 0;
 
-    overflow-y: scroll;
     background-color: var(--popup-colour);
 }
 
@@ -48,29 +57,61 @@
     align-content: center;
     align-items: center;
     justify-content: space-between;
+
+    position: absolute;
+    width: 100%;
+
+    z-index: 10;
+}
+
+.class_popup__dummy_header {
+    margin-top: 0;
+    min-height: 60px;
+    margin-left: -25px;
+    margin-right: -25px;
+    padding: 5px 20px 5px 25px;
+
+
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
 }
 
 
-
-.class_popup__header * {
+.class_popup__header *, .class_popup__dummy_header * {
     font-size: 30px!important;
     color: var(--header-light-colour);
 }
 
-.class_popup__header__title {
-    margin: 10px 15px 0px 15px;
+.class_popup__header__title, .class_popup__dummy_header__title {
+    margin: 10px 15px 5px 15px;
     line-height: 1em;
 }
+
+.class_popup__dummy_header {
+    visibility: hidden;
+    width: calc(100% + 50px);
+    padding-left: 0!important;
+}
+
 
 .class_popup__header i {
     cursor: pointer;
 }
 
 .class_popup__wrapper {
-    padding: 0 25px 25px 25px;
+    /*margin-top: 70px;*/
+    padding: 0px 25px 0px 25px;
     /*height: 530px;*/
-    /*overflow-y: scroll;*/
-    height: calc(100% - 70px);
+    overflow-y: scroll;
+    /*height: calc(100% - 70px);*/
+    box-sizing: border-box;
+    height: 100%;
+    /*height: fit-content;*/
 }
 
 
@@ -91,6 +132,7 @@
 
 .class_popup__container {
     overflow-y: scroll;
+    height: inherit;
 }
 
 
@@ -292,16 +334,17 @@
 @media (min-width : 769px) {
     #class_popup .class_popup__body {
         position: fixed;
-        top: 6%;
+        top: 10%;
         left: 35%;
         margin: 0;
-        height: 600px;
+        min-height: 500px;
+        max-height: 70%;
         width: 400px;
         padding: 0;
         border-radius: 10px;
     }
 
-    .class_popup__header {
+    .class_popup__header, .class_popup__dummy_header {
         min-height: 70px;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;

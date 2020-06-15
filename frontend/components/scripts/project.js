@@ -10,10 +10,11 @@ function editOthersProject(project_id) {
 
     // Pre setup project title
     document.querySelector('#project_popup .project_popup__header__title').innerText = document.querySelectorAll('[project-id="' + project_id + '"]')[0].getElementsByTagName('span')[0].textContent;
+    document.querySelector('#project_popup .project_popup__dummy_header__title').innerText = document.querySelectorAll('[project-id="' + project_id + '"]')[0].getElementsByTagName('span')[0].textContent;
 
     startProjectLoading();
     loadProject(project_id, setPopupProject);
-    showProject();
+    showProject(project_id);
 }
 
 function editProject(project_id) {
@@ -21,10 +22,11 @@ function editProject(project_id) {
 
     // Pre setup project title
     document.querySelector('#project_popup .project_popup__header__title').innerText = document.querySelectorAll('[project-id="' + project_id + '"]')[0].getElementsByTagName('span')[0].textContent;
+    document.querySelector('#project_popup .project_popup__dummy_header__title').innerText = document.querySelectorAll('[project-id="' + project_id + '"]')[0].getElementsByTagName('span')[0].textContent;
 
     startProjectLoading();
     loadProject(project_id, setPopupProject);
-    showProject();
+    showProject(project_id);
 }
 
 
@@ -33,11 +35,13 @@ function editProject(project_id) {
  * Class popup state management
  * Open and close
  */
-function showProject() {
+function showProject(project_id = undefined) {
     openState = true;
     // document.getElementById('project_popup').style.display = 'block';
     document.getElementById('project_popup').classList.add('active');
     // console.log("Open menu");
+
+    setQueryParam('project_id', project_id);
 }
 
 function hideProject() {
@@ -45,6 +49,8 @@ function hideProject() {
     // document.getElementById('project_popup').style.display = 'none';
     document.getElementById('project_popup').classList.remove('active');
     // console.log("Close menu");
+
+    removeQueryParam('project_id');
 }
 
 
@@ -82,6 +88,7 @@ function setPopupProject() {
     let project_id = project.id;
 
     document.querySelector('#project_popup .project_popup__header__title').innerText = project.title;
+    document.querySelector('#project_popup .project_popup__dummy_header__title').innerText = project.title;
 
     setupData(document.querySelector('#project_popup .desc'), project.description);
     setupData(document.querySelector('#project_popup .anno'), project.annotation);
@@ -228,7 +235,7 @@ function saveProject() {
 
     let data = JSON.stringify(cache['project']);
 
-    showProject();
+    showProject(project.id);
 
     xhttp.open("POST", "/edit_project", true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');

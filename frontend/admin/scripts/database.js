@@ -18,6 +18,7 @@ var current_table = 'users';
 
 
 
+
 let users;
 let events;
 let projects;
@@ -224,6 +225,7 @@ function buildTable($el, tableName, fields, data) {
  */
 function setTable() {
     console.log('setting Table: ', current_table);
+    setQueryParam('table', current_table);
 
 
     events = cache['events'];
@@ -303,7 +305,13 @@ function loadAndCreateTable(table_name) {
 
 
 $(function() {
-    current_table = 'users';
+    // current_table = 'users';
+    current_table = getQueryParam('table');
+    // console.warn('current_table', current_table);
+    if (current_table == null) {
+        current_table = 'users';
+    }
+
 
     loadTable('users', function () {console.log('checkLoading', cache); checkLoading(setTable, ['users', 'events', 'projects', 'days']);});
     loadTable('events', function () {console.log('checkLoading', cache); checkLoading(setTable, ['users', 'events', 'projects', 'days']);});
@@ -498,9 +506,11 @@ function editRow(row) {
 function setupTabs() {
     console.log('setup.sh-ing tabs');
 
-
-
+    $('.tabs button').removeClass('active_tab');
     for (let tab_name in fields) {
+        if (tab_name == current_table) {
+            $('#tab_' + tab_name).addClass('active_tab');
+        }
         $('#tab_' + tab_name)[0].onclick = function () {
             current_table = tab_name;
             loadAndCreateTable(current_table);

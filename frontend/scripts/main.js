@@ -216,25 +216,42 @@ function hashCode(s) {
 
 /**
  * Update query params without refreshing a page
+ *
  * @param {string} key - key param string
  * @param {string} value - value param string
  */
 function setQueryParam(key, value) {
     if (history.pushState) {
-        let searchParams = new URLSearchParams(window.location.search);
-        searchParams.set(key, value);
-        let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + searchParams.toString();
+        let urlParams = new URLSearchParams(window.location.search);
+        urlParams.set(key, value);
+        let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + (urlParams.toString() != '' ? '?' + urlParams.toString() : '');
         window.history.pushState({path: newurl}, '', newurl);
     }
 }
+
+
 /**
  * Read query params without refreshing a page
+ *
  * @param {string} key - key param string
  * @return {string}
  */
 function getQueryParam(key) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(key);
+}
+
+
+/**
+ * Delete query params without refreshing a page
+ *
+ * @param {string} key - key param string
+ */
+function removeQueryParam(key) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.delete(key);
+    let newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + (urlParams.toString() != '' ? '?' + urlParams.toString() : '');
+    window.history.pushState({path: newurl}, '', newurl);
 }
 
 

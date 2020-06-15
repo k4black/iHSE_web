@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="/components/styles/project.css">
 
 
-<div class="overlay" id="project_popup">
+<div class="overlay" id="project_popup" onclick="console.warn('click')">
     <div class="project_popup__body">
         <div class="project_popup__header">
             <p class="project_popup__header__title">Title</p>
@@ -16,12 +16,19 @@
             </div>
 
             <div class="project_popup__container">
+                <div class="project_popup__dummy_header">
+                    <p class="project_popup__dummy_header__title">Title</p>
+                    <i class="mobile__item__icon large material-icons" onclick="hideProject()">clear</i>
+                </div>
+
                 <div class="project_popup__block loading__resource">
                     <div class="anno">
                         <p>Some description of the event in several lines lines lines lines lines.</p>
                         <textarea placeholder="Аннотация (Одно предложение)">Some description of the event in several lines lines lines lines lines.</textarea>
                     </div>
                 </div>
+
+                <hr class="border_line">
 
                 <div class="project_popup__block loading__resource">
                     <i class="mobile__item__icon large material-icons">people</i>

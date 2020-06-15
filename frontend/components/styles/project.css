@@ -4,6 +4,18 @@
 /*    display: none;*/
 /*}*/
 
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+
+#project_popup .border_line {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+
 #project_popup {
     display: block;
     transition: opacity 0.2s ease-out;
@@ -29,7 +41,6 @@
     padding: 0;
     border-radius: 0;
 
-    overflow-y: scroll;
     background-color: #f7f7f7;;
 }
 
@@ -39,7 +50,7 @@
     padding-bottom: 5px;
     padding-right: 20px;
 
-    background-color: #00b3bc;
+    background-color: var(--sub-colour);
     /*padding: 25px 10px;*/
 
     display: flex;
@@ -47,32 +58,64 @@
     align-content: center;
     align-items: center;
     justify-content: space-between;
+
+    position: absolute;
+    width: 100%;
+
+    z-index: 10;
+}
+
+.project_popup__dummy_header {
+    margin-top: 0;
+    min-height: 60px;
+    margin-left: -25px;
+    margin-right: -25px;
+    padding: 5px 20px 5px 25px;
+
+
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
 }
 
 
 
-.project_popup__header * {
+.project_popup__header *, .project_popup__dummy_header *{
     font-size: 30px!important;
-    color: whitesmoke;
+    color: var(--header-light-colour);
 }
 
-.project_popup__header__title {
-    margin-top: 10px;
+.project_popup__header__title, .project_popup__dummy_header__title {
+    margin: 10px 15px 5px 15px;
     margin-left: 15px;
 }
+
+.project_popup__dummy_header {
+    visibility: hidden;
+    width: calc(100% + 50px);
+    padding-left: 0!important;
+}
+
+
 
 .project_popup__header i {
     cursor: pointer;
 }
 
 .project_popup__wrapper {
-    padding: 0 25px 25px 25px;
+    /*margin-top: 70px;*/
+    padding: 0px 25px 0px 25px;
     /*height: 530px;*/
-    /*overflow-y: scroll;*/
-    height: calc(100% - 70px);
+    overflow-y: scroll;
+    /*height: calc(100% - 70px);*/
+    box-sizing: border-box;
+    height: 100%;
+    /*height: fit-content;*/
 }
-
-
 
 
 .project_popup__loading {
@@ -95,6 +138,7 @@
 
 .project_popup__container {
     overflow-y: scroll;
+    height: inherit;
 }
 
 
@@ -290,21 +334,21 @@ select {
 @media (min-width : 769px) {
     #project_popup .project_popup__body {
         position: fixed;
-        top: 6%;
+        top: 10%;
         left: 35%;
         margin: 0;
-        height: 600px;
+        min-height: 500px;
+        max-height: 70%;
         width: 400px;
         padding: 0;
         border-radius: 10px;
     }
 
-    .project_popup__header {
+    .project_popup__header, .project_popup__dummy_header {
         min-height: 70px;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
     }
-
 }
 
 

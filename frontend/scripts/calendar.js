@@ -9,13 +9,14 @@
 
 /** ===============  LOGIC and REQUESTS  =============== */
 
-// and here's the trick (works everywhere)
-function r(f){/in/.test(document.readyState)?setTimeout('r('+f+')',9):f()}
-// use like
-r(function(){
+
+runAfterLoading(function () {
     loadUsers(setUsers);
     loadPlaces(setPlaces);
 });
+
+
+
 
 
 function setUsers() {
@@ -45,7 +46,6 @@ function addDay() {
 setupDays();
 function setupDays() {   // TODO: Refactor
     var xhttp = new XMLHttpRequest();
-
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4 && this.status === 200) { // If ok set up day field
             let days_raw = JSON.parse( this.responseText );
@@ -77,12 +77,17 @@ function setupDays() {   // TODO: Refactor
                     continue;
                 }
 
+
+                let selected_date = getQueryParam('date');
+                if (selected_date == undefined) {
+                    selected_date = today;
+                }
                 if (day.date === today) {  // TODO: Today
-                    topbar_html += '<div class="day today selected">'
+                    topbar_html += '<div class="day today ' + (day.date === selected_date ? 'selected' : '') + '">'
                 } else if (day.date < today) {
-                    topbar_html += '<div class="day disabled">'
+                    topbar_html += '<div class="day disabled ' + (day.date === selected_date ? 'selected' : '') + '">'
                 } else {
-                    topbar_html += '<div class="day">'
+                    topbar_html += '<div class="day ' + (day.date === selected_date ? 'selected' : '') + '">'
                 }
 
                 let [dd, mm] = day.date.split('.');
@@ -121,11 +126,17 @@ function setupDays() {   // TODO: Refactor
                         this.classList.add('selected');
 
                         loadDay(this.lastElementChild.textContent, setDay);
+                        setQueryParam('date', this.lastElementChild.textContent);
                     }
                 });
             }
 
-            loadDay(today, setDay);
+            let date = getQueryParam('date');
+            if (date == undefined) {
+                date = today;
+                setQueryParam('date', today);
+            }
+            loadDay(date, setDay);
         }
     };
 
@@ -431,6 +442,7 @@ function saveEvent() {
             }
 
             loadDay(selectedDay, setDay);
+            setQueryParam('date', selectedDay);
         }
     };
 
@@ -471,6 +483,7 @@ function removeEvent(id) {
             }
 
             loadDay(selectedDay, setDay);
+            setQueryParam('date', selectedDay);
         }
     };
 

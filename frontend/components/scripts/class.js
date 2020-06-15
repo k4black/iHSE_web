@@ -11,12 +11,13 @@ document.addEventListener('load', function () {
  * Class popup state management
  * Open and close
  */
-function showClass() {
+function showClass(event_id = undefined) {
     openState = true;
     // document.getElementById('class_popup').style.display = 'block';
     document.getElementById('class_popup').classList.add('active');
 
     // console.log("Open menu");
+    setQueryParam('event_id', event_id);
 }
 
 function hideClass() {
@@ -24,6 +25,7 @@ function hideClass() {
     // document.getElementById('class_popup').style.display = 'none';
     document.getElementById('class_popup').classList.remove('active');
     // console.log("Close menu");
+    removeQueryParam('event_id');
 }
 
 
@@ -98,6 +100,7 @@ function setupClasses() {
             // Pre setup class title
             console.log('class', class_events[i].getElementsByClassName('event__title')[0])
             document.querySelector('#class_popup .class_popup__header__title').innerText = class_events[i].getElementsByClassName('event__title')[0].textContent;
+            document.querySelector('#class_popup .class_popup__dummy_header__title').innerText = class_events[i].getElementsByClassName('event__title')[0].textContent;
 
             // loadClass(class_events[i].getAttribute('data-id'));
             startClassLoading();
@@ -117,7 +120,7 @@ function setupClasses() {
             }, ['class', 'enrolls'])});
 
             // document.querySelector('#class_popup').style.display = 'block';
-            showClass();
+            showClass(class_events[i].getAttribute('data-id'));
         }
     }
 }
@@ -171,6 +174,7 @@ function setClass() {
     let class_id = event_class.id;
 
     document.querySelector('#class_popup .class_popup__header__title').innerText = current_events[class_id].title;
+    document.querySelector('#class_popup .class_popup__dummy_header__title').innerText = current_events[class_id].title;
 
     setupData(document.querySelector('#class_popup .desc').firstElementChild, current_events[class_id].description);
     setupData(document.querySelector('#class_popup .anno').firstElementChild, event_class.annotation);
