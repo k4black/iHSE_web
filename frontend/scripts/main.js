@@ -14,6 +14,75 @@ var cache = {};
 var user;
 
 
+
+// /**
+//  * Run function after loading of the page
+//  *
+//  * @param func: function witch will be run only once after loading of the page
+//  */
+// function runAfterLoading(func) {
+//     // TODO: Check if window already loaded
+//     // (function(w) {
+//     //     //private variable
+//     //     var loaded = false;
+//     //     w.onload = function() {
+//     //         loaded = true;
+//     //     };
+//     //
+//     //     w.checkLoaded = function() {
+//     //         return loaded;
+//     //     };
+//     // })(window);
+//
+//     window.addEventListener('load', func);
+// }
+
+
+
+/**
+ * Run function after loading of the page
+ *
+ * @param func: function witch will be run only once after loading of the page
+ */
+function runAfterLoading(func, timeout=15) {
+    console.log('check');
+    /in/.test(document.readyState) ? setTimeout(function () {runAfterLoading(func, timeout)}, timeout) : func()
+}
+
+
+
+/**
+ * Load resources by function list
+ * Activate loading start/end functions
+ *
+ * @param loaders_list: list of loader functions to run
+ * @param waiting_list: list of strings with cache names
+ * @param setup_funcs: function witch will be run only once after loading
+ */
+function loadMainResources(loaders_list, waiting_list, setup_funcs) {
+    // runAfterLoading(loadingStart, 1);
+    window.addEventListener('load', loadingStart);
+
+    for (let res of waiting_list) {
+        cache[res] = undefined;
+    }
+
+    // Run all functions after 1) page are loaded 2) resources are loaded
+    let setup_func = function () {
+        for (let func of setup_funcs) {
+            func();
+        }
+        loadingEnd();
+    }
+
+    for (let func of loaders_list) {
+        func(function () {checkLoading(function () {runAfterLoading(setup_func)}, waiting_list);});
+    }
+}
+
+
+
+
 /**
  * Setup admin/moderator tag
  */
@@ -26,6 +95,10 @@ loadUser(function () {
         }
     }
 });
+
+
+
+
 
 
 /**

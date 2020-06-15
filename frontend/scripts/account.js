@@ -5,44 +5,34 @@
  */
 
 
-
-
-window.addEventListener('load', function () {
-    createBar();
-
+{
     let id = getQueryParam('id');
-
     if (id == null) {
         // Load self user
-        loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
-        loadCredits(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
-        loadDays(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
-        loadNames(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits']);});
+        loadMainResources(
+            [loadUser, loadCredits, loadDays, loadNames],
+            ['names', 'days', 'user', 'credits'],
+            [createBar, setAccount]
+        );
     } else {
         // Load other user
-        loadOtherUser(id, function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
-        loadUser(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
-        loadOtherCredits(id, function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
-        loadDays(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
-        loadNames(function () {console.log('checkLoading', cache); checkLoading(setAccount, ['names', 'days', 'user', 'credits', 'other']);});
+        loadMainResources(
+            [
+                function (x) {loadOtherUser(id, x)},
+                loadUser,
+                function (x) {loadOtherCredits(id, x)},
+                loadDays,
+                loadNames
+            ],
+            ['names', 'days', 'user', 'credits', 'other'],
+            [createBar, setAccount]
+        );
     }
+}
+runAfterLoading(function () {
+    // createBar();
 });
 
-
-
-
-
-(function(w) {
-    //private variable
-    var loaded = false;
-    w.onload = function() {
-        loaded = true;
-    };
-
-    w.checkLoaded = function() {
-        return loaded;
-    };
-})(window);
 
 
 
@@ -406,7 +396,7 @@ function setCredits() {
     days = [];
     let flag = false;
     for (let day_id of Object.keys(cache['days']).reverse()) {
-        console.log(day_id);
+        // console.log(day_id);
         let date = cache['days'][day_id].date;
 
         if (data_pre[date] !== 0) {

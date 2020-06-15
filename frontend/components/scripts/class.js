@@ -81,7 +81,7 @@ function setupClasses() {
     console.log('setupClasses');
     let class_events = document.querySelectorAll('[active-event]');
     for (let i = 0;  i < class_events.length; ++i) {
-        console.log('setupClass', class_events[i]);
+        // console.log('setupClass', class_events[i]);
 
         class_events[i].onclick = function (val) {
             console.log('Clicked on', val);

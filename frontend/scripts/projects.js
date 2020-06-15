@@ -6,19 +6,22 @@
 
 
 
-
-/** ===============  LOGIC and REQUESTS  =============== */
-
-
-// TODO: Create wrapper in main.js
-window.addEventListener('load', function () {
-    console.log('Load');
-    // loadProjects(setProjects);
-    // Run 'setProjects' when both Projects and Names are loaded
-    loadProjects(function () {checkLoading(setProjects, ['names', 'projects']);})
-    loadNames(function () {checkLoading(setProjects, ['names', 'projects']);})
+{
+    loadMainResources(
+        [
+            loadProjects,
+            loadNames,
+        ],
+        ['names', 'projects'],
+        [setProjects]
+    );
+}
+runAfterLoading(function () {
+    loadingStart();
 });
 
+
+/** ===============  LOGIC and REQUESTS  =============== */
 
 
 

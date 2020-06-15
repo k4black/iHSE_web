@@ -11,39 +11,27 @@
 var current_event = 0;
 
 
+{
+    loadMainResources(
+        [
+            function (x) {loadDay('', x)},
+        ],
+        ['events'],
+        [setDay]
+    );
+}
+runAfterLoading(function () {
+    // setupBar(0.8);
+    // document.querySelector('#save').onclick = function (val) {
+    //     saveEnrolls();
+    //     saveClass();
+    // };
+});
+
 
 
 
 /** ===============  LOGIC and REQUESTS  =============== */
-
-
-
-
-
-window.addEventListener('load', function () {
-    console.log('Load');
-    //
-    // // Get today date
-    // var today = new Date();
-    // var dd = String(today.getDate()).padStart(2, '0');
-    // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    //
-    // if (today.getDate() < 5 || today.getMonth() + 1 < 6)
-    //     today = '05.06';
-    // else
-    //     today = dd + '.' + mm;
-
-    // loadNames(function () {});
-    loadDay('', setDay);
-
-    // setupBar(0.8);
-
-    document.querySelector('#save').onclick = function (val) {
-        saveEnrolls();
-        saveClass();
-    };
-});
-
 
 
 

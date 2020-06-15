@@ -5,20 +5,27 @@
  */
 
 
+loadMainResources(
+    [
+        loadDays,
+        function (x) {loadFeedback('05.06', x)},
+    ],
+    ['feedback', 'days'],
+    [setFeedback, setDays]
+);
+runAfterLoading(function () {
+    // loadingStart();  // TODO: Check
 
-window.addEventListener('load', function () {
-    // loadDays(setDays);
-    loadingStart();
-    loadDays(function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
-    loadFeedback('05.06', function () {checkLoading(function () {setFeedback(); setDays()}, ['feedback', 'days'])});
     document.querySelector('.feedback_title').innerHTML = '05.06'; // TODO: load title from cache
     // TODO: remove '05.06'
+
     loadNames(setNames);
-
-
     document.querySelector('#btn').addEventListener('click', saveFeedback);
-
 });
+
+
+
+/** ===============  LOGIC and REQUESTS  =============== */
 
 
 
