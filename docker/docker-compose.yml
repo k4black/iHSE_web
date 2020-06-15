@@ -35,7 +35,7 @@ services:
 #            - nginx
 
     letsencrypt:
-        container_name: letsencrypt_docker
+        container_name: ihse_letsencrypt
         image: gordonchan/auto-letsencrypt
         volumes:
             - /var/log/letsencrypt/:/var/log/letsencrypt

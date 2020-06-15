@@ -56,8 +56,7 @@ def get_date_str() -> str:
 def logger(function, message, type_='ERROR'):  # TODO: move function to separate file
     time_ = get_datetime_str_utc()
 
-    print(f'*** {type_} in {function}; {time_} ***')
-    print(f'*** {message} ***')
+    print(f'[{time_}]:{type_}:{function}:{message}')
 
 
 """ ---===---==========================================---===--- """
