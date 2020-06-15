@@ -32,7 +32,7 @@ let data = [
 let fields = {
     'users': ['id', 'code', 'user_type', 'phone', 'name', 'sex', 'pass', 'team', 'project_id', 'avatar'],
     'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
-    'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
+    'credits': ['id', 'user_id', 'event_id', 'validator_id', 'time', 'value'],
     'codes': ['code', 'type', 'used'],
     'feedback': ['id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'],
     'top': ['id', 'user_id', 'day_id', 'chosen_1', 'chosen_2', 'chosen_3'],
@@ -41,7 +41,8 @@ let fields = {
     'classes': ['id', 'total', 'annotation'],
     'enrolls': ['id', 'class_id', 'user_id', 'time', 'attendance', 'bonus'],
     'days': ['id', 'date', 'title', 'feedback'],
-    'vacations': ['id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'],
+    'notifications': ['id', 'user_id', 'token'],
+    'vacations': ['id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to', 'accepted'],
 };
 
 
@@ -91,15 +92,15 @@ function getTableColumns(tableName, fields) {
     let columns = [];
 
     for (let field of fields[tableName]) {
-        if (field === 'user_id' || field === 'event_id' || field === 'class_id' || field === 'project_id' || field === 'day_id' || (tableName === 'classes' && field === 'id')) {
+        if (field === 'user_id' || field === 'validator_id' || field === 'event_id' || field === 'class_id' || field === 'project_id' || field === 'day_id' || (tableName === 'classes' && field === 'id')) {
             columns.push({
                 title: field,
                 field: field,
                 sortable: 'true',
                 formatter: function (val) {
                     try {
-                        if (field === 'user_id') {
-                            return '<div class="replaced_cell" user_id=' + val + ' title="user_id: ' + val + '">' + users[val].name + '</div>'
+                        if (field === 'user_id' || field === 'validator_id') {
+                            return '<div class="replaced_cell" user_id=' + val + ' title="'+ field +': ' + val + '">' + users[val].name + '</div>'
                         }
                         if (field === 'event_id' || field === 'class_id') {
                             if (field === 'event_id') {
@@ -122,13 +123,14 @@ function getTableColumns(tableName, fields) {
                     }
                 },
             });
-        } else if (field === 'user_type' || (tableName === 'events' && field === 'type') || (tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback') || (tableName === 'codes' && field === 'used')) {
+        } else if (field === 'user_type' || (tableName === 'events' && field === 'type') || (tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback') || (tableName === 'codes' && field === 'used') || (tableName === 'vacations' && field === 'accepted')) {
             columns.push({
                 title: field,
                 field: field,
                 sortable: 'true',
                 formatter: function (val) {
                     try {
+                        // USER TYPE
                         if (field === 'user_type') {
                             if (val === 0 || val === '0') {
                                 // Regualr user
@@ -141,6 +143,8 @@ function getTableColumns(tableName, fields) {
                                 return '<div class="user_type admin_user" user_type=' + val + ' title="user_type: ' + val + '">admin</div>'
                             }
                         }
+
+                        // EVENT TYPE
                         if (tableName === 'events' && field === 'type') {
                             if (val === 0 || val === '0') {
                                 // Regualr event
@@ -153,7 +157,9 @@ function getTableColumns(tableName, fields) {
                                 return '<div class="event_type fun_event" event_type=' + val + ' title="event_type: ' + val + '">fun</div>'
                             }
                         }
-                        if ((tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback') || (tableName === 'codes' && field === 'used')) {
+
+                        // TRUE/FALSE
+                        if ((tableName === 'enrolls' && field === 'attendance') || (tableName === 'days' && field === 'feedback') || (tableName === 'codes' && field === 'used') || (tableName === 'vacations' && field === 'accepted')) {
                             if (val === true || val === 'true') {
                                 // True value
                                 return '<div class="bool_type true_bool" bool_type=' + val + ' title="bool_type: ' + val + '">true</div>'
@@ -439,7 +445,7 @@ function editRow(row) {
         let current_inputs_html = '<label for=' + field + '>' + field + '</label>';
 
         let disabled = (field === 'id' ? 'disabled' : '');
-        let list = (field === 'user_id' || field === 'event_id' || field === 'class_id' || field === 'project_id' || field === 'day_id' ? 'list=' + field + '_list' : '');
+        let list = (field === 'user_id' || field === 'validator_id' || field === 'event_id' || field === 'class_id' || field === 'project_id' || field === 'day_id' ? 'list=' + field + '_list' : '');
         let placeholder = (field.slice(0, 4) === 'date' ? 'placeholder="dd.mm"' : '');
         placeholder = (field.slice(0, 4) === 'time' ? 'placeholder="hh.mm"' : '');
         placeholder = (current_table === 'events' && field === 'time' ? 'placeholder="hh.mm-hh.mm"' : '');
@@ -449,12 +455,18 @@ function editRow(row) {
             current_inputs_html += '<input name="' + field + '" value="' + row[field] + '" type="text" ' + disabled + ' ' + list + ' ' + placeholder + '>';
         }
 
-        if (field === 'user_id' || field === 'event_id' || field === 'class_id' || field === 'project_id' || field === 'day_id') {
+        if (field === 'user_id' || field === 'validator_id' || field === 'event_id' || field === 'class_id' || field === 'project_id' || field === 'day_id') {
             current_inputs_html += '<datalist id="' + field + '_list" name="' + field + '_list">';
 
             if (field === 'user_id') {
                 for (let id in users) {
                     current_inputs_html += '<option value="' + id + '">' + users[id].name + '</option>';
+                }
+            } else if (field === 'validator_id') {
+                for (let id in users) {
+                    if (users[id].user_type !== 0 && users[id].user_type !== '0') {
+                        current_inputs_html += '<option value="' + id + '">' + users[id].name + '</option>';
+                    }
                 }
             } else if (field === 'event_id' || field === 'class_id' ) {
                 for (let id in events) {

@@ -196,6 +196,8 @@ try:
                 foreign key (user_id) references users(id),
                 event_id int,
                 foreign key (event_id) references events(id),
+                validator_id int,
+                foreign key (validator_id) references users(id),
                 time text default '',
                 value int default 0
             );
@@ -212,6 +214,16 @@ try:
             );
         """)
 
+        # Notifications
+        cursor.execute("""
+            create table if not exists notifications (
+                id serial not null primary key,
+                user_id int,
+                foreign key (user_id) references users(id),
+                token text
+            );
+        """)
+
         # Vacations
         cursor.execute("""
             create table if not exists vacations (
@@ -221,7 +233,8 @@ try:
                 date_from text default '',
                 date_to text default '',
                 time_from text default '',
-                time_to text default ''
+                time_to text default '',
+                accepted bool default FALSE
             );
         """)
 except psycopg2.Error as error:
@@ -234,7 +247,7 @@ TTableObject = tp.Dict[str, tp.Any]
 table_fields: tp.Dict[str, tp.List[str]] = {
     'users': ['id', 'code', 'user_type', 'phone', 'name', 'sex', 'pass', 'team', 'project_id', 'avatar'],
     'sessions': ['id', 'user_id', 'user_type', 'user_agent', 'last_ip', 'time'],
-    'credits': ['id', 'user_id', 'event_id', 'time', 'value'],
+    'credits': ['id', 'user_id', 'event_id', 'validator_id', 'time', 'value'],
     'codes': ['id', 'code', 'type', 'used'],
     'feedback': ['id', 'user_id', 'event_id', 'score', 'entertain', 'useful', 'understand', 'comment'],
     'top': ['id', 'user_id', 'day_id', 'chosen_1', 'chosen_2', 'chosen_3'],
@@ -243,7 +256,8 @@ table_fields: tp.Dict[str, tp.List[str]] = {
     'classes': ['id', 'total', 'annotation'],
     'enrolls': ['id', 'class_id', 'user_id', 'time', 'attendance', 'bonus'],
     'days': ['id', 'date', 'title', 'feedback'],
-    'vacations': ['id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to'],
+    'notifications': ['id', 'user_id', 'token'],
+    'vacations': ['id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to', 'accepted'],
 }
 
 

@@ -37,7 +37,6 @@ def post(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         '/deenroll_project': post_deenroll_project,
 
         '/credits': post_credits,
-        '/checkin': post_checkin,
         '/mark_enrolls': post_mark_enrolls,
         '/create_enroll': post_create_enroll,
         '/remove_enroll': post_remove_enroll,
@@ -363,99 +362,6 @@ def post_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
 
     else:
         return http.not_allowed()
-
-
-def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
-    """ Check in at lecture  HTTP request (by student )
-    By cookie add credits to user
-
-    Args:
-        env: HTTP request environment
-        query: url query parameters
-        cookie: http cookie parameters (may be empty)
-
-    Note:
-        Send:
-            200 Ok: if all are ok
-            401 Unauthorized: if wrong session id
-            405 Method Not Allowed: already got it or timeout
-
-    Returns:
-        Response - result of request
-        None; Only http answer
-    """
-
-    checkins = get_json_by_response(env)
-    event_id = query['event']
-
-    # Safety get user_obj
-    user_obj = get_user_by_response(cookie)
-    if user_obj is None:
-        return http.wrong_cookie(env['HTTP_HOST'])
-
-    if user_obj['user_type'] == 0:
-        return http.not_allowed(host=env['HTTP_HOST'])
-
-    event = sql.get_in_table(event_id, 'events')
-
-    if event is None:  # No such event
-        return http.not_allowed(host=env['HTTP_HOST'])
-
-    config_dict = config.get_config()
-
-    # Set up credits and enrolls attendance
-    if event['type'] == 1 and event['total'] > 0:
-        # master
-        # Check there are enrolls
-        enrolls = sql.get_enrolls_by_event_id(event_id)
-
-        users_in_enrolls = {enroll['user_id'] for enroll in enrolls if not enroll['attendance']}  # type: tp.Set[int]
-        users_in_checkins = {int(checkin['id']): min(int(checkin['bonus']), config_dict['CREDITS_ADDITIONAL']) for checkin in
-                             checkins}  # type: tp.Dict[int, int]
-
-        users_to_set_credits = {k for k in users_in_checkins.keys() if k in users_in_enrolls}  # type: tp.Set[int]
-
-        # Setup attendance for enrolls
-        enrolls = [enroll for enroll in enrolls if
-                   enroll['user_id'] in users_to_set_credits]  # type: tp.List[sql.TTableObject]
-        for i in range(len(enrolls)):
-            enrolls[i]['attendance'] = True
-            enrolls[i]['bonus'] = users_in_checkins[enrolls[i]['user_id']]
-
-            sql.update_in_table(enrolls[i], 'enrolls')
-
-        # TODO: Minus balls if not attendant
-        credits = [{'user_id': int(checkin['id']),
-                    'event_id': event_id,
-                    'time': get_datetime_str(),
-                    'value':
-                        config_dict['CREDITS_MASTER'] + min(int(checkin['bonus']), config_dict['CREDITS_ADDITIONAL'])}
-                   for checkin in checkins
-                   if int(checkin['id']) in users_to_set_credits]  # type: tp.List[sql.TTableObject]
-        for credit in credits:
-            sql.insert_to_table(credit, 'credits')
-
-        logger('post_checkin()', f'Checkin users {users_in_checkins} to master event {event_id}', type_='LOG')
-    else:
-        # lecture
-        enrolls = [{'class_id': event_id, 'user_id': int(checkin['id']), 'time': get_datetime_str(), 'attendance': True,
-                    'bonus': min(int(checkin['bonus']), config_dict['CREDITS_ADDITIONAL'])} for checkin in
-                   checkins]  # type: tp.List[sql.TTableObject]
-        for enroll in enrolls:
-            sql.update_in_table(enroll, 'enrolls')
-
-        credits = [{'user_id': int(checkin['id']),
-                    'event_id': event_id,
-                    'time': get_datetime_str(),
-                    'value': config_dict['CREDITS_LECTURE'] + min(int(checkin['bonus']),
-                                                                  config_dict['CREDITS_ADDITIONAL'])}
-                   for checkin in checkins]  # type: tp.List[sql.TTableObject]
-        for credit in credits:
-            sql.insert_to_table(credit, 'credits')
-
-        logger('post_checkin()', f'Checkin user {checkins} to lecture event {event_id}', type_='LOG')
-
-    return http.ok(env['HTTP_HOST'])
 
 
 # TODO: think mb rename
