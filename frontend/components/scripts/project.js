@@ -217,7 +217,7 @@ function saveProject() {
     let desc = document.querySelector('.desc').lastElementChild.value;
 
     let project = cache['project'];
-    if (desc == project.description && type == project.type && def_type == project.def_type && anno == project.annotation) {
+    if (desc == project.description && type == project.type && dirs == project.direction && def_type == project.def_type && anno == project.annotation) {
         alert('Вы не изменили поля. Сохранять нечего.');
         return;
     }

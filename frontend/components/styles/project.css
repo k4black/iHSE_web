@@ -217,9 +217,14 @@ select {
     width: 100%!important;
 }
 
+.desc * {
+    font-weight: bold;
+}
+
 .anno textarea, .desc textarea {
     font-size: 16px;
     width: inherit;
+    resize: vertical;
 }
 
 
