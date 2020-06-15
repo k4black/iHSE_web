@@ -64,6 +64,21 @@
         <div class="progress"></div>
     </div>
 
+    <hr class="border_line admin_element">
+
+    <div class="change_password admin_element">
+<!--        <input id="pass" type="password" name="pass" maxlength="20"/>-->
+        <div class="form__input" style="transform:translateY(0px)">
+            <label for="pass" class="login__label">Новый пароль</label>
+            <input id="pass" type="password" name="pass"  maxlength="20"/>
+            <div class="input__icon">
+                <i style="display: none" class="mobile__item__icon large material-icons">visibility</i>
+                <i style="display: block" class="mobile__item__icon large material-icons">visibility_off</i>
+            </div>
+        </div>
+        <button id="save_password" onclick="changePassword()"><i class="mobile__item__icon large material-icons">save</i></button>
+    </div>
+
     <hr class="border_line">
 
     <div class="loading__resource account__project no_project">

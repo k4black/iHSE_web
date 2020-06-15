@@ -25,6 +25,28 @@ body {
 }
 
 
+
+
+.change_password {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+
+    width: 100%;
+}
+
+.change_password .form__input {
+    margin: 0;
+}
+.change_password button {
+    width: 100px;
+    margin: 0;
+}
+
+
+
+
 .description {
     display: flex;
     flex-direction: column;

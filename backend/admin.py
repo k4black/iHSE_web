@@ -53,7 +53,9 @@ def admin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
         '/admin_send_data': send_data,
         '/admin_remove_data': remove_data,
 
-        '/admin_codes': codes
+        '/admin_codes': codes,
+
+        '/admin_change_password': change_password
     }
 
     if env['PATH_INFO'] in functions:
@@ -85,11 +87,6 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
 
     # Safety get user_obj
     user_obj = get_user_by_response(cookie)
-    if user_obj is None:
-        return http.wrong_cookie(env['HTTP_HOST'])
-
-    if user_obj['user_type'] == 0:
-        return http.not_allowed(host=env['HTTP_HOST'])
 
     event = sql.get_in_table(event_id, 'events')
 
@@ -152,6 +149,31 @@ def post_checkin(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         logger('post_checkin()', f'Checkin user {checkins} to lecture event {event_id}', type_='LOG')
 
     return http.ok(env['HTTP_HOST'])
+
+
+def change_password(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
+    """
+
+    Args:
+        env: HTTP request environment
+        query: url query parameters
+        cookie: http cookie parameters (may be empty)
+
+    Returns:
+        TODO: add description
+    """
+
+    data = get_json_by_response(env)
+
+    if 'user_id' not in data or 'pass' not in data:
+        return http.bad_request(host=env['HTTP_HOST'])
+
+    logger('change_password()', f'Change password for {data["user_id"]}.', type_='LOG')
+
+    if sql.change_password(data['user_id'], data['pass']):
+        return http.ok(host=env['HTTP_HOST'])
+    else:
+        return http.bad_request(host=env['HTTP_HOST'])
 
 
 def get_credits(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:

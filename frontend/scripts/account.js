@@ -123,8 +123,9 @@ function setAccount() {
     document.querySelector('.team__title').innerText = user.team;
 
     //setup.sh avatar
-    if (user.avatar != null && user.avatar != undefined && user.avatar != '')
+    if (user.avatar != null && user.avatar != undefined && user.avatar != '') {
         topbar.querySelector('.topbar__avatar').style.backgroundImage = "url('" + user.avatar + "')";
+    }
 
     // Setup user type label
     switch (user['user_type']) {
@@ -141,9 +142,54 @@ function setAccount() {
             break;
     }
 
-
     setCredits();
 }
+
+
+
+function changePassword() {
+    if (user['user_type'] != 2) {
+        alert('Не нужно баловаться. Об инцеденте было сообщено.');
+        return;
+    }
+
+    let new_pass = document.getElementById('pass').value;
+
+    if (new_pass == '') {
+        alert('You have to fill password field!');
+        return;
+    }
+
+    let hash_value = hashCode(new_pass);
+
+    console.warn('NEW', hash_value);
+
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) {
+                document.getElementById('pass').value = '';
+                
+                alert('Password changed');
+            }
+        }
+    };
+
+    let user_id = getQueryParam('id');
+    if (user_id == '') {
+        user_id = cache['user'].id;
+    }
+
+    let data = JSON.stringify({"user_id": user_id, "pass": hash_value});
+
+    xhttp.open("POST", "/admin_change_password", true);
+    //xhttp.setRequestHeader('Content-Type', 'application/json');
+    xhttp.setRequestHeader('Content-Type', 'text/plain');
+    xhttp.withCredentials = true;  // To receive cookie
+    xhttp.send(data);
+}
+
+
 
 
 
@@ -152,7 +198,7 @@ function setAccount() {
  * Send http POST request to clear session id
  */
 function logout() {
-    var xhttp = new XMLHttpRequest();
+    let xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
         if (this.readyState === 4) {
@@ -473,3 +519,55 @@ function loadOtherCredits(user_id, func) {
     xhttp.withCredentials = true;  // To receive cookie
     xhttp.send();
 }
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Add password field animations
+ * Hint Rise up when there is some text or cursor inside it
+ */
+var pass = document.querySelector('#pass');
+
+pass.addEventListener('focus', function () {
+    pass.closest('div').querySelector("label").parentElement.classList.add('active');
+});
+
+pass.addEventListener('blur', function () {
+    if (pass.value != "")
+        return;
+
+    pass.closest('div').querySelector("label").parentElement.classList.remove('active');
+});
+
+
+
+
+/**
+ * Add password hide/show button
+ * Change type of password field
+ */
+var hideButton = pass.parentElement.querySelector('.input__icon');
+hideButton.addEventListener('click', function () {
+
+    if (pass.type == 'password') {
+        pass.type = 'text';
+        hideButton.firstElementChild.style.display = 'block';
+        hideButton.lastElementChild.style.display = 'none';
+    }
+
+    else {
+        pass.type = 'password';
+        hideButton.firstElementChild.style.display = 'none';
+        hideButton.lastElementChild.style.display = 'block';
+    }
+
+});
+

@@ -848,6 +848,29 @@ def get_session(sess_id: int) -> tp.Optional[TTableObject]:
     return tuple_to_dict(sess, 'sessions')
 
 
+def change_password(user_id: int, passw: int) -> bool:
+    """ Change password for user
+
+    Args:
+        user_id: Id from table of user - int
+        passw: Password hash - int
+
+    Returns:
+        bool - success or not
+    """
+
+    try:
+        with conn.cursor() as cursor_:
+            cursor_.execute('UPDATE users SET pass = %s WHERE id = %s;', (passw, user_id))
+    except psycopg2.Error as error_:
+        logger(f'sql.change_password({user_id}, )', f'{error_}. Rolling back.', type_='ERROR')
+        conn.rollback()
+        return False
+    else:
+        conn.commit()
+        return True
+
+
 # TODO: Update time in sessions
 def login(phone: str, passw: str, agent: str, ip: str, time_: str = '0') -> tp.Optional[bytes]:
     """ Login user

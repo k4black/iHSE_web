@@ -200,11 +200,13 @@ function groupByUnique(arr, property) {
 /**
  * Calculate hash from password
  * TODO: Check security
+ * TODO: Add salt
  * @param {string} s - password with which the hash is calculated
  * @return {int}
  */
-function hashCode(s) {
-    let h;
+function hashCode(s, salt='') {
+    s = salt + s;
+    let h = 0;
     for(let i = 0; i < s.length; i++)
         h = Math.imul(31, h) + s.charCodeAt(i) | 0;
 
