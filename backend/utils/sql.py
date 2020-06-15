@@ -53,9 +53,9 @@ checkpoint()
 
 
 try:
-    with conn.cursor() as cursor:
+    with conn.cursor() as cursor_:
         # Projects
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists projects (
                 id serial not null primary key,
                 title text default '',
@@ -69,7 +69,7 @@ try:
 
         # Users
         # TODO: rename user_type to type
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists users (
                 id serial not null primary key unique,
                 code text not null unique,
@@ -86,7 +86,7 @@ try:
         """)
 
         # Sessions
-        cursor.execute("""
+        cursor_.execute("""
             CREATE OR REPLACE FUNCTION random_bytea(bytea_length integer)
             RETURNS bytea AS $$
             SELECT decode(string_agg(lpad(to_hex(width_bucket(random(), 0, 1, 256)-1),2,'0') ,''), 'hex')
@@ -94,7 +94,7 @@ try:
             $$
             LANGUAGE 'sql';
         """)
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists sessions (
                 id bytea not null primary key unique default random_bytea(16),
                 user_id int,
@@ -107,7 +107,7 @@ try:
         """)
 
         # Days
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists days (
                 id serial not null primary key unique,
                 date text default '',
@@ -117,7 +117,7 @@ try:
         """)
 
         # Top
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists top (
                 id serial not null primary key unique,
                 user_id int,
@@ -134,7 +134,7 @@ try:
         """)
 
         # Events
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists events (
                 id serial not null primary key unique,
                 type int,
@@ -149,7 +149,7 @@ try:
         """)
 
         # Feedback
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists feedback (
                 id serial not null primary key,
                 user_id int,
@@ -165,7 +165,7 @@ try:
         """)
 
         # Classes
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists classes (
                 id int primary key,
                 foreign key (id) references events(id),
@@ -175,7 +175,7 @@ try:
         """)
 
         # Enrolls
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists enrolls (
                 id serial not null primary key,
                 class_id int,
@@ -189,7 +189,7 @@ try:
         """)
 
         # Credits
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists credits (
                 id serial not null primary key,
                 user_id int,
@@ -205,7 +205,7 @@ try:
 
         # TODO: check if codes were created in a right way, just to make sure
         # Codes
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists codes (
                 id serial not null primary key,
                 code text,
@@ -215,7 +215,7 @@ try:
         """)
 
         # Notifications
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists notifications (
                 id serial not null primary key,
                 user_id int,
@@ -225,7 +225,7 @@ try:
         """)
 
         # Vacations
-        cursor.execute("""
+        cursor_.execute("""
             create table if not exists vacations (
                 id serial not null primary key unique,
                 user_id int,
@@ -1674,6 +1674,53 @@ def deenroll_project(user_id: int) -> bool:
 
 
 # Feedback
+
+def get_top(user_id: int, date: str) -> tp.Optional[TTableObject]:
+    """ Enroll user in project
+
+    Args:
+        user_id: user id from bd
+        date: date from bd  # TODO: Check dd.mm of day_id
+
+    Returns:
+        Top object for current day
+    """
+
+    day: tp.Optional[tp.Tuple[int]]
+
+    try:
+        with conn.cursor() as cursor_:
+            cursor_.execute('SELECT id FROM days WHERE date = %s;', (date,))
+            day = cursor_.fetchone()
+    except psycopg2.Error as error_:
+        logger(f'sql.get_feedback({user_id}, {date})', f'Select day; {error_}. Rolling back.', type_='ERROR')
+        conn.rollback()
+        return None
+    else:
+        conn.commit()
+
+    if day is None:
+        return None
+
+    day_id = day[0]
+
+    top_obj = None  # type: tp.Optional[TTableObject]
+
+    try:
+        with conn.cursor() as cursor_:
+            cursor_.execute('SELECT * FROM top WHERE user_id = %s AND day_id = %s', (user_id, day_id))
+            top_ = cursor_.fetchone()
+            if top_ is not None:
+                top_obj = tuple_to_dict(top_, 'top')
+    except psycopg2.Error as error_:
+        logger(f'sql.get_top({user_id}, {date})', f'{error_}. Rolling back.', type_='ERROR')
+        conn.rollback()
+        return None
+    else:
+        conn.commit()
+        return top_obj
+
+
 def get_feedback(user_id: int, date: str) -> tp.Tuple[tp.List[TTableObject], tp.List[TTableObject]]:
     """ Enroll user in project
 
@@ -1756,7 +1803,7 @@ def post_feedback(user_id: int, feedback_list: tp.List[TTableObject]) -> None:
         insert_to_table(feedback, 'feedback')
 
 
-def post_top(user_id: int, date: str, users_list: tp.List[str]) -> None:
+def post_top(user_id: int, date: str, users_list: tp.List[str]) -> bool:
     """ Post top users
 
     Args:
@@ -1768,13 +1815,14 @@ def post_top(user_id: int, date: str, users_list: tp.List[str]) -> None:
         None
     """
     day: tp.Optional[tp.Tuple[int]] = None
+    print('!!!!!! date !!!!!!', date)
 
     try:
         with conn.cursor() as cursor_:
             cursor_.execute('SELECT (id) FROM days WHERE date = %s;', (date,))
-            day = cursor.fetchone()
+            day = cursor_.fetchone()
     except psycopg2.Error as error_:
-        logger(f'sql.post_top({user_id})', f'Select day; {error_}. Rolling back.', type_='ERROR')
+        logger(f'sql.post_top({user_id}, {date})', f'Select day; {error_}. Rolling back.', type_='ERROR')
         conn.rollback()
         return
     else:
@@ -1782,6 +1830,8 @@ def post_top(user_id: int, date: str, users_list: tp.List[str]) -> None:
 
     if day is None:
         return
+
+    print('!!!!!! day !!!!!!', day)
 
     day_id = day[0]
 
@@ -1793,19 +1843,25 @@ def post_top(user_id: int, date: str, users_list: tp.List[str]) -> None:
         user = None  # type: tp.Optional[tp.Tuple[int]]
         try:
             with conn.cursor() as cursor_:
-                cursor.execute('SELECT (id) FROM users WHERE name = %s;', (name,))
-                user = cursor.fetchone()
+                cursor_.execute('SELECT (id) FROM users WHERE name = %s;', (name,))
+                user = cursor_.fetchone()
         except psycopg2.Error as error_:
-            logger(f'sql.post_top({user_id})', f'Select user; {error_}. Rolling back.', type_='ERROR')
+            logger(f'sql.post_top({user_id}, {date})', f'Select user; {error_}. Rolling back.', type_='ERROR')
             # TODO if you don't like losing all the looped stuff in case of rollback,
             conn.rollback()
             continue
+
+            print('!!!!!! user !!!!!!' + str(i+1), user)
 
         if user is None:
             continue
 
         user_id = user[0]
 
-        top_obj['chosen' + str(i+1)] = user_id
+        top_obj[f'chosen_{i+1}'] = user_id
+
+    print('!!!! top_obj !!!!', top_obj)
 
     insert_to_table(top_obj, 'top')
+
+    return True

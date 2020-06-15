@@ -264,8 +264,9 @@ def get_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse
         return http.wrong_cookie(host=env['HTTP_HOST'])
 
     feedback_template, feedback_data = sql.get_feedback(user_obj['id'], day)
+    top_object = sql.get_top(user_obj['id'], day)
 
-    data = {'template': feedback_template, 'data': feedback_data}
+    data = {'template': feedback_template, 'data': feedback_data, 'top': top_object}
     return http.ok(json_dict=data)
 
 

@@ -274,10 +274,12 @@ def post_feedback(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRespons
     users = feedback_obj['users']
     events = feedback_obj['events']
 
-    # TODO: check
-    if sql.post_feedback(user_obj['id'], events) and sql.post_top(user_obj['id'], date, users):
-        return http.ok(env['HTTP_HOST'])
+    print('EVENTS', events)
+    print('USERS', users)
 
+    # TODO: check
+    if sql.post_feedback(user_obj['id'], events) or sql.post_top(user_obj['id'], date, users):
+        return http.ok(env['HTTP_HOST'])
     else:
         return http.not_allowed()
 

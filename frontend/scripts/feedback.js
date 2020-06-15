@@ -8,10 +8,11 @@
 loadMainResources(
     [
         loadDays,
+        loadNames,
         function (x) {loadFeedback('05.06', x)},
     ],
     ['feedback', 'days'],
-    [setFeedback, setDays]
+    [setFeedback, setDays, setNames]
 );
 runAfterLoading(function () {
     // loadingStart();  // TODO: Check
@@ -19,7 +20,6 @@ runAfterLoading(function () {
     document.querySelector('.feedback_title').innerHTML = '05.06'; // TODO: load title from cache
     // TODO: remove '05.06'
 
-    loadNames(setNames);
     document.querySelector('#btn').addEventListener('click', saveFeedback);
 });
 
@@ -118,10 +118,14 @@ function setDays() {
  * Loading users in list
  */
 function setNames() {
-    let datalist_html = "";
+    let names = Object.values(cache['names'])
+        .filter(function (x) {return x.id != cache['user'].id})
+        .map(function (x) {return x.team + ' ' + x.name})
+        .sort();
 
-    for (let id in cache['names']) {
-        datalist_html += '<option value="' + cache['names'][id].name + '">';
+    let datalist_html = "";
+    for (let name of names) {
+        datalist_html += '<option value="' + name + '">';
     }
 
     document.querySelector('#users_list').innerHTML = datalist_html;
@@ -134,6 +138,7 @@ function setFeedback() {
 
     let template = cache['feedback'].template;
     let data = cache['feedback'].data;
+    let top = cache['feedback'].top;
     let feedback_by_event_id = groupByUnique(Object.values(data), 'event_id');
 
     let events_html = '';
@@ -204,6 +209,32 @@ function setFeedback() {
         }
     }
 
+    if (top != null) {
+        for (let i of [1, 2, 3]) {
+            let user = cache['names'][top['chosen_' + i]];
+            if (user != null) {
+                document.getElementById('user' + i).value = user.team + ' ' + user.name;
+            } else {
+                document.getElementById('user' + i).value = '# Пользователь Неизвестен';
+            }
+            document.getElementById('user' + i).disabled = true;
+        }
+    } else {
+        for (let i of [1, 2, 3]) {
+            document.getElementById('user' + i).value = '';
+            document.getElementById('user' + i).disabled = false;
+        }
+    }
+
+    if (top == null || data == null) {
+        document.getElementById('btn').disabled = false;
+        document.getElementById('btn').style.display = 'block';
+    } else {
+        document.getElementById('btn').disabled = true;
+        document.getElementById('btn').style.display = 'none';
+    }
+
+
     loadingEnd();
 }
 
@@ -243,27 +274,24 @@ function saveFeedback() {
         }
     }
 
-
     // Process names
-    let existed_names = [];
-    for (let user in cache['names']) {
-        existed_names.push(user.name);
-    }
-    let names = [];
-    for (let user in cache['names']) {
-        names.push(user.name);
-    }
+    let existed_names = Object.values(cache['names']).map(function (x) {return x.name})
 
     let chosen_names = [];
     for (let user of users) {
-        let name = user.value;
+        let name = user.value.split(' ').slice(1).join(' ');
 
-        if (name in chosen_names) {
+        if (name == cache['user'].name) {
+            alert('Невозможно выбрать пользователя <' + name + '>. Нельзя выбирать себя.');
+            return;
+        }
+
+        if (chosen_names.includes(name)) {
             alert('Невозможно выбрать пользователя <' + name + '>. Уже выбран.');
             return;
         }
 
-        if (name in existed_names) {
+        if (existed_names.includes(name)) {
             chosen_names.push(name);
         } else {
             alert('Невозможно выбрать пользователя <' + name + '>. Нет пользователя.');
@@ -312,7 +340,7 @@ function saveFeedback() {
             }
 
             if (this.status === 405) {  //  Method Not Allowed or already got it
-                alert("not!");  // TODO: show Html error message
+                alert("Вы уже отправляли отзыв в на этот день.");  // TODO: show Html error message
             }
         }
     };

@@ -211,7 +211,17 @@ h1 {
 
 .rs-container .rs-selected {
     background-color: var(--main-colour)!important;
-    border: 1px solid var(--main-dark-colour) !important;
+    border: 1px solid var(--main-colour) !important;
+}
+
+.rs-container.disabled .rs-selected {
+    background-color: var(--main-inactive-colour)!important;
+    border: 1px solid var(--main-inactive-colour) !important;
+}
+
+.rs-container.disabled .rs-pointer {
+    background-color: var(--text-light-colour);
+    box-shadow: none;
 }
 
 .rs-container {
