@@ -1,4 +1,6 @@
 import typing as tp
+import os
+import shutil
 
 import configparser
 
@@ -7,6 +9,9 @@ from utils.auxiliary import logger
 
 CONFIG_PATH = '/var/conf/ihse/ihse.ini'
 PLACES_PATH = '/var/conf/ihse/places.list'
+
+DEFAULT_CONFIG_PATH = '/var/conf/ihse/default_ihse.ini'
+DEFAULT_PLACES_PATH = '/var/conf/ihse/default_places.list'
 
 
 """ ---===---==========================================---===--- """
@@ -75,13 +80,26 @@ def read_config() -> None:
 
         NUMBER_TEAMS = int(config['TEAMS']['number'])
     except (KeyError, configparser.MissingSectionHeaderError):
-        logger('read_config()', 'No config file. Using default values', type_='ERROR')
-        CREDITS_TOTAL = 300
-        CREDITS_MASTER = 15
-        CREDITS_LECTURE = 15
-        CREDITS_ADDITIONAL = 5
-        NUMBER_TEAMS = 5
-        write_config()
+        logger('read_config()', 'No config file. Using default config file', type_='INFO')
+        try:
+            config = configparser.ConfigParser()
+            config.read(DEFAULT_CONFIG_PATH)
+
+            CREDITS_TOTAL = int(config['CREDITS']['total'])
+            CREDITS_MASTER = int(config['CREDITS']['masterclass'])
+            CREDITS_LECTURE = int(config['CREDITS']['lecture'])
+            CREDITS_ADDITIONAL = int(config['CREDITS']['additional'])
+
+            NUMBER_TEAMS = int(config['TEAMS']['number'])
+            write_config()
+        except (KeyError, configparser.MissingSectionHeaderError):
+            logger('read_config()', 'No default config file. Using default values', type_='ERROR')
+            CREDITS_TOTAL = 300
+            CREDITS_MASTER = 15
+            CREDITS_LECTURE = 15
+            CREDITS_ADDITIONAL = 5
+            NUMBER_TEAMS = 5
+            write_config()
 
     logger('read_config()', '==== End config file reading ====', type_='LOG')
 
@@ -140,14 +158,22 @@ def get_places() -> tp.List[str]:
     return PLACES
 
 
+
 def read_places() -> tp.List[str]:
     """Read list of places from file (`places.list`) """
 
     global PLACES
 
     # Check file exist. or auto create
-    with open(PLACES_PATH, "a+") as f:
-        pass
+    if not os.path.exists(PLACES_PATH):
+        logger('read_places()', 'No places file. Using default places file', type_='INFO')
+        if os.path.exists(DEFAULT_PLACES_PATH):
+            shutil.copy(DEFAULT_PLACES_PATH, PLACES_PATH)
+        else:
+            # Create empty
+            logger('read_places()', 'No default places file. Using default values', type_='ERROR')
+            with open(PLACES_PATH, "a+") as f:
+                pass
 
     PLACES = []
     with open(PLACES_PATH, "r") as f:
