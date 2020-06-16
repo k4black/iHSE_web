@@ -275,6 +275,7 @@ function logout() {
 // var ProgressBar = require('scripts/progressbar.js');
 var bar;
 function createBar() {
+    document.getElementsByClassName('progress')[0].innerHTML = '';
     bar = new ProgressBar.Circle('.progress', {
         color: '#aaaaaa',
         // This has to be the same size as the maximum width to

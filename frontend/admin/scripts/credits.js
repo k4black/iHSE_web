@@ -270,8 +270,8 @@ function setTable() {
             // edit some
             if (value === 0 || value === '0') {
                 console.log('-', user_id, event_id, '-', event_id === 'tal');
-
-                editCredit('', user_id, event_id, '', value);
+                let now = new Date().toLocaleString("lt-LT", {timeZone: "Europe/Moscow", hour12: false}).replace('-', '.').replace('-', '.') + ' MSK';
+                editCredit('', user_id, event_id, cache['user'].id, now, value);
             } else {
                 let credit_id = args[3][0]['children'][0].id;
                 let time = credits[credit_id]['time'];
@@ -349,13 +349,15 @@ $(function() {
 
 
 function addCredit(user_id, value) {
-    editCredit('', user_id,'', '', value)
+    let now = new Date().toLocaleString("lt-LT", {timeZone: "Europe/Moscow", hour12: false}).replace('-', '.').replace('-', '.') + ' MSK';
+    editCredit('', user_id,'', cache['user'].id, now, value)
 }
 
-function editCredit(id, user_id, event_id, time, value) {
+function editCredit(id, user_id, event_id, validator_id, time, value) {
     document.getElementById('id').value = id;
     document.getElementById('user_id').value = user_id;
     document.getElementById('event_id').value = event_id;
+    document.getElementById('validator_id').value = validator_id;
     document.getElementById('time').value = time;
     document.getElementById('value').value = value;
 
@@ -368,10 +370,11 @@ function saveCredit() {
     let id = document.getElementById('id').value;
     let user_id = document.getElementById('user_id').value;
     let event_id = document.getElementById('event_id').value;
+    let validator_id = document.getElementById('validator_id').value;
     let time = document.getElementById('time').value;
     let value = document.getElementById('value').value;
 
-    alert('Saving credit: ' + id + ' ' + user_id + ' ' + event_id + ' ' + time + ' ' + value);
+    // alert('Saving credit: ' + id + ' ' + user_id + ' ' + event_id + ' ' + time + ' ' + value);
 
     if (event_id === '' || value === '') {
         alert('Cannot save with empty EVENT_ID or VALUE');
@@ -384,6 +387,7 @@ function saveCredit() {
                                 "id": id,
                                 "user_id": user_id,
                                 "event_id": event_id,
+                                "validator_id": validator_id,
                                 "time": time,
                                 "value": value,
                                 });
