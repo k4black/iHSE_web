@@ -292,12 +292,20 @@ function setEnrolls() {
 
             if (check_user) {
                 document.querySelector('.enroll_enrolled_alert').style.display = 'block';
+            }
                 document.getElementById('deenroll').style.display = 'block';
-            } else if (current_time_15 < event_time) {
+            if (current_time_15 < event_time) {
                 document.querySelector('.enroll_15_alert').style.display = 'block';
                 document.getElementById('enroll').style.display = 'block';
+                if (check_user) {
+                    document.getElementById('deenroll').style.display = 'block';
+                }
             } else {
-                document.querySelector('.enroll_close_alert').style.display = 'block';
+                if (!check_user) {
+                    document.querySelector('.enroll_close_alert').style.display = 'block';
+                } else {
+                    document.getElementById('deenroll').style.display = 'none';
+                }
             }
         } else if (cache['today'] < date) {
             document.querySelector('.enroll_day_alert').style.display = 'block';

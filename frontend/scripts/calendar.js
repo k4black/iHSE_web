@@ -7,6 +7,26 @@
 
 
 
+// {
+//     loadMainResources(
+//         [
+//             loadDays,
+//             function (x) {loadDay('', x)},
+//         ],
+//         ['events', 'days'],
+//         [setDay]
+//     );
+// }
+// runAfterLoading(function () {
+//     // setupBar(0.8);
+//     // document.querySelector('#save').onclick = function (val) {
+//     //     saveEnrolls();
+//     //     saveClass();
+//     // };
+// });
+
+
+
 /** ===============  LOGIC and REQUESTS  =============== */
 
 

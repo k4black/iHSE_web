@@ -14,9 +14,10 @@ var current_event = 0;
 {
     loadMainResources(
         [
+            loadDays,
             function (x) {loadDay('', x)},
         ],
-        ['events'],
+        ['events', 'days'],
         [setDay]
     );
 }
