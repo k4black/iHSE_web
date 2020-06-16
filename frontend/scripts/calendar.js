@@ -259,7 +259,7 @@ function setDay() {
     document.querySelector('.calendar__day').innerHTML = day_html;  // Set day html
 
     setupClasses();
-    if (cache['user'].user_type == 2) {
+    if (cache['user'] != null && cache['user'].user_type == 2) {
         console.warn('ADMIN');
         setupAdminButtons();
     }
