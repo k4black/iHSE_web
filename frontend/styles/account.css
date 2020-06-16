@@ -256,6 +256,11 @@ body {
     color: var(--header-colour);
 
     min-width: 100px;
+
+    overflow: auto;
+    white-space:nowrap;
+    text-overflow: ellipsis;
+    height: 20px;
 }
 
 .project__top_line div span:first-child {

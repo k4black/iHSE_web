@@ -34,6 +34,7 @@ def post(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
 
         '/project': post_project,
         '/edit_project': post_edit_project,
+        '/enroll_project': post_enroll_project,
         '/deenroll_project': post_deenroll_project,
 
         '/credits': post_credits,
