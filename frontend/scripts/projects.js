@@ -61,9 +61,15 @@ function setProjects() { // If ok set up day field
             }
         }
 
+        let project_id = 0;
+        try {
+            project_id = cache['user']['project_id'];
+        } catch (e) {
+            project_id = 0;
+        }
 
         project_html =
-            '<div class="project" project-id="' + project.id + '"' + (cache['user']['project_id'] == project.id ? 'onclick="editProject(' + project.id + ')"' : 'onclick="editOthersProject(' + project.id + ');"') + '>' +
+            '<div class="project" project-id="' + project.id + '"' + (project_id == project.id ? 'onclick="editProject(' + project.id + ')"' : 'onclick="editOthersProject(' + project.id + ');"') + '>' +
                 '<img src="images/' + (project.type === 'science' ? 'science.png' : (project.type === 'project' ? 'project.png': 'other.png')) + '">' +
                 '<div class="description">' +
 
@@ -79,7 +85,7 @@ function setProjects() { // If ok set up day field
 
                     '<p class="project__anno">' + project.annotation + '</p>' +
                     // '<p class="project__desc">' + project.description + '</p>' +
-                    (cache['user']['project_id'] == project.id ? '<button class="project__edit_button"><i class="mobile__item__icon large material-icons">edit</i></button>' : '') +
+                    (project_id == project.id ? '<button class="project__edit_button"><i class="mobile__item__icon large material-icons">edit</i></button>' : '') +
                 '</div>' +
             '</div>';
         projects_html += project_html + '<hr class="border_line">';

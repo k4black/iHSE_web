@@ -171,7 +171,7 @@ function setDay() {
 
     // TODO: refactor
     // load for admin
-    if (cache['user'].user_type != 0){
+    if (cache['user'] != null && cache['user'].user_type != 0){
         loadUsers(setUsers);
         loadPlaces(setPlaces);
     }
