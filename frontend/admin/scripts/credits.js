@@ -349,7 +349,7 @@ $(function() {
 
 
 function addCredit(user_id, value) {
-    let now = new Date().toLocaleString("lt-LT", {timeZone: "Europe/Moscow", hour12: false}).replace('-', '.').replace('-', '.') + ' MSK';
+    let now = new Date().toLocaleString("lt-LT", {timeZone: "Europe/Moscow", hour12: false}) + ' MSK';
     editCredit('', user_id,'', cache['user'].id, now, value)
 }
 

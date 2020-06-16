@@ -674,6 +674,12 @@ COPY public.credits (id, user_id, event_id, validator_id, "time", value) FROM st
 30	1	24	23	2020-06-02 13:42:30 MSK	20
 31	3	24	23	2020-06-02 13:42:30 MSK	15
 32	12	24	23	2020-06-02 13:42:30 MSK	15
+34	5	76	0	2020.06.16 12:58:51 MSK	5
+35	10	12	0	2020.06.16 12:59:00 MSK	3
+36	16	12	0	2020.06.16 12:59:07 MSK	3
+37	22	12	0	2020.06.16 12:59:15 MSK	3
+38	18	12	0	2020.06.16 12:59:22 MSK	2
+39	9	12	0	2020.06.16 12:59:27 MSK	2
 \.
 
 
@@ -1046,7 +1052,7 @@ SELECT pg_catalog.setval('public.codes_id_seq', 20, true);
 -- Name: credits_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.credits_id_seq', 33, true);
+SELECT pg_catalog.setval('public.credits_id_seq', 39, true);
 
 
 --
