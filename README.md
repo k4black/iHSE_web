@@ -66,7 +66,7 @@ A page to collect comments on some days. Reviews are collected for events that a
 * Credits  
 View and edit the history of getting credits for all camp participants in the form of a table. 
 
-* Profiles (TODO)  
+* Profiles 
 You can view users' pages to see beautiful graphics of their credits.
 
 * Events  
