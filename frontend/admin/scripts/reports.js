@@ -310,7 +310,10 @@ function countDayFeedback() {
         events_html +=
             '<div class="day_feedback">' +
                 '<div class="description">' +
-                    '<p class="event_title">' + events[event_id].title + ' [' + events[event_id].host +']</p>' +
+                    '<div class="event_left">' +
+                        '<p class="event_title">' + events[event_id].title + ' (' + events[event_id].time.split('\n')[0] + ')</p>' +
+                        '<p class="event_host">'  + events[event_id].host + '</p>' +
+                    '</div>' +
                     '<p class="event_count">' + 'Собрано:' + feedback_by_event_id[event_id].length + '</p>' +
                 '</div>' +
                 '<canvas id="event' + event_id + '"></canvas>' +

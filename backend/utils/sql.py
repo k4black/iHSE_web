@@ -832,12 +832,14 @@ def get_session(sess_id: int) -> tp.Optional[TTableObject]:
         session obj: (id, user_id, user_type, user_agent, last_ip, time)
                      or None if there is no such session
     """
-    sess: tp.Optional[tp.Tuple] = None
 
+    sess: tp.Optional[tp.Tuple] = None
     try:
         with conn.cursor() as cursor_:
             cursor_.execute(f"select * from sessions where id = bytea \'\\x{sess_id}\';")
             sess = cursor_.fetchone()
+            if sess is None:
+                return None
     except psycopg2.Error as error_:
         logger(f'sql.get_session({sess_id})', f'{error_}. Rolling back.', type_='ERROR')
         conn.rollback()

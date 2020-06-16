@@ -176,10 +176,15 @@ function setDay() {
         loadPlaces(setPlaces);
     }
 
-
-    let enrolled_classes_id = Object.values(cache['user'].enrolls).map(function (x) {return x.class_id});
-    let attended_classes_id = Object.values(cache['user'].enrolls).filter(function (x) {return x.attendance}).map(function (x) {return x.class_id});
-
+    let enrolled_classes_id;
+    let attended_classes_id;
+    try{
+        enrolled_classes_id = Object.values(cache['user'].enrolls).map(function (x) {return x.class_id});
+        attended_classes_id = Object.values(cache['user'].enrolls).filter(function (x) {return x.attendance}).map(function (x) {return x.class_id});
+    } catch (e) {
+        enrolled_classes_id = [];
+        attended_classes_id = [];
+    }
 
     let events = Object.values(cache['events']);
 

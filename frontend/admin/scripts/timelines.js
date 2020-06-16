@@ -10,12 +10,17 @@ var current_timeline = 'vacations';
 
 
 window.addEventListener('load', function () {
-    current_timeline = 'vacations';
+    let date = getQueryParam('date');
+    if (date == null) {
+        current_timeline = Object.values(cache['days'])[0].data
+    } else {
+        current_timeline = date;
+    }
     // loadAndCreateTable(current_table);
 
     // setupToolbar();
     // setupTabs();
-    loadDays(function () {setupTabs(); current_timeline = Object.values(cache['days'])[0].data; loadAndCreateTimeline(current_timeline)});
+    loadDays(function () {setupTabs(current_timeline); loadAndCreateTimeline(current_timeline)});
 
     // buildTestTimeline();
 });
@@ -23,13 +28,14 @@ window.addEventListener('load', function () {
 
 
 
-function setupTabs() {
+function setupTabs(active_tab = null) {
     let tabs_html = '';
     for (let day of Object.values(cache['days'])) {
         let name = day.date.replace('.', '_');
         tabs_html += '<button ' + (day.date === Object.values(cache['days'])[0].date ? 'class="active_tab"' : '') + ' id="tab_' + name + '">' + day.date + '</button>';
     }
     $('.tabs')[0].innerHTML = tabs_html;
+    $('.tabs button').removeClass('active_tab');
 
     for (let day of Object.values(cache['days'])) {
         let tab_name = day.date;
@@ -45,11 +51,17 @@ function setupTabs() {
             // setupClasses();
         };
     }
+    if (active_tab != null) {
+        console.warn('active_tab', active_tab);
+        $('#tab_' + active_tab.replace('.', '_')).addClass('active_tab');
+    }
 }
 
 
 
 function loadAndCreateTimeline(timeline) {  // TODO: refactor
+    setQueryParam('date', timeline);
+
     var xhttp = new XMLHttpRequest();
 
     xhttp.onreadystatechange = function() {
@@ -133,7 +145,7 @@ function buildTimeline(locations, events) {
     for (let i in events) {
         let [month, day] = cache['days'][events[i].day_id].date.split('.');
         let [time1, time2] = events[i].time.split('\n');
-        console.log('added event ', time1, time2);
+        // console.log('added event ', time1, time2);
 
         let [hours1, min1] = time1.split('.');
         let hours2, min2;
@@ -147,7 +159,7 @@ function buildTimeline(locations, events) {
             [hours2, min2] = time2.split('.');
         }
 
-        console.log('added event ', month + '.' + day, hours1 + ':' + min1, hours2 + ':' + min2);
+        // console.log('added event ', month + '.' + day, hours1 + ':' + min1, hours2 + ':' + min2);
 
         let event_type = '';
         if (events[i].type === 0) {
@@ -164,7 +176,7 @@ function buildTimeline(locations, events) {
             class: event_type,
             onClick: function (event) {
                 if (events[i].type === 1 || events[i].type === 2) {
-                    console.log('clicked event with id: ', events[i].id);
+                    // console.log('clicked event with id: ', events[i].id);
 
                     // loadClass(events[i].id);
                     loadClass(events[i].id, setClass);
@@ -176,7 +188,7 @@ function buildTimeline(locations, events) {
                     // loadEnrolls(events[i].id);
                     loadEnrollsByClassId(events[i].id, setEnrolls);
 
-                    alert('You clicked on the ' + events[i].id + '=' + events[i].title + ' event in ' + events[i].place + '. This is an example of a click handler');
+                    // alert('You clicked on the ' + events[i].id + '=' + events[i].title + ' event in ' + events[i].place + '. This is an example of a click handler');
 
                     // document.querySelector('#class_popup').style.display = 'block';
                     showClass(events[i].id);

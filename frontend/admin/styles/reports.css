@@ -71,6 +71,19 @@
 }
 
 
+.event_left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.event_host {
+    color: var(--hint-colour);
+    font-style: italic;
+    font-size: 13px;
+}
+
 .day_feedback .event_title, .host_feedback .host_title {
 
 }

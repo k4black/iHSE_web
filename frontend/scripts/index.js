@@ -49,8 +49,15 @@ function setDay() {
     current_time = current_time.slice(0, 2) + '.' + current_time.slice(3);
     console.log('CURRENT TIME', current_time);
 
-    let enrolled_classes_id = Object.values(cache['user'].enrolls).map(function (x) {return x.class_id});
-    let attended_classes_id = Object.values(cache['user'].enrolls).filter(function (x) {return x.attendance}).map(function (x) {return x.class_id});
+    let enrolled_classes_id;
+    let attended_classes_id;
+    try{
+        enrolled_classes_id = Object.values(cache['user'].enrolls).map(function (x) {return x.class_id});
+        attended_classes_id = Object.values(cache['user'].enrolls).filter(function (x) {return x.attendance}).map(function (x) {return x.class_id});
+    } catch (e) {
+        enrolled_classes_id = [];
+        attended_classes_id = [];
+    }
 
 
     let events = Object.values(cache['events']);

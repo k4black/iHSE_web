@@ -567,31 +567,21 @@ ALTER TABLE ONLY public.vacations ALTER COLUMN id SET DEFAULT nextval('public.va
 
 COPY public.classes (id, total, annotation) FROM stdin;
 8	0	
-11	10	
 13	0	
 21	0	
 22	0	
-23	0	
 24	0	
-27	0	
 28	0	
 30	0	
 29	0	
-35	0	
 36	0	
 37	0	
-38	0	
 39	0	
 42	0	
 43	0	
-44	0	
 45	0	
-47	0	
 48	0	
-49	0	
 50	0	
-51	0	
-53	0	
 59	0	
 60	0	
 61	0	
@@ -607,6 +597,17 @@ COPY public.classes (id, total, annotation) FROM stdin;
 73	0	
 74	0	
 78	0	
+11	12	
+27	0	
+44	7	
+47	6	
+49	12	
+51	10	
+53	20	
+140	25	
+35	50	
+38	50	
+23	100	
 \.
 
 
@@ -657,6 +658,22 @@ COPY public.credits (id, user_id, event_id, validator_id, "time", value) FROM st
 13	11	21	24	2020-06-02 11:16:31 MSK	10
 14	6	21	24	2020-06-02 11:16:31 MSK	10
 16	1	21	0	2020-06-02 13:42:30 MSK	12
+17	20	22	0	2020-06-02 13:42:30 MSK	15
+18	19	22	0	2020-06-02 13:42:30 MSK	15
+19	18	22	24	2020-06-02 13:42:30 MSK	20
+20	17	22	24	2020-06-02 13:42:30 MSK	15
+21	16	22	24	2020-06-02 13:42:30 MSK	15
+22	15	22	24	2020-06-02 13:42:30 MSK	15
+23	1	22	24	2020-06-02 13:42:30 MSK	15
+24	5	23	24	2020-06-02 13:42:30 MSK	20
+25	4	23	24	2020-06-02 13:42:30 MSK	15
+26	7	23	24	2020-06-02 13:42:30 MSK	15
+27	11	23	24	2020-06-02 13:42:30 MSK	15
+28	6	23	23	2020-06-02 13:42:30 MSK	15
+29	20	24	23	2020-06-02 13:42:30 MSK	15
+30	1	24	23	2020-06-02 13:42:30 MSK	20
+31	3	24	23	2020-06-02 13:42:30 MSK	15
+32	12	24	23	2020-06-02 13:42:30 MSK	15
 \.
 
 
@@ -699,6 +716,25 @@ COPY public.enrolls (id, class_id, user_id, "time", attendance, bonus) FROM stdi
 15	21	13	2020-06-02 11:16:31 MSK	f	0
 16	21	6	2020-06-02 11:16:31 MSK	t	0
 17	21	1	2020-06-02 11:16:31 MSK	t	2
+27	44	5	2020-06-16 02:07:50 MSK	f	0
+28	35	5	2020-06-02 09:46:30 MSK	f	0
+29	23	5	2020-06-02 13:46:30 MSK	f	5
+30	22	20	2020-06-02 13:46:30 MSK	t	0
+31	22	19	2020-06-02 13:46:30 MSK	t	0
+32	22	18	2020-06-02 13:46:30 MSK	t	5
+33	22	17	2020-06-02 13:46:30 MSK	t	0
+34	22	16	2020-06-02 13:46:30 MSK	t	0
+35	22	15	2020-06-02 13:46:30 MSK	t	0
+36	22	1	2020-06-02 13:46:30 MSK	t	0
+37	23	9	2020-06-02 13:46:30 MSK	f	0
+38	23	4	2020-06-02 13:46:30 MSK	t	0
+39	23	7	2020-06-02 13:46:30 MSK	t	0
+40	23	11	2020-06-02 13:46:30 MSK	t	0
+41	23	6	2020-06-02 13:46:30 MSK	t	0
+42	24	20	2020-06-02 13:46:30 MSK	t	0
+43	24	1	2020-06-02 13:46:30 MSK	t	5
+44	24	3	2020-06-02 13:46:30 MSK	t	0
+45	24	12	2020-06-02 13:46:30 MSK	t	0
 \.
 
 
@@ -761,6 +797,7 @@ COPY public.events (id, type, title, description, host, place, "time", day_id) F
 53	1	Бейсбол		Никита Власюк	Фут. поле	17.30\n19.00	3
 55	3	Подготовка к вечернему концерту «Таланты iВышки»				19.30\n20.00	3
 56	3	Концерт «Таланты iВышки»	Перерыв (Кефир): 21.00 – 21.10		КЛУБ	20.15\n22.00	3
+132	0	Отбой				23.00	8
 57	0	Рефлексия				22.20\n22.45	3
 58	0	Отбой				23.00	3
 18	0	Подъем, зарядка, умывание, порядок в комнате				8.00\n8.50	2
@@ -829,7 +866,6 @@ COPY public.events (id, type, title, description, host, place, "time", day_id) F
 129	0	Отбой				23.00	5
 130	0	Отбой				23.00	6
 131	0	Отбой				23.00	7
-132	0	Отбой				23.00	8
 133	0	Отбой				23.00	9
 134	0	Полдник				16.00\n16.10	4
 135	0	Полдник				16.00\n16.10	5
@@ -840,6 +876,7 @@ COPY public.events (id, type, title, description, host, place, "time", day_id) F
 8	1	Проектирование досуговых мероприятий в лагере		Ксения Бурлак	Дача 3, подъезд 2	17.30\n19.00	1
 59	1	Направление "Просвещение"	Поиск идеи будущего проекта / исследования	Яна Логинова, Н.А. Серова	Дача 3, подъезд 2	16.20\n17.00	2
 60	1	Направление "Событийная программа"	Поиск идеи будущего проекта / исследования	Анна Берсенина, Евгений Журавлёв	Корпус Хабенских, 2 этаж	16.20\n17.00	2
+140	2	Тестовая Лекция без права	Тут у меня кончилась фантазия	Константин Чернышев	КЛУБ	10.00\n11.20	4
 \.
 
 
@@ -859,6 +896,22 @@ COPY public.feedback (id, user_id, event_id, score, entertain, useful, understan
 9	7	21	6	9	1	1	
 10	11	21	5	7	6	2	
 11	6	21	8	9	2	4	
+12	20	22	9	7	10	2	Нихрена не понятно, но очень интересно
+13	19	22	1	9	8	2	
+14	18	22	9	10	8	2	
+15	17	22	3	8	10	6	
+16	16	22	5	7	3	9	
+17	15	22	2	5	5	12	
+18	1	22	1	5	8	4	
+19	5	23	7	5	9	5	Ещё какой-то остро-социальный комментарий
+20	4	23	5	3	5	7	
+21	7	23	9	8	2	8	
+22	11	23	9	10	5	9	В мне не хватило еды!!! Почему её так мало у вас было на завтрак? 
+23	6	23	3	8	2	10	
+24	20	24	9	10	10	3	
+25	1	24	6	7	7	8	Очень вкусный кагор был в прошлом году. В этом - не торт(
+26	3	24	10	10	5	4	
+27	12	24	1	1	1	9	
 \.
 
 
@@ -876,13 +929,13 @@ COPY public.notifications (id, user_id, token) FROM stdin;
 
 COPY public.projects (id, title, type, def_type, direction, description, annotation) FROM stdin;
 0	NO PROJECT					
-1	Умные остановки	project	presentation	media	Описание проекта умных остановок, который довольно большой. Тут должны описываться общие этапы.	Делаем умные остановки для нижнего
 2	Цифровой Нижний	science	TED	IT	Модульная система обеспечивающая связь между администрацией и жителями Нижнего Новгорода.	Связь между администрацией и жителями.
 3	Неформальный Нижний Новгород	other	TED	tourism	Этот проект будет посвящен местам в Нижнем Новгороде, о которых вы не задумывались ранее, но которые будут интересны всем вам. 	Путеводитель по Нижнему.
 4	Умные Дети	project	presentation	education	Проект представляет собой непрерывное и старательно произсодство умных детей. Долгими ночами и долгими днями.	Тупому городу - Умные дети
 5	Отчисление из ВыШЭ	science	TED	events	Лекция посвященная сложностям и проблемами с которыми столкнулся автор при отчислении из ВШЭ и последующей попытки суицида.	Доступное образование для всех!
 7	iHSE	project	TED	IT	Официальный сайт летнего многопрофильного лагеря iВышка с расписанием, заческой, записью на мероприятия и отзывами.	Официальный сайт iВышки!
 8	Шашлык-life	science	TED	events	Исследование непосредственного влияния проведения массовых мероприятий в Москве на политический климат.	Исследуем Шашлык-life!
+1	Умные остановки	project	presentation	tourism	Описание проекта умных остановок, который довольно большой. Тут должны описываться общие этапы.	Делаем умные остановки для нижнего
 \.
 
 
@@ -903,6 +956,7 @@ COPY public.sessions (id, user_id, user_type, user_agent, last_ip, "time") FROM 
 \\xcb06c48662d5364106228b7adaf2bb08	0	2	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36	172.18.0.1	2020-02-24 09:08:50 MSK
 \\x7714af63a0139e13b24e6b30d25f73c5	0	2	Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1	172.18.0.1	2020-06-05 19:47:34 MSK
 \\x5295343c1aab4611f5887a0a31c9121d	0	2	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36	172.18.0.1	2020-06-05 19:48:07 MSK
+\\x142f9dae58b4c916f5d9f15147e4121c	5	0	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36	172.29.0.1	2020-06-15 20:58:51 MSK
 \.
 
 
@@ -926,6 +980,9 @@ COPY public.top (id, user_id, day_id, chosen_1, chosen_2, chosen_3) FROM stdin;
 13	18	1	1	2	15
 14	19	1	20	1	13
 15	21	1	16	2	1
+22	5	1	6	13	7
+23	16	1	6	5	20
+24	20	1	6	5	16
 \.
 
 
@@ -958,7 +1015,7 @@ COPY public.users (id, code, user_type, phone, name, sex, pass, team, project_id
 22	03RGL5	0	79984772610	Ольга Хиритонова	f	105934	3	0	
 17	04RGL6	0	79984772611	Фёдор Витальевич	t	105934	3	0	
 4	VW4946	0	79645266448	Евгения Зитцева	t	105934	3	2	
-1	Y2G41J	0	79157043031	Юлия Самойлова	f	105934	3	5	
+1	Y2G41J	0	79157043031	Юлия Самойлова	f	99214	3	5	
 \.
 
 
@@ -989,7 +1046,7 @@ SELECT pg_catalog.setval('public.codes_id_seq', 20, true);
 -- Name: credits_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.credits_id_seq', 16, true);
+SELECT pg_catalog.setval('public.credits_id_seq', 33, true);
 
 
 --
@@ -1003,21 +1060,21 @@ SELECT pg_catalog.setval('public.days_id_seq', 9, true);
 -- Name: enrolls_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.enrolls_id_seq', 17, true);
+SELECT pg_catalog.setval('public.enrolls_id_seq', 46, true);
 
 
 --
 -- Name: events_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.events_id_seq', 139, true);
+SELECT pg_catalog.setval('public.events_id_seq', 140, true);
 
 
 --
 -- Name: feedback_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.feedback_id_seq', 11, true);
+SELECT pg_catalog.setval('public.feedback_id_seq', 27, true);
 
 
 --
@@ -1038,7 +1095,7 @@ SELECT pg_catalog.setval('public.projects_id_seq', 8, true);
 -- Name: top_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.top_id_seq', 15, true);
+SELECT pg_catalog.setval('public.top_id_seq', 25, true);
 
 
 --
@@ -1232,19 +1289,19 @@ ALTER TABLE ONLY public.feedback
 
 
 --
--- Name: notifications notifications_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.notifications
-    ADD CONSTRAINT notifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
-    
-    
---
 -- Name: feedback feedback_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.feedback
     ADD CONSTRAINT feedback_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: notifications notifications_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.notifications
+    ADD CONSTRAINT notifications_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --

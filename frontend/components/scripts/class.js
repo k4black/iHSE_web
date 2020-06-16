@@ -245,16 +245,20 @@ function setEnrolls() {
 
 
     // Hide when there is no enrollment (total === 0)
-    if (cache['class'].total == 0) {
+    if (cache['class'].total == 0 && cache['user'].user_type == 0) {
         document.querySelector('.class_popup__enroll_section').style.display = 'none';
     } else {
         document.querySelector('.class_popup__enroll_section').style.display = 'block';
 
+        if (cache['class'].total != 0) {
+            setupData(document.querySelector('#class_popup .count').firstElementChild, Object.keys(enrolls).length + ' / ' + cache['class'].total);
+            console.log(Object.keys(enrolls).length, cache['class'].total, Object.keys(enrolls).length / cache['class'].total);
+            setupBar(Object.keys(enrolls).length / cache['class'].total);  // Number from 0.0 to 1.0
+        } else {
+            setupData(document.querySelector('#class_popup .count').firstElementChild, Object.keys(enrolls).length + ' / ∞');
+            setupBar(0);  // Number from 0.0 to 1.0
+        }
 
-        setupData(document.querySelector('#class_popup .count').firstElementChild, Object.keys(enrolls).length + ' / ' + cache['class'].total);
-
-        console.log(Object.keys(enrolls).length, cache['class'].total, Object.keys(enrolls).length / cache['class'].total);
-        setupBar(Object.keys(enrolls).length / cache['class'].total);  // Number from 0.0 to 1.0
     }
 
 
