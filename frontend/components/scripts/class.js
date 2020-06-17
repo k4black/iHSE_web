@@ -126,7 +126,8 @@ function setupClasses() {
 
 
 function setupEnrollButtons() {
-    if (user === undefined) {
+    if (cache['user'] == null) {
+        console.warn('No user');
         document.getElementById('deenroll').style.display = 'none';
         document.getElementById('enroll').style.display = 'none';
         return;
@@ -186,7 +187,7 @@ function setClass() {
     document.querySelector('#total').value = event_class.total;  // Admin editable field
     document.querySelector('#anno').value = event_class.annotation;  // Admin editable field
 
-    if (cache['user'].type >= 1) {
+    if (cache['user'] != null && cache['user'].type >= 1) {
         document.querySelector('.anno').parentElement.style.display = 'none';
     }
 
@@ -245,7 +246,7 @@ function setEnrolls() {
 
 
     // Hide when there is no enrollment (total === 0)
-    if (cache['class'].total == 0 && cache['user'].user_type == 0) {
+    if (cache['class'].total == 0 && (cache['user'] == null || cache['user'].user_type == 0)) {
         document.querySelector('.class_popup__enroll_section').style.display = 'none';
     } else {
         document.querySelector('.class_popup__enroll_section').style.display = 'block';
@@ -274,6 +275,10 @@ function setEnrolls() {
     // Set status of enrolls
     for (let e of document.querySelectorAll('.enroll_alert')) {e.style.display = 'none';}
 
+    if (cache['user'] == null) {
+        return;
+    }
+
     if (attend_user) {
         document.querySelector('.enroll_visited_alert').style.display = 'block';
     } else
@@ -296,10 +301,11 @@ function setEnrolls() {
 
             if (check_user) {
                 document.querySelector('.enroll_enrolled_alert').style.display = 'block';
-            }
                 document.getElementById('deenroll').style.display = 'block';
+            }
             if (current_time_15 < event_time) {
                 document.querySelector('.enroll_15_alert').style.display = 'block';
+
                 document.getElementById('enroll').style.display = 'block';
                 if (check_user) {
                     document.getElementById('deenroll').style.display = 'block';
@@ -326,7 +332,7 @@ function setEnrolls() {
 
 
     // If not admin - exit
-    if (cache['user'].user_type == 0) {
+    if (cache['user'] == null || cache['user'].user_type == 0) {
         return;
     }
 

@@ -101,7 +101,7 @@ function setPopupProject() {
         let user = names[id];
 
         if (user['project_id'] == project_id) {
-            users_html += '<p class="user' + (user['id'] == cache['user']['id'] ? 'current_user' : '') + '">' + user.name + ' [' + user.team + ']</p>';
+            users_html += '<p class="user' + (cache['user'] != null && user['id'] == cache['user']['id'] ? 'current_user' : '') + '">' + user.name + ' [' + user.team + ']</p>';
         }
     }
 
@@ -111,10 +111,10 @@ function setPopupProject() {
 
 
     // Setup buttons
-    if (cache['user']['project_id'] == 0) {
+    if (cache['user'] != null && cache['user']['project_id'] == 0) {
         document.querySelector('#enroll').style.display = 'block';
         document.querySelector('#deenroll').style.display = 'none';
-    } else if (project_id == cache['user']['project_id']) { // Current user enrolled
+    } else if (cache['user'] != null && project_id == cache['user']['project_id']) { // Current user enrolled
         document.querySelector('#enroll').style.display = 'none';
         document.querySelector('#deenroll').style.display = 'block';
     } else {
