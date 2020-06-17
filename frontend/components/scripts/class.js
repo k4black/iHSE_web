@@ -1,7 +1,9 @@
 
 
-loadNames(function () {});  // TODO: Check
 
+runAfterLoading(function () {
+    loadNames(function () {});  // TODO: Check
+})
 
 
 

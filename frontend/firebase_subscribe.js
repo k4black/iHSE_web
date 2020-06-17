@@ -91,6 +91,9 @@ function sendTokenToServer(currentToken) {
             if (this.readyState === 4) {  // When request is done
                 if (this.status === 200) {  // Got it
                     setTokenSentToServer(currentToken);
+                    console.warn('Токен принят сервером');
+                } else {
+                    console.warn('Токен не принят сервером');
                 }
             }
         };

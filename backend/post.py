@@ -302,16 +302,18 @@ def post_notification(env: TEnvironment, query: TQuery, cookie: TCookie) -> TRes
         None; Only http answer
     """
 
-    # TODO: Save to sql
-
     user_obj = get_user_by_response(cookie)
     if user_obj is None:
         return http.wrong_cookie(env['HTTP_HOST'])
 
     key_obj = get_json_by_response(env)
-
-
     registration_id = key_obj['token']
+
+    sess = sql.get_session(cookie.get('sessid', ''))  # Get session object
+    hash_ = hash(sess['user_agent'] + sess['last_ip'])  # TODO: save hash
+
+    sql.set_notification(user_obj['id'], registration_id)  # TODO: check status
+
     message_title = "Uber update"
     message_body = f"Hi {user_obj['name']}, your customized news for today is ready"
     result = push_service.notify_single_device(registration_id=registration_id, message_title=message_title,

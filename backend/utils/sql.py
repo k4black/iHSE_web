@@ -592,6 +592,31 @@ def remove_project(project_id: int) -> bool:
 # Vacations
 
 
+# Notifications
+def set_notification(user_id: int, token: str) -> bool:
+    """ Register new user
+    There is no verification - create anywhere
+
+    Args:
+        user_id: user id from sql table
+        token: Token for FCMNotification
+
+    Returns:
+        Success reg or not
+    """
+
+    try:
+        with conn.cursor() as cursor_:
+            cursor_.execute('INSERT INTO notifications (user_id, token) VALUES (%s, %s);', (user_id, token))
+    except psycopg2.Error as error_:
+        logger('sql.set_notification()', f'{error_}. Rolling back.', type_='ERROR')
+        conn.rollback()
+        return False
+    else:
+        conn.commit()
+        return True
+
+
 # Users
 def get_names() -> tp.List[TTableObject]:
     """ Get all users short list from sql table
