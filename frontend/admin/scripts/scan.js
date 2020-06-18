@@ -61,6 +61,7 @@ function setEvent() {
 
     document.querySelector('.description .event_title').innerHTML = event['title'];
     document.querySelector('.description .desc').innerHTML = event['description'];
+    document.querySelector('.description .validator').innerHTML = 'Валидатор: ' + cache['user'].name;
 
     let type_elem = "";
     if (event['type'] == 1) {
@@ -104,6 +105,10 @@ let scanned = {};
 
 
 function saveScanned() {
+    if (!confirm('Save credits?')) {
+        return;
+    }
+
     let users_elems = document.querySelector('#scanned_list').children;
 
     let users_list = [];
@@ -116,6 +121,9 @@ function saveScanned() {
         });
     }
 
+    if (users_list.length == 0) {
+        return;
+    }
 
     var xhttp = new XMLHttpRequest();
 
@@ -123,6 +131,7 @@ function saveScanned() {
         if (this.readyState === 4) {
             if (this.status === 200) {
                 // TODO Redirect
+                alert('Saved!');
             }
         }
     };
@@ -130,7 +139,7 @@ function saveScanned() {
 
     let data = JSON.stringify(users_list);
 
-    xhttp.open("POST", "/checkin?" + "event="+currentEventId, true);
+    xhttp.open("POST", "/admin/checkin?" + "event="+currentEventId, true);
     //xhttp.setRequestHeader('Content-Type', 'application/json');
     xhttp.setRequestHeader('Content-Type', 'text/plain');
     xhttp.withCredentials = true;  // To receive cookie
@@ -186,7 +195,11 @@ function onQRCodeScanned(scannedText) {
     if (cache['users'] == undefined || !Object.keys(cache['users']).includes(scannedText)) {
         console.log('No user with id: ', scannedText);
         setWrongScannedClass(); // Red blink animation
-        document.getElementById("scannedTextMemo").innerText = scannedText + ' : ' + 'Wrong user!';
+        if (scannedText == 'Requested device not found') {
+            document.getElementById("scannedTextMemo").innerText = 'Ошибка камеры.';
+        } else {
+            document.getElementById("scannedTextMemo").innerText = 'Wrong user: ' + scannedText;
+        }
         return;
     }
 

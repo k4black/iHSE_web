@@ -34,16 +34,19 @@
 <!--#include virtual="/components/noscript.html" -->
 
 
-<button id="save" onclick="saveScanned()" class="moderator_element enroll__button"><i class="mobile__item__icon large material-icons">save</i></button>
-
-
 
 <div class="wrapper">
 
     <div class="description">
-        <h2 class="event_title">Some title</h2>
+        <div class="description__topline">
+            <h2 class="event_title">Some title</h2>
+            <div class="type">type</div>
+        </div>
         <p class="desc">And description</p>
-        <div class="type">type</div>
+
+        <hr>
+
+        <p class="validator">Валидатор: ываываыва ываыва</p>
     </div>
 
 
@@ -51,8 +54,7 @@
     <div class="row-element-set row-element-set-QRScanner">
 
         <div class="row-element">
-            <div class="qrscanner" id="scanner" onclick="changeScanning()">
-            </div>
+            <div class="qrscanner" id="scanner" onclick="changeScanning()"></div>
         </div>
 
         <div class="row-element">
@@ -82,12 +84,11 @@
                     <div id="scanned_list"></div>
                 </div>
             </div>
-
         </div>
-
     </div>
 
-</div>
+
+    <button id="save" onclick="saveScanned()" class="moderator_element enroll__button"><i class="mobile__item__icon large material-icons">save</i></button>
 
 
 <!--STD logic -->
