@@ -5,7 +5,7 @@ import copy
 
 import psycopg2
 
-from utils.auxiliary import logger
+from utils.auxiliary import logger, get_datetime_str
 
 
 """ ---===---==========================================---===--- """
@@ -259,6 +259,44 @@ table_fields: tp.Dict[str, tp.List[str]] = {
     'notifications': ['id', 'user_id', 'token'],
     'vacations': ['id', 'user_id', 'date_from', 'date_to', 'time_from', 'time_to', 'accepted'],
 }
+
+
+""" ---===---==========================================---===--- """
+"""               Save update time of main tables                """
+""" ---===---==========================================---===--- """
+
+
+table_updates = {
+    table: get_datetime_str() for table in table_fields
+}
+
+
+def update_time(table: str) -> str:
+    """ Set time of last table update
+
+    Args:
+        table: table title
+
+    Returns:
+        datetime string of new time
+    """
+
+    now = get_datetime_str()
+
+    if table in table_updates:
+        table_updates[table] = now
+
+    return now
+
+
+def get_update_times() -> tp.Dict[str, str]:
+    """ Get time of last all tables update
+
+    Returns:
+        Dict of table update times
+    """
+
+    return table_updates
 
 
 """ ---===---==========================================---===--- """

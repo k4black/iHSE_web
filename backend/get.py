@@ -84,6 +84,9 @@ def get_user(env: TEnvironment, query: TQuery, cookie: TCookie) -> TResponse:
     data['total'] = config.get_config()['CREDITS_TOTAL']
     data['today'] = get_date_str()  # TODO: remove. Only for debug???
 
+    database_update_time = sql.get_update_times()
+
+    data['update_time'] = database_update_time
 
     return http.ok(host=env['HTTP_HOST'], json_dict=data)
 
