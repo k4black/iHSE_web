@@ -224,3 +224,22 @@ th[data-field=id] {
     /*font-style: italic;*/
     font-weight: 500;
 }
+
+
+
+
+
+
+.dropdown-menu label {
+    position: relative;
+
+}
+
+.dropdown-menu-right {
+    left: 0!important;
+    right: auto!important;
+}
+.dropdown-menu input {
+    width: auto;
+    height: auto;
+}

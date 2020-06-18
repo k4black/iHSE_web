@@ -112,7 +112,11 @@ function setAccount() {
 
     // Load project
     startProjectLoading();
-    loadProject(user['project_id'], function () {setProject(user)});
+    if (user['project_id'] != 0) {
+        loadProject(user['project_id'], function () {setProject(user)});
+    } else {
+        setProject(user);
+    }
 
     // Setup user bio
     topbar.querySelector('.topbar__name').innerText = user.name;

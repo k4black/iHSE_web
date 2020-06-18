@@ -14,6 +14,8 @@ var cache = {};
 var user;
 
 
+var localStorageDataList = ['days', 'names', 'events', 'projects', 'places', 'users', '']
+
 
 // /**
 //  * Run function after loading of the page
@@ -79,6 +81,59 @@ function loadMainResources(loaders_list, waiting_list, setup_funcs) {
         func(function () {checkLoading(function () {runAfterLoading(setup_func)}, waiting_list);});
     }
 }
+
+
+
+
+function get_datetime_str() {
+    return new Date().toLocaleString("lt-LT", {timeZone: "Europe/Moscow", hour12: false}) + ' MSK';
+}
+
+
+function check_table_cache(table) {
+    let update_time = window.localStorage.getItem(table + '_update_time');  // Time of real update in table
+    let fetch_time = window.localStorage.getItem(table + '_fetch_time');  // Time of fetching some data
+
+    console.log('update_time', table, update_time);
+    console.log('fetch_time ', table, fetch_time);
+
+    if (update_time == null || fetch_time == null) {
+        console.warn('No data ' + table);
+        return false;
+    }
+
+    if (update_time > fetch_time) {
+        console.warn('Expired data ' + table);
+        return false;
+    }
+
+    console.warn('Ok time on data ' + table);
+    return true;
+}
+
+
+function get_table_cache(table) {
+    let date = window.localStorage.getItem(table + '_date');
+    return data;
+}
+
+
+function set_table_cache(table, update_time, fetch_time, data_string) {
+    window.localStorage.setItem(table + '_date', data_string);
+    // let fetch_time = get_datetime_str();
+
+    window.localStorage.setItem(table + '_update_time', update_time);  // Time of real update in table
+    window.localStorage.setItem(table + '_fetch_time', fetch_time);  // Time of fetching some data
+}
+
+
+
+
+
+
+
+
+
 
 
 

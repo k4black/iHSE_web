@@ -12,9 +12,11 @@ function editOthersProject(project_id) {
     document.querySelector('#project_popup .project_popup__header__title').innerText = document.querySelectorAll('[project-id="' + project_id + '"]')[0].getElementsByTagName('span')[0].textContent;
     document.querySelector('#project_popup .project_popup__dummy_header__title').innerText = document.querySelectorAll('[project-id="' + project_id + '"]')[0].getElementsByTagName('span')[0].textContent;
 
-    startProjectLoading();
-    loadProject(project_id, setPopupProject);
-    showProject(project_id);
+    if (project_id != 0) {
+        startProjectLoading();
+        loadProject(project_id, setPopupProject);
+        showProject(project_id);
+    }
 }
 
 function editProject(project_id) {
@@ -24,9 +26,11 @@ function editProject(project_id) {
     document.querySelector('#project_popup .project_popup__header__title').innerText = document.querySelectorAll('[project-id="' + project_id + '"]')[0].getElementsByTagName('span')[0].textContent;
     document.querySelector('#project_popup .project_popup__dummy_header__title').innerText = document.querySelectorAll('[project-id="' + project_id + '"]')[0].getElementsByTagName('span')[0].textContent;
 
-    startProjectLoading();
-    loadProject(project_id, setPopupProject);
-    showProject(project_id);
+    if (project_id != 0) {
+        startProjectLoading();
+        loadProject(project_id, setPopupProject);
+        showProject(project_id);
+    }
 }
 
 

@@ -9,6 +9,34 @@ var current_timeline = 'vacations';
 
 
 
+{
+    let date = getQueryParam('date');
+    if (date == null) {
+        loadMainResources(
+            [
+                loadDays
+            ],
+            ['days'],
+            [function () {current_timeline = Object.values(cache['days'])[0].data; setupTabs(current_timeline); loadAndCreateTimeline(current_timeline)}]
+        );
+    } else {
+        loadMainResources(
+            [
+                loadDays
+            ],
+            ['days'],
+            [function () {current_timeline = date; setupTabs(current_timeline); loadAndCreateTimeline(current_timeline)}]
+        );
+    }
+
+    loadDays();
+}
+runAfterLoading(function () {
+    // createBar();
+});
+
+
+
 window.addEventListener('load', function () {
     let date = getQueryParam('date');
     if (date == null) {
@@ -16,13 +44,8 @@ window.addEventListener('load', function () {
     } else {
         current_timeline = date;
     }
-    // loadAndCreateTable(current_table);
 
-    // setupToolbar();
-    // setupTabs();
     loadDays(function () {setupTabs(current_timeline); loadAndCreateTimeline(current_timeline)});
-
-    // buildTestTimeline();
 });
 
 

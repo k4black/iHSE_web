@@ -59,6 +59,7 @@ function getTableColumns(credits, days, events) {
     let columnsBottom = [];
 
     let userColumns = ['id', 'name', 'group', 'total'];
+    let userColumnsSearchable = {'id': false, 'name': true, 'group': true, 'total': false};
     let fixedColumns = userColumns.length;
 
 
@@ -66,11 +67,14 @@ function getTableColumns(credits, days, events) {
     let specialColumns = [];
 
 
+        // TODO: on search ignore id value in formatted link
     for (let i of userColumns) {
         columnsTop.push({
             field: i,
             title: i,
             sortable: true,
+            searchable: userColumnsSearchable[i],
+            // searchable: false,
             rowspan: 2,
             valign: 'middle',
             filter: "input",
@@ -101,6 +105,8 @@ function getTableColumns(credits, days, events) {
         columnsTop.push({
             title: days[day_id].date,
             colspan: processed_days[day_id].size + 1,
+            sortable: false,
+            searchable: false,
             align: 'center'
         });
 
@@ -121,6 +127,7 @@ function getTableColumns(credits, days, events) {
                 title: events[event_id].title,
                 titleTooltip: 'Title: ' + events[event_id].title,
                 sortable: true,
+                searchable: false,
                 align: 'center',
                 valign: 'middle',
                 // formatter: creditsFormatter,
@@ -139,6 +146,7 @@ function getTableColumns(credits, days, events) {
             field: 'date' + days[day_id].date + 'total',
             title: 'Total',
             sortable: true,
+            searchable: false,
             align: 'center',
             valign: 'middle',
             // formatter: function (val) {
@@ -152,7 +160,8 @@ function getTableColumns(credits, days, events) {
         columnsTop.push({
             field: i,
             title: i,
-            sortable: true,
+            sortable: false,
+            searchable: false,
             rowspan: 2,
             valign: 'middle'
         });
@@ -180,13 +189,13 @@ function getTableData(credits, users, days, events) {
         row['total'] = 0;
         for (let day_id in days) {
             for (let event_id in events) {
-                row['date' + days[day_id].date + 'id' + event_id] = 0;
+                row['date' + days[day_id].date + 'id' + event_id] = '-';
             }
             row['date' + days[day_id].date + 'total'] = 0;
         }
 
 
-        console.log('credits: ', credits);
+        // console.log('credits: ', credits);
         for (let credit_id in credits) {
 
             if (user_id == credits[credit_id]['user_id']) {  // Only for current user
@@ -202,6 +211,12 @@ function getTableData(credits, users, days, events) {
 
         data.push(row);
     }
+
+    sortBy(data, 'group');
+    // TODO: name sorting
+    // data.sort(function (first, second) {
+    //     return first['name'].replace(/[0-9]/g, ''); - second['name'].replace(/[0-9]/g, '');;
+    // });
     return data;
 }
 
@@ -216,6 +231,14 @@ function buildTable($el, credits, users, days, events) {
     console.log('columnsBottom', columnsBottom);
 
     $el.bootstrapTable('destroy').bootstrapTable({
+        exportDataType: 'all',
+        // exportTypes: ['csv', 'excel'],
+        exportTypes: ['csv', 'excel', 'xlsx', 'xml'],
+        exportOptions: {
+            fileName: function () {return 'ihse_credits_' + get_datetime_str().replace('.', '-').replace('.', '-').replace(' ', '_').replace(' ', '_')},
+            tableName: function () {return get_datetime_str().replace('.', '-').replace('.', '-').replace(' ', '_').replace(' ', '_')},
+            forceExport: true,
+        },
         // responseHandler(res) {
         //   res.rows.forEach(row => {
         //     row.id = {
@@ -236,6 +259,8 @@ function buildTable($el, credits, users, days, events) {
 
 
 function setTable() {
+
+
     events = cache['events'];
     users = cache['users'];
     days = cache['days'];
@@ -249,6 +274,8 @@ function setTable() {
 
 
     $table.on('all.bs.table', function (e, name, args) {
+        console.warn('TEST CLICK');
+
         if (name !== "click-cell.bs.table") {
             return;
         }
@@ -257,31 +284,44 @@ function setTable() {
             return;
         }
 
-        console.log(name, args);
+        // console.log('click on', name, args);
         let user_id = args[2].id;
         let value = args[1];
         let event_id = args[0].slice(11);
 
-        if (event_id === 'tal') {
+        if (event_id === 'tal' || event_id === 'otal' ) {
             // Total
             return;
             addCredit(event_id, user_id, 0);
         } else {
             // edit some
-            if (value === 0 || value === '0') {
+            if (value === '-' || value === 0 || value === '0') {
                 console.log('-', user_id, event_id, '-', event_id === 'tal');
                 let now = new Date().toLocaleString("lt-LT", {timeZone: "Europe/Moscow", hour12: false}).replace('-', '.').replace('-', '.') + ' MSK';
-                editCredit('', user_id, event_id, cache['user'].id, now, value);
+                editCredit('', user_id, event_id, cache['user'].id, now, 0);
             } else {
                 let credit_id = args[3][0]['children'][0].id;
                 let time = credits[credit_id]['time'];
 
                 console.log(credit_id, user_id, event_id, time, event_id === 'tal');
 
-                editCredit(credit_id, user_id, event_id, time, value);
+                editCredit(credit_id, user_id, event_id, cache['user'].id, time, value);
             }
         }
-    })
+    });
+
+    $('.dropdown-toggle').click(function (e) {
+        console.log(e);
+        let div_list = e.currentTarget.nextElementSibling;
+
+        if (div_list.classList.contains('show')) {
+            div_list.classList.remove('show');
+        } else {
+            div_list.classList.add('show');
+
+        }
+        console.log(div_list);
+    });
 }
 
 
