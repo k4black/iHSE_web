@@ -1,5 +1,5 @@
 # webserver
-uwsgi==2.0.18
+uwsgi==2.0.22
 # interacting with PostgreSQL database
 psycopg2-binary==2.8.4
 # interacting with Google Sheets
